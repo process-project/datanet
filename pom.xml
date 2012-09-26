@@ -12,6 +12,12 @@
 		<version>1</version>
 	</parent>
 	
+	<scm>
+		<connection>scm:git:ssh://git@dev.cyfronet.pl/datanet.git</connection>
+		<developerConnection>scm:git:ssh://git@dev.cyfronet.pl/datanet.git</developerConnection>
+		<url>http://dev.cyfronet.pl/gitlab/datanet</url>
+	</scm>
+	
 	<build>
 		<plugins>
 			<plugin>
