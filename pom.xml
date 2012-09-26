@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pl.cyfronet</groupId>
 	<artifactId>datanet</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.0.3</version>
 	<packaging>pom</packaging>
 	
 	<parent>
@@ -15,7 +15,8 @@
 		<connection>scm:git:ssh://git@dev.cyfronet.pl/datanet.git</connection>
 		<developerConnection>scm:git:ssh://git@dev.cyfronet.pl/datanet.git</developerConnection>
 		<url>http://dev.cyfronet.pl/gitlab/datanet</url>
-	</scm>
+	  <tag>datanet-0.0.3</tag>
+  </scm>
 	
 	<build>
 		<plugins>
