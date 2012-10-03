@@ -49,6 +49,7 @@
 	
 	<modules>
 		<module>deployer</module>
+		<module>skel-mongodb</module>
 	</modules>
 	
 	<dependencies>
