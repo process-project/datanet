@@ -10,7 +10,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DeploymentPerformance {
+public class DeploymentPerformanceTest {
 	private static final String CF_TARGET = System.getProperty("cf.target");
 	private static final String CF_USER = System.getProperty("cf.user");
 	private static final String CF_PASS = System.getProperty("cf.pass");
