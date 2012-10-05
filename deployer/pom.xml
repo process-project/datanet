@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<groupId>pl.cyfronet</groupId>
+		<groupId>pl.cyfronet.datanet</groupId>
 		<artifactId>datanet</artifactId>
 		<version>0.1.0-SNAPSHOT</version>
 	</parent>
