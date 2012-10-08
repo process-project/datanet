@@ -1,23 +1,29 @@
 require 'rubygems'
 require 'sinatra/base'
-require 'sinatra/reloader'
+#require 'sinatra/reloader'
 require 'mongo'
 require 'json'
 
 class MongoSkel < Sinatra::Base
-  register Sinatra::Reloader
-  use Rack::Logger
+ # register Sinatra::Reloader
+   use Rack::Logger
   
-  host = JSON.parse(ENV['VCAP_SERVICES'])['mongodb-2.0'].first['credentials']['hostname'] rescue 'localhost' 
-  port = JSON.parse( ENV['VCAP_SERVICES'] )['mongodb-2.0'].first['credentials']['port'] rescue 27017 
-  database = JSON.parse( ENV['VCAP_SERVICES'] )['mongodb-2.0'].first['credentials']['db'] rescue 'mydb'
-  username = JSON.parse( ENV['VCAP_SERVICES'] )['mongodb-2.0'].first['credentials']['username'] rescue nil
-  password = JSON.parse( ENV['VCAP_SERVICES'] )['mongodb-2.0'].first['credentials']['password'] rescue nil
+   SERVICES = JSON.parse(ENV['VCAP_SERVICES'])
+   
+   host =     SERVICES['mongodb-2.0'].first['credentials']['hostname'] rescue 'localhost' 
+   port =     SERVICES['mongodb-2.0'].first['credentials']['port'] rescue 27017 
+   database = SERVICES['mongodb-2.0'].first['credentials']['db'] rescue 'db'
+   username = SERVICES['mongodb-2.0'].first['credentials']['username'] rescue nil
+   password = SERVICES['mongodb-2.0'].first['credentials']['password'] rescue nil
   
-  DB = Mongo::Connection.new(host, port).db("mydb", :pool_size => 5,  :timeout => 5) 
+   DB = Mongo::Connection.new(host, port).db(database, :pool_size => 5,  :timeout => 5) 
   
-  if not username.nil? and not password.nil?
+  if username and password
     DB.authenticate(username, password)
+  end
+ 
+  configure do
+    set(:port, ENV["VCAP_APP_PORT"] || 4567)
   end
   
   helpers do
@@ -68,8 +74,7 @@ class MongoSkel < Sinatra::Base
       end
     end
   end
-
-
+  
   get '/' do  
     "Datanet mapper (mongodb), currently we have following collections #{db.collection_names}"  
   end
@@ -121,6 +126,8 @@ class MongoSkel < Sinatra::Base
     collection!.update({"_id" => id}, doc!)    
     "Entity replaced"
   end
+
+   run! if __FILE__ == $0
 end
 
-MongoSkel.run!
+#MongoSkel.run!
