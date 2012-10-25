@@ -1,10 +1,10 @@
 package pl.cyfronet.datanet.deployer.test;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 
-import org.cloudfoundry.client.lib.CloudCredentials;
 import org.cloudfoundry.client.lib.CloudFoundryClient;
+import org.cloudfoundry.client.lib.CloudInfo;
+import org.cloudfoundry.client.lib.Staging;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,7 +19,8 @@ public class DeploymentPerformanceTest {
 	
 	@Before
 	public void setup() throws MalformedURLException {
-		client = new CloudFoundryClient(new CloudCredentials(CF_USER, CF_PASS), new URL(CF_TARGET));
+//		client = new CloudFoundryClient(new CloudCredentials(CF_USER, CF_PASS), new URL(CF_TARGET));
+		client = new CloudFoundryClient(CF_USER, CF_PASS, CF_TARGET);
 		client.login();
 	}
 	

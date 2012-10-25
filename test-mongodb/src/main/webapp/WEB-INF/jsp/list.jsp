@@ -1,0 +1,1 @@
+Number of entities: ${entityCount}
