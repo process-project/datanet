@@ -22,7 +22,7 @@ public class WebApp implements WebApplicationInitializer {
 
 		Dynamic servlet = servletContext.addServlet("spring", new DispatcherServlet(root));
 		servlet.setLoadOnStartup(1);
-		servlet.addMapping("/*");
+		servlet.addMapping("/");
 		log.info("Datanet web application successfully initialized");
 	}
 }
