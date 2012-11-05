@@ -1,0 +1,12 @@
+package pl.cyfronet.datanet.web.client.services;
+
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
+import pl.cyfronet.datanet.web.client.errors.LoginException;
+
+@RemoteServiceRelativePath("../rpcservices/loginService")
+public interface LoginService extends RemoteService {
+	boolean isUserLoggedIn();
+	void login(String user, String password) throws LoginException;
+}

@@ -4,5 +4,5 @@
 <module rename-to="ria">
 	<inherits name="com.google.gwt.user.User" />
 	<source path="client" />
-	<entry-point class="pl.cyfronet.datanet.web.client.RiaEntryPoint" />
+	<entry-point class="pl.cyfronet.datanet.web.client.ClientEntryPoint" />
 </module>

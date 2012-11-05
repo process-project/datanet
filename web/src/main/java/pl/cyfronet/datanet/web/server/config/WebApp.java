@@ -10,6 +10,8 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import pl.cyfronet.datanet.web.server.util.SpringGwtRemoteServiceServlet;
+
 public class WebApp implements WebApplicationInitializer {
 	private static final Logger log = LoggerFactory.getLogger(WebApp.class);
 	
@@ -17,12 +19,16 @@ public class WebApp implements WebApplicationInitializer {
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		AnnotationConfigWebApplicationContext root = new AnnotationConfigWebApplicationContext();
 		root.setServletContext(servletContext);
-		root.scan("pl.cyfronet.datanet.web.server.config");
+		root.scan("pl.cyfronet.datanet.web.server.config",
+				"pl.cyfronet.datanet.web.server.rpcservices");
 		root.refresh();
+		
+		Dynamic gwtServlet = servletContext.addServlet("gwtServices", new SpringGwtRemoteServiceServlet(root));
+		gwtServlet.addMapping("/rpcservices/*");
 
-		Dynamic servlet = servletContext.addServlet("spring", new DispatcherServlet(root));
-		servlet.setLoadOnStartup(1);
-		servlet.addMapping("/");
+		Dynamic springServlet = servletContext.addServlet("spring", new DispatcherServlet(root));
+		springServlet.setLoadOnStartup(1);
+		springServlet.addMapping("/");
 		log.info("Datanet web application successfully initialized");
 	}
 }
