@@ -3,6 +3,7 @@ package pl.cyfronet.datanet.web.client;
 import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginPresenter;
+import pl.cyfronet.datanet.web.client.widgets.login.LoginWidget;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -21,7 +22,7 @@ public class ClientController {
 		loginService.isUserLoggedIn(new AsyncCallback<Boolean>() {
 			@Override
 			public void onSuccess(Boolean isLoggedIn) {
-				if(isLoggedIn) {
+				if(!isLoggedIn) {
 					showLoginPanel();
 				} else {
 					showMainPanel();
@@ -42,7 +43,8 @@ public class ClientController {
 	}
 
 	private void showLoginPanel() {
-		LoginPresenter loginPresenter = new LoginPresenter(loginService, rpcErrorHandler);
+		LoginPresenter loginPresenter = new LoginPresenter(loginService, rpcErrorHandler,
+				new LoginWidget());
 		RootPanel.get().clear();
 		RootPanel.get().add(loginPresenter.getWidget());
 	}

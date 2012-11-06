@@ -1,0 +1,52 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:with type="pl.cyfronet.datanet.web.client.widgets.login.LoginMessages" field="messages"/>
+	<ui:style>
+		.loginPanel {
+			margin-top: 100px;
+			margin-right: auto;
+			margin-left: auto;
+			width: 25em;
+			border-radius: 10px;
+			box-shadow: 0px 0px 5px #888888;
+			padding: 15px;
+		}
+		.loginHeader {
+			text-align: center;
+			margin-bottom: 10px;
+			font-size: larger;
+		}
+		.submit {
+			text-align: center;
+		}
+		.label {
+			width: 10em;
+			text-align: right;
+			display: block;
+			float: left;
+			margin-right:5px; 
+		}
+		.errorLabel {
+			color: red;
+			text-align: center;
+		}
+	</ui:style>
+	<g:HTMLPanel styleName="{style.loginPanel}">
+		<div class="{style.loginHeader}"><ui:text from="{messages.loginHeader}"/></div>
+		<div>
+			<span class="{style.label}"><ui:text from="{messages.loginLabel}"/></span>
+			<g:TextBox ui:field="loginField"/>
+		</div>
+		<div>
+			<span class="{style.label}"><ui:text from="{messages.passwordLabel}"/></span>
+			<g:PasswordTextBox ui:field="passwordField"/>
+		</div>
+		<div class="{style.submit}">
+			<g:Button ui:field="loginButton" text="{messages.submitLabel}"/>
+		</div>
+		<div class="{style.errorLabel}">
+			<g:Label ui:field="errorLabel"/>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder>

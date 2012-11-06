@@ -14,6 +14,8 @@ import org.springframework.web.servlet.view.JstlView;
 @EnableWebMvc
 @ComponentScan("pl.cyfronet.datanet.web.server.controllers")
 public class ControllerConfiguration extends WebMvcConfigurerAdapter {
+	private static final int YEAR = 31556926;
+	
 	@Bean
     public ViewResolver viewResolver() {
 		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
@@ -30,6 +32,8 @@ public class ControllerConfiguration extends WebMvcConfigurerAdapter {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/ria/**").
-				addResourceLocations("/ria/").setCachePeriod(31556926);
+				addResourceLocations("/ria/").setCachePeriod(YEAR);
+		registry.addResourceHandler("/css/**").
+				addResourceLocations("/css/").setCachePeriod(YEAR);
 	}
 }

@@ -9,13 +9,11 @@ import pl.cyfronet.datanet.web.client.services.LoginService;
 public class RpcLoginService implements LoginService {
 	@Override
 	public void login(String user, String password) throws LoginException {
-		// TODO Auto-generated method stub
-		
+		throw new LoginException();
 	}
 
 	@Override
 	public boolean isUserLoggedIn() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }
