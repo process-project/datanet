@@ -50,7 +50,6 @@
 
 	<modules>
 		<module>deployer</module>
-		<module>skel-mongodb</module>
 		<module>test-mongodb</module>
 		<module>web</module>
 		<module>model</module>
