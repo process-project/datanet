@@ -9,4 +9,5 @@ public interface LoginMessages extends Messages {
 	String submitLabel();
 	String loginOrPasswordEmpty();
 	String unknownLoginError();
+	String wrongLoginOrPassword();
 }

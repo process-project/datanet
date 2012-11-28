@@ -16,6 +16,7 @@ public class LoginPresenter implements Presenter {
 		void errorLoginOrPasswordEmpty();
 		void errorUnknownDuringLogin();
 		void clearErrors();
+		void errorWrongLoginOrPassword();
 	}
 	
 	private LoginServiceAsync loginService;
@@ -56,9 +57,13 @@ public class LoginPresenter implements Presenter {
 			public void onFailure(Throwable t) {
 				if(t instanceof LoginException) {
 					LoginException e = (LoginException) t;
+					
 					switch(e.getErrorCode()) {
 						case Unknown:
 							view.errorUnknownDuringLogin();
+						break;
+						case UserPasswordUnknown:
+							view.errorWrongLoginOrPassword();
 						break;
 					}
 					

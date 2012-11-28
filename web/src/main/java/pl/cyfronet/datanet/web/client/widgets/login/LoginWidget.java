@@ -67,4 +67,9 @@ public class LoginWidget extends Composite implements View {
 	public void clearErrors() {
 		errorLabel.setText("");
 	}
+
+	@Override
+	public void errorWrongLoginOrPassword() {
+		errorLabel.setText(messages.wrongLoginOrPassword());
+	}
 }

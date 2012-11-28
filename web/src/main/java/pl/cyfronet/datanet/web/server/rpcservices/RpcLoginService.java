@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import pl.cyfronet.datanet.web.client.errors.LoginException;
 import pl.cyfronet.datanet.web.client.services.LoginService;
-import pl.cyfronet.datanet.web.server.services.PortalLoginHandler;
+import pl.cyfronet.datanet.web.server.services.portallogin.PortalLoginHandler;
 
 @Service("loginService")
 public class RpcLoginService implements LoginService {
@@ -16,9 +16,9 @@ public class RpcLoginService implements LoginService {
 	@Autowired private PortalLoginHandler portalLoginHandler;
 	
 	@Override
-	public void login(String user, String password) throws LoginException {
-		portalLoginHandler.login("dummy", "dummy");
-		throw new LoginException();
+	public void login(String userLogin, String password) throws LoginException {
+		portalLoginHandler.login(userLogin, password);
+		log.info("User {} successfully logged in", userLogin);
 	}
 
 	@Override

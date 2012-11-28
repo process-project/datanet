@@ -4,7 +4,8 @@ public class LoginException extends Exception {
 	private static final long serialVersionUID = 7569975052885032757L;
 
 	public enum Code {
-		Unknown
+		Unknown,
+		UserPasswordUnknown
 	}
 	
 	private Code errorCode;

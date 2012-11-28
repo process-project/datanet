@@ -2,7 +2,8 @@ package pl.cyfronet.datanet.web.server.util;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
@@ -18,8 +19,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  */
 @SuppressWarnings("serial")
 public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
-	private static final Logger log = Logger
-			.getLogger(SpringGwtRemoteServiceServlet.class);
+	private static final Logger log = LoggerFactory.getLogger(SpringGwtRemoteServiceServlet.class);
 
 	private ApplicationContext applicationContext;
 
@@ -33,11 +33,8 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
 			Object handler = getBean(getThreadLocalRequest());
 			RPCRequest rpcRequest = RPC.decodeRequest(payload, handler.getClass(), this);
 			onAfterRequestDeserialized(rpcRequest);
-
-			if (log.isDebugEnabled()) {
-				log.debug("Invoking " + handler.getClass().getName() + "."
-						+ rpcRequest.getMethod().getName());
-			}
+			log.trace("Invoking {}.{}", handler.getClass().getName(),
+					rpcRequest.getMethod().getName());
 			
 			return RPC.invokeAndEncodeResponse(handler, rpcRequest.getMethod(),
 					rpcRequest.getParameters(),
@@ -65,10 +62,8 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
 			throw new IllegalArgumentException(
 					"Spring bean is not a GWT RemoteService: " + service + " ("	+ bean + ")");
 		}
-		
-		if (log.isDebugEnabled()) {
-			log.debug("Bean for service " + service + " is " + bean);
-		}
+
+		log.trace("Bean for service {} is {}", service, bean);
 		
 		return bean;
 	}
@@ -82,10 +77,7 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
 	protected String getService(HttpServletRequest request) {
 		String url = request.getRequestURI();
 		String service = url.substring(url.lastIndexOf("/") + 1);
-		
-		if (log.isDebugEnabled()) {
-			log.debug("Service for URL " + url + " is " + service);
-		}
+		log.trace("Service for URL {} is {}", url, service);
 		
 		return service;
 	}
