@@ -19,8 +19,7 @@ public class WebApp implements WebApplicationInitializer {
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		AnnotationConfigWebApplicationContext root = new AnnotationConfigWebApplicationContext();
 		root.setServletContext(servletContext);
-		root.scan("pl.cyfronet.datanet.web.server.config",
-				"pl.cyfronet.datanet.web.server.rpcservices");
+		root.scan("pl.cyfronet.datanet.web.server.config");
 		root.refresh();
 		
 		Dynamic gwtServlet = servletContext.addServlet("gwtServices", new SpringGwtRemoteServiceServlet(root));
