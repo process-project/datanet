@@ -46,6 +46,7 @@ public class SpringConfiguration {
                 new ClassPathResource("datanet-override.properties")
         };
         properies.setLocations(resourceLocations);
+        properies.setIgnoreResourceNotFound(true);
         
         return properies;
 	}
