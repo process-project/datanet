@@ -9,4 +9,5 @@ import pl.cyfronet.datanet.web.client.errors.LoginException;
 public interface LoginService extends RemoteService {
 	boolean isUserLoggedIn();
 	void login(String user, String password) throws LoginException;
+	void logout();
 }

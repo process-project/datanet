@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.client.widgets.login;
 
+import pl.cyfronet.datanet.web.client.ClientController;
 import pl.cyfronet.datanet.web.client.errors.LoginException;
 import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
@@ -19,12 +20,14 @@ public class LoginPresenter implements Presenter {
 		void errorWrongLoginOrPassword();
 	}
 	
+	private ClientController clientController;
 	private LoginServiceAsync loginService;
 	private RpcErrorHandler rpcErrorHandler;
 	private View view;
 
 	public LoginPresenter(LoginServiceAsync loginService,
-			RpcErrorHandler rpcErrorHandler, View view) {
+			RpcErrorHandler rpcErrorHandler, View view, ClientController clientController) {
+		this.clientController = clientController;
 		this.loginService = loginService;
 		this.rpcErrorHandler = rpcErrorHandler;
 		this.view = view;
@@ -50,9 +53,8 @@ public class LoginPresenter implements Presenter {
 		loginService.login(login, password, new AsyncCallback<Void>() {
 			@Override
 			public void onSuccess(Void result) {
-				//notify controller
+				clientController.onLogin();
 			}
-			
 			@Override
 			public void onFailure(Throwable t) {
 				if(t instanceof LoginException) {

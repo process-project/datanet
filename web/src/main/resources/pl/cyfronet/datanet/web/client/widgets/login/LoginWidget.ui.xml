@@ -7,7 +7,7 @@
 			margin-top: 100px;
 			margin-right: auto;
 			margin-left: auto;
-			width: 25em;
+			width: 30em;
 			border-radius: 10px;
 			box-shadow: 0px 0px 5px #888888;
 			padding: 15px;
@@ -19,6 +19,7 @@
 		}
 		.submit {
 			text-align: center;
+			margin-top: 10px;
 		}
 		.label {
 			width: 10em;
@@ -30,17 +31,24 @@
 		.errorLabel {
 			color: red;
 			text-align: center;
+			margin-top: 10px;
+		}
+		.input {
+			width: 12em;
+		}
+		.input-section {
+			margin-top: 5px;
 		}
 	</ui:style>
 	<g:HTMLPanel styleName="{style.loginPanel}">
 		<div class="{style.loginHeader}"><ui:text from="{messages.loginHeader}"/></div>
-		<div>
+		<div class="{style.input-section}">
 			<span class="{style.label}"><ui:text from="{messages.loginLabel}"/></span>
-			<g:TextBox ui:field="loginField"/>
+			<g:TextBox ui:field="loginField" styleName="{style.input}"/>
 		</div>
-		<div>
+		<div class="{style.input-section}">
 			<span class="{style.label}"><ui:text from="{messages.passwordLabel}"/></span>
-			<g:PasswordTextBox ui:field="passwordField"/>
+			<g:PasswordTextBox ui:field="passwordField" styleName="{style.input}"/>
 		</div>
 		<div class="{style.submit}">
 			<g:Button ui:field="loginButton" text="{messages.submitLabel}"/>

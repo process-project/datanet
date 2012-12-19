@@ -1,0 +1,45 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:with type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelMessages" field="messages"/>
+	<ui:style>
+		.main-panel {
+			margin: 20px auto;
+			width: 80%;
+		}
+		.logout-button {
+			float: right;
+		}
+		.datanet-label {
+			float: left;
+		}
+		.header {
+			margin: 3px;
+		}
+	</ui:style>
+	<g:DockLayoutPanel>
+		<g:north size="40">
+			<g:FlowPanel styleName="{style.header}">
+				<g:Label styleName="{style.datanet-label}" text="{messages.datanetMain}"/>
+				<g:Button ui:field="logout" text="{messages.logoutLabel}" styleName="gwt-Button {style.logout-button}"></g:Button>
+			</g:FlowPanel>
+		</g:north>
+		<g:center>
+			<g:SplitLayoutPanel>
+				<g:west size="200">
+					<g:StackLayoutPanel unit="EM">
+						<g:stack>
+							<g:header size="3"><ui:text from="{messages.modelsLabel}"/></g:header>
+							<g:Label>Models: TODO</g:Label>
+						</g:stack>
+						<g:stack>
+							<g:header size="3"><ui:text from="{messages.repositoriesLabel}"/></g:header>
+							<g:Label>Repositories: TODO</g:Label>
+						</g:stack>
+					</g:StackLayoutPanel>
+				</g:west>
+				<g:center><g:Label text="hello"/></g:center>
+			</g:SplitLayoutPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder>

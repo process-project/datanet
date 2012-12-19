@@ -22,6 +22,8 @@
 	</repositories>
 
 	<build>
+		<finalName>datanet</finalName>
+		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -45,6 +47,7 @@
 				</executions>
 				<configuration>
 					<runTarget>/</runTarget>
+					<buildOutputDirectory>${project.build.directory}/${project.build.finalName}</buildOutputDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -61,6 +64,8 @@
 				</executions>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<!-- web.xml is a dummy making the GWT plugin happy -->
+					<warSourceExcludes>WEB-INF/web.xml</warSourceExcludes>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -124,11 +129,6 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-c3p0</artifactId>
 			<version>4.1.7.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-annotations</artifactId>
-			<version>3.5.6-Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>

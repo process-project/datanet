@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import pl.cyfronet.datanet.web.client.errors.LoginException;
 import pl.cyfronet.datanet.web.client.services.LoginService;
@@ -19,10 +21,27 @@ public class RpcLoginService implements LoginService {
 	public void login(String userLogin, String password) throws LoginException {
 		portalLoginHandler.login(userLogin, password);
 		log.info("User {} successfully logged in", userLogin);
+		RequestContextHolder.getRequestAttributes().
+				setAttribute("authentication", "true", RequestAttributes.SCOPE_SESSION);
 	}
 
 	@Override
 	public boolean isUserLoggedIn() {
-		return false;
+		boolean result = false;
+		
+		if(RequestContextHolder.getRequestAttributes().
+				getAttribute("authentication", RequestAttributes.SCOPE_SESSION) != null) {
+			result = true;
+		}
+		
+		log.debug("User login status is: {}", result);
+		
+		return result;
+	}
+
+	@Override
+	public void logout() {
+		RequestContextHolder.getRequestAttributes().
+				removeAttribute("authentication", RequestAttributes.SCOPE_SESSION);
 	}
 }
