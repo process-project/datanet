@@ -3,15 +3,16 @@
 		"http://google-web-toolkit.googlecode.com/svn/tags/2.5.0/distro-source/core/src/gwt-module.dtd">
 <module rename-to="ria">
 	<inherits name="com.google.gwt.user.User" />
+	<inherits name="com.google.gwt.i18n.I18N"/>
 	<inherits name='com.google.gwt.user.theme.standard.Standard'/>
 	
 	<source path="client" />
 	<entry-point class="pl.cyfronet.datanet.web.client.ClientEntryPoint" />
 	
 	<!-- locale setup -->
-	<extend-property name="locale" values="en"/>
-	<extend-property name="locale" values="pl"/>
+	<extend-property name="locale" values="en,pl"/>
 	<set-property-fallback name="locale" value="en"/>
+	<set-property name="locale" value="en,pl"/>
 	
 	<stylesheet src="../css/datanet.css"/>
 </module>
