@@ -4,7 +4,14 @@ import java.util.Map;
 
 public class Deployer {
 	public enum RepositoryType {
-		Mongo
+		
+		Mongo("mongodb");
+		
+		private String serviceTypeName;
+		
+		RepositoryType(String serviceTypeName) {
+			this.serviceTypeName = serviceTypeName;
+		}
 	}
 	/**
 	 * 
