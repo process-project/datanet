@@ -24,10 +24,12 @@ import org.cloudfoundry.client.lib.Staging;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import pl.cyfronet.datanet.deployer.Unzip;
 
+@Ignore
 public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 	
 	private static final String MONGODB_SERVICE_TYPE = "mongodb";

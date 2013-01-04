@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import pl.cyfronet.datanet.deployer.ApplicationConfig;
@@ -13,6 +14,7 @@ import pl.cyfronet.datanet.deployer.Deployer;
 import pl.cyfronet.datanet.deployer.MapperBuilder;
 import pl.cyfronet.datanet.deployer.test.CloudFoundryTest;
 
+@Ignore
 public class DeployerTest extends CloudFoundryTest {
 	
 	private static final String REPOSITORY_NAME = "bwtest-mongodb";
