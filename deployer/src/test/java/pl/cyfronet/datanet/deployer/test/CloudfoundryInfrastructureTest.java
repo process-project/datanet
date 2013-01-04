@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.zip.ZipException;
 
+import org.apache.commons.io.FileUtils;
 import org.cloudfoundry.client.lib.CloudApplication;
 import org.cloudfoundry.client.lib.CloudFoundryClient;
 import org.cloudfoundry.client.lib.CloudService;
@@ -28,7 +28,7 @@ import org.junit.Test;
 
 import pl.cyfronet.datanet.deployer.Unzip;
 
-public class CloudfoundryInfrastructureTest  {
+public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 	
 	private static final String MONGODB_SERVICE_TYPE = "mongodb";
 	private static final String ZIP_NAME = "datanet-skel-mongodb.zip";
@@ -39,24 +39,12 @@ public class CloudfoundryInfrastructureTest  {
 	private static final String SERVICE_NAME = "bw-test-service-123";
 	private static final String APP_NAME = "bw-test-app-123";
 	private static final int MEMORY = 128;
-	
-	private final String CF_TARGET;
-	private final String CF_USER;
-	private final String CF_PASS;
 
 	private final Staging staging;
 	private final List<String> uris;
 	private final Map<String, String> envVarsMap;
-		
-	private CloudFoundryClient client;
-			
+				
 	public CloudfoundryInfrastructureTest() throws IOException {
-		
-		Properties props = PropertiesLoader.loadEnvProperties();
-	
-		CF_TARGET = props.getProperty("cf.target");
-		CF_USER = props.getProperty("cf.user");
-		CF_PASS = props.getProperty("cf.pass");
 		
 		staging = new Staging("rack");
 		staging.setRuntime("ruby193");
@@ -67,7 +55,7 @@ public class CloudfoundryInfrastructureTest  {
 		envVarsMap.put("BUNDLE_WITHOUT", "test");
 		envVarsMap.put("RAILS_ENV", "staging");
 	}
-	
+
 	@Before
 	public void setup() throws MalformedURLException {
 		Assert.assertNotNull(CF_TARGET);
@@ -163,7 +151,7 @@ public class CloudfoundryInfrastructureTest  {
 		File unzipFolder = new File(UNZIP_PATH);
 		Unzip.extractOverridingAll(new File(this.getClass().getClassLoader().getResource(ZIP_NAME).toURI()), unzipFolder);
 		client.uploadApplication(APP_NAME, new File(unzipFolder, APP_FOLDER_NAME));
-		Unzip.deleteRecursively(unzipFolder);
+		FileUtils.forceDelete(unzipFolder);
 	}
 	
 	private void startApplication() {
