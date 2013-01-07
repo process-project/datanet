@@ -5,8 +5,13 @@ import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter.View;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainPanelWidget extends Composite implements View {
@@ -16,18 +21,49 @@ public class MainPanelWidget extends Composite implements View {
 	private MainPanelMessages messages;
 	private Presenter presenter;
 	
+	@UiField FlowPanel mainContainer;
+	@UiField Label errorLabel;
+	
 	public MainPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
 		messages = GWT.create(MainPanelMessages.class);
-	}
-
-	@Override
-	public void setPresenter(Presenter presenter) {
-		this.presenter = presenter;
 	}
 	
 	@UiHandler("logout")
 	void logoutClicked(ClickEvent event) {
 		presenter.onLogout();
+	}
+	
+	@UiHandler("newModel")
+	void newModelClicked(ClickEvent event) {
+		presenter.onNewModel();
+	}
+	
+	@UiHandler("saveModel")
+	void saveModelClicked(ClickEvent event) {
+		presenter.onSaveModel();
+	}
+
+	@Override
+	public HasWidgets getMainContainer() {
+		return mainContainer;
+	}
+	
+	@Override
+	public void setPresenter(Presenter presenter) {
+		this.presenter = presenter;
+	}
+
+	@Override
+	public void errorNoModelPresent() {
+		errorLabel.setText(messages.errorNoModelPresent());
+		errorLabel.setVisible(true);
+		new Timer() {
+			@Override
+			public void run() {
+				errorLabel.setVisible(false);
+				errorLabel.setText("");
+			}
+		}.schedule(2000);
 	}
 }

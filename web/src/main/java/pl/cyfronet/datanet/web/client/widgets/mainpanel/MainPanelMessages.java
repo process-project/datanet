@@ -7,4 +7,7 @@ public interface MainPanelMessages extends Messages {
 	String datanetMain();
 	String modelsLabel();
 	String repositoriesLabel();
+	String newModelLabel();
+	String saveModelLabel();
+	String errorNoModelPresent();
 }

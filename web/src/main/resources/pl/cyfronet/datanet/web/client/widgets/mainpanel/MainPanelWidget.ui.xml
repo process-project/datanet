@@ -16,12 +16,30 @@
 		.header {
 			margin: 3px;
 		}
+		.menuButton {
+			margin-left: 5px;
+		}
+		.errorLabel {
+			color: white;
+			background-color: red;
+			font-weight: bold;
+			float: left;
+			padding: 2px;
+			margin-left: 20em;
+		}
 	</ui:style>
 	<g:DockLayoutPanel>
 		<g:north size="40">
 			<g:FlowPanel styleName="{style.header}">
-				<g:Label styleName="{style.datanet-label}" text="{messages.datanetMain}"/>
+				<g:Label styleName="gwt-Label {style.datanet-label}" text="{messages.datanetMain}"/>
+				<g:Label ui:field="errorLabel" styleName="gwt-Label {style.errorLabel}" visible="false"/>
 				<g:Button ui:field="logout" text="{messages.logoutLabel}" styleName="gwt-Button {style.logout-button}"></g:Button>
+			</g:FlowPanel>
+		</g:north>
+		<g:north size="40">
+			<g:FlowPanel>
+				<g:Button ui:field="newModel" text="{messages.newModelLabel}" styleName="gwt-Button {style.menuButton}"/>
+				<g:Button ui:field="saveModel" text="{messages.saveModelLabel}" styleName="gwt-Button {style.menuButton}"/>
 			</g:FlowPanel>
 		</g:north>
 		<g:center>
@@ -38,7 +56,9 @@
 						</g:stack>
 					</g:StackLayoutPanel>
 				</g:west>
-				<g:center><g:Label text="hello"/></g:center>
+				<g:center>
+					<g:FlowPanel ui:field="mainContainer"/>
+				</g:center>
 			</g:SplitLayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>

@@ -62,7 +62,7 @@ public class SpringConfiguration {
     }
 	
 	/**
-	 * REST client used to communicate with the  portal to authenticate users.
+	 * REST client used to communicate with the portal to authenticate users.
 	 */
 	@Bean
 	public RestTemplate restClient() {

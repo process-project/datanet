@@ -1,0 +1,28 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:with type="pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelMessages" field="messages"/>
+	<ui:style>
+		.modelPanel {
+			padding: 5px;
+		}
+		.modelPropertyLabel {
+			float: left;
+			padding-left: 20px;
+		}
+		.modelPropertyInput {
+			float: left;
+			padding-left: 5px;
+		}
+	</ui:style>
+	<g:FlowPanel styleName="{style.modelPanel}">
+		<g:FlowPanel>
+			<g:Label text="{messages.modelName}" styleName="gwt-Label {style.modelPropertyLabel}"/>
+			<g:TextBox ui:field="modelNameTextBox" styleName="gwt-TextBox {style.modelPropertyInput}"/>
+			<g:Label text="{messages.modelVersion}" styleName="gt-Label {style.modelPropertyLabel}"/>
+			<g:TextBox ui:field="modelVersionTextBox" styleName="gwt-TextBox {style.modelPropertyInput}"/>
+		</g:FlowPanel>
+		<g:FlowPanel ui:field="entityContainer">
+		</g:FlowPanel>
+	</g:FlowPanel>
+</ui:UiBinder>
