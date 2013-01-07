@@ -12,9 +12,7 @@ import org.junit.Test;
 import pl.cyfronet.datanet.deployer.ApplicationConfig;
 import pl.cyfronet.datanet.deployer.Deployer;
 import pl.cyfronet.datanet.deployer.MapperBuilder;
-import pl.cyfronet.datanet.deployer.test.CloudFoundryTest;
 
-@Ignore
 public class DeployerTest extends CloudFoundryTest {
 	
 	private static final String REPOSITORY_NAME = "bwtest-mongodb";
@@ -37,6 +35,7 @@ public class DeployerTest extends CloudFoundryTest {
 	}
 	
 	@Test
+	@Ignore
 	public void sampleDeploy() {
 		Map<String, String> models = new HashMap<String, String>();
 		models.put("entity123", "test{\"type\": \"object\"}");
@@ -44,8 +43,15 @@ public class DeployerTest extends CloudFoundryTest {
 	}
 	
 	@Test
+	@Ignore
 	public void sampleUndeploy() {
 		deployer.undeployRepository(REPOSITORY_NAME);
+	}
+	
+	@Test
+	public void deployAndCleanup() {
+		sampleDeploy();
+		sampleUndeploy();
 	}
 
 }

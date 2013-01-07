@@ -10,6 +10,10 @@
 	
 	<artifactId>deployer</artifactId>
 	
+	<properties>
+	    <org.springframework.version>3.1.2</org.springframework.version>
+	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.cloudfoundry</groupId>
@@ -37,6 +41,10 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>3.0.5.RELEASE</version>
+		</dependency>
 	</dependencies>
 </project>
