@@ -2,10 +2,12 @@ package pl.cyfronet.datanet.model.beans;
 
 public class Field {
 	public enum Type {
-		String,
-		Integer,
-		Float,
-		Boolean
+		Id,
+		ObjectId, ObjectIdArray,
+		String, StringArray,
+		Integer, IntegerArray,
+		Float, FloatArray,
+		Boolean, BooleanArray
 	}
 	
 	private String name;

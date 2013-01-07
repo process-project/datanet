@@ -1,6 +1,5 @@
 package pl.cyfronet.datanet.model.util;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
