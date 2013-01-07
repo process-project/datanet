@@ -12,7 +12,6 @@ import org.junit.Test;
 import pl.cyfronet.datanet.deployer.ApplicationConfig;
 import pl.cyfronet.datanet.deployer.Deployer;
 import pl.cyfronet.datanet.deployer.MapperBuilder;
-import pl.cyfronet.datanet.deployer.test.CloudFoundryTest;
 
 public class DeployerTest extends CloudFoundryTest {
 	

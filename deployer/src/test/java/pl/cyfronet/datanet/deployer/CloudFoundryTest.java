@@ -1,10 +1,12 @@
-package pl.cyfronet.datanet.deployer.test;
+package pl.cyfronet.datanet.deployer;
 
 import java.io.IOException;
 import java.util.Properties;
 
 import org.cloudfoundry.client.lib.CloudFoundryClient;
 import org.junit.Ignore;
+
+import pl.cyfronet.datanet.deployer.test.PropertiesLoader;
 
 @Ignore
 public class CloudFoundryTest {

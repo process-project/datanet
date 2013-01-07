@@ -26,6 +26,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import pl.cyfronet.datanet.deployer.CloudFoundryTest;
 import pl.cyfronet.datanet.deployer.Unzip;
 
 public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
