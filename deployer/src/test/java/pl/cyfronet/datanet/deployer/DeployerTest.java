@@ -49,6 +49,7 @@ public class DeployerTest extends CloudFoundryTest {
 		deployer.undeployRepository(REPOSITORY_NAME);
 	}
 	
+	@Test
 	public void deployAndCleanup() {
 		sampleDeploy();
 		sampleUndeploy();
