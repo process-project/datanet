@@ -1,0 +1,29 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:with type="pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelMessages" field="messages"/>
+	<ui:style>
+		.entityPanel {
+			margin: 5px;
+			padding: 5px;
+			border: solid 1px black;
+			float: left;
+			width: 25em;
+		}
+		.section {
+			margin: 5px;
+		}
+		.element {
+			width: 7em;
+			float: left;
+			margin-right: 5px;
+		}
+	</ui:style>
+	<g:FlowPanel styleName="{style.entityPanel}">
+		<g:FlowPanel styleName="{style.section}">
+			<g:Label text="{messages.entityNameLabel}" styleName="{style.element}"/>
+			<g:TextBox ui:field="entityName" styleName="gwt-TextBox {style.element}"/>
+			<g:Button ui:field="removeEntity" text="{messages.removeEntityLabel}" styleName="gwt-Button {style.element}"/>
+		</g:FlowPanel>
+	</g:FlowPanel>
+</ui:UiBinder>

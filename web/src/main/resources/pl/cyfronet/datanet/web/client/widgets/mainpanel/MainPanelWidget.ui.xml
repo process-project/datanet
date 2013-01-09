@@ -57,7 +57,7 @@
 					</g:StackLayoutPanel>
 				</g:west>
 				<g:center>
-					<g:FlowPanel ui:field="mainContainer"/>
+					<g:LayoutPanel ui:field="mainContainer"/>
 				</g:center>
 			</g:SplitLayoutPanel>
 		</g:center>

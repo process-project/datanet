@@ -38,7 +38,7 @@ public class MainPanelPresenter implements Presenter {
 		view.getMainContainer().clear();
 		
 		currentModelPanelPresenter = new ModelPanelPresenter(new ModelPanelWidget());
-		view.getMainContainer().add(currentModelPanelPresenter.getWidget());
+		view.getMainContainer().add(currentModelPanelPresenter.getWidget().asWidget());
 	}
 
 	@Override

@@ -9,9 +9,9 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainPanelWidget extends Composite implements View {
@@ -20,8 +20,9 @@ public class MainPanelWidget extends Composite implements View {
 
 	private MainPanelMessages messages;
 	private Presenter presenter;
+	private Timer errorLabelTimer;
 	
-	@UiField FlowPanel mainContainer;
+	@UiField Panel mainContainer;
 	@UiField Label errorLabel;
 	
 	public MainPanelWidget() {
@@ -58,12 +59,20 @@ public class MainPanelWidget extends Composite implements View {
 	public void errorNoModelPresent() {
 		errorLabel.setText(messages.errorNoModelPresent());
 		errorLabel.setVisible(true);
-		new Timer() {
-			@Override
-			public void run() {
-				errorLabel.setVisible(false);
-				errorLabel.setText("");
-			}
-		}.schedule(2000);
+		
+		if(errorLabelTimer == null) {
+			errorLabelTimer = new Timer() {
+				@Override
+				public void run() {
+					errorLabel.setVisible(false);
+					errorLabel.setText("");
+					errorLabelTimer = null;
+				}
+			};
+		} else {
+			errorLabelTimer.cancel();
+		}
+		
+		errorLabelTimer.schedule(2000);
 	}
 }
