@@ -30,8 +30,13 @@ public class ModelPanelPresenter implements Presenter {
 
 	@Override
 	public void onNewEntity() {
-		EntityPanelPresenter entityPanelPresenter = new EntityPanelPresenter(new EntityPanelWidget());
+		EntityPanelPresenter entityPanelPresenter = new EntityPanelPresenter(this, new EntityPanelWidget());
 		entityPanelPresenters.add(entityPanelPresenter);
 		view.getEntityContainer().add(entityPanelPresenter.getWidget().asWidget());
+	}
+
+	public void removeEntity(EntityPanelPresenter entityPanelPresenter) {
+		view.getEntityContainer().remove(entityPanelPresenter.getWidget().asWidget());
+		entityPanelPresenters.remove(entityPanelPresenter);
 	}
 }

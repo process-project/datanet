@@ -1,0 +1,13 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:with type="pl.cyfronet.datanet.web.client.widgets.fieldpanel.FieldPanelMessages" field="messages"/>
+	<ui:style>
+		
+	</ui:style>
+	<g:FlowPanel>
+		<g:TextBox ui:field="name"/>
+		<g:ListBox ui:field="type"/>
+		<g:Button ui:field="remove" text="{messages.removeField}"/>
+	</g:FlowPanel>
+</ui:UiBinder>

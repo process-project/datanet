@@ -47,6 +47,10 @@
 				</executions>
 				<configuration>
 					<runTarget>/</runTarget>
+					<modules>
+						<module>pl.cyfronet.datanet.model</module>
+						<module>pl.cyfronet.datanet.web.ria</module>
+					</modules>
 					<buildOutputDirectory>${project.build.directory}/${project.build.finalName}</buildOutputDirectory>
 				</configuration>
 			</plugin>
@@ -72,6 +76,20 @@
 	</build>
 
 	<dependencies>
+		<!-- Inner dependencies -->
+		<dependency>
+			<groupId>pl.cyfronet.datanet</groupId>
+			<artifactId>model</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>pl.cyfronet.datanet</groupId>
+			<artifactId>model</artifactId>
+			<version>${project.version}</version>
+			<classifier>sources</classifier>
+			<scope>compile</scope>
+		</dependency>
+	
 		<!-- Servlet 3 dependencies -->
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>

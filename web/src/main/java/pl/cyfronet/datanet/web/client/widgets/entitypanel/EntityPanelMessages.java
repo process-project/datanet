@@ -5,4 +5,5 @@ import com.google.gwt.i18n.client.Messages;
 public interface EntityPanelMessages extends Messages {
 	String entityNameLabel();
 	String removeEntityLabel();
+	String newFieldActionLabel();
 }

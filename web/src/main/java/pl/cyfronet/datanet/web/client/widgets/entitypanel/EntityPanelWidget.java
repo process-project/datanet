@@ -8,6 +8,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -19,6 +21,7 @@ public class EntityPanelWidget extends Composite implements View {
 	private EntityPanelMessages messages;
 	
 	@UiField TextBox entityName;
+	@UiField Panel fieldContainer;
 
 	public EntityPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -29,9 +32,19 @@ public class EntityPanelWidget extends Composite implements View {
 	void removeEntityClicked(ClickEvent event) {
 		presenter.onRemoveEntity();
 	}
+	
+	@UiHandler("newField")
+	void addFieldClicked(ClickEvent event) {
+		presenter.onNewField();
+	}
 
 	@Override
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
+	}
+
+	@Override
+	public HasWidgets getFieldContainer() {
+		return fieldContainer;
 	}
 }

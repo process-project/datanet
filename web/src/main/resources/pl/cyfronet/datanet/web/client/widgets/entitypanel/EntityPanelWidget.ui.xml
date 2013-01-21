@@ -25,5 +25,9 @@
 			<g:TextBox ui:field="entityName" styleName="gwt-TextBox {style.element}"/>
 			<g:Button ui:field="removeEntity" text="{messages.removeEntityLabel}" styleName="gwt-Button {style.element}"/>
 		</g:FlowPanel>
+		<g:FlowPanel ui:field="fieldContainer"/>
+		<g:FlowPanel styleName="{style.section}">
+			<g:Button ui:field="newField" text="{messages.newFieldActionLabel}" styleName="gwt-Button {style.element}"/>
+		</g:FlowPanel>
 	</g:FlowPanel>
 </ui:UiBinder>
