@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.client.widgets.mainpanel;
 
+import pl.cyfronet.datanet.model.beans.validator.ModelValidator.ModelError;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter.View;
 
 import com.google.gwt.core.client.GWT;
@@ -57,7 +58,29 @@ public class MainPanelWidget extends Composite implements View {
 
 	@Override
 	public void errorNoModelPresent() {
-		errorLabel.setText(messages.errorNoModelPresent());
+		displayErrorMessage(messages.errorNoModelPresent());
+	}
+
+	@Override
+	public void displayModelSaveError(ModelError modelError) {
+		String message = messages.errorModelSavePrefix() + " ";
+		
+		switch(modelError) {
+			case EMPTY_ENTITY_NAME: message += messages.errorEmptyEntityName(); break;
+			case NULL_MODEL: message += messages.errorNullModel(); break;
+			case EMPTY_FIELD_NAME: message += messages.errorEmptyFieldName(); break;
+			case EMPTY_MODEL_NAME: message += messages.errorEmptyModelName(); break;
+			case EMPTY_MODEL_VERSION: message += messages.errorEmptyModelVersion(); break;
+			case NULL_ENTITY_LIST: message += messages.errorNullEntityList(); break;
+			case NULL_FIELD_LIST: message += messages.errorNullFieldList(); break;
+			case NULL_FIELD_TYPE: message += messages.errorNullFieldType(); break;
+		}
+		
+		displayErrorMessage(message);
+	}
+	
+	private void displayErrorMessage(String errorMessage) {
+		errorLabel.setText(errorMessage);
 		errorLabel.setVisible(true);
 		
 		if(errorLabelTimer == null) {

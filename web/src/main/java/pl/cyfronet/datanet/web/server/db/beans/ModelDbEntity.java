@@ -5,10 +5,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class Model {
+public class ModelDbEntity {
 	@Id @GeneratedValue
 	private long id;
 	private String name;
+	private String experimentBody;
 	
 	public long getId() {
 		return id;
@@ -21,5 +22,11 @@ public class Model {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getExperimentBody() {
+		return experimentBody;
+	}
+	public void setExperimentBody(String experimentBody) {
+		this.experimentBody = experimentBody;
 	}
 }

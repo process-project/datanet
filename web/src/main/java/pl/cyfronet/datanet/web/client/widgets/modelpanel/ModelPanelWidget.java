@@ -4,6 +4,7 @@ import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter.Vie
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -18,20 +19,28 @@ public class ModelPanelWidget extends Composite implements View {
 	interface ModelPanelWidgetUiBinder extends UiBinder<Widget, ModelPanelWidget> {}
 	
 	private Presenter presenter;
-	private ModelPanelMessages messages;
 	
-	@UiField TextBox modelNameTextBox;
-	@UiField TextBox modelVersionTextBox;
+	@UiField TextBox modelName;
+	@UiField TextBox modelVersion;
 	@UiField Panel entityContainer;
 	
 	public ModelPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
-		messages = GWT.create(ModelPanelMessages.class);
 	}
 	
 	@UiHandler("newEntity")
 	void newEntityClicked(ClickEvent event) {
 		presenter.onNewEntity();
+	}
+	
+	@UiHandler("modelName")
+	void modelNameChanged(ValueChangeEvent<String> event) {
+		presenter.onModelNameChanged(event.getValue());
+	}
+	
+	@UiHandler("modelVersion")
+	void modelVersionChanged(ValueChangeEvent<String> event) {
+		presenter.onModelVersionChanged(event.getValue());
 	}
 	
 	@Override

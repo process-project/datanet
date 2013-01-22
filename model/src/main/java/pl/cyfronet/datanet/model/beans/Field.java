@@ -1,6 +1,10 @@
 package pl.cyfronet.datanet.model.beans;
 
-public class Field {
+import java.io.Serializable;
+
+public class Field implements Serializable {
+	private static final long serialVersionUID = 7956535573658372420L;
+	
 	public enum Type {
 		Id,
 		ObjectId, ObjectIdArray,
@@ -13,6 +17,10 @@ public class Field {
 	private String name;
 	private Type type;
 	
+	public Field() {
+		type = Type.Id;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -24,5 +32,10 @@ public class Field {
 	}
 	public void setType(Type type) {
 		this.type = type;
+	}
+	
+	@Override
+	public String toString() {
+		return "Field [name=" + name + ", type=" + type + "]";
 	}
 }

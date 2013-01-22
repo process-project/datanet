@@ -1,11 +1,17 @@
 package pl.cyfronet.datanet.web.client;
 
+import java.util.List;
+
+import pl.cyfronet.datanet.model.beans.validator.ModelValidator;
+import pl.cyfronet.datanet.model.beans.validator.ModelValidator.ModelError;
 import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
+import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginPresenter;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginWidget;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelWidget;
+import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -13,11 +19,17 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 public class ClientController {
 	private LoginServiceAsync loginService;
+	private ModelServiceAsync modelService;
 	private RpcErrorHandler rpcErrorHandler;
+	private ModelValidator modelValidator;
+	private MainPanelPresenter mainPanelPresenter;
 	
-	public ClientController(LoginServiceAsync loginService, RpcErrorHandler rpcErrorHandler) {
+	public ClientController(LoginServiceAsync loginService, ModelServiceAsync modelService,
+			RpcErrorHandler rpcErrorHandler, ModelValidator modelValidator) {
 		this.loginService = loginService;
+		this.modelService = modelService;
 		this.rpcErrorHandler = rpcErrorHandler;
+		this.modelValidator = modelValidator;
 	}
 	
 	public void start() {
@@ -54,8 +66,27 @@ public class ClientController {
 		});
 	}
 	
+	public void onSaveModel(ModelPanelPresenter modelPanelPresenter) {
+		List<ModelError> modelErrors = modelValidator.validateModel(modelPanelPresenter.getModel());
+		
+		if(modelErrors.isEmpty()) {
+			modelService.saveModel(modelPanelPresenter.getModel(), new AsyncCallback<Void>() {
+				@Override
+				public void onFailure(Throwable arg0) {
+					
+				}
+				@Override
+				public void onSuccess(Void arg0) {
+					
+				}
+			});
+		} else {
+			mainPanelPresenter.displayModelSaveError(modelErrors.get(0));
+		}
+	}
+	
 	private void showMainPanel() {
-		MainPanelPresenter mainPanelPresenter = new MainPanelPresenter(
+		mainPanelPresenter = new MainPanelPresenter(
 				new MainPanelWidget(), this);
 		clearPanels();
 		RootPanel.get().add(RootLayoutPanel.get());

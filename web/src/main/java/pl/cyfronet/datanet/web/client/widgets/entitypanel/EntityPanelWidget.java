@@ -4,6 +4,7 @@ import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelPresenter.V
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -36,6 +37,11 @@ public class EntityPanelWidget extends Composite implements View {
 	@UiHandler("newField")
 	void addFieldClicked(ClickEvent event) {
 		presenter.onNewField();
+	}
+	
+	@UiHandler("entityName")
+	void entityNameChanged(ValueChangeEvent<String> event) {
+		presenter.onEntityNameChanged(event.getValue());
 	}
 
 	@Override

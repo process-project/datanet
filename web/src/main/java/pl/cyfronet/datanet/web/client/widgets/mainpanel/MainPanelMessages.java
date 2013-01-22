@@ -10,4 +10,13 @@ public interface MainPanelMessages extends Messages {
 	String newModelLabel();
 	String saveModelLabel();
 	String errorNoModelPresent();
+	String errorModelSavePrefix();
+	String errorEmptyEntityName();
+	String errorNullModel();
+	String errorEmptyFieldName();
+	String errorEmptyModelName();
+	String errorEmptyModelVersion();
+	String errorNullEntityList();
+	String errorNullFieldList();
+	String errorNullFieldType();
 }

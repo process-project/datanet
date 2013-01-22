@@ -22,6 +22,8 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+import pl.cyfronet.datanet.model.util.ModelBuilder;
+
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 @Configuration
@@ -51,6 +53,17 @@ public class SpringConfiguration {
         return properies;
 	}
 	
+	/**
+	 * 
+	 */
+	@Bean
+	public ModelBuilder modelBuilder() {
+		return new ModelBuilder();
+	}
+	
+	/**
+	 * Standard view resolver used to find jsp views.
+	 */
 	@Bean
     public ViewResolver viewResolver() {
 		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();

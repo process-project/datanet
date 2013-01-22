@@ -8,6 +8,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import pl.cyfronet.datanet.web.client.errors.LoginException;
+import pl.cyfronet.datanet.web.client.errors.LoginException.Code;
 import pl.cyfronet.datanet.web.client.services.LoginService;
 import pl.cyfronet.datanet.web.server.services.portallogin.PortalLoginHandler;
 
@@ -19,10 +20,18 @@ public class RpcLoginService implements LoginService {
 	
 	@Override
 	public void login(String userLogin, String password) throws LoginException {
-		portalLoginHandler.login(userLogin, password);
-		log.info("User {} successfully logged in", userLogin);
-		RequestContextHolder.getRequestAttributes().
-				setAttribute("authentication", "true", RequestAttributes.SCOPE_SESSION);
+		try {
+			portalLoginHandler.login(userLogin, password);
+			log.info("User {} successfully logged in", userLogin);
+			RequestContextHolder.getRequestAttributes().
+					setAttribute("authentication", "true", RequestAttributes.SCOPE_SESSION);
+		} catch (Exception e) {
+			if(e instanceof LoginException) {
+				throw e;
+			} else {
+				throw new LoginException(Code.Unknown);
+			}
+		}
 	}
 
 	@Override

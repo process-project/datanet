@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.client.widgets.mainpanel;
 
+import pl.cyfronet.datanet.model.beans.validator.ModelValidator.ModelError;
 import pl.cyfronet.datanet.web.client.ClientController;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelWidget;
@@ -12,6 +13,7 @@ public class MainPanelPresenter implements Presenter {
 		void setPresenter(Presenter presenter);
 		HasWidgets getMainContainer();
 		void errorNoModelPresent();
+		void displayModelSaveError(ModelError modelError);
 	}
 
 	private View view;
@@ -27,6 +29,10 @@ public class MainPanelPresenter implements Presenter {
 	public Widget getWidget() {
 		return (Widget) view;
 	}
+	
+	public void displayModelSaveError(ModelError modelError) {
+		view.displayModelSaveError(modelError);		
+	}
 
 	@Override
 	public void onLogout() {
@@ -36,7 +42,6 @@ public class MainPanelPresenter implements Presenter {
 	@Override
 	public void onNewModel() {
 		view.getMainContainer().clear();
-		
 		currentModelPanelPresenter = new ModelPanelPresenter(new ModelPanelWidget());
 		view.getMainContainer().add(currentModelPanelPresenter.getWidget().asWidget());
 	}
@@ -44,7 +49,7 @@ public class MainPanelPresenter implements Presenter {
 	@Override
 	public void onSaveModel() {
 		if(currentModelPanelPresenter != null) {
-			
+			clientController.onSaveModel(currentModelPanelPresenter);
 		} else {
 			view.errorNoModelPresent();
 		}
