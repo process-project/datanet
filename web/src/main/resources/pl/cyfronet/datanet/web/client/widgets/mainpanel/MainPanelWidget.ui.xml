@@ -35,6 +35,12 @@
 			padding: 2px;
 			margin-left: 20em;
 		}
+		.modelLabel {
+			cursor: pointer;
+		}
+		.marked {
+			font-weight: bold;
+		}
 	</ui:style>
 	<g:DockLayoutPanel>
 		<g:north size="40">

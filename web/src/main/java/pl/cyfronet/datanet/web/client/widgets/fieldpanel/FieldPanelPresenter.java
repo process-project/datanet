@@ -19,20 +19,20 @@ public class FieldPanelPresenter implements Presenter {
 	private Field field;
 	private EntityPanelPresenter entityPanelPresenter;
 	
-	public FieldPanelPresenter(EntityPanelPresenter entityPanelPresenter, FieldPanelWidget view) {
+	public FieldPanelPresenter(EntityPanelPresenter entityPanelPresenter, View view) {
 		this.view = view;
 		view.setPresenter(this);
 		this.entityPanelPresenter = entityPanelPresenter;
 		field = new Field();
 		view.selectType(field.getType());
 	}
-	
+
 	public void setField(Field field) {
 		this.field = field;
 		view.getName().setText(field.getName());
 		view.selectType(field.getType());
 		
-		if(field.getType() == Type.Id) {
+		if(field.getType() == Type.Id && field.getName() != null && field.getName().equals("id")) {
 			view.setEditable(false);
 		}
 	}

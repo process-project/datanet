@@ -13,6 +13,7 @@ import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -66,7 +67,7 @@ public class ClientController {
 		});
 	}
 	
-	public void onSaveModel(ModelPanelPresenter modelPanelPresenter) {
+	public void onSaveModel(ModelPanelPresenter modelPanelPresenter, final Command command) {
 		List<ModelError> modelErrors = modelValidator.validateModel(modelPanelPresenter.getModel());
 		
 		if(modelErrors.isEmpty()) {
@@ -78,7 +79,10 @@ public class ClientController {
 				@Override
 				public void onSuccess(Void v) {
 					mainPanelPresenter.displayModelSavedInfo();
-					mainPanelPresenter.updateModelList();
+					
+					if(command != null) {
+						command.execute();
+					}
 				}
 			});
 		} else {

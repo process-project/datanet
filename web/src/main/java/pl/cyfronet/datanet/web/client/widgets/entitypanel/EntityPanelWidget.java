@@ -19,14 +19,12 @@ public class EntityPanelWidget extends Composite implements View {
 	interface EntityPanelWidgetUiBinder extends UiBinder<Widget, EntityPanelWidget> {}
 
 	private Presenter presenter;
-	private EntityPanelMessages messages;
 	
 	@UiField TextBox entityName;
 	@UiField Panel fieldContainer;
 
 	public EntityPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
-		messages = GWT.create(EntityPanelMessages.class);
 	}
 	
 	@UiHandler("removeEntity")
@@ -52,5 +50,10 @@ public class EntityPanelWidget extends Composite implements View {
 	@Override
 	public HasWidgets getFieldContainer() {
 		return fieldContainer;
+	}
+
+	@Override
+	public void setEntityName(String name) {
+		entityName.setText(name);
 	}
 }

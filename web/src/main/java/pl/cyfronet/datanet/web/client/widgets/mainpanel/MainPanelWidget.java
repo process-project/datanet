@@ -5,12 +5,14 @@ import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter.View;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -28,6 +30,8 @@ public class MainPanelWidget extends Composite implements View {
 	interface MainPanelWidgetStyles extends CssResource {
 		String errorLabel();
 		String infoLabel();
+		String modelLabel();
+		String marked();
 	}
 
 	private MainPanelMessages messages;
@@ -37,8 +41,8 @@ public class MainPanelWidget extends Composite implements View {
 	@UiField Panel mainContainer;
 	@UiField Label messageLabel;
 	@UiField MainPanelWidgetStyles style;
-	@UiField Panel modelContainer;
-	@UiField Panel repositoryContainer;
+	@UiField FlowPanel modelContainer;
+	@UiField FlowPanel repositoryContainer;
 	
 	public MainPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -104,15 +108,35 @@ public class MainPanelWidget extends Composite implements View {
 	}
 
 	@Override
-	public void addModel(String name, String version) {
+	public int addModel(String name, String version) {
+		final int index = modelContainer.getWidgetCount();
 		Label modelLabel = new Label();
 		modelLabel.setText(name + "(" + version + ")");
+		modelLabel.setStyleName(style.modelLabel(), true);
+		modelLabel.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.onModelClicked(index);
+			}
+		});
 		modelContainer.add(modelLabel);
+		
+		return modelContainer.getWidgetCount() - 1;
 	}
 	
 	@Override
 	public void displayNoModelsLabel() {
 		modelContainer.add(new Label(messages.noModelsLabel()));
+	}
+	
+	@Override
+	public void markModel(int index) {
+		modelContainer.getWidget(index).setStyleName(style.marked(), true);
+	}
+	
+	@Override
+	public void unmarkModel(int index) {
+		modelContainer.getWidget(index).removeStyleName(style.marked());	
 	}
 
 	private void displayMessage(String message, MessageType messageType) {

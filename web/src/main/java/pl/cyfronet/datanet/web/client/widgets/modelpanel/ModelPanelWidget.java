@@ -52,4 +52,14 @@ public class ModelPanelWidget extends Composite implements View {
 	public HasWidgets getEntityContainer() {
 		return entityContainer;
 	}
+
+	@Override
+	public void setModelName(String name) {
+		modelName.setText(name);
+	}
+
+	@Override
+	public void setModelVersion(String version) {
+		modelVersion.setText(version);
+	}
 }
