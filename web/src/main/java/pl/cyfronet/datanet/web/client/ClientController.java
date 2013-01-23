@@ -72,12 +72,13 @@ public class ClientController {
 		if(modelErrors.isEmpty()) {
 			modelService.saveModel(modelPanelPresenter.getModel(), new AsyncCallback<Void>() {
 				@Override
-				public void onFailure(Throwable arg0) {
-					
+				public void onFailure(Throwable t) {
+					rpcErrorHandler.handleRpcError(t);
 				}
 				@Override
-				public void onSuccess(Void arg0) {
-					
+				public void onSuccess(Void v) {
+					mainPanelPresenter.displayModelSavedInfo();
+					mainPanelPresenter.updateModelList();
 				}
 			});
 		} else {
@@ -87,10 +88,11 @@ public class ClientController {
 	
 	private void showMainPanel() {
 		mainPanelPresenter = new MainPanelPresenter(
-				new MainPanelWidget(), this);
+				new MainPanelWidget(), this, modelService, rpcErrorHandler);
 		clearPanels();
 		RootPanel.get().add(RootLayoutPanel.get());
 		RootLayoutPanel.get().add(mainPanelPresenter.getWidget());
+		mainPanelPresenter.updateModelList();
 	}
 
 	private void showLoginPanel() {

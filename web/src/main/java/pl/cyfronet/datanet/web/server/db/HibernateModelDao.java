@@ -1,5 +1,7 @@
 package pl.cyfronet.datanet.web.server.db;
 
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -19,5 +21,11 @@ public class HibernateModelDao {
 	@Transactional
 	public ModelDbEntity getModel(long id) {
 		return (ModelDbEntity) sessionFactory.getCurrentSession().get(ModelDbEntity.class, id);
+	}
+	
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public List<ModelDbEntity> getModels() {
+		return sessionFactory.getCurrentSession().createCriteria(ModelDbEntity.class).list();
 	}
 }

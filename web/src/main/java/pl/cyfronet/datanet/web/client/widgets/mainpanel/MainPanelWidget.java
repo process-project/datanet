@@ -5,6 +5,7 @@ import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter.View;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -18,13 +19,26 @@ import com.google.gwt.user.client.ui.Widget;
 public class MainPanelWidget extends Composite implements View {
 	private static MainPanelWidgetUiBinder uiBinder = GWT.create(MainPanelWidgetUiBinder.class);
 	interface MainPanelWidgetUiBinder extends UiBinder<Widget, MainPanelWidget> {}
+	
+	enum MessageType {
+		INFO,
+		ERROR
+	}
+	
+	interface MainPanelWidgetStyles extends CssResource {
+		String errorLabel();
+		String infoLabel();
+	}
 
 	private MainPanelMessages messages;
 	private Presenter presenter;
-	private Timer errorLabelTimer;
+	private Timer messageLabelTimer;
 	
 	@UiField Panel mainContainer;
-	@UiField Label errorLabel;
+	@UiField Label messageLabel;
+	@UiField MainPanelWidgetStyles style;
+	@UiField Panel modelContainer;
+	@UiField Panel repositoryContainer;
 	
 	public MainPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -58,7 +72,7 @@ public class MainPanelWidget extends Composite implements View {
 
 	@Override
 	public void errorNoModelPresent() {
-		displayErrorMessage(messages.errorNoModelPresent());
+		displayMessage(messages.errorNoModelPresent(), MessageType.ERROR);
 	}
 
 	@Override
@@ -76,26 +90,53 @@ public class MainPanelWidget extends Composite implements View {
 			case NULL_FIELD_TYPE: message += messages.errorNullFieldType(); break;
 		}
 		
-		displayErrorMessage(message);
+		displayMessage(message, MessageType.ERROR);
 	}
 	
-	private void displayErrorMessage(String errorMessage) {
-		errorLabel.setText(errorMessage);
-		errorLabel.setVisible(true);
+	@Override
+	public void displayModelSavedMessage() {
+		displayMessage(messages.modelSavedMessage(), MessageType.INFO);
+	}
+	
+	@Override
+	public void clearModels() {
+		modelContainer.clear();
+	}
+
+	@Override
+	public void addModel(String name, String version) {
+		Label modelLabel = new Label();
+		modelLabel.setText(name + "(" + version + ")");
+		modelContainer.add(modelLabel);
+	}
+	
+	@Override
+	public void displayNoModelsLabel() {
+		modelContainer.add(new Label(messages.noModelsLabel()));
+	}
+
+	private void displayMessage(String message, MessageType messageType) {
+		switch(messageType) {
+			case ERROR: messageLabel.setStyleName(style.errorLabel()); break;
+			case INFO: messageLabel.setStyleName(style.infoLabel()); break;
+		}
 		
-		if(errorLabelTimer == null) {
-			errorLabelTimer = new Timer() {
+		messageLabel.setText(message);
+		messageLabel.setVisible(true);
+		
+		if(messageLabelTimer == null) {
+			messageLabelTimer = new Timer() {
 				@Override
 				public void run() {
-					errorLabel.setVisible(false);
-					errorLabel.setText("");
-					errorLabelTimer = null;
+					messageLabel.setVisible(false);
+					messageLabel.setText("");
+					messageLabelTimer = null;
 				}
 			};
 		} else {
-			errorLabelTimer.cancel();
+			messageLabelTimer.cancel();
 		}
 		
-		errorLabelTimer.schedule(2000);
+		messageLabelTimer.schedule(2000);
 	}
 }

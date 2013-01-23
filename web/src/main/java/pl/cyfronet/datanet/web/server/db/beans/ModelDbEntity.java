@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.server.db.beans;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -9,6 +10,9 @@ public class ModelDbEntity {
 	@Id @GeneratedValue
 	private long id;
 	private String name;
+	private String version;
+	
+	@Column(length = 17000000) //should map to longtext or equivalent
 	private String experimentBody;
 	
 	public long getId() {
@@ -28,5 +32,11 @@ public class ModelDbEntity {
 	}
 	public void setExperimentBody(String experimentBody) {
 		this.experimentBody = experimentBody;
+	}
+	public String getVersion() {
+		return version;
+	}
+	public void setVersion(String version) {
+		this.version = version;
 	}
 }

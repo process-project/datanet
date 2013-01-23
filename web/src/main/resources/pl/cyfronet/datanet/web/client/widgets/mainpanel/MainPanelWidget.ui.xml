@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 		xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:with type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelMessages" field="messages"/>
-	<ui:style>
+	<ui:style type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelWidget.MainPanelWidgetStyles">
 		.main-panel {
 			margin: 20px auto;
 			width: 80%;
@@ -27,12 +27,20 @@
 			padding: 2px;
 			margin-left: 20em;
 		}
+		.infoLabel {
+			color: white;
+			background-color: green;
+			font-weight: bold;
+			float: left;
+			padding: 2px;
+			margin-left: 20em;
+		}
 	</ui:style>
 	<g:DockLayoutPanel>
 		<g:north size="40">
 			<g:FlowPanel styleName="{style.header}">
 				<g:Label styleName="gwt-Label {style.datanet-label}" text="{messages.datanetMain}"/>
-				<g:Label ui:field="errorLabel" styleName="gwt-Label {style.errorLabel}" visible="false"/>
+				<g:Label ui:field="messageLabel" styleName="gwt-Label {style.errorLabel}" visible="false"/>
 				<g:Button ui:field="logout" text="{messages.logoutLabel}" styleName="gwt-Button {style.logout-button}"></g:Button>
 			</g:FlowPanel>
 		</g:north>
@@ -48,11 +56,11 @@
 					<g:StackLayoutPanel unit="EM">
 						<g:stack>
 							<g:header size="3"><ui:text from="{messages.modelsLabel}"/></g:header>
-							<g:Label>Models: TODO</g:Label>
+							<g:FlowPanel ui:field="modelContainer"/>
 						</g:stack>
 						<g:stack>
 							<g:header size="3"><ui:text from="{messages.repositoriesLabel}"/></g:header>
-							<g:Label>Repositories: TODO</g:Label>
+							<g:FlowPanel ui:field="repositoryContainer"/>
 						</g:stack>
 					</g:StackLayoutPanel>
 				</g:west>

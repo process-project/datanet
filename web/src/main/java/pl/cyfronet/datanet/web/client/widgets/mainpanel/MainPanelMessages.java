@@ -19,4 +19,6 @@ public interface MainPanelMessages extends Messages {
 	String errorNullEntityList();
 	String errorNullFieldList();
 	String errorNullFieldType();
+	String modelSavedMessage();
+	String noModelsLabel();
 }
