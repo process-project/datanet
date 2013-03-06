@@ -62,11 +62,15 @@
 					<g:StackLayoutPanel unit="EM">
 						<g:stack>
 							<g:header size="3"><ui:text from="{messages.modelsLabel}"/></g:header>
-							<g:FlowPanel ui:field="modelContainer"/>
+							<g:ScrollPanel>
+								<g:FlowPanel ui:field="modelContainer"/>
+							</g:ScrollPanel>
 						</g:stack>
 						<g:stack>
 							<g:header size="3"><ui:text from="{messages.repositoriesLabel}"/></g:header>
-							<g:FlowPanel ui:field="repositoryContainer"/>
+							<g:ScrollPanel>
+								<g:FlowPanel ui:field="repositoryContainer"/>
+							</g:ScrollPanel>
 						</g:stack>
 					</g:StackLayoutPanel>
 				</g:west>
