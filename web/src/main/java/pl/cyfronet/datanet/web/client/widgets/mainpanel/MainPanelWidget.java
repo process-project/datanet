@@ -33,6 +33,18 @@ public class MainPanelWidget extends Composite implements View {
 		String modelLabel();
 		String marked();
 	}
+	
+	private class ModelLabel extends Label {
+		private long modelId;
+
+		public long getModelId() {
+			return modelId;
+		}
+
+		public void setModelId(long modelId) {
+			this.modelId = modelId;
+		}
+	}
 
 	private MainPanelMessages messages;
 	private Presenter presenter;
@@ -108,20 +120,30 @@ public class MainPanelWidget extends Composite implements View {
 	}
 
 	@Override
-	public int addModel(String name, String version) {
-		final int index = modelContainer.getWidgetCount();
-		Label modelLabel = new Label();
+	public void addModel(final long id, String name, String version) {
+		ModelLabel modelLabel = new ModelLabel();
+		modelLabel.setModelId(id);
 		modelLabel.setText(name + "(" + version + ")");
 		modelLabel.setStyleName(style.modelLabel(), true);
 		modelLabel.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				presenter.onModelClicked(index);
+				presenter.onModelClicked(id);
 			}
 		});
 		modelContainer.add(modelLabel);
-		
-		return modelContainer.getWidgetCount() - 1;
+	}
+	
+	public void removeModel(long id) {
+		for(int i = 0; i<modelContainer.getWidgetCount(); i++) {
+			Widget w = modelContainer.getWidget(i);
+			if (w instanceof ModelLabel) {
+				ModelLabel modelLabel = (ModelLabel) w;
+				if(modelLabel.getModelId() == id) {
+					modelContainer.remove(i);
+				}
+			}
+		}
 	}
 	
 	@Override
@@ -130,13 +152,19 @@ public class MainPanelWidget extends Composite implements View {
 	}
 	
 	@Override
-	public void markModel(int index) {
-		modelContainer.getWidget(index).setStyleName(style.marked(), true);
+	public void markModel(long id) {
+		unmarkModel();
+		ModelLabel activeModel = getModelLabelByModelId(id);
+		if(activeModel != null) {
+			activeModel.setStyleName(style.marked(), true);
+		}
 	}
 	
 	@Override
-	public void unmarkModel(int index) {
-		modelContainer.getWidget(index).removeStyleName(style.marked());	
+	public void unmarkModel() {
+		for (int i = 0; i < modelContainer.getWidgetCount(); i++) {
+			modelContainer.getWidget(i).removeStyleName(style.marked());
+		}
 	}
 
 	private void displayMessage(String message, MessageType messageType) {
@@ -162,5 +190,18 @@ public class MainPanelWidget extends Composite implements View {
 		}
 		
 		messageLabelTimer.schedule(2000);
+	}
+	
+	private ModelLabel getModelLabelByModelId(long id) {
+		for (int i = 0; i < modelContainer.getWidgetCount(); i++) {
+			Widget w = modelContainer.getWidget(i);
+			if (w instanceof ModelLabel) {
+				ModelLabel modelLabel = (ModelLabel) w;
+				if (modelLabel.getModelId() == id) {
+					return modelLabel;
+				}
+			}
+		}
+		return null;
 	}
 }

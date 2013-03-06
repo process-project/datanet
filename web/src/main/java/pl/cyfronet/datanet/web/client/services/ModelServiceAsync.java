@@ -7,6 +7,6 @@ import pl.cyfronet.datanet.model.beans.Model;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface ModelServiceAsync {
-	void saveModel(Model model, AsyncCallback<Void> asyncCallback);
+	void saveModel(Model model, AsyncCallback<Model> asyncCallback);
 	void getModels(AsyncCallback<List<Model>> asyncCallback);
 }

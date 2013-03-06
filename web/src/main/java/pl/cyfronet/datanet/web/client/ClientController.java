@@ -2,6 +2,7 @@ package pl.cyfronet.datanet.web.client;
 
 import java.util.List;
 
+import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.beans.validator.ModelValidator;
 import pl.cyfronet.datanet.model.beans.validator.ModelValidator.ModelError;
 import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
@@ -13,6 +14,7 @@ import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -67,22 +69,22 @@ public class ClientController {
 		});
 	}
 	
-	public void onSaveModel(ModelPanelPresenter modelPanelPresenter, final Command command) {
+	public void onSaveModel(ModelPanelPresenter modelPanelPresenter) {
 		List<ModelError> modelErrors = modelValidator.validateModel(modelPanelPresenter.getModel());
 		
 		if(modelErrors.isEmpty()) {
-			modelService.saveModel(modelPanelPresenter.getModel(), new AsyncCallback<Void>() {
+			modelService.saveModel(modelPanelPresenter.getModel(), new AsyncCallback<Model>() {
 				@Override
 				public void onFailure(Throwable t) {
 					rpcErrorHandler.handleRpcError(t);
 				}
 				@Override
-				public void onSuccess(Void v) {
+				public void onSuccess(Model m) {
 					mainPanelPresenter.displayModelSavedInfo();
 					
-					if(command != null) {
-						command.execute();
-					}
+					mainPanelPresenter.addModel(m);
+					mainPanelPresenter.setMarked(m.getId());
+					mainPanelPresenter.onModelClicked(m.getId());
 				}
 			});
 		} else {

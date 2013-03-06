@@ -15,7 +15,7 @@ public class HibernateModelDao {
 	
 	@Transactional
 	public void saveModel(ModelDbEntity model) {
-		sessionFactory.getCurrentSession().save(model);
+		sessionFactory.getCurrentSession().saveOrUpdate(model);
 	}
 
 	@Transactional

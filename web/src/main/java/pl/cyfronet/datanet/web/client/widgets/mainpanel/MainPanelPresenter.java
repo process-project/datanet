@@ -1,5 +1,8 @@
 package pl.cyfronet.datanet.web.client.widgets.mainpanel;
 
+import java.text.Collator;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import pl.cyfronet.datanet.model.beans.Model;
@@ -10,7 +13,6 @@ import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelWidget;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
@@ -23,10 +25,11 @@ public class MainPanelPresenter implements Presenter {
 		void displayModelSaveError(ModelError modelError);
 		void displayModelSavedMessage();
 		void clearModels();
-		int addModel(String name, String version);
+		void addModel(long id, String name, String version);
+		void removeModel(long id);
 		void displayNoModelsLabel();
-		void markModel(int index);
-		void unmarkModel(int displayedModelIndex);
+		void markModel(long id);
+		void unmarkModel();
 	}
 
 	private View view;
@@ -35,7 +38,6 @@ public class MainPanelPresenter implements Presenter {
 	private ModelServiceAsync modelService;
 	private RpcErrorHandler rpcErrorHandler;
 	private List<Model> models;
-	private int displayedModelIndex;
 	
 	public MainPanelPresenter(View view, ClientController clientController,
 			ModelServiceAsync modelService, RpcErrorHandler rpcErrorHandler) {
@@ -43,7 +45,6 @@ public class MainPanelPresenter implements Presenter {
 		this.clientController = clientController;
 		this.modelService = modelService;
 		this.rpcErrorHandler = rpcErrorHandler;
-		displayedModelIndex = -1;
 		view.setPresenter(this);
 	}
 	
@@ -57,6 +58,27 @@ public class MainPanelPresenter implements Presenter {
 	
 	public void displayModelSavedInfo() {
 		view.displayModelSavedMessage();
+	}
+	
+	public void setMarked(long id) {
+		view.markModel(id);
+	}
+	
+	public void addModel(Model model) {
+		Model old = null;
+		for (Model m : models) {
+			if (m.getId() == model.getId()) {
+				old = m;
+				break;
+			}
+		}
+		if (old == null) {
+			models.add(model);
+		} else {
+			models.remove(old);
+			models.add(model);
+		}
+		refreshModelList();
 	}
 	
 	public void updateModelList() {
@@ -83,63 +105,64 @@ public class MainPanelPresenter implements Presenter {
 		currentModelPanelPresenter = new ModelPanelPresenter(new ModelPanelWidget());
 		view.getMainContainer().add(currentModelPanelPresenter.getWidget().asWidget());
 		
-		if(displayedModelIndex > -1) {
-			view.unmarkModel(displayedModelIndex);
-			displayedModelIndex = -1;
-		}
+		view.unmarkModel();
 	}
 
 	@Override
 	public void onSaveModel() {
 		if(currentModelPanelPresenter != null) {
-			clientController.onSaveModel(currentModelPanelPresenter, new Command() {
-				@Override
-				public void execute() {
-					Model model = currentModelPanelPresenter.getModel();
-					int index = view.addModel(model.getName(), model.getVersion());
-					view.markModel(index);
-					models.add(model);
-					
-					if(displayedModelIndex > -1) {
-						view.unmarkModel(displayedModelIndex);
-					}
-					
-					displayedModelIndex = index;
-				}
-			});
+			clientController.onSaveModel(currentModelPanelPresenter);
 		} else {
 			view.errorNoModelPresent();
 		}
 	}
 	
 	@Override
-	public void onModelClicked(int index) {
-		if(displayedModelIndex == index) {
+	public void onModelClicked(long id) {
+		if(currentModelPanelPresenter != null && currentModelPanelPresenter.getModel().getId() == id) {
 			return;
 		}
 		
 		view.getMainContainer().clear();
 		currentModelPanelPresenter = new ModelPanelPresenter(new ModelPanelWidget());
-		currentModelPanelPresenter.setModel(models.get(index));
+		currentModelPanelPresenter.setModel(getModelById(id));
 		view.getMainContainer().add(currentModelPanelPresenter.getWidget().asWidget());
-		view.markModel(index);
-		
-		if(displayedModelIndex > -1) {
-			view.unmarkModel(displayedModelIndex);
-		}
-		
-		displayedModelIndex = index;
+
+		view.markModel(id);
 	}
 	
 	private void refreshModelList() {
 		view.clearModels();
 		
+		Collections.sort(models, new Comparator<Model>() {
+
+			@Override
+			public int compare(Model o1, Model o2) {
+				return o1.getName().compareToIgnoreCase(o2.getName());
+			}
+			
+		});
+		
 		if(models.size() > 0) {
 			for(Model model : models) {
-				view.addModel(model.getName(), model.getVersion());
+				view.addModel(model.getId(), model.getName(), model.getVersion());
+				
+				//mark active model
+				if (currentModelPanelPresenter != null && currentModelPanelPresenter.getModel().getId() == model.getId()) {
+					view.markModel(currentModelPanelPresenter.getModel().getId());
+				}
 			}
 		} else {
 			view.displayNoModelsLabel();
 		}
+	}
+	
+	private Model getModelById(Long id) {
+		for (Model m : models) {
+			if(m.getId() == id) {
+				return m;
+			}
+		}
+		return null;
 	}
 }

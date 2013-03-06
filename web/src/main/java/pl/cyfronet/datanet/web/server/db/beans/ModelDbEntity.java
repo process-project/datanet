@@ -39,4 +39,9 @@ public class ModelDbEntity {
 	public void setVersion(String version) {
 		this.version = version;
 	}
+	@Override
+	public String toString() {
+		return "ModelDbEntity [id=" + id + ", name=" + name + ", version="
+				+ version + ", experimentBody=" + experimentBody + "]";
+	}
 }

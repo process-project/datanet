@@ -24,15 +24,21 @@ public class RpcModelService  implements ModelService {
 	@Autowired private ModelBuilder modelBuilder;
 	
 	@Override
-	public void saveModel(Model model) throws ModelException {
+	public Model saveModel(Model model) throws ModelException {
 		log.info("Processing model save request for model {}", model);
 
 		try {
 			ModelDbEntity modelDbEntity = new ModelDbEntity();
+			modelDbEntity.setId(model.getId());
 			modelDbEntity.setName(model.getName());
 			modelDbEntity.setVersion(model.getVersion());
+			//TODO: serialize entities only
 			modelDbEntity.setExperimentBody(modelBuilder.serialize(model));
 			modelDao.saveModel(modelDbEntity);
+			//return model id
+			model.setId(modelDbEntity.getId());
+			
+			return model;
 		} catch (Exception e) {
 			String message = "Could not save model " + model;
 			log.error(message, e);
@@ -46,7 +52,12 @@ public class RpcModelService  implements ModelService {
 			List<Model> result = new ArrayList<>();
 			
 			for(ModelDbEntity modelDbEntity : modelDao.getModels()) {
-				result.add(modelBuilder.deserialize(modelDbEntity.getExperimentBody()));
+				//TODO: deserialize entities only
+				Model model = modelBuilder.deserialize(modelDbEntity.getExperimentBody());
+				model.setId(modelDbEntity.getId());
+				model.setName(modelDbEntity.getName());
+				model.setVersion(modelDbEntity.getVersion());
+				result.add(model);
 			}
 			
 			return result;
