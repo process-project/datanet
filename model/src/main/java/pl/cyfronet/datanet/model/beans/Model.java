@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Model implements Serializable {
 	private static final long serialVersionUID = 7356373514701080184L;
 
+	private long id;
 	private String name;
 	private String version;
 	private List<Entity> entities;
@@ -19,6 +20,14 @@ public class Model implements Serializable {
 		entities = new ArrayList<Entity>();
 	}
 	
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -43,7 +52,7 @@ public class Model implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "Model [name=" + name + ", version=" + version + ", entities="
-				+ entities + "]";
+		return "Model [id=" + id + ", name=" + name + ", version=" + version
+				+ ", entities=" + entities + "]";
 	}
 }
