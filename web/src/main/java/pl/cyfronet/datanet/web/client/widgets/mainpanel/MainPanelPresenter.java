@@ -64,7 +64,7 @@ public class MainPanelPresenter implements Presenter {
 		view.markModel(id);
 	}
 	
-	public void addModel(Model model) {
+	public void addOrReplaceModel(Model model) {
 		Model old = null;
 		for (Model m : models) {
 			if (m.getId() == model.getId()) {

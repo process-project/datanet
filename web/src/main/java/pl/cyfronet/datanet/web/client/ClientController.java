@@ -84,7 +84,7 @@ public class ClientController {
 				public void onSuccess(Model m) {
 					mainPanelPresenter.displayModelSavedInfo();
 					
-					mainPanelPresenter.addModel(m);
+					mainPanelPresenter.addOrReplaceModel(m);
 					mainPanelPresenter.setMarked(m.getId());
 					mainPanelPresenter.onModelClicked(m.getId());
 				}
