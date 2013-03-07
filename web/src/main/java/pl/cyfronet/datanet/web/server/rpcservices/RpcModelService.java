@@ -8,7 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Model;
+import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
 import pl.cyfronet.datanet.model.util.ModelBuilder;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
 import pl.cyfronet.datanet.web.client.errors.ModelException.Code;
@@ -22,6 +24,7 @@ public class RpcModelService  implements ModelService {
 	
 	@Autowired private HibernateModelDao modelDao;
 	@Autowired private ModelBuilder modelBuilder;
+	@Autowired private JaxbEntityListBuilder jaxbEntityListBuilder;
 	
 	@Override
 	public Model saveModel(Model model) throws ModelException {
@@ -32,10 +35,10 @@ public class RpcModelService  implements ModelService {
 			modelDbEntity.setId(model.getId());
 			modelDbEntity.setName(model.getName());
 			modelDbEntity.setVersion(model.getVersion());
-			//TODO: serialize entities only
-			modelDbEntity.setExperimentBody(modelBuilder.serialize(model));
+			modelDbEntity.setExperimentBody(jaxbEntityListBuilder.serialize(model.getEntities()));
 			modelDao.saveModel(modelDbEntity);
-			//return model id
+			
+			//return model id, updated by hibernate with new unique id
 			model.setId(modelDbEntity.getId());
 			
 			return model;
@@ -52,11 +55,12 @@ public class RpcModelService  implements ModelService {
 			List<Model> result = new ArrayList<>();
 			
 			for(ModelDbEntity modelDbEntity : modelDao.getModels()) {
-				//TODO: deserialize entities only
-				Model model = modelBuilder.deserialize(modelDbEntity.getExperimentBody());
+				Model model = new Model();
+				List<Entity> entitiesList = jaxbEntityListBuilder.deserialize(modelDbEntity.getExperimentBody());
 				model.setId(modelDbEntity.getId());
 				model.setName(modelDbEntity.getName());
 				model.setVersion(modelDbEntity.getVersion());
+				model.setEntities(entitiesList);
 				result.add(model);
 			}
 			

@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
 import pl.cyfronet.datanet.model.util.ModelBuilder;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
@@ -59,6 +60,14 @@ public class SpringConfiguration {
 	@Bean
 	public ModelBuilder modelBuilder() {
 		return new ModelBuilder();
+	}
+	
+	/**
+	 * 
+	 */
+	@Bean
+	public JaxbEntityListBuilder jaxbEntityListBuilder() {
+		return new JaxbEntityListBuilder();
 	}
 	
 	/**
