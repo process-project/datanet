@@ -69,6 +69,8 @@ public class ClientController {
 		});
 	}
 	
+	
+	//TODO: check if presenter logic should be here or in presenter
 	public void onSaveModel(ModelPanelPresenter modelPanelPresenter) {
 		List<ModelError> modelErrors = modelValidator.validateModel(modelPanelPresenter.getModel());
 		

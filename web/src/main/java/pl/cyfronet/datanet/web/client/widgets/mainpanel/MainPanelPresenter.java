@@ -81,6 +81,7 @@ public class MainPanelPresenter implements Presenter {
 		refreshModelList();
 	}
 	
+	//TODO: is it ok that presenter calls services directly
 	public void updateModelList() {
 		modelService.getModels(new AsyncCallback<List<Model>>() {
 			@Override
