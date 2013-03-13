@@ -81,7 +81,7 @@ public class MainPanelPresenter implements Presenter {
 		refreshModelList();
 	}
 	
-	//TODO: is it ok that presenter calls services directly
+	//TODO: is it ok that presenter calls services directly?
 	public void updateModelList() {
 		modelService.getModels(new AsyncCallback<List<Model>>() {
 			@Override
@@ -116,6 +116,15 @@ public class MainPanelPresenter implements Presenter {
 		} else {
 			view.errorNoModelPresent();
 		}
+	}
+	
+	@Override
+	public void onDeployModel() {
+//		if(currentModelPanelPresenter != null) {
+//			clientController.onDeployModel(currentModelPanelPresenter);
+//		} else {
+//			view.errorNoModelPresent();
+//		}
 	}
 	
 	@Override

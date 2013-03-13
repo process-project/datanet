@@ -120,7 +120,7 @@ public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 		client.deleteService(SERVICE_NAME);
 	}
 	
-	//@Test 
+	@Test
 	public void printServices() {
 		for (CloudService service: client.getServices()) {
 			System.out.println(service.getName());

@@ -54,6 +54,7 @@
 			<g:FlowPanel>
 				<g:Button ui:field="newModel" text="{messages.newModelLabel}" styleName="gwt-Button {style.menuButton}"/>
 				<g:Button ui:field="saveModel" text="{messages.saveModelLabel}" styleName="gwt-Button {style.menuButton}"/>
+				<g:Button ui:field="deployModel" text="{messages.deployModelLabel}" styleName="gwt-Button {style.menuButton}"/>
 			</g:FlowPanel>
 		</g:north>
 		<g:center>

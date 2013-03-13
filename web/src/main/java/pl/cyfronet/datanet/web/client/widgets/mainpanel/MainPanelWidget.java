@@ -75,6 +75,11 @@ public class MainPanelWidget extends Composite implements View {
 	void saveModelClicked(ClickEvent event) {
 		presenter.onSaveModel();
 	}
+	
+	@UiHandler("deployModel")
+	void deployModelClicked(ClickEvent event) {
+		presenter.onDeployModel();
+	}
 
 	@Override
 	public HasWidgets getMainContainer() {

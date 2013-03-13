@@ -46,5 +46,15 @@
 			<artifactId>spring-core</artifactId>
 			<version>3.0.5.RELEASE</version>
 		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>pl.cyfronet.datanet</groupId>
+			<artifactId>model</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>

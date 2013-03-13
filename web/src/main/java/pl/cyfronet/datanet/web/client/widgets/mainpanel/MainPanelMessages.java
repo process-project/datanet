@@ -9,6 +9,7 @@ public interface MainPanelMessages extends Messages {
 	String repositoriesLabel();
 	String newModelLabel();
 	String saveModelLabel();
+	String deployModelLabel();
 	String errorNoModelPresent();
 	String errorModelSavePrefix();
 	String errorEmptyEntityName();

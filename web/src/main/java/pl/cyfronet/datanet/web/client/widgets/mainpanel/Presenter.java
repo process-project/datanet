@@ -4,5 +4,6 @@ public interface Presenter {
 	void onLogout();
 	void onNewModel();
 	void onSaveModel();
+	void onDeployModel();
 	void onModelClicked(long id);
 }
