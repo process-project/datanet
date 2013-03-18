@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipException;
@@ -87,6 +88,17 @@ public class Deployer {
 		}
 		builder.deleteMapper();
 		client.logout();
+	}
+	
+	public List<String> listRepostories() {
+		logger.debug("Listing repositories");
+		CloudFoundryClient client = prepareNewClient();
+		List<CloudApplication> cloudApplications = client.getApplications();
+		ArrayList<String> repositories = new ArrayList<>(cloudApplications.size());
+		for (CloudApplication application : cloudApplications) {
+			repositories.add(application.getName());
+		}
+		return repositories;
 	}
 	
 	public void undeployRepository(String repositoryName) {
