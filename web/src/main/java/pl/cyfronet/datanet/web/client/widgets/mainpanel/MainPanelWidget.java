@@ -120,6 +120,29 @@ public class MainPanelWidget extends Composite implements View {
 	}
 	
 	@Override
+	public void displayModelDeployError(ModelError modelError) {
+		String message = new String();
+		
+		switch(modelError) {
+			case EMPTY_ENTITY_NAME: message += messages.errorEmptyEntityName(); break;
+			case NULL_MODEL: message += messages.errorNullModel(); break;
+			case EMPTY_FIELD_NAME: message += messages.errorEmptyFieldName(); break;
+			case EMPTY_MODEL_NAME: message += messages.errorEmptyModelName(); break;
+			case EMPTY_MODEL_VERSION: message += messages.errorEmptyModelVersion(); break;
+			case NULL_ENTITY_LIST: message += messages.errorNullEntityList(); break;
+			case NULL_FIELD_LIST: message += messages.errorNullFieldList(); break;
+			case NULL_FIELD_TYPE: message += messages.errorNullFieldType(); break;
+		}
+		
+		displayMessage(message, MessageType.ERROR);
+	}
+	
+	@Override
+	public void displayModelDeployedMessage() {
+		displayMessage(messages.modelDeployedMessage(), MessageType.INFO);
+	}
+	
+	@Override
 	public void clearModels() {
 		modelContainer.clear();
 	}

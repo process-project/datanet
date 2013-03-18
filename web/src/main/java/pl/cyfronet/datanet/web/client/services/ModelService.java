@@ -12,4 +12,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface ModelService extends RemoteService {
 	Model saveModel(Model model) throws ModelException;
 	List<Model> getModels() throws ModelException;
+	void deployModel(Model model) throws ModelException;
+	List<Model> getDeployedModels() throws ModelException;
 }

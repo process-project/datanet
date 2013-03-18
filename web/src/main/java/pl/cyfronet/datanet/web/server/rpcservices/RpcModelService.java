@@ -71,4 +71,16 @@ public class RpcModelService  implements ModelService {
 			throw new ModelException(Code.ModelRetrievalError);
 		}
 	}
+
+	@Override
+	public void deployModel(Model model) throws ModelException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<Model> getDeployedModels() throws ModelException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

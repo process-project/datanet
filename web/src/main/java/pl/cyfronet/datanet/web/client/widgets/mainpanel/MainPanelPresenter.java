@@ -1,6 +1,5 @@
 package pl.cyfronet.datanet.web.client.widgets.mainpanel;
 
-import java.text.Collator;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -24,6 +23,8 @@ public class MainPanelPresenter implements Presenter {
 		void errorNoModelPresent();
 		void displayModelSaveError(ModelError modelError);
 		void displayModelSavedMessage();
+		void displayModelDeployError(ModelError modelError);
+		void displayModelDeployedMessage();
 		void clearModels();
 		void addModel(long id, String name, String version);
 		void removeModel(long id);
@@ -60,6 +61,10 @@ public class MainPanelPresenter implements Presenter {
 		view.displayModelSavedMessage();
 	}
 	
+	public void displayModelDeployedInfo() {
+		view.displayModelDeployedMessage();
+	}
+	
 	public void setMarked(long id) {
 		view.markModel(id);
 	}
@@ -81,7 +86,6 @@ public class MainPanelPresenter implements Presenter {
 		refreshModelList();
 	}
 	
-	//TODO: is it ok that presenter calls services directly?
 	public void updateModelList() {
 		modelService.getModels(new AsyncCallback<List<Model>>() {
 			@Override
@@ -120,11 +124,11 @@ public class MainPanelPresenter implements Presenter {
 	
 	@Override
 	public void onDeployModel() {
-//		if(currentModelPanelPresenter != null) {
-//			clientController.onDeployModel(currentModelPanelPresenter);
-//		} else {
-//			view.errorNoModelPresent();
-//		}
+		if(currentModelPanelPresenter != null) {
+			clientController.onDeployModel(currentModelPanelPresenter.getModel());
+		} else {
+			view.errorNoModelPresent();
+		}
 	}
 	
 	@Override
@@ -174,5 +178,9 @@ public class MainPanelPresenter implements Presenter {
 			}
 		}
 		return null;
+	}
+
+	public void displayModelDeployError(ModelError modelError) {
+		view.displayModelDeployError(modelError);
 	}
 }

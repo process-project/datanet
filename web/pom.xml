@@ -89,7 +89,13 @@
 			<classifier>sources</classifier>
 			<scope>compile</scope>
 		</dependency>
-	
+		<!--
+		<dependency>
+			<groupId>pl.cyfronet.datanet</groupId>
+			<artifactId>deployer</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		-->
 		<!-- Servlet 3 dependencies -->
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
@@ -179,5 +185,6 @@
 			<artifactId>commons-codec</artifactId>
 			<version>1.7</version>
 		</dependency>
+
 	</dependencies>
 </project>

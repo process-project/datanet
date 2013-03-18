@@ -70,7 +70,7 @@ public class ClientController {
 	}
 	
 	
-	//TODO: check if presenter logic should be here or in presenter
+	//TODO: check if presenter logic should be here or in presenter, this looks like presenter code
 	public void onSaveModel(ModelPanelPresenter modelPanelPresenter) {
 		List<ModelError> modelErrors = modelValidator.validateModel(modelPanelPresenter.getModel());
 		
@@ -91,6 +91,28 @@ public class ClientController {
 			});
 		} else {
 			mainPanelPresenter.displayModelSaveError(modelErrors.get(0));
+		}
+	}
+	
+	public void onDeployModel(Model model) {
+		//TODO: deployment needs proper validation and error handling, this was copied from onSaveModel()
+		List<ModelError> modelErrors = modelValidator.validateModel(model);
+		
+		if(modelErrors.isEmpty()) {
+			modelService.deployModel(model, new AsyncCallback<Void>() {
+				@Override
+				public void onFailure(Throwable t) {
+					rpcErrorHandler.handleRpcError(t);
+				}
+				@Override
+				public void onSuccess(Void v) {
+					mainPanelPresenter.displayModelDeployedInfo();
+					
+					//TODO: Refresh deployed models list
+				}
+			});
+		} else {
+			mainPanelPresenter.displayModelDeployError(modelErrors.get(0));
 		}
 	}
 	
