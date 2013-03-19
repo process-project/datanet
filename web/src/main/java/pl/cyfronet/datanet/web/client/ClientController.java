@@ -14,8 +14,6 @@ import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
 
-import com.google.gwt.core.shared.GWT;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -107,8 +105,7 @@ public class ClientController {
 				@Override
 				public void onSuccess(Void v) {
 					mainPanelPresenter.displayModelDeployedInfo();
-					
-					//TODO: Refresh deployed models list
+					mainPanelPresenter.updateRepositoryList();
 				}
 			});
 		} else {
@@ -123,6 +120,7 @@ public class ClientController {
 		RootPanel.get().add(RootLayoutPanel.get());
 		RootLayoutPanel.get().add(mainPanelPresenter.getWidget());
 		mainPanelPresenter.updateModelList();
+		mainPanelPresenter.updateRepositoryList();
 	}
 
 	private void showLoginPanel() {

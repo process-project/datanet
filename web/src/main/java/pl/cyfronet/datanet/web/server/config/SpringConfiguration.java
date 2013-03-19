@@ -1,5 +1,11 @@
 package pl.cyfronet.datanet.web.server.config;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.hibernate.SessionFactory;
@@ -22,6 +28,10 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+import pl.cyfronet.datanet.deployer.ApplicationConfig;
+import pl.cyfronet.datanet.deployer.Deployer;
+import pl.cyfronet.datanet.deployer.MapperBuilder;
+import pl.cyfronet.datanet.deployer.marshaller.ModelMarshaller;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
 import pl.cyfronet.datanet.model.util.ModelBuilder;
 
@@ -36,6 +46,11 @@ public class SpringConfiguration {
 	@Value("${db.jdbc.url}") private String dbJdbcUrl;
 	@Value("${db.user}") private String dbUser;
 	@Value("${db.password}") private String dbPassword;
+	
+	@Value("${cf.target}") private String cfTarget;
+	@Value("${cf.username}") private String cfUsername;
+	@Value("${cf.password}") private String cfPassword;
+	@Value("${cf.unzip.path}") private String cfUnzipPath;
 	
 	/**
 	 * Properties configuration. The properties can later be accessed from
@@ -132,5 +147,25 @@ public class SpringConfiguration {
 		pfb.setLocation(new ClassPathResource("hibernate.properties"));
 		
 		return pfb;
+	}
+	
+	@Bean
+	public Deployer deployer() throws MalformedURLException, URISyntaxException {
+		final String ZIP_NAME = "datanet-skel-mongodb.zip";
+		final String APP_FOLDER_NAME = "datanet-skel-mongodb";
+
+		InputStream zipStream = this.getClass().getClassLoader()
+				.getResourceAsStream(ZIP_NAME);
+		Map<Deployer.RepositoryType, MapperBuilder> builderMap = new HashMap<Deployer.RepositoryType, MapperBuilder>();
+		builderMap.put(Deployer.RepositoryType.Mongo, new MapperBuilder(zipStream,
+				new File(cfUnzipPath), APP_FOLDER_NAME));
+		Deployer deployer = new Deployer(cfUsername, cfPassword, cfTarget,
+				new ApplicationConfig(), builderMap);
+		return deployer;
+	}
+	
+	@Bean
+	public ModelMarshaller modelMarshaller() {
+		return new ModelMarshaller();
 	}
 }

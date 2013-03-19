@@ -2,12 +2,17 @@ package pl.cyfronet.datanet.web.server.rpcservices;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.hsqldb.lib.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pl.cyfronet.datanet.deployer.Deployer;
+import pl.cyfronet.datanet.deployer.marshaller.MarshallerException;
+import pl.cyfronet.datanet.deployer.marshaller.ModelMarshaller;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
@@ -25,6 +30,8 @@ public class RpcModelService  implements ModelService {
 	@Autowired private HibernateModelDao modelDao;
 	@Autowired private ModelBuilder modelBuilder;
 	@Autowired private JaxbEntityListBuilder jaxbEntityListBuilder;
+	@Autowired private Deployer deployer;
+	@Autowired private ModelMarshaller modelMarshaller;
 	
 	@Override
 	public Model saveModel(Model model) throws ModelException {
@@ -74,13 +81,25 @@ public class RpcModelService  implements ModelService {
 
 	@Override
 	public void deployModel(Model model) throws ModelException {
-		// TODO Auto-generated method stub
-		
+		try {
+			Map<String, String> models = modelMarshaller.marshall(model);
+			deployer.deployRepository(Deployer.RepositoryType.Mongo, model.getName(), models);
+		} catch (MarshallerException e) {
+			String message = "Could not marshall model";
+			log.error(message, e);
+			throw new ModelException(Code.ModelDeployError);
+		}
 	}
 
 	@Override
-	public List<Model> getDeployedModels() throws ModelException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> getRepositories() throws ModelException {
+		try {
+			List<String> repositoryNames = deployer.listRepostories();
+			return repositoryNames;
+		} catch (Exception e) {
+			String message = "Could not read available repositories";
+			log.error(message, e);
+			throw new ModelException(Code.RepositoryRetrievalError);
+		}
 	}
 }

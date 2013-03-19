@@ -23,4 +23,5 @@ public interface MainPanelMessages extends Messages {
 	String modelSavedMessage();
 	String modelDeployedMessage();
 	String noModelsLabel();
+	String noRepositoriesLabel();
 }

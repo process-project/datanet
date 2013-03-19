@@ -2,6 +2,7 @@ package pl.cyfronet.datanet.deployer;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.ZipException;
@@ -16,6 +17,7 @@ public class MapperBuilder {
 	private File outputDir;
 	private File mapperDir;
 	private File modelDir;
+	private InputStream zipStream;
 
 	/**
 	 * 
@@ -27,6 +29,11 @@ public class MapperBuilder {
 	public MapperBuilder(File archiveFile, File outputDir,
 			String mapperDirName) {
 		this(archiveFile, outputDir, mapperDirName, null);
+	}
+	
+	public MapperBuilder(InputStream zipStream, File outputDir,
+			String mapperDirName) {
+		this(zipStream, outputDir, mapperDirName, null);
 	}
 	
 	/**
@@ -41,6 +48,19 @@ public class MapperBuilder {
 			String mapperDirName, String modelDirName) {
 		super();
 		this.archiveFile = archiveFile;
+		this.zipStream = null;
+		this.outputDir = outputDir;
+		this.mapperDir = new File(outputDir, mapperDirName);
+		if (modelDirName == null)
+			modelDirName = MODEL_DIR_NAME_DEFAULT;
+		this.modelDir = new File(mapperDir, modelDirName);
+	}
+	
+	public MapperBuilder(InputStream zipStream, File outputDir,
+			String mapperDirName, String modelDirName) {
+		super();
+		this.archiveFile = null;
+		this.zipStream = zipStream;
 		this.outputDir = outputDir;
 		this.mapperDir = new File(outputDir, mapperDirName);
 		if (modelDirName == null)
@@ -49,7 +69,13 @@ public class MapperBuilder {
 	}
 	
 	public File buildMapper(Map<String, String> models) throws ZipException, IOException {
-		Unzip.extractOverridingAll(archiveFile, outputDir);
+		if(archiveFile != null) {
+			Unzip.extractOverridingAll(archiveFile, outputDir);
+		} else if (zipStream != null){
+			Unzip.extractOverridingAll(zipStream, outputDir);
+		} else {
+			throw new ZipException("No file or stream given");
+		}
 
 		if (!mapperDir.exists() || !mapperDir.isDirectory())
 			throw new IllegalStateException("Mapper directory does not exist: " + mapperDir.getAbsolutePath());

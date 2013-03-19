@@ -232,4 +232,19 @@ public class MainPanelWidget extends Composite implements View {
 		}
 		return null;
 	}
+
+	@Override
+	public void displayNoRepositoriesLabel() {
+		repositoryContainer.add(new Label(messages.noRepositoriesLabel()));
+	}
+
+	@Override
+	public void clearRepositories() {
+		repositoryContainer.clear();
+	}
+
+	@Override
+	public void addRepository(String repositoryName) {
+		repositoryContainer.add(new Label(repositoryName));
+	}
 }

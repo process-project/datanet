@@ -10,5 +10,5 @@ public interface ModelServiceAsync {
 	void saveModel(Model model, AsyncCallback<Model> asyncCallback);
 	void getModels(AsyncCallback<List<Model>> asyncCallback);
 	void deployModel(Model model, AsyncCallback<Void> asyncCallback);
-	void getDeployedModels(AsyncCallback<List<Model>> asyncCallback);
+	void getRepositories(AsyncCallback<List<String>> asyncCallback);
 }

@@ -10,6 +10,7 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
 
@@ -19,9 +20,8 @@ public class Unzip {
 			throws IOException {
 		byte[] buffer = new byte[1024];
 		int len;
-		while ((len = in.read(buffer)) >= 0)
+		while ((len = in.read(buffer)) > 0)
 			out.write(buffer, 0, len);
-		in.close();
 		out.close();
 	}
 
@@ -47,6 +47,28 @@ public class Unzip {
 					new BufferedOutputStream(new FileOutputStream(file)));
 		}
 		zipFile.close();
+	}
+	
+	public static final void extractOverridingAll(InputStream inputStream, File outputFolder)
+			throws ZipException, IOException {
+		ZipInputStream zipStream = new ZipInputStream(inputStream);
+
+		if (!outputFolder.exists())
+			outputFolder.mkdir();
+
+		ZipEntry entry;
+		while ((entry = zipStream.getNextEntry()) != null) {
+			File file = new File(outputFolder, entry.getName());
+			if (file.exists())
+				FileUtils.forceDelete(file);
+			if (entry.isDirectory()) {
+				file.mkdir();
+				continue;
+			}
+			copyInputStream(zipStream,
+					new BufferedOutputStream(new FileOutputStream(file)));
+		}
+		zipStream.close();
 	}
 
 }

@@ -125,7 +125,7 @@ public class Deployer {
 	
 	private CloudFoundryClient prepareNewClient() {
 		CloudFoundryClient client = new CloudFoundryClient(email, password, null, cloudControllerUrl);
-		client.login();	
+		client.login();
 		return client;
 	}
 	

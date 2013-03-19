@@ -6,7 +6,9 @@ public class ModelException extends Exception {
 	public enum Code {
 		Unknown,
 		ModelSaveError,
-		ModelRetrievalError
+		ModelRetrievalError,
+		ModelDeployError,
+		RepositoryRetrievalError
 	}
 	
 	private Code errorCode;

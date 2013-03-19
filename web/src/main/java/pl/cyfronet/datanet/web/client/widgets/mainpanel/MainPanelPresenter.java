@@ -31,6 +31,9 @@ public class MainPanelPresenter implements Presenter {
 		void displayNoModelsLabel();
 		void markModel(long id);
 		void unmarkModel();
+		void displayNoRepositoriesLabel();
+		void clearRepositories();
+		void addRepository(String repositoryName);
 	}
 
 	private View view;
@@ -39,6 +42,7 @@ public class MainPanelPresenter implements Presenter {
 	private ModelServiceAsync modelService;
 	private RpcErrorHandler rpcErrorHandler;
 	private List<Model> models;
+	private List<String> repositories;
 	
 	public MainPanelPresenter(View view, ClientController clientController,
 			ModelServiceAsync modelService, RpcErrorHandler rpcErrorHandler) {
@@ -98,6 +102,21 @@ public class MainPanelPresenter implements Presenter {
 				refreshModelList();
 			}});
 	}
+	
+	public void updateRepositoryList() {
+		modelService.getRepositories(new AsyncCallback<List<String>>() {
+
+			@Override
+			public void onFailure(Throwable t) {
+				rpcErrorHandler.handleRpcError(t);
+			}
+			@Override
+			public void onSuccess(List<String> repositories) {
+				MainPanelPresenter.this.repositories = repositories;
+				refreshRepositoryList();
+			}
+		});
+	}
 
 	@Override
 	public void onLogout() {
@@ -148,16 +167,15 @@ public class MainPanelPresenter implements Presenter {
 	private void refreshModelList() {
 		view.clearModels();
 		
-		Collections.sort(models, new Comparator<Model>() {
-
-			@Override
-			public int compare(Model o1, Model o2) {
-				return o1.getName().compareToIgnoreCase(o2.getName());
-			}
-			
-		});
-		
 		if(models.size() > 0) {
+			Collections.sort(models, new Comparator<Model>() {
+				
+				@Override
+				public int compare(Model o1, Model o2) {
+					return o1.getName().compareToIgnoreCase(o2.getName());
+				}
+				
+			});
 			for(Model model : models) {
 				view.addModel(model.getId(), model.getName(), model.getVersion());
 				
@@ -171,6 +189,20 @@ public class MainPanelPresenter implements Presenter {
 		}
 	}
 	
+
+	protected void refreshRepositoryList() {
+		view.clearRepositories();
+
+		Collections.sort(repositories);
+		if (repositories.size() > 0) {
+			for(String repositoryName : repositories) {
+				view.addRepository(repositoryName);
+			}
+		} else {
+			view.displayNoRepositoriesLabel();
+		}
+	}
+		
 	private Model getModelById(Long id) {
 		for (Model m : models) {
 			if(m.getId() == id) {
