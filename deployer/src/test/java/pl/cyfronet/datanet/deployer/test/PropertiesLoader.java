@@ -18,7 +18,7 @@ public class PropertiesLoader {
 			Properties prop = new Properties();
 			FileInputStream in = new FileInputStream(propFile);
 			prop.load(in);
-			in.close();			
+			in.close();
 			return prop;
 		}
 	}

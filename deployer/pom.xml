@@ -20,11 +20,6 @@
 			<artifactId>cloudfoundry-client-lib</artifactId>
 			<version>${cloud.foundry.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>1.3.2</version>
-		</dependency>
 		<!-- Logging dependencies -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
