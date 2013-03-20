@@ -1,6 +1,7 @@
 package pl.cyfronet.datanet.web.server.config;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -150,14 +152,14 @@ public class SpringConfiguration {
 	}
 	
 	@Bean
-	public Deployer deployer() throws MalformedURLException, URISyntaxException {
+	public Deployer deployer() throws URISyntaxException, IOException {
 		final String ZIP_NAME = "datanet-skel-mongodb.zip";
 		final String APP_FOLDER_NAME = "datanet-skel-mongodb";
 
 		InputStream zipStream = this.getClass().getClassLoader()
 				.getResourceAsStream(ZIP_NAME);
 		Map<Deployer.RepositoryType, MapperBuilder> builderMap = new HashMap<Deployer.RepositoryType, MapperBuilder>();
-		builderMap.put(Deployer.RepositoryType.Mongo, new MapperBuilder(zipStream,
+		builderMap.put(Deployer.RepositoryType.Mongo, new MapperBuilder(IOUtils.toByteArray(zipStream),
 				new File(cfUnzipPath), APP_FOLDER_NAME));
 		Deployer deployer = new Deployer(cfUsername, cfPassword, cfTarget,
 				new ApplicationConfig(), builderMap);
