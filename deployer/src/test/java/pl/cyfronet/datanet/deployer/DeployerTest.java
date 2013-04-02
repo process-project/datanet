@@ -26,7 +26,7 @@ public class DeployerTest extends CloudFoundryTest {
 		super();
 		File zip = new File(this.getClass().getClassLoader().getResource(ZIP_NAME).toURI());
 		Map <Deployer.RepositoryType, MapperBuilder> builderMap = new HashMap<Deployer.RepositoryType, MapperBuilder>();
-		builderMap.put(Deployer.RepositoryType.Mongo, new MapperBuilder(zip, new File(UNZIP_PATH), APP_FOLDER_NAME));
+		builderMap.put(Deployer.RepositoryType.Mongo, new ZipFileMapperBuilder(zip, new File(UNZIP_PATH), APP_FOLDER_NAME));
 		deployer = new Deployer(CF_USER,
 			CF_PASS, 
 			CF_TARGET,

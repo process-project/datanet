@@ -33,6 +33,7 @@ import org.springframework.web.servlet.view.JstlView;
 import pl.cyfronet.datanet.deployer.ApplicationConfig;
 import pl.cyfronet.datanet.deployer.Deployer;
 import pl.cyfronet.datanet.deployer.MapperBuilder;
+import pl.cyfronet.datanet.deployer.ZipByteArrayMapperBuilder;
 import pl.cyfronet.datanet.deployer.marshaller.ModelMarshaller;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
 import pl.cyfronet.datanet.model.util.ModelBuilder;
@@ -159,7 +160,7 @@ public class SpringConfiguration {
 		InputStream zipStream = this.getClass().getClassLoader()
 				.getResourceAsStream(ZIP_NAME);
 		Map<Deployer.RepositoryType, MapperBuilder> builderMap = new HashMap<Deployer.RepositoryType, MapperBuilder>();
-		builderMap.put(Deployer.RepositoryType.Mongo, new MapperBuilder(IOUtils.toByteArray(zipStream),
+		builderMap.put(Deployer.RepositoryType.Mongo, new ZipByteArrayMapperBuilder(IOUtils.toByteArray(zipStream),
 				new File(cfUnzipPath), APP_FOLDER_NAME));
 		Deployer deployer = new Deployer(cfUsername, cfPassword, cfTarget,
 				new ApplicationConfig(), builderMap);
