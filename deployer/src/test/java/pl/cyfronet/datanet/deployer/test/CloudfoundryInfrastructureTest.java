@@ -57,7 +57,7 @@ public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 		staging = new Staging("rack");
 		staging.setRuntime("ruby193");
 		
-		String uniqueComponent = String.format("_%d_%d", date.getTime(), random.nextInt());
+		String uniqueComponent = String.format("_%d_%d", date.getTime(), Math.abs(random.nextInt()));
 		
 		appName = APP_NAME_BASE + uniqueComponent;
 		serviceName = SERVICE_NAME_BASE + uniqueComponent;
@@ -97,7 +97,7 @@ public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 	@Test
 	public void createService() {
 		createNewService(serviceName);
-		assertNotNull("Service not registerred", client.getService(SERVICE_NAME_BASE));
+		assertNotNull("Service not registerred", client.getService(serviceName));
 		deleteService(serviceName);
 	}
 	
@@ -105,7 +105,7 @@ public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 	public void uploadBindAndStartApplication() throws IOException, URISyntaxException {
 		
 		createNewService(serviceName);
-		uploadApplication(asList(SERVICE_NAME_BASE));
+		uploadApplication(asList(serviceName));
 		startApplication();
 		
 		CloudApplication app = client.getApplication(appName);
@@ -115,7 +115,7 @@ public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 
 		List<String> appServices = app.getServices();
 		assertEquals(1, appServices.size());
-		assertEquals(SERVICE_NAME_BASE, appServices.get(0));
+		assertEquals(serviceName, appServices.get(0));
 		
 		deleteApplication();
 		deleteService(serviceName);
