@@ -34,7 +34,7 @@ import pl.cyfronet.datanet.deployer.ApplicationConfig;
 import pl.cyfronet.datanet.deployer.Deployer;
 import pl.cyfronet.datanet.deployer.MapperBuilder;
 import pl.cyfronet.datanet.deployer.ZipByteArrayMapperBuilder;
-import pl.cyfronet.datanet.deployer.marshaller.ModelMarshaller;
+import pl.cyfronet.datanet.deployer.marshaller.ModelSchemaGenerator;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
 import pl.cyfronet.datanet.model.util.ModelBuilder;
 
@@ -168,7 +168,7 @@ public class SpringConfiguration {
 	}
 	
 	@Bean
-	public ModelMarshaller modelMarshaller() {
-		return new ModelMarshaller();
+	public ModelSchemaGenerator modelMarshaller() {
+		return new ModelSchemaGenerator();
 	}
 }
