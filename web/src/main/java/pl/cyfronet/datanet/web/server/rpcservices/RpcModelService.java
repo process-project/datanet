@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pl.cyfronet.datanet.deployer.Deployer;
+import pl.cyfronet.datanet.deployer.DeployerException;
 import pl.cyfronet.datanet.deployer.marshaller.MarshallerException;
 import pl.cyfronet.datanet.deployer.marshaller.ModelSchemaGenerator;
 import pl.cyfronet.datanet.model.beans.Entity;
@@ -87,6 +88,9 @@ public class RpcModelService  implements ModelService {
 		} catch (MarshallerException e) {
 			String message = "Could not marshall model";
 			log.error(message, e);
+			throw new ModelException(Code.ModelDeployError);
+		} catch (DeployerException de) {
+			log.error("Deployer authorization failure", de);
 			throw new ModelException(Code.ModelDeployError);
 		}
 	}

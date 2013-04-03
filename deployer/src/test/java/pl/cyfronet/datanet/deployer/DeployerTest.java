@@ -47,7 +47,7 @@ public class DeployerTest extends CloudFoundryTest {
 	
 	@Test
 	@Ignore
-	public void sampleDeploy() {
+	public void sampleDeploy() throws DeployerException {
 		Map<String, String> models = new HashMap<String, String>();
 		models.put("entity123", "test{\"type\": \"object\"}");
 		deployer.deployRepository(Deployer.RepositoryType.Mongo, repositoryName, models);
@@ -55,12 +55,12 @@ public class DeployerTest extends CloudFoundryTest {
 	
 	@Test
 	@Ignore
-	public void sampleUndeploy() {
+	public void sampleUndeploy() throws DeployerException {
 		deployer.undeployRepository(repositoryName);
 	}
 	
 	@Test
-	public void deployAndCleanup() {
+	public void deployAndCleanup() throws DeployerException {
 		sampleDeploy();
 		sampleUndeploy();
 	}
