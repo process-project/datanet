@@ -1,84 +1,71 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-		xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:with type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelMessages" field="messages"/>
-	<ui:style type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelWidget.MainPanelWidgetStyles">
-		.main-panel {
-			margin: 20px auto;
-			width: 80%;
-		}
-		.logout-button {
-			float: right;
-		}
-		.datanet-label {
-			float: left;
-		}
-		.header {
-			margin: 3px;
-		}
-		.menuButton {
-			margin-left: 5px;
-		}
-		.errorLabel {
-			color: white;
-			background-color: red;
-			font-weight: bold;
-			float: left;
-			padding: 2px;
-			margin-left: 20em;
-		}
-		.infoLabel {
-			color: white;
-			background-color: green;
-			font-weight: bold;
-			float: left;
-			padding: 2px;
-			margin-left: 20em;
-		}
-		.modelLabel {
-			cursor: pointer;
-		}
-		.marked {
-			font-weight: bold;
-		}
-	</ui:style>
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:with
+		type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelMessages"
+		field="messages" />
+	<ui:style
+		type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelWidget.MainPanelWidgetStyles">
+			.main-panel {
+				margin: 20px auto;
+				width: 80%;
+			}
+			
+			.logout-button {
+				float: right;
+			}
+			
+			.datanet-label {
+				float: left;
+			}
+			
+			.header {
+				margin: 3px;
+			}
+			
+			.errorLabel {
+				color: white;
+				background-color: red;
+				font-weight: bold;
+				float: left;
+				padding: 2px;
+				margin-left: 20em;
+			}
+			
+			.infoLabel {
+				color: white;
+				background-color: green;
+				font-weight: bold;
+				float: left;
+				padding: 2px;
+				margin-left: 20em;
+			}
+		</ui:style>
 	<g:DockLayoutPanel>
 		<g:north size="40">
 			<g:FlowPanel styleName="{style.header}">
-				<g:Label styleName="gwt-Label {style.datanet-label}" text="{messages.datanetMain}"/>
-				<g:Label ui:field="messageLabel" styleName="gwt-Label {style.errorLabel}" visible="false"/>
-				<g:Button ui:field="logout" text="{messages.logoutLabel}" styleName="gwt-Button {style.logout-button}"></g:Button>
-			</g:FlowPanel>
-		</g:north>
-		<g:north size="40">
-			<g:FlowPanel>
-				<g:Button ui:field="newModel" text="{messages.newModelLabel}" styleName="gwt-Button {style.menuButton}"/>
-				<g:Button ui:field="saveModel" text="{messages.saveModelLabel}" styleName="gwt-Button {style.menuButton}"/>
-				<g:Button ui:field="deployModel" text="{messages.deployModelLabel}" styleName="gwt-Button {style.menuButton}"/>
+				<g:Label styleName="gwt-Label {style.datanet-label}" text="{messages.datanetMain}" />
+				<g:Label ui:field="messageLabel" styleName="gwt-Label {style.errorLabel}"
+					visible="false" />
+				<g:Button ui:field="logout" text="{messages.logout}"
+					styleName="gwt-Button {style.logout-button}"></g:Button>
 			</g:FlowPanel>
 		</g:north>
 		<g:center>
-			<g:SplitLayoutPanel>
-				<g:west size="200">
-					<g:StackLayoutPanel unit="EM">
-						<g:stack>
-							<g:header size="3"><ui:text from="{messages.modelsLabel}"/></g:header>
-							<g:ScrollPanel>
-								<g:FlowPanel ui:field="modelContainer"/>
-							</g:ScrollPanel>
-						</g:stack>
-						<g:stack>
-							<g:header size="3"><ui:text from="{messages.repositoriesLabel}"/></g:header>
-							<g:ScrollPanel>
-								<g:FlowPanel ui:field="repositoryContainer"/>
-							</g:ScrollPanel>
-						</g:stack>
-					</g:StackLayoutPanel>
-				</g:west>
-				<g:center>
-					<g:LayoutPanel ui:field="mainContainer"/>
-				</g:center>
-			</g:SplitLayoutPanel>
+			<g:TabLayoutPanel barHeight="25">
+				<g:tab>
+					<g:header>
+						<ui:text from="{messages.models}" />
+					</g:header>
+					<g:LayoutPanel ui:field="modelsPanel" />
+				</g:tab>
+				<g:tab>
+					<g:header>
+						<ui:text from="{messages.repositories}" />
+					</g:header>
+					<g:Label>repos go here</g:Label>
+				</g:tab>
+			</g:TabLayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder>

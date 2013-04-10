@@ -6,6 +6,7 @@ import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.beans.validator.ModelValidator;
 import pl.cyfronet.datanet.model.beans.validator.ModelValidator.ModelError;
 import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
+import pl.cyfronet.datanet.web.client.messages.MessagePresenter;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginPresenter;
@@ -13,6 +14,7 @@ import pl.cyfronet.datanet.web.client.widgets.login.LoginWidget;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelWidget;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -24,6 +26,8 @@ public class ClientController {
 	private RpcErrorHandler rpcErrorHandler;
 	private ModelValidator modelValidator;
 	private MainPanelPresenter mainPanelPresenter;
+	private ModelPanelPresenter modelPanelPresenter;
+	private MessagePresenter messagePresenter;
 	
 	public ClientController(LoginServiceAsync loginService, ModelServiceAsync modelService,
 			RpcErrorHandler rpcErrorHandler, ModelValidator modelValidator) {
@@ -68,8 +72,7 @@ public class ClientController {
 	}
 	
 	
-	//TODO: check if presenter logic should be here or in presenter, this looks like presenter code
-	public void onSaveModel(ModelPanelPresenter modelPanelPresenter) {
+	public void onSaveModel(final ModelPanelPresenter modelPanelPresenter) {
 		List<ModelError> modelErrors = modelValidator.validateModel(modelPanelPresenter.getModel());
 		
 		if(modelErrors.isEmpty()) {
@@ -80,19 +83,23 @@ public class ClientController {
 				}
 				@Override
 				public void onSuccess(Model m) {
-					mainPanelPresenter.displayModelSavedInfo();
+					messagePresenter.displayModelSavedMessage();
 					
-					mainPanelPresenter.addOrReplaceModel(m);
-					mainPanelPresenter.setMarked(m.getId());
-					mainPanelPresenter.onModelClicked(m.getId());
+					modelPanelPresenter.addOrReplaceModel(m);
+					modelPanelPresenter.setMarked(m.getId());
+					modelPanelPresenter.onModelClicked(m.getId());
 				}
 			});
 		} else {
-			mainPanelPresenter.displayModelSaveError(modelErrors.get(0));
+			messagePresenter.displayModelSaveError(modelErrors.get(0));
 		}
 	}
 	
-	public void onDeployModel(Model model) {
+	public MessagePresenter getMessagePresenter() {
+		return messagePresenter;
+	}
+	
+	public void onDeployModel(final Model model) {
 		//TODO: deployment needs proper validation and error handling, this was copied from onSaveModel()
 		List<ModelError> modelErrors = modelValidator.validateModel(model);
 		
@@ -104,23 +111,27 @@ public class ClientController {
 				}
 				@Override
 				public void onSuccess(Void v) {
-					mainPanelPresenter.displayModelDeployedInfo();
-					mainPanelPresenter.updateRepositoryList();
+					modelPanelPresenter.displayModelDeployedInfo();
+					modelPanelPresenter.updateRepositoryList();
 				}
 			});
 		} else {
-			mainPanelPresenter.displayModelDeployError(modelErrors.get(0));
+			messagePresenter.displayModelDeployError(modelErrors.get(0));
 		}
 	}
 	
 	private void showMainPanel() {
+		modelPanelPresenter = new ModelPanelPresenter(
+				new ModelPanelWidget(), this, modelService, rpcErrorHandler
+				);
 		mainPanelPresenter = new MainPanelPresenter(
-				new MainPanelWidget(), this, modelService, rpcErrorHandler);
+				new MainPanelWidget(), this);
+		messagePresenter = new MessagePresenter(mainPanelPresenter);
 		clearPanels();
 		RootPanel.get().add(RootLayoutPanel.get());
 		RootLayoutPanel.get().add(mainPanelPresenter.getWidget());
-		mainPanelPresenter.updateModelList();
-		mainPanelPresenter.updateRepositoryList();
+		modelPanelPresenter.updateModelList();
+		modelPanelPresenter.updateRepositoryList();
 	}
 
 	private void showLoginPanel() {
