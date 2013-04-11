@@ -2,7 +2,7 @@ package pl.cyfronet.datanet.web.client.widgets.mainpanel;
 
 import pl.cyfronet.datanet.web.client.messages.MessageDispatcher.MessageType;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter.View;
-import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelPresenter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

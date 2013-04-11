@@ -1,4 +1,4 @@
-package pl.cyfronet.datanet.web.client.widgets.modelpanel;
+package pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +20,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 
-public class ModelPanelPresenter implements Presenter {
+public class ModelBrowserPanelPresenter implements Presenter {
 	interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
 		HasWidgets getEntityContainer();
@@ -47,7 +47,7 @@ public class ModelPanelPresenter implements Presenter {
 	private ClientController clientController;
 	private MessagePresenter messagePresenter;
 	
-	public ModelPanelPresenter(View view, ClientController clientController, ModelServiceAsync modelServiceAsync, RpcErrorHandler errorHandler) {
+	public ModelBrowserPanelPresenter(View view, ClientController clientController, ModelServiceAsync modelServiceAsync, RpcErrorHandler errorHandler) {
 		this.view = view;
 		this.clientController = clientController;
 		this.messagePresenter = clientController.getMessagePresenter();
@@ -236,7 +236,7 @@ public class ModelPanelPresenter implements Presenter {
 			}
 			@Override
 			public void onSuccess(List<Model> models) {
-				ModelPanelPresenter.this.models = models;
+				ModelBrowserPanelPresenter.this.models = models;
 				refreshModelList();
 			}});
 	}
@@ -250,7 +250,7 @@ public class ModelPanelPresenter implements Presenter {
 			}
 			@Override
 			public void onSuccess(List<String> repositories) {
-				ModelPanelPresenter.this.repositories = repositories;
+				ModelBrowserPanelPresenter.this.repositories = repositories;
 				refreshRepositoryList();
 			}
 		});

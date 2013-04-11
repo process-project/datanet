@@ -13,8 +13,8 @@ import pl.cyfronet.datanet.web.client.widgets.login.LoginPresenter;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginWidget;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelWidget;
-import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
-import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelWidget;
+import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelWidget;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -26,7 +26,7 @@ public class ClientController {
 	private RpcErrorHandler rpcErrorHandler;
 	private ModelValidator modelValidator;
 	private MainPanelPresenter mainPanelPresenter;
-	private ModelPanelPresenter modelPanelPresenter;
+	private ModelBrowserPanelPresenter modelPanelPresenter;
 	private MessagePresenter messagePresenter;
 	
 	public ClientController(LoginServiceAsync loginService, ModelServiceAsync modelService,
@@ -72,7 +72,7 @@ public class ClientController {
 	}
 	
 	
-	public void onSaveModel(final ModelPanelPresenter modelPanelPresenter) {
+	public void onSaveModel(final ModelBrowserPanelPresenter modelPanelPresenter) {
 		List<ModelError> modelErrors = modelValidator.validateModel(modelPanelPresenter.getModel());
 		
 		if(modelErrors.isEmpty()) {
@@ -121,8 +121,8 @@ public class ClientController {
 	}
 	
 	private void showMainPanel() {
-		modelPanelPresenter = new ModelPanelPresenter(
-				new ModelPanelWidget(), this, modelService, rpcErrorHandler
+		modelPanelPresenter = new ModelBrowserPanelPresenter(
+				new ModelBrowserPanelWidget(), this, modelService, rpcErrorHandler
 				);
 		mainPanelPresenter = new MainPanelPresenter(
 				new MainPanelWidget(), this);

@@ -1,6 +1,6 @@
-package pl.cyfronet.datanet.web.client.widgets.modelpanel;
+package pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel;
 
-import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter.View;
+import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelPresenter.View;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -18,16 +18,16 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ModelPanelWidget extends Composite implements View {
-	private static ModelPanelWidgetUiBinder uiBinder = GWT
-			.create(ModelPanelWidgetUiBinder.class);
+public class ModelBrowserPanelWidget extends Composite implements View {
+	private static ModelBrowserPanelWidgetUiBinder uiBinder = GWT
+			.create(ModelBrowserPanelWidgetUiBinder.class);
 
-	interface ModelPanelWidgetUiBinder extends
-			UiBinder<Widget, ModelPanelWidget> {
+	interface ModelBrowserPanelWidgetUiBinder extends
+			UiBinder<Widget, ModelBrowserPanelWidget> {
 	}
 
 	private Presenter presenter;
-	private ModelPanelMessages messages;
+	private ModelBrowserPanelMessages messages;
 
 	@UiField
 	TextBox modelName;
@@ -40,9 +40,9 @@ public class ModelPanelWidget extends Composite implements View {
 	@UiField
 	FlowPanel repositoryContainer;
 	@UiField
-	ModelPanelWidgetStyles style;
+	ModelBrowserPanelWidgetStyles style;
 	
-	interface ModelPanelWidgetStyles extends CssResource {
+	interface ModelBrowserPanelWidgetStyles extends CssResource {
 		String modelLabel();
 
 		String marked();
@@ -60,9 +60,9 @@ public class ModelPanelWidget extends Composite implements View {
 		}
 	}
 
-	public ModelPanelWidget() {
+	public ModelBrowserPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
-		messages = GWT.create(ModelPanelMessages.class);
+		messages = GWT.create(ModelBrowserPanelMessages.class);
 	}
 
 	@UiHandler("newEntity")
