@@ -58,7 +58,7 @@
 								<ui:text from="{messages.models}" />
 							</g:header>
 							<g:ScrollPanel>
-								<g:FlowPanel ui:field="modelContainer" />
+								<g:FlowPanel ui:field="modelListContainer" />
 							</g:ScrollPanel>
 						</g:stack>
 						<g:stack>
@@ -66,32 +66,13 @@
 								<ui:text from="{messages.repositories}" />
 							</g:header>
 							<g:ScrollPanel>
-								<g:FlowPanel ui:field="repositoryContainer" />
+								<g:FlowPanel ui:field="repositoryListContainer" />
 							</g:ScrollPanel>
 						</g:stack>
 					</g:StackLayoutPanel>
 				</g:west>
 				<g:center>
-					<g:DockLayoutPanel>
-						<g:north size="40">
-							<g:FlowPanel styleName="{style.modelPanelSection}">
-								<g:Label text="{messages.modelName}" styleName="gwt-Label {style.modelPropertyLabel}" />
-								<g:TextBox ui:field="modelName"
-									styleName="gwt-TextBox {style.modelPropertyInput}" />
-								<g:Label text="{messages.modelVersion}" styleName="gt-Label {style.modelPropertyLabel}" />
-								<g:TextBox ui:field="modelVersion"
-									styleName="gwt-TextBox {style.modelPropertyInput}" />
-							</g:FlowPanel>
-						</g:north>
-						<g:north size="40">
-							<g:FlowPanel styleName="{style.modelPanelSection}">
-								<g:Button ui:field="newEntity" text="{messages.newEntity}" />
-							</g:FlowPanel>
-						</g:north>
-						<g:center>
-							<g:FlowPanel ui:field="entityContainer" />
-						</g:center>
-					</g:DockLayoutPanel>
+					<g:FlowPanel ui:field="modelContainer"/>
 				</g:center>
 			</g:SplitLayoutPanel>
 		</g:center>

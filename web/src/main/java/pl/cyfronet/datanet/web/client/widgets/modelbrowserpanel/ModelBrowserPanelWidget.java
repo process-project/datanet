@@ -5,17 +5,14 @@ import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPane
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ModelBrowserPanelWidget extends Composite implements View {
@@ -30,21 +27,16 @@ public class ModelBrowserPanelWidget extends Composite implements View {
 	private ModelBrowserPanelMessages messages;
 
 	@UiField
-	TextBox modelName;
+	FlowPanel modelListContainer;
 	@UiField
-	TextBox modelVersion;
+	FlowPanel repositoryListContainer;
 	@UiField
-	Panel entityContainer;
-	@UiField
-	FlowPanel modelContainer;
-	@UiField
-	FlowPanel repositoryContainer;
+	Panel modelContainer;
 	@UiField
 	ModelBrowserPanelWidgetStyles style;
 	
 	interface ModelBrowserPanelWidgetStyles extends CssResource {
 		String modelLabel();
-
 		String marked();
 	}
 
@@ -65,40 +57,11 @@ public class ModelBrowserPanelWidget extends Composite implements View {
 		messages = GWT.create(ModelBrowserPanelMessages.class);
 	}
 
-	@UiHandler("newEntity")
-	void newEntityClicked(ClickEvent event) {
-		presenter.onNewEntity();
-	}
-
-	@UiHandler("modelName")
-	void modelNameChanged(ValueChangeEvent<String> event) {
-		presenter.onModelNameChanged(event.getValue());
-	}
-
-	@UiHandler("modelVersion")
-	void modelVersionChanged(ValueChangeEvent<String> event) {
-		presenter.onModelVersionChanged(event.getValue());
-	}
-
 	@Override
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
 	}
 
-	@Override
-	public HasWidgets getEntityContainer() {
-		return entityContainer;
-	}
-
-	@Override
-	public void setModelName(String name) {
-		modelName.setText(name);
-	}
-
-	@Override
-	public void setModelVersion(String version) {
-		modelVersion.setText(version);
-	}
 
 	@UiHandler("newModel")
 	void newModelClicked(ClickEvent event) {
@@ -117,7 +80,7 @@ public class ModelBrowserPanelWidget extends Composite implements View {
 
 	@Override
 	public void clearModels() {
-		modelContainer.clear();
+		modelListContainer.clear();
 	}
 
 	@Override
@@ -132,16 +95,16 @@ public class ModelBrowserPanelWidget extends Composite implements View {
 				presenter.onModelClicked(id);
 			}
 		});
-		modelContainer.add(modelLabel);
+		modelListContainer.add(modelLabel);
 	}
 
 	public void removeModel(long id) {
-		for (int i = 0; i < modelContainer.getWidgetCount(); i++) {
-			Widget w = modelContainer.getWidget(i);
+		for (int i = 0; i < modelListContainer.getWidgetCount(); i++) {
+			Widget w = modelListContainer.getWidget(i);
 			if (w instanceof ModelLabel) {
 				ModelLabel modelLabel = (ModelLabel) w;
 				if (modelLabel.getModelId() == id) {
-					modelContainer.remove(i);
+					modelListContainer.remove(i);
 				}
 			}
 		}
@@ -149,7 +112,7 @@ public class ModelBrowserPanelWidget extends Composite implements View {
 
 	@Override
 	public void displayNoModelsLabel() {
-		modelContainer.add(new Label(messages.noModels()));
+		modelListContainer.add(new Label(messages.noModels()));
 	}
 
 	@Override
@@ -163,14 +126,14 @@ public class ModelBrowserPanelWidget extends Composite implements View {
 
 	@Override
 	public void unmarkModel() {
-		for (int i = 0; i < modelContainer.getWidgetCount(); i++) {
-			modelContainer.getWidget(i).removeStyleName(style.marked());
+		for (int i = 0; i < modelListContainer.getWidgetCount(); i++) {
+			modelListContainer.getWidget(i).removeStyleName(style.marked());
 		}
 	}
 
 	private ModelLabel getModelLabelByModelId(long id) {
-		for (int i = 0; i < modelContainer.getWidgetCount(); i++) {
-			Widget w = modelContainer.getWidget(i);
+		for (int i = 0; i < modelListContainer.getWidgetCount(); i++) {
+			Widget w = modelListContainer.getWidget(i);
 			if (w instanceof ModelLabel) {
 				ModelLabel modelLabel = (ModelLabel) w;
 				if (modelLabel.getModelId() == id) {
@@ -183,17 +146,22 @@ public class ModelBrowserPanelWidget extends Composite implements View {
 
 	@Override
 	public void displayNoRepositoriesLabel() {
-		repositoryContainer.add(new Label(messages.noRepositories()));
+		repositoryListContainer.add(new Label(messages.noRepositories()));
 	}
 
 	@Override
 	public void clearRepositories() {
-		repositoryContainer.clear();
+		repositoryListContainer.clear();
 	}
 
 	@Override
 	public void addRepository(String repositoryName) {
-		repositoryContainer.add(new Label(repositoryName));
+		repositoryListContainer.add(new Label(repositoryName));
+	}
+
+	@Override
+	public void clearModel() {
+		modelContainer.clear();
 	}
 
 }

@@ -7,7 +7,7 @@ import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.web.client.widgets.fieldpanel.FieldPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.fieldpanel.FieldPanelWidget;
-import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -20,11 +20,11 @@ public class EntityPanelPresenter implements Presenter {
 	}
 
 	private View view;
-	private ModelBrowserPanelPresenter modelPanelPresenter;
+	private ModelPanelPresenter modelPanelPresenter;
 	private List<FieldPanelPresenter> fieldPanelPresenters;
 	private Entity entity;
 
-	public EntityPanelPresenter(ModelBrowserPanelPresenter modelPanelPresenter, View view) {
+	public EntityPanelPresenter(ModelPanelPresenter modelPanelPresenter, View view) {
 		this.view = view;
 		view.setPresenter(this);
 		this.modelPanelPresenter = modelPanelPresenter;

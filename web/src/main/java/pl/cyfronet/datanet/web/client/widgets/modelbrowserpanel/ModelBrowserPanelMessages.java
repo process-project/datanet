@@ -5,9 +5,6 @@ import com.google.gwt.i18n.client.Messages;
 public interface ModelBrowserPanelMessages extends Messages {
 	String models();
 	String repositories();
-	String modelName();
-	String modelVersion();
-	String newEntity();
 	String newModel();
 	String saveModel();
 	String deployModel();

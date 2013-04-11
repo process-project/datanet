@@ -15,6 +15,7 @@ import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelWidget;
+import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -26,7 +27,7 @@ public class ClientController {
 	private RpcErrorHandler rpcErrorHandler;
 	private ModelValidator modelValidator;
 	private MainPanelPresenter mainPanelPresenter;
-	private ModelBrowserPanelPresenter modelPanelPresenter;
+	private ModelBrowserPanelPresenter modelBrowserPanelPresenter;
 	private MessagePresenter messagePresenter;
 	
 	public ClientController(LoginServiceAsync loginService, ModelServiceAsync modelService,
@@ -72,7 +73,7 @@ public class ClientController {
 	}
 	
 	
-	public void onSaveModel(final ModelBrowserPanelPresenter modelPanelPresenter) {
+	public void onSaveModel(final ModelPanelPresenter modelPanelPresenter) {
 		List<ModelError> modelErrors = modelValidator.validateModel(modelPanelPresenter.getModel());
 		
 		if(modelErrors.isEmpty()) {
@@ -85,9 +86,9 @@ public class ClientController {
 				public void onSuccess(Model m) {
 					messagePresenter.displayModelSavedMessage();
 					
-					modelPanelPresenter.addOrReplaceModel(m);
-					modelPanelPresenter.setMarked(m.getId());
-					modelPanelPresenter.onModelClicked(m.getId());
+					modelBrowserPanelPresenter.addOrReplaceModel(m);
+					modelBrowserPanelPresenter.setMarked(m.getId());
+					modelBrowserPanelPresenter.onModelClicked(m.getId());
 				}
 			});
 		} else {
@@ -111,8 +112,8 @@ public class ClientController {
 				}
 				@Override
 				public void onSuccess(Void v) {
-					modelPanelPresenter.displayModelDeployedInfo();
-					modelPanelPresenter.updateRepositoryList();
+					messagePresenter.displayModelDeployedMessage();
+					modelBrowserPanelPresenter.updateRepositoryList();
 				}
 			});
 		} else {
@@ -121,7 +122,7 @@ public class ClientController {
 	}
 	
 	private void showMainPanel() {
-		modelPanelPresenter = new ModelBrowserPanelPresenter(
+		modelBrowserPanelPresenter = new ModelBrowserPanelPresenter(
 				new ModelBrowserPanelWidget(), this, modelService, rpcErrorHandler
 				);
 		mainPanelPresenter = new MainPanelPresenter(
@@ -130,8 +131,8 @@ public class ClientController {
 		clearPanels();
 		RootPanel.get().add(RootLayoutPanel.get());
 		RootLayoutPanel.get().add(mainPanelPresenter.getWidget());
-		modelPanelPresenter.updateModelList();
-		modelPanelPresenter.updateRepositoryList();
+		modelBrowserPanelPresenter.updateModelList();
+		modelBrowserPanelPresenter.updateRepositoryList();
 	}
 
 	private void showLoginPanel() {

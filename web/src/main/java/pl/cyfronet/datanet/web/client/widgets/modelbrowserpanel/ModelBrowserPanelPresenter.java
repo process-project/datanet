@@ -15,6 +15,8 @@ import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelWidget;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -23,9 +25,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 public class ModelBrowserPanelPresenter implements Presenter {
 	interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
-		HasWidgets getEntityContainer();
-		void setModelName(String name);
-		void setModelVersion(String version);
 		void clearModels();
 		void addModel(long id, String name, String version);
 		void removeModel(long id);
@@ -35,13 +34,13 @@ public class ModelBrowserPanelPresenter implements Presenter {
 		void displayNoRepositoriesLabel();
 		void clearRepositories();
 		void addRepository(String repositoryName);
+		void clearModel();
 	}
 	
 	private View view;
-	private List<EntityPanelPresenter> entityPanelPresenters;
-	private Model model;
 	private List<Model> models;
 	private List<String> repositories;
+	private ModelPanelPresenter modelPanelPresenter;
 	private ModelServiceAsync modelService;
 	private RpcErrorHandler rpcErrorHandler;
 	private ClientController clientController;
@@ -54,73 +53,26 @@ public class ModelBrowserPanelPresenter implements Presenter {
 		this.modelService = modelServiceAsync;
 		this.rpcErrorHandler = rpcErrorHandler;
 		view.setPresenter(this);
-		entityPanelPresenters = new ArrayList<EntityPanelPresenter>();
-		model = new Model();
 	}
 
 	public IsWidget getWidget() {
 		return view;
 	}
 	
-	public void removeEntity(EntityPanelPresenter entityPanelPresenter) {
-		view.getEntityContainer().remove(entityPanelPresenter.getWidget().asWidget());
-		entityPanelPresenters.remove(entityPanelPresenter);
-		model.getEntities().remove(entityPanelPresenter.getEntity());
-	}
-
-	public Model getModel() {
-		return model;
-	}
-
-	@Override
-	public void onNewEntity() {
-		EntityPanelPresenter entityPanelPresenter = new EntityPanelPresenter(this, new EntityPanelWidget());
-		entityPanelPresenters.add(entityPanelPresenter);
-		view.getEntityContainer().add(entityPanelPresenter.getWidget().asWidget());
-		model.getEntities().add(entityPanelPresenter.getEntity());
-	}
-
-	@Override
-	public void onModelNameChanged(String modelName) {
-		model.setName(modelName);
-	}
-
-	@Override
-	public void onModelVersionChanged(String versionName) {
-		model.setVersion(versionName);
-	}
-	
-	public void setModel(Model model) {
-		this.model = model;
-		view.setModelName(model.getName());
-		view.setModelVersion(model.getVersion());
-		view.getEntityContainer().clear();
-		entityPanelPresenters.clear();
 		
-		for(Entity entity : model.getEntities()) {
-			displayEntity(entity);
-		}
-	}
-
-	private void displayEntity(Entity entity) {
-		EntityPanelPresenter entityPanelPresenter = new EntityPanelPresenter(this, new EntityPanelWidget());
-		entityPanelPresenter.setEntity(entity);
-		entityPanelPresenters.add(entityPanelPresenter);
-		view.getEntityContainer().add(entityPanelPresenter.getWidget().asWidget());
-	}
 	
 	@Override
 	public void onNewModel() {
-		view.getEntityContainer().clear();
-		model = new Model();
+		view.clearModel();
+		modelPanelPresenter = new ModelPanelPresenter(new ModelPanelWidget());
 		
 		view.unmarkModel();
 	}
 
 	@Override
 	public void onSaveModel() {
-		if(model != null) {
-			clientController.onSaveModel(this);
+		if(modelPanelPresenter != null) {
+			clientController.onSaveModel(modelPanelPresenter);
 		} else {
 			messagePresenter.errorNoModelPresent();
 		}
@@ -128,8 +80,8 @@ public class ModelBrowserPanelPresenter implements Presenter {
 	
 	@Override
 	public void onDeployModel() {
-		if(model != null) {
-			clientController.onDeployModel(this.getModel());
+		if(modelPanelPresenter != null) {
+			clientController.onDeployModel(modelPanelPresenter.getModel());
 		} else {
 			messagePresenter.errorNoModelPresent();
 		}
@@ -137,14 +89,15 @@ public class ModelBrowserPanelPresenter implements Presenter {
 	
 	@Override
 	public void onModelClicked(long id) {
-		if(model == null || model.getId() == id) {
+		if(modelPanelPresenter == null || modelPanelPresenter.getModel().getId() == id) {
 			return;
 		}
 		
-		view.getEntityContainer().clear();
-		model = getModelById(id);
+		view.clearModel();
+		Model model = getModelById(id);
+		modelPanelPresenter.setModel(model);
 
-		view.markModel(id);
+		view.markModel(model.getId());
 	}
 	
 	private void refreshModelList() {
@@ -163,8 +116,8 @@ public class ModelBrowserPanelPresenter implements Presenter {
 				view.addModel(model.getId(), model.getName(), model.getVersion());
 				
 				//mark active model
-				if (model != null && this.model.getId() == model.getId()) {
-					view.markModel(this.model.getId());
+				if (model != null && modelPanelPresenter.getModel().getId() == model.getId()) {
+					view.markModel(modelPanelPresenter.getModel().getId());
 				}
 			}
 		} else {
@@ -201,10 +154,6 @@ public class ModelBrowserPanelPresenter implements Presenter {
 	
 	public void displayModelSaveError(ModelError modelError) {
 		messagePresenter.displayModelSaveError(modelError);		
-	}
-	
-	public void displayModelDeployedInfo() {
-		messagePresenter.displayModelDeployedMessage();
 	}
 	
 	public void setMarked(long id) {
