@@ -15,7 +15,8 @@ import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelWidget;
-import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelWidget;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -28,6 +29,7 @@ public class ClientController {
 	private ModelValidator modelValidator;
 	private MainPanelPresenter mainPanelPresenter;
 	private ModelBrowserPanelPresenter modelBrowserPanelPresenter;
+	private RepositoryBrowserPanelPresenter repositoryBrowserPanelPresenter;
 	private MessagePresenter messagePresenter;
 	
 	public ClientController(LoginServiceAsync loginService, ModelServiceAsync modelService,
@@ -126,8 +128,13 @@ public class ClientController {
 				new ModelBrowserPanelWidget(), this, modelService, rpcErrorHandler
 				);
 		
+		repositoryBrowserPanelPresenter = new RepositoryBrowserPanelPresenter(
+				new RepositoryBrowserPanelWidget(), this, modelService, rpcErrorHandler
+				);
+		
 		MainPanelWidget mainPanelWidget = new MainPanelWidget();
 		mainPanelWidget.setModelBrowser(modelBrowserPanelPresenter.getWidget());
+		mainPanelWidget.setRepositoryBrowser(repositoryBrowserPanelPresenter.getWidget());
 		mainPanelPresenter = new MainPanelPresenter(
 				mainPanelWidget, this);
 		
@@ -137,7 +144,7 @@ public class ClientController {
 		RootPanel.get().add(RootLayoutPanel.get());
 		RootLayoutPanel.get().add(mainPanelPresenter.getWidget());
 		modelBrowserPanelPresenter.updateModelList();
-		modelBrowserPanelPresenter.updateRepositoryList();
+		repositoryBrowserPanelPresenter.updateRepositoryList();
 	}
 
 	private void showLoginPanel() {
