@@ -124,6 +124,12 @@ public class ClientController {
 	}
 	
 	private void showMainPanel() {
+		MainPanelWidget mainPanelWidget = new MainPanelWidget();
+		mainPanelPresenter = new MainPanelPresenter(
+				mainPanelWidget, this);
+		
+		messagePresenter = new MessagePresenter(mainPanelPresenter);
+		
 		modelBrowserPanelPresenter = new ModelBrowserPanelPresenter(
 				new ModelBrowserPanelWidget(), this, modelService, rpcErrorHandler
 				);
@@ -132,13 +138,8 @@ public class ClientController {
 				new RepositoryBrowserPanelWidget(), this, modelService, rpcErrorHandler
 				);
 		
-		MainPanelWidget mainPanelWidget = new MainPanelWidget();
 		mainPanelWidget.setModelBrowser(modelBrowserPanelPresenter.getWidget());
 		mainPanelWidget.setRepositoryBrowser(repositoryBrowserPanelPresenter.getWidget());
-		mainPanelPresenter = new MainPanelPresenter(
-				mainPanelWidget, this);
-		
-		messagePresenter = new MessagePresenter(mainPanelPresenter);
 		
 		clearPanels();
 		RootPanel.get().add(RootLayoutPanel.get());
