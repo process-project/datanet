@@ -1,7 +1,6 @@
 package pl.cyfronet.datanet.web.client.widgets.modelpanel;
 
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter.View;
-import pl.cyfronet.datanet.web.client.widgets.modelpanel.Presenter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -36,6 +35,10 @@ public class ModelPanelWidget extends Composite implements View {
 	TextBox modelVersion;
 	@UiField
 	Panel entityContainer;
+	
+	public ModelPanelWidget() {
+		initWidget(uiBinder.createAndBindUi(this));
+	}
 
 	@UiHandler("newEntity")
 	void newEntityClicked(ClickEvent event) {

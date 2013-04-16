@@ -82,5 +82,8 @@ public class ModelPanelPresenter implements Presenter {
 	public void onModelVersionChanged(String versionName) {
 		model.setVersion(versionName);
 	}
-
+	
+	public IsWidget getWidget() {
+		return view;
+	}
 }

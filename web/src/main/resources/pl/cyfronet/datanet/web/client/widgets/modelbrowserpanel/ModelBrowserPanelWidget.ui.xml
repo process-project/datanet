@@ -6,20 +6,6 @@
 		field="messages" />
 	<ui:style
 		type="pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelWidget.ModelBrowserPanelWidgetStyles">
-		.modelPanelSection {
-			padding: 5px;
-		}
-		
-		.modelPropertyLabel {
-			float: left;
-			margin-right: 5px;
-		}
-		
-		.modelPropertyInput {
-			float: left;
-			margin-right: 20px;
-		}
-		
 		.modelLabel {
 			cursor: pointer;
 		}
@@ -37,7 +23,7 @@
 			margin-top: 5px;
 		}
 	</ui:style>
-
+	
 	<g:DockLayoutPanel>
 		<g:north size="40">
 			<g:FlowPanel styleName="gwt-FlowPanel">
@@ -72,7 +58,7 @@
 					</g:StackLayoutPanel>
 				</g:west>
 				<g:center>
-					<g:FlowPanel ui:field="modelContainer"/>
+					<g:LayoutPanel ui:field="modelContainer"/>
 				</g:center>
 			</g:SplitLayoutPanel>
 		</g:center>

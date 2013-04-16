@@ -11,6 +11,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
@@ -162,6 +163,12 @@ public class ModelBrowserPanelWidget extends Composite implements View {
 	@Override
 	public void clearModel() {
 		modelContainer.clear();
+	}
+
+	@Override
+	public void setModelPanel(IsWidget widget) {
+		clearModel();
+		modelContainer.add(widget);
 	}
 
 }

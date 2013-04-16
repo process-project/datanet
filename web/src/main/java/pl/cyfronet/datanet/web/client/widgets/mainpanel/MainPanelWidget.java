@@ -2,7 +2,6 @@ package pl.cyfronet.datanet.web.client.widgets.mainpanel;
 
 import pl.cyfronet.datanet.web.client.messages.MessageDispatcher.MessageType;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter.View;
-import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelPresenter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -12,6 +11,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
@@ -29,6 +29,7 @@ public class MainPanelWidget extends Composite implements View {
 	private Timer messageLabelTimer;
 	
 	@UiField Panel modelsPanel;
+	@UiField Panel repositoriesPanel;
 	@UiField Label messageLabel;
 	@UiField MainPanelWidgetStyles style;
 	
@@ -70,6 +71,16 @@ public class MainPanelWidget extends Composite implements View {
 		}
 		
 		messageLabelTimer.schedule(2000);
+	}
+
+	@Override
+	public void setModelBrowser(IsWidget widget) {
+		modelsPanel.add(widget);
+	}
+
+	@Override
+	public void setRepositoryBrowser(IsWidget widget) {
+		repositoriesPanel.add(widget);
 	}
 	
 }

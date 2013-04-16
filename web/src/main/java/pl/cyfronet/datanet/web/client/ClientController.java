@@ -73,11 +73,11 @@ public class ClientController {
 	}
 	
 	
-	public void onSaveModel(final ModelPanelPresenter modelPanelPresenter) {
-		List<ModelError> modelErrors = modelValidator.validateModel(modelPanelPresenter.getModel());
+	public void onSaveModel(final Model model) {
+		List<ModelError> modelErrors = modelValidator.validateModel(model);
 		
 		if(modelErrors.isEmpty()) {
-			modelService.saveModel(modelPanelPresenter.getModel(), new AsyncCallback<Model>() {
+			modelService.saveModel(model, new AsyncCallback<Model>() {
 				@Override
 				public void onFailure(Throwable t) {
 					rpcErrorHandler.handleRpcError(t);
@@ -125,9 +125,14 @@ public class ClientController {
 		modelBrowserPanelPresenter = new ModelBrowserPanelPresenter(
 				new ModelBrowserPanelWidget(), this, modelService, rpcErrorHandler
 				);
+		
+		MainPanelWidget mainPanelWidget = new MainPanelWidget();
+		mainPanelWidget.setModelBrowser(modelBrowserPanelPresenter.getWidget());
 		mainPanelPresenter = new MainPanelPresenter(
-				new MainPanelWidget(), this);
+				mainPanelWidget, this);
+		
 		messagePresenter = new MessagePresenter(mainPanelPresenter);
+		
 		clearPanels();
 		RootPanel.get().add(RootLayoutPanel.get());
 		RootLayoutPanel.get().add(mainPanelPresenter.getWidget());

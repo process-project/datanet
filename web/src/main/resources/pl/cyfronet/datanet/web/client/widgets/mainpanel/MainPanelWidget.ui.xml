@@ -63,7 +63,7 @@
 					<g:header>
 						<ui:text from="{messages.repositories}" />
 					</g:header>
-					<g:Label>repos go here</g:Label>
+					<g:LayoutPanel ui:field="repositoriesPanel" />
 				</g:tab>
 			</g:TabLayoutPanel>
 		</g:center>
