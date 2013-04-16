@@ -47,14 +47,6 @@
 								<g:FlowPanel ui:field="modelListContainer" />
 							</g:ScrollPanel>
 						</g:stack>
-						<g:stack>
-							<g:header size="3">
-								<ui:text from="{messages.repositories}" />
-							</g:header>
-							<g:ScrollPanel>
-								<g:FlowPanel ui:field="repositoryListContainer" />
-							</g:ScrollPanel>
-						</g:stack>
 					</g:StackLayoutPanel>
 				</g:west>
 				<g:center>

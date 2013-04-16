@@ -115,7 +115,7 @@ public class ClientController {
 				@Override
 				public void onSuccess(Void v) {
 					messagePresenter.displayModelDeployedMessage();
-					modelBrowserPanelPresenter.updateRepositoryList();
+					repositoryBrowserPanelPresenter.updateRepositoryList();
 				}
 			});
 		} else {

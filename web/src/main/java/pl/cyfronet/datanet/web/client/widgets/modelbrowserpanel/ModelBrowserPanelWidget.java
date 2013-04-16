@@ -30,8 +30,6 @@ public class ModelBrowserPanelWidget extends Composite implements View {
 	@UiField
 	FlowPanel modelListContainer;
 	@UiField
-	FlowPanel repositoryListContainer;
-	@UiField
 	Panel modelContainer;
 	@UiField
 	ModelBrowserPanelWidgetStyles style;
@@ -143,21 +141,6 @@ public class ModelBrowserPanelWidget extends Composite implements View {
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public void displayNoRepositoriesLabel() {
-		repositoryListContainer.add(new Label(messages.noRepositories()));
-	}
-
-	@Override
-	public void clearRepositories() {
-		repositoryListContainer.clear();
-	}
-
-	@Override
-	public void addRepository(String repositoryName) {
-		repositoryListContainer.add(new Label(repositoryName));
 	}
 
 	@Override

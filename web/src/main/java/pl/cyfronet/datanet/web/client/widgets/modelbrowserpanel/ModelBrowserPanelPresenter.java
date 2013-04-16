@@ -24,16 +24,12 @@ public class ModelBrowserPanelPresenter implements Presenter {
 		void displayNoModelsLabel();
 		void markModel(long id);
 		void unmarkModel();
-		void displayNoRepositoriesLabel();
-		void clearRepositories();
-		void addRepository(String repositoryName);
 		void clearModel();
 		void setModelPanel(IsWidget widget);
 	}
 	
 	private View view;
 	private List<Model> models;
-	private List<String> repositories;
 	private ModelPanelPresenter modelPanelPresenter;
 	private ModelServiceAsync modelService;
 	private RpcErrorHandler rpcErrorHandler;
@@ -120,20 +116,6 @@ public class ModelBrowserPanelPresenter implements Presenter {
 		}
 	}
 	
-
-	protected void refreshRepositoryList() {
-		view.clearRepositories();
-
-		Collections.sort(repositories);
-		if (repositories.size() > 0) {
-			for(String repositoryName : repositories) {
-				view.addRepository(repositoryName);
-			}
-		} else {
-			view.displayNoRepositoriesLabel();
-		}
-	}
-		
 	private Model getModelById(Long id) {
 		for (Model m : models) {
 			if(m.getId() == id) {
@@ -176,20 +158,4 @@ public class ModelBrowserPanelPresenter implements Presenter {
 				refreshModelList();
 			}});
 	}
-	
-	public void updateRepositoryList() {
-		modelService.getRepositories(new AsyncCallback<List<String>>() {
-
-			@Override
-			public void onFailure(Throwable t) {
-				rpcErrorHandler.handleRpcError(t);
-			}
-			@Override
-			public void onSuccess(List<String> repositories) {
-				ModelBrowserPanelPresenter.this.repositories = repositories;
-				refreshRepositoryList();
-			}
-		});
-	}
-	
 }
