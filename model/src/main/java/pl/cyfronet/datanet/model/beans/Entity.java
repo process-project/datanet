@@ -22,6 +22,15 @@ public class Entity implements Serializable {
 		fields.add(idField);
 	}
 	
+	public Entity(Entity entity) {
+		name = entity.name;
+		
+		fields = new ArrayList<Field>();
+		for (Field field : entity.getFields()) {
+			fields.add(new Field(field));
+		}
+	}
+	
 	public String getName() {
 		return name;
 	}

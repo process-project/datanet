@@ -88,7 +88,8 @@ public class ModelBrowserPanelPresenter implements Presenter {
 		view.clearModel();
 		modelPanelPresenter = new ModelPanelPresenter(new ModelPanelWidget());
 		Model model = getModelById(id);
-		modelPanelPresenter.setModel(model);
+		//let's work on copy of stored model, and save it when requested
+		modelPanelPresenter.setModel(new Model(model));
 
 		view.setModelPanel(modelPanelPresenter.getWidget());
 		view.markModel(model.getId());

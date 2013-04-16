@@ -21,6 +21,11 @@ public class Field implements Serializable {
 		type = Type.Id;
 	}
 	
+	public Field(Field field) {
+		name = field.getName();
+		type = field.getType();
+	}
+	
 	public String getName() {
 		return name;
 	}
