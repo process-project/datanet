@@ -42,6 +42,7 @@ public class MarshallerTest {
 		Field field3 = new Field();
 		field3.setType(Field.Type.StringArray);
 		field3.setName("tagi");
+		field3.setRequired(false);
 
 		fields.add(field1);
 		fields.add(field2);
@@ -86,7 +87,7 @@ public class MarshallerTest {
 
 		ObjectNode object3 = object.putObject("count");
 		object3.put("type", "integer");
-		object3.put("required", true);
+		object3.put("required", false);
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ObjectWriter ow = mapper.writerWithDefaultPrettyPrinter();

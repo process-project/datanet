@@ -9,4 +9,5 @@ public interface Presenter {
 	void onRemoveField();
 	void onFieldNameChanged(String fieldName);
 	void onFieldTypeChanged(Type value);
+	void onFieldRequiredChanged(boolean value);
 }

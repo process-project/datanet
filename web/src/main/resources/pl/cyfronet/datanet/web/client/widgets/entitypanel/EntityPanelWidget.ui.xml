@@ -8,7 +8,7 @@
 			padding: 5px;
 			border: solid 1px black;
 			float: left;
-			width: 25em;
+			width: 34em;
 		}
 		.section {
 			margin: 5px;

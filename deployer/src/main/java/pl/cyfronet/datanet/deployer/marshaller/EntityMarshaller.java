@@ -104,7 +104,7 @@ public class EntityMarshaller {
 			throw new MarshallerException("Uknown field type: " + type.name());
 		}
 		
-		fieldObject.put("required", true);
+		fieldObject.put("required", field.isRequired());
 	}
 
 }
