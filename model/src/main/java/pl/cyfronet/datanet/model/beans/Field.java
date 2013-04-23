@@ -11,7 +11,8 @@ public class Field implements Serializable {
 		String, StringArray,
 		Integer, IntegerArray,
 		Float, FloatArray,
-		Boolean, BooleanArray
+		Boolean, BooleanArray,
+		File
 	}
 	
 	private String name;
