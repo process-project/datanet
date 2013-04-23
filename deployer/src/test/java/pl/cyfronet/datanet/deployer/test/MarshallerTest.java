@@ -43,10 +43,20 @@ public class MarshallerTest {
 		field3.setType(Field.Type.StringArray);
 		field3.setName("tagi");
 		field3.setRequired(false);
+		Field field4 = new Field();
+		field4.setType(Field.Type.File);
+		field4.setName("plik");
+		field4.setRequired(true);
+		Field field5 = new Field();
+		field5.setType(Field.Type.File);
+		field5.setName("pliksss");
+		field5.setRequired(true);
 
 		fields.add(field1);
 		fields.add(field2);
 		fields.add(field3);
+		fields.add(field4);
+		fields.add(field5);
 
 		entity.setFields(fields);
 		model.getEntities().add(entity);
@@ -99,6 +109,8 @@ public class MarshallerTest {
 	public void marshallEntity() throws MarshallerException {
 		Entity entity = generateModel().getEntities().get(0);
 		EntityMarshaller m = new EntityMarshaller(true);
-		System.out.println(m.marshall(entity));
+		String result = m.marshall(entity);
+		System.out.println(result);
+		Assert.assertFalse(result.isEmpty());
 	}
 }
