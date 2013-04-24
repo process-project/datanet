@@ -72,6 +72,11 @@ public class EntityMarshaller {
 		for (Field field : entity.getFields()) {
 			buildField(field, properties, links);
 		}
+		
+		if(links.size() == 0) {
+			//links arrayNode is empty, so we don't need it
+			objectNode.remove("links");
+		}
 
 		// serialize and return
 		try {
