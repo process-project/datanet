@@ -34,10 +34,6 @@ public class FieldPanelPresenter implements Presenter {
 		view.getName().setText(field.getName());
 		view.selectType(field.getType());
 		view.setRequired(field.isRequired());
-		
-		if(field.getType() == Type.Id && field.getName() != null && field.getName().equals("id")) {
-			view.setEditable(false);
-		}
 	}
 	
 	public Field getField() {

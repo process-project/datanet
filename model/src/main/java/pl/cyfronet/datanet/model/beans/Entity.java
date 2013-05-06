@@ -15,12 +15,6 @@ public class Entity implements Serializable {
 	public Entity() {
 		fields = new ArrayList<Field>();
 		
-		//there should always be an id field
-		Field idField = new Field();
-		idField.setName("id");
-		idField.setType(Type.Id);
-		idField.setRequired(true);
-		fields.add(idField);
 	}
 	
 	public Entity(Entity entity) {

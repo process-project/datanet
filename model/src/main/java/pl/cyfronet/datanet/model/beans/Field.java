@@ -6,7 +6,6 @@ public class Field implements Serializable {
 	private static final long serialVersionUID = 7956535573658372420L;
 	
 	public enum Type {
-		Id,
 		ObjectId, ObjectIdArray,
 		String, StringArray,
 		Integer, IntegerArray,
@@ -20,7 +19,7 @@ public class Field implements Serializable {
 	private boolean required;
 	
 	public Field() {
-		type = Type.Id;
+		type = Type.String;
 		required = true;
 	}
 	

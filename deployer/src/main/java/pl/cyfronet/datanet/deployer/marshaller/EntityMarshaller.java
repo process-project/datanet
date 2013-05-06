@@ -24,7 +24,6 @@ public class EntityMarshaller {
 	static {
 		Map<Field.Type, String> map = new HashMap<Field.Type, String>();
 		
-		map.put(Field.Type.Id, JsonFormatTypes.INTEGER.name().toLowerCase());
 		map.put(Field.Type.ObjectId, JsonFormatTypes.INTEGER.name().toLowerCase());
 		map.put(Field.Type.String, JsonFormatTypes.STRING.name().toLowerCase());
 		map.put(Field.Type.Integer, JsonFormatTypes.INTEGER.name().toLowerCase());
