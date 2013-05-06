@@ -24,7 +24,7 @@ public class EntityMarshaller {
 	static {
 		Map<Field.Type, String> map = new HashMap<Field.Type, String>();
 		
-		map.put(Field.Type.ObjectId, JsonFormatTypes.INTEGER.name().toLowerCase());
+		map.put(Field.Type.ObjectId, JsonFormatTypes.STRING.name().toLowerCase());
 		map.put(Field.Type.String, JsonFormatTypes.STRING.name().toLowerCase());
 		map.put(Field.Type.Integer, JsonFormatTypes.INTEGER.name().toLowerCase());
 		map.put(Field.Type.Float, JsonFormatTypes.NUMBER.name().toLowerCase());
@@ -34,7 +34,7 @@ public class EntityMarshaller {
 		
 		Map<Field.Type, String> arrayMap = new HashMap<Field.Type, String>();
 		
-		arrayMap.put(Field.Type.ObjectIdArray, JsonFormatTypes.INTEGER.name().toLowerCase());
+		arrayMap.put(Field.Type.ObjectIdArray, JsonFormatTypes.STRING.name().toLowerCase());
 		arrayMap.put(Field.Type.StringArray, JsonFormatTypes.STRING.name().toLowerCase());
 		arrayMap.put(Field.Type.IntegerArray, JsonFormatTypes.INTEGER.name().toLowerCase());
 		arrayMap.put(Field.Type.FloatArray, JsonFormatTypes.NUMBER.name().toLowerCase());
