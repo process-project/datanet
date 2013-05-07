@@ -106,4 +106,14 @@ public class RpcModelService  implements ModelService {
 			throw new ModelException(Code.RepositoryRetrievalError);
 		}
 	}
+
+	@Override
+	public void undeployRepository(String repositoryName) throws ModelException {
+		try {
+			deployer.undeployRepository(repositoryName);
+		} catch (DeployerException e) {
+			log.error("Deployer undeploy repository failure", e);
+			throw new ModelException(Code.RepositoryUndeployError);
+		}
+	}
 }

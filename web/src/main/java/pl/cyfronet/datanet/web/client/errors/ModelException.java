@@ -9,6 +9,7 @@ public class ModelException extends Exception {
 		ModelRetrievalError,
 		ModelDeployError,
 		RepositoryRetrievalError,
+		RepositoryUndeployError,
 		AuthorizationError
 	}
 	

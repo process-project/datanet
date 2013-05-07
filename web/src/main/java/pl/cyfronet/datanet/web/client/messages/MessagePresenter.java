@@ -19,12 +19,20 @@ public class MessagePresenter {
 		dispatcher.displayMessage(messages.errorNoModelPresent(), MessageType.ERROR);
 	}
 	
+	public void errorNoRepositoryPresent() {
+		dispatcher.displayMessage(messages.errorNoRepositoryPresent(), MessageType.ERROR);
+	}
+	
 	public void displayModelSavedMessage() {
 		dispatcher.displayMessage(messages.modelSaved(), MessageType.INFO);
 	}
 	
 	public void displayModelDeployedMessage() {
 		dispatcher.displayMessage(messages.modelDeployed(), MessageType.INFO);
+	}
+	
+	public void displayRepositoryUndeployedMessage() {
+		dispatcher.displayMessage(messages.repositoryUndeployed(), MessageType.INFO);
 	}
 	
 	public void displayModelSaveError(ModelError modelError) {

@@ -4,6 +4,7 @@ import com.google.gwt.i18n.client.Messages;
 
 public interface MessagePresenterMessages extends Messages {
 	String errorNoModelPresent();
+	String errorNoRepositoryPresent();
 	String errorModelSavePrefix();
 	String errorModelDeployPrefix();
 	String errorEmptyEntityName();
@@ -16,4 +17,5 @@ public interface MessagePresenterMessages extends Messages {
 	String errorNullFieldType();
 	String modelSaved();
 	String modelDeployed();
+	String repositoryUndeployed();
 }

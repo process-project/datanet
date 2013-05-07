@@ -123,6 +123,23 @@ public class ClientController {
 		}
 	}
 	
+	public void onUndeployRepository(String repositoryName) {
+		modelService.undeployRepository(repositoryName, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable t) {
+				rpcErrorHandler.handleRpcError(t);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				messagePresenter.displayRepositoryUndeployedMessage();
+				repositoryBrowserPanelPresenter.updateRepositoryList();
+			}
+			
+		});
+	}
+	
 	private void showMainPanel() {
 		MainPanelWidget mainPanelWidget = new MainPanelWidget();
 		mainPanelPresenter = new MainPanelPresenter(

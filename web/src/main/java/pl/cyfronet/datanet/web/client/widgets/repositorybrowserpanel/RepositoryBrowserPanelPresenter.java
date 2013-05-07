@@ -80,9 +80,15 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 
 	@Override
 	public void onUndeployRepository() {
-		// TODO Auto-generated method stub
-		// get repository name
-		// call deployer.undeploy()
+		if(repositoryPanelPresenter != null) {
+			String applicationName = repositoryPanelPresenter.getRepository();
+			String repositoryName = applicationName.substring(4);
+			clientController.onUndeployRepository(repositoryName);
+			view.clearRepository();
+			repositoryPanelPresenter = null;
+		} else {
+			messagePresenter.errorNoRepositoryPresent();
+		}
 	}
 
 	@Override
