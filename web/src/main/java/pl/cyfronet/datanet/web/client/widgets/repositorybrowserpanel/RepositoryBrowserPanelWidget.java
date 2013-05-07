@@ -4,6 +4,7 @@ import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryB
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -22,6 +23,18 @@ public class RepositoryBrowserPanelWidget extends Composite implements View {
 	interface RepositoryBrowserPanelWidgetUiBinder extends
 			UiBinder<Widget, RepositoryBrowserPanelWidget> {
 	}
+	
+	private class RepositoryLabel extends Label {
+		private String repositoryName;
+
+		public String getRepositoryName() {
+			return repositoryName;
+		}
+
+		public void setRepositoryName(String repositoryName) {
+			this.repositoryName = repositoryName;
+		}
+	}
 
 	private Presenter presenter;
 	private RepositoryBrowserPanelMessages messages;
@@ -34,7 +47,7 @@ public class RepositoryBrowserPanelWidget extends Composite implements View {
 	RepositoryBrowserPanelWidgetStyles style;
 	
 	interface RepositoryBrowserPanelWidgetStyles extends CssResource {
-		String modelLabel();
+		String repositoryLabel();
 		String marked();
 	}
 
@@ -50,7 +63,7 @@ public class RepositoryBrowserPanelWidget extends Composite implements View {
 
 
 	@UiHandler("undeployRepository")
-	void undeployModelClicked(ClickEvent event) {
+	void undeployRepositoryClicked(ClickEvent event) {
 		presenter.onUndeployRepository();
 	}
 
@@ -65,8 +78,20 @@ public class RepositoryBrowserPanelWidget extends Composite implements View {
 	}
 
 	@Override
-	public void addRepository(String repositoryName) {
-		repositoryListContainer.add(new Label(repositoryName));
+	public void addRepository(final String repositoryName) {
+		RepositoryLabel repositorylabel = new RepositoryLabel();
+		repositorylabel.setText(repositoryName);
+		repositorylabel.setRepositoryName(repositoryName);
+		repositorylabel.setStyleName(style.repositoryLabel(), true);
+		repositorylabel.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.onRepositoryClicked(repositoryName);
+			}
+			
+		});
+		repositoryListContainer.add(repositorylabel);
 	}
 
 	@Override
@@ -80,4 +105,33 @@ public class RepositoryBrowserPanelWidget extends Composite implements View {
 		repositoryContainer.add(widget);
 	}
 
+	private RepositoryLabel getRepositoryLabelByRepositoryName(String repositoryName) {
+		for (int i = 0; i < repositoryListContainer.getWidgetCount(); i++) {
+			Widget w = repositoryListContainer.getWidget(i);
+			if (w instanceof RepositoryLabel) {
+				RepositoryLabel repositoryLabel = (RepositoryLabel) w;
+				if (repositoryLabel.getRepositoryName().equals(repositoryName)) {
+					return repositoryLabel;
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void markRepository(String repositoryName) {
+		unmarkRepository();
+		RepositoryLabel activeRepository = getRepositoryLabelByRepositoryName(repositoryName);
+		if (activeRepository != null ) {
+			activeRepository.setStyleName(style.marked(), true);
+		}
+	}
+
+	@Override
+	public void unmarkRepository() {
+		for (int i = 0; i < repositoryListContainer.getWidgetCount(); i++) {
+			repositoryListContainer.getWidget(i)
+					.removeStyleName(style.marked());
+		}
+	}
 }

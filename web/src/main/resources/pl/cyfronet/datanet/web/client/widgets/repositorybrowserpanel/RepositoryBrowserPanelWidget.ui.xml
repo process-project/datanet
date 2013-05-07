@@ -6,7 +6,7 @@
 		field="messages" />
 	<ui:style
 		type="pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelWidget.RepositoryBrowserPanelWidgetStyles">
-		.modelLabel {
+		.repositoryLabel {
 			cursor: pointer;
 		}
 		

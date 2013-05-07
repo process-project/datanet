@@ -97,6 +97,7 @@ public class ModelBrowserPanelWidget extends Composite implements View {
 		modelListContainer.add(modelLabel);
 	}
 
+	//TODO: probably not needed, due to using refresh and updating list in presenter
 	public void removeModel(long id) {
 		for (int i = 0; i < modelListContainer.getWidgetCount(); i++) {
 			Widget w = modelListContainer.getWidget(i);

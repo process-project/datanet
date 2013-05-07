@@ -7,6 +7,8 @@ import pl.cyfronet.datanet.web.client.ClientController;
 import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
 import pl.cyfronet.datanet.web.client.messages.MessagePresenter;
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
+import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelWidget;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -14,9 +16,11 @@ import com.google.gwt.user.client.ui.IsWidget;
 public class RepositoryBrowserPanelPresenter implements Presenter {
 	interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
-		void displayNoRepositoriesLabel();
 		void clearRepositories();
 		void addRepository(String repositoryName);
+		void displayNoRepositoriesLabel();
+		void markRepository(String repositoryName);
+		void unmarkRepository();
 		void clearRepository();
 		void setRepositoryPanel(IsWidget widget);
 	}
@@ -27,6 +31,7 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 	private RpcErrorHandler rpcErrorHandler;
 	private ClientController clientController;
 	private MessagePresenter messagePresenter;
+	private RepositoryPanelPresenter repositoryPanelPresenter;
 	
 	public RepositoryBrowserPanelPresenter(View view, ClientController clientController, ModelServiceAsync modelServiceAsync, RpcErrorHandler errorHandler) {
 		this.view = view;
@@ -48,6 +53,10 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 		if (repositories.size() > 0) {
 			for(String repositoryName : repositories) {
 				view.addRepository(repositoryName);
+				
+				if(repositoryPanelPresenter != null && repositoryPanelPresenter.getRepository().equals(repositoryName)) {
+					view.markRepository(repositoryName);
+				}
 			}
 		} else {
 			view.displayNoRepositoriesLabel();
@@ -72,6 +81,22 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 	@Override
 	public void onUndeployRepository() {
 		// TODO Auto-generated method stub
+		// get repository name
+		// call deployer.undeploy()
+	}
+
+	@Override
+	public void onRepositoryClicked(String repositoryName) {
+		if(repositoryPanelPresenter != null && repositoryPanelPresenter.getRepository().equals(repositoryName)) {
+			return;
+		}
+		
+		view.clearRepository();
+		repositoryPanelPresenter = new RepositoryPanelPresenter(new RepositoryPanelWidget());
+		repositoryPanelPresenter.setRepository(repositoryName);
+		
+		view.setRepositoryPanel(repositoryPanelPresenter.getWidget());
+		view.markRepository(repositoryName);
 	}
 	
 }
