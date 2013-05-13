@@ -38,7 +38,7 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 		this.clientController = clientController;
 		this.messagePresenter = clientController.getMessagePresenter();
 		this.modelService = modelServiceAsync;
-		this.rpcErrorHandler = rpcErrorHandler;
+		this.rpcErrorHandler = errorHandler;
 		view.setPresenter(this);
 	}
 
