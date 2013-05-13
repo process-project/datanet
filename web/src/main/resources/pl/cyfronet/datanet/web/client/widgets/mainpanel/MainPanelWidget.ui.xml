@@ -40,11 +40,14 @@
 				padding: 2px;
 				margin-left: 20em;
 			}
+			.logo {
+				float: left;
+			}
 		</ui:style>
 	<g:DockLayoutPanel>
 		<g:north size="40">
 			<g:FlowPanel styleName="{style.header}">
-				<g:Image url="img/datanet-logo-143x40.png" altText="{messages.datanetMain}"/>
+				<g:Image url="img/datanet-logo-143x40.png" altText="{messages.datanetMain}" styleName="{style.logo}"/>
 				<g:Label ui:field="messageLabel" styleName="gwt-Label {style.errorLabel}"
 					visible="false" />
 				<g:Button ui:field="logout" text="{messages.logout}"
