@@ -25,8 +25,11 @@ public class Model implements Serializable {
 		name = model.getName();
 		version = model.version;
 		entities = new ArrayList<Entity>();
-		for(Entity entity : model.getEntities()) {
-			entities.add(new Entity(entity));
+		
+		if(model.getEntities() != null) {
+			for(Entity entity : model.getEntities()) {
+				entities.add(new Entity(entity));
+			}
 		}
 		
 	}
