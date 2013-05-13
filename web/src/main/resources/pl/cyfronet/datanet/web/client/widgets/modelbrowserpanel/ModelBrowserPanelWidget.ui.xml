@@ -9,30 +9,28 @@
 		.modelLabel {
 			cursor: pointer;
 		}
-		
 		.marked {
 			font-weight: bold;
 		}
-		
 		.header {
 			margin: 3px;
 		}
-		
 		.menuButton {
 			margin-left: 5px;
 			margin-top: 5px;
 		}
+		.action {
+			cursor: pointer;
+			margin-left: 5px;
+			margin-top: 5px;
+		}
 	</ui:style>
-	
 	<g:DockLayoutPanel>
 		<g:north size="40">
 			<g:FlowPanel styleName="gwt-FlowPanel">
-				<g:Button ui:field="newModel" text="{messages.newModel}"
-					styleName="gwt-Button {style.menuButton}" />
-				<g:Button ui:field="saveModel" text="{messages.saveModel}"
-					styleName="gwt-Button {style.menuButton}" />
-				<g:Button ui:field="deployModel" text="{messages.deployModel}"
-					styleName="gwt-Button {style.menuButton}" />
+				<g:Image ui:field="newModel" url="img/new-model.png" title="{messages.newModel}" styleName="gwt-Image {style.action}"/>
+				<g:Image ui:field="saveModel" url="img/save-model.png" title="{messages.saveModel}" styleName="gwt-Image {style.action}"/>
+				<g:Image ui:field="deployModel" url="img/deploy-model.png" title="{messages.deployModel}" styleName="gwt-Image {style.action}"/>
 			</g:FlowPanel>
 		</g:north>
 		<g:center>
@@ -44,7 +42,7 @@
 								<ui:text from="{messages.models}" />
 							</g:header>
 							<g:ScrollPanel>
-								<g:FlowPanel ui:field="modelListContainer" />
+								<g:FlowPanel ui:field="modelListContainer"/>
 							</g:ScrollPanel>
 						</g:stack>
 					</g:StackLayoutPanel>

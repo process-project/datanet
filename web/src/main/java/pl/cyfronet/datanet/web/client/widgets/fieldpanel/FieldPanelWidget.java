@@ -10,10 +10,10 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -26,7 +26,7 @@ public class FieldPanelWidget extends Composite implements View {
 
 	@UiField(provided = true) ListBox type;
 	@UiField TextBox name;
-	@UiField Button remove;
+	@UiField Image remove;
 	@UiField CheckBox required;
 
 	public FieldPanelWidget() {

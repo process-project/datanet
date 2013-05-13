@@ -1,44 +1,39 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:with
-		type="pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelMessages"
-		field="messages" />
-	<ui:style
-		type="pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelWidget.ModelPanelWidgetStyles">
-			.modelPanelSection {
-				padding: 5px;
-			}
-			
-			.modelPropertyLabel {
-				float: left;
-				margin-right: 5px;
-			}
-			
-			.modelPropertyInput {
-				float: left;
-				margin-right: 20px;
-			}
-		</ui:style>
-
+	<ui:with type="pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelMessages" field="messages" />
+	<ui:style type="pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelWidget.ModelPanelWidgetStyles">
+		.modelPanelSection {
+			padding: 5px;
+		}
+		.modelPropertyLabel {
+			float: left;
+			margin-right: 5px;
+		}
+		.modelPropertyInput {
+			float: left;
+			margin-right: 20px;
+		}
+		.action {
+			margin-left: 5px;
+			margin-top: 5px;
+			cursor: pointer;
+		}
+	</ui:style>
 	<g:DockLayoutPanel>
 		<g:north size="40">
 			<g:FlowPanel styleName="{style.modelPanelSection}">
-				<g:Label text="{messages.modelName}" styleName="gwt-Label {style.modelPropertyLabel}" />
-				<g:TextBox ui:field="modelName"
-					styleName="gwt-TextBox {style.modelPropertyInput}" />
-				<g:Label text="{messages.modelVersion}" styleName="gt-Label {style.modelPropertyLabel}" />
-				<g:TextBox ui:field="modelVersion"
-					styleName="gwt-TextBox {style.modelPropertyInput}" />
+				<g:Label text="{messages.modelName}" styleName="gwt-Label {style.modelPropertyLabel}"/>
+				<g:TextBox ui:field="modelName" styleName="gwt-TextBox {style.modelPropertyInput}"/>
+				<g:Label text="{messages.modelVersion}" styleName="gt-Label {style.modelPropertyLabel}"/>
+				<g:TextBox ui:field="modelVersion" styleName="gwt-TextBox {style.modelPropertyInput}"/>
 			</g:FlowPanel>
 		</g:north>
 		<g:north size="40">
-			<g:FlowPanel styleName="{style.modelPanelSection}">
-				<g:Button ui:field="newEntity" text="{messages.newEntity}" />
-			</g:FlowPanel>
+			<g:Image ui:field="newEntity" url="img/new-entity.png" title="{messages.newEntity}" styleName="gwt-Image {style.action}"/>
 		</g:north>
 		<g:center>
-			<g:FlowPanel ui:field="entityContainer" />
+			<g:FlowPanel ui:field="entityContainer"/>
 		</g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder>

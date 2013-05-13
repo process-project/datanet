@@ -9,26 +9,23 @@
 		.repositoryLabel {
 			cursor: pointer;
 		}
-		
 		.marked {
 			font-weight: bold;
 		}
-		
 		.header {
 			margin: 3px;
 		}
-		
-		.menuButton {
+		.action {
 			margin-left: 5px;
 			margin-top: 5px;
+			cursor: pointer;
 		}
 	</ui:style>
 	
 	<g:DockLayoutPanel>
 		<g:north size="40">
 			<g:FlowPanel styleName="gwt-FlowPanel">
-				<g:Button ui:field="undeployRepository" text="{messages.undeployRepository}"
-					styleName="gwt-Button {style.menuButton}" />
+				<g:Image ui:field="undeployRepository" url="img/undeploy-model.png" title="{messages.undeployRepository}" styleName="gwt-Image {style.action}" />
 			</g:FlowPanel>
 		</g:north>
 		<g:center>

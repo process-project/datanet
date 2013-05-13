@@ -18,16 +18,21 @@
 			float: left;
 			margin-right: 5px;
 		}
+		.action {
+			margin-left: 5px;
+			margin-top: 5px;
+			cursor: pointer;
+		}
 	</ui:style>
 	<g:FlowPanel styleName="{style.entityPanel}">
 		<g:FlowPanel styleName="{style.section}">
 			<g:Label text="{messages.entityNameLabel}" styleName="{style.element}"/>
 			<g:TextBox ui:field="entityName" styleName="gwt-TextBox {style.element}"/>
-			<g:Button ui:field="removeEntity" text="{messages.removeEntityLabel}" styleName="gwt-Button"/>
+			<g:Image ui:field="removeEntity" url="img/delete-entity.png" title="{messages.removeEntityLabel}" styleName="gwt-Image {style.action}"/>
 		</g:FlowPanel>
 		<g:FlowPanel ui:field="fieldContainer"/>
 		<g:FlowPanel styleName="{style.section}">
-			<g:Button ui:field="newField" text="{messages.newFieldActionLabel}" styleName="gwt-Button {style.element}"/>
+			<g:Image ui:field="newField" url="img/new-field.png" title="{messages.newFieldActionLabel}" styleName="gwt-Image {style.action}"/>
 		</g:FlowPanel>
 	</g:FlowPanel>
 </ui:UiBinder>

@@ -10,19 +10,16 @@
 				margin: 20px auto;
 				width: 80%;
 			}
-			
 			.logout-button {
 				float: right;
+				cursor: pointer;
 			}
-			
 			.datanet-label {
 				float: left;
 			}
-			
 			.header {
 				margin: 3px;
 			}
-			
 			.errorLabel {
 				color: white;
 				background-color: red;
@@ -31,7 +28,6 @@
 				padding: 2px;
 				margin-left: 20em;
 			}
-			
 			.infoLabel {
 				color: white;
 				background-color: green;
@@ -50,8 +46,7 @@
 				<g:Image url="img/datanet-logo-143x40.png" altText="{messages.datanetMain}" styleName="{style.logo}"/>
 				<g:Label ui:field="messageLabel" styleName="gwt-Label {style.errorLabel}"
 					visible="false" />
-				<g:Button ui:field="logout" text="{messages.logout}"
-					styleName="gwt-Button {style.logout-button}"></g:Button>
+				<g:Image ui:field="logout" url="img/logout.png" altText="{messages.logout}" title="{messages.logout}" styleName="{style.logout-button}"/>
 			</g:FlowPanel>
 		</g:north>
 		<g:center>
