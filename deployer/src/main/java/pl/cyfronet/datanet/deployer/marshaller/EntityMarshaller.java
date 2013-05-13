@@ -109,7 +109,7 @@ public class EntityMarshaller {
 			
 			ObjectNode linksEntry = linksArray.addObject();
 			linksEntry.put("rel", field.getName() + "_id");
-			linksEntry.put("href", "/entity/file/{" + field.getName() + "_id}");
+			linksEntry.put("href", "/file/{" + field.getName() + "_id}");
 			linksEntry.put("targetSchema", "file");
 		} else {
 			// unknown type
@@ -117,5 +117,4 @@ public class EntityMarshaller {
 		}
 		
 	}
-
 }
