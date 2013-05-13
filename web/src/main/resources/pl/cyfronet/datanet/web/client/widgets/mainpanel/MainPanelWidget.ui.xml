@@ -44,7 +44,7 @@
 	<g:DockLayoutPanel>
 		<g:north size="40">
 			<g:FlowPanel styleName="{style.header}">
-				<g:Label styleName="gwt-Label {style.datanet-label}" text="{messages.datanetMain}" />
+				<g:Image url="img/datanet-logo-143x40.png" altText="{messages.datanetMain}"/>
 				<g:Label ui:field="messageLabel" styleName="gwt-Label {style.errorLabel}"
 					visible="false" />
 				<g:Button ui:field="logout" text="{messages.logout}"

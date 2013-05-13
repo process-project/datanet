@@ -20,5 +20,6 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/ria/**").addResourceLocations("/ria/").setCachePeriod(YEAR);
 		registry.addResourceHandler("/css/**").addResourceLocations("/css/").setCachePeriod(YEAR);
+		registry.addResourceHandler("/img/**").addResourceLocations("/img/").setCachePeriod(YEAR);
 	}
 }
