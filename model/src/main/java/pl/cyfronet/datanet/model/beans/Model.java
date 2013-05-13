@@ -20,6 +20,17 @@ public class Model implements Serializable {
 		entities = new ArrayList<Entity>();
 	}
 	
+	public Model(Model model) {
+		id = model.getId();
+		name = model.getName();
+		version = model.version;
+		entities = new ArrayList<Entity>();
+		for(Entity entity : model.getEntities()) {
+			entities.add(new Entity(entity));
+		}
+		
+	}
+	
 	public long getId() {
 		return id;
 	}

@@ -1,0 +1,58 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:with
+		type="pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelMessages"
+		field="messages" />
+	<ui:style
+		type="pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelWidget.ModelBrowserPanelWidgetStyles">
+		.modelLabel {
+			cursor: pointer;
+		}
+		
+		.marked {
+			font-weight: bold;
+		}
+		
+		.header {
+			margin: 3px;
+		}
+		
+		.menuButton {
+			margin-left: 5px;
+			margin-top: 5px;
+		}
+	</ui:style>
+	
+	<g:DockLayoutPanel>
+		<g:north size="40">
+			<g:FlowPanel styleName="gwt-FlowPanel">
+				<g:Button ui:field="newModel" text="{messages.newModel}"
+					styleName="gwt-Button {style.menuButton}" />
+				<g:Button ui:field="saveModel" text="{messages.saveModel}"
+					styleName="gwt-Button {style.menuButton}" />
+				<g:Button ui:field="deployModel" text="{messages.deployModel}"
+					styleName="gwt-Button {style.menuButton}" />
+			</g:FlowPanel>
+		</g:north>
+		<g:center>
+			<g:SplitLayoutPanel>
+				<g:west size="200">
+					<g:StackLayoutPanel unit="EM">
+						<g:stack>
+							<g:header size="3">
+								<ui:text from="{messages.models}" />
+							</g:header>
+							<g:ScrollPanel>
+								<g:FlowPanel ui:field="modelListContainer" />
+							</g:ScrollPanel>
+						</g:stack>
+					</g:StackLayoutPanel>
+				</g:west>
+				<g:center>
+					<g:LayoutPanel ui:field="modelContainer"/>
+				</g:center>
+			</g:SplitLayoutPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder>

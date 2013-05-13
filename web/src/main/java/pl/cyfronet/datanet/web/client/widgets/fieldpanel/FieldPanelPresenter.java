@@ -13,6 +13,7 @@ public class FieldPanelPresenter implements Presenter {
 		HasText getName();
 		void selectType(Type type);
 		void setEditable(boolean editable);
+		void setRequired(boolean required);
 	}
 	
 	private View view;
@@ -25,16 +26,14 @@ public class FieldPanelPresenter implements Presenter {
 		this.entityPanelPresenter = entityPanelPresenter;
 		field = new Field();
 		view.selectType(field.getType());
+		view.setRequired(field.isRequired());
 	}
 
 	public void setField(Field field) {
 		this.field = field;
 		view.getName().setText(field.getName());
 		view.selectType(field.getType());
-		
-		if(field.getType() == Type.Id && field.getName() != null && field.getName().equals("id")) {
-			view.setEditable(false);
-		}
+		view.setRequired(field.isRequired());
 	}
 	
 	public Field getField() {
@@ -59,5 +58,10 @@ public class FieldPanelPresenter implements Presenter {
 	@Override
 	public void onFieldTypeChanged(Type value) {
 		field.setType(value);
+	}
+
+	@Override
+	public void onFieldRequiredChanged(boolean value) {
+		field.setRequired(value);
 	}
 }

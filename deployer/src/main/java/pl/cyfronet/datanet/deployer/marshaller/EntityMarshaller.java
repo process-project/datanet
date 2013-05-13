@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class EntityMarshaller {
@@ -20,18 +21,10 @@ public class EntityMarshaller {
 	private static final Map<Field.Type, String> typeMap;
 	private static final Map<Field.Type, String> arrayTypeMap;
 
-	// Id,
-	// ObjectId, ObjectIdArray,
-	// String, StringArray,
-	// Integer, IntegerArray,
-	// Float, FloatArray,
-	// Boolean, BooleanArray
-
 	static {
 		Map<Field.Type, String> map = new HashMap<Field.Type, String>();
 		
-		map.put(Field.Type.Id, JsonFormatTypes.INTEGER.name().toLowerCase());
-		map.put(Field.Type.ObjectId, JsonFormatTypes.INTEGER.name().toLowerCase());
+		map.put(Field.Type.ObjectId, JsonFormatTypes.STRING.name().toLowerCase());
 		map.put(Field.Type.String, JsonFormatTypes.STRING.name().toLowerCase());
 		map.put(Field.Type.Integer, JsonFormatTypes.INTEGER.name().toLowerCase());
 		map.put(Field.Type.Float, JsonFormatTypes.NUMBER.name().toLowerCase());
@@ -41,7 +34,7 @@ public class EntityMarshaller {
 		
 		Map<Field.Type, String> arrayMap = new HashMap<Field.Type, String>();
 		
-		arrayMap.put(Field.Type.ObjectIdArray, JsonFormatTypes.INTEGER.name().toLowerCase());
+		arrayMap.put(Field.Type.ObjectIdArray, JsonFormatTypes.STRING.name().toLowerCase());
 		arrayMap.put(Field.Type.StringArray, JsonFormatTypes.STRING.name().toLowerCase());
 		arrayMap.put(Field.Type.IntegerArray, JsonFormatTypes.INTEGER.name().toLowerCase());
 		arrayMap.put(Field.Type.FloatArray, JsonFormatTypes.NUMBER.name().toLowerCase());
@@ -72,10 +65,16 @@ public class EntityMarshaller {
 
 		// construct properties
 		ObjectNode properties = objectNode.putObject("properties");
+		ArrayNode links = objectNode.putArray("links");
 
 		// construct fields
 		for (Field field : entity.getFields()) {
-			buildField(field, properties);
+			buildField(field, properties, links);
+		}
+		
+		if(links.size() == 0) {
+			//links arrayNode is empty, so we don't need it
+			objectNode.remove("links");
 		}
 
 		// serialize and return
@@ -86,25 +85,37 @@ public class EntityMarshaller {
 		}
 	}
 
-	private void buildField(Field field, ObjectNode rootNode)
+	private void buildField(Field field, ObjectNode rootNode, ArrayNode linksArray)
 			throws MarshallerException {
 		Field.Type type = field.getType();
-		ObjectNode fieldObject = rootNode.putObject(field.getName());
 		
 		if (typeMap.keySet().contains(type)) {
 			// primitive type
+			ObjectNode fieldObject = rootNode.putObject(field.getName());
 			fieldObject.put("type", typeMap.get(type));
+			fieldObject.put("required", field.isRequired());
 		} else if (arrayTypeMap.keySet().contains(type)) {
 			// array type
+			ObjectNode fieldObject = rootNode.putObject(field.getName());
 			fieldObject.put("type", "array");
 			ObjectNode arrayInfo = fieldObject.putObject("items");
 			arrayInfo.put("type", arrayTypeMap.get(type));
+			fieldObject.put("required", field.isRequired());
+		} else if (Field.Type.File.equals(type)) {
+			// file type
+			ObjectNode fieldObject = rootNode.putObject(field.getName() + "_id");
+			fieldObject.put("type", JsonFormatTypes.STRING.name().toLowerCase());
+			fieldObject.put("required", field.isRequired());
+			
+			ObjectNode linksEntry = linksArray.addObject();
+			linksEntry.put("rel", field.getName() + "_id");
+			linksEntry.put("href", "/entity/file/{" + field.getName() + "_id}");
+			linksEntry.put("targetSchema", "file");
 		} else {
 			// unknown type
 			throw new MarshallerException("Uknown field type: " + type.name());
 		}
 		
-		fieldObject.put("required", true);
 	}
 
 }

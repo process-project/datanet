@@ -8,7 +8,9 @@ public class ModelException extends Exception {
 		ModelSaveError,
 		ModelRetrievalError,
 		ModelDeployError,
-		RepositoryRetrievalError
+		RepositoryRetrievalError,
+		RepositoryUndeployError,
+		AuthorizationError
 	}
 	
 	private Code errorCode;

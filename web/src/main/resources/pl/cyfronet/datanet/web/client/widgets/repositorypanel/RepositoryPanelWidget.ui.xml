@@ -1,0 +1,36 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:with
+		type="pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelMessages"
+		field="messages" />
+	<ui:style
+		type="pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelWidget.RepositoryPanelWidgetStyles">
+			.repositoryPanelSection {
+				padding: 5px;
+			}
+			
+			.repositoryPropertyLabel {
+				float: left;
+				margin-right: 5px;
+			}
+			
+			.repositoryPropertyInput {
+				float: left;
+				margin-right: 20px;
+			}
+		</ui:style>
+
+	<g:DockLayoutPanel>
+		<g:north size="40">
+			<g:FlowPanel styleName="{style.repositoryPanelSection}">
+				<g:Label text="{messages.repositoryName}" styleName="gwt-Label {style.repositoryPropertyLabel}" />
+				<g:TextBox ui:field="repositoryName"
+					styleName="gwt-TextBox {style.repositoryPropertyInput}" enabled="false"/>
+			</g:FlowPanel>
+		</g:north>
+		<g:center>
+			<g:FlowPanel ui:field="repositoryContainer" />
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder>

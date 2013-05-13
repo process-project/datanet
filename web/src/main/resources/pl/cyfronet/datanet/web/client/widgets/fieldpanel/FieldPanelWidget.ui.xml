@@ -3,11 +3,15 @@
 		xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:with type="pl.cyfronet.datanet.web.client.widgets.fieldpanel.FieldPanelMessages" field="messages"/>
 	<ui:style>
-		
+		.remove {
+			margin-left: 1em;
+		}
 	</ui:style>
 	<g:FlowPanel>
 		<g:TextBox ui:field="name"/>
 		<g:ListBox ui:field="type"/>
-		<g:Button ui:field="remove" text="{messages.removeField}"/>
+		<g:CheckBox ui:field="required" text="{messages.required}"/>
+		
+		<g:Button ui:field="remove" text="{messages.removeField}" styleName="gwt-Button {style.remove}"/>
 	</g:FlowPanel>
 </ui:UiBinder>

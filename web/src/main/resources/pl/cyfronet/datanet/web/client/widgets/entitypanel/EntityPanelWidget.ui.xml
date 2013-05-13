@@ -8,7 +8,7 @@
 			padding: 5px;
 			border: solid 1px black;
 			float: left;
-			width: 25em;
+			width: 34em;
 		}
 		.section {
 			margin: 5px;
@@ -23,7 +23,7 @@
 		<g:FlowPanel styleName="{style.section}">
 			<g:Label text="{messages.entityNameLabel}" styleName="{style.element}"/>
 			<g:TextBox ui:field="entityName" styleName="gwt-TextBox {style.element}"/>
-			<g:Button ui:field="removeEntity" text="{messages.removeEntityLabel}" styleName="gwt-Button {style.element}"/>
+			<g:Button ui:field="removeEntity" text="{messages.removeEntityLabel}" styleName="gwt-Button"/>
 		</g:FlowPanel>
 		<g:FlowPanel ui:field="fieldContainer"/>
 		<g:FlowPanel styleName="{style.section}">

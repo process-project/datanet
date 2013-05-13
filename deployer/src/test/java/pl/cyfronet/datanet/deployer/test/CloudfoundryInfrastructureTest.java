@@ -8,10 +8,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.zip.ZipException;
 
 import org.apache.commons.io.FileUtils;
@@ -37,20 +39,29 @@ public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 	
 	private static final String APP_FOLDER_NAME = "datanet-skel-mongodb";
 	
-	private static final String SERVICE_NAME = "bw-test-service-123";
-	private static final String APP_NAME = "bw-test-app-123";
+	private static final String SERVICE_NAME_BASE = "bw-test-service";
+	private static final String APP_NAME_BASE = "bw-test-app";
 	private static final int MEMORY = 128;
 
 	private final Staging staging;
 	private final List<String> uris;
 	private final Map<String, String> envVarsMap;
+	private final String appName;
+	private final String serviceName;
 				
 	public CloudfoundryInfrastructureTest() throws IOException {
+		
+		Date date = new Date();
+		Random random = new Random();
 		
 		staging = new Staging("rack");
 		staging.setRuntime("ruby193");
 		
-		uris = asList(String.format("%s.datanet.cyfronet.pl", APP_NAME));
+		String uniqueComponent = String.format("_%d_%d", date.getTime(), Math.abs(random.nextInt()));
+		
+		appName = APP_NAME_BASE + uniqueComponent;
+		serviceName = SERVICE_NAME_BASE + uniqueComponent;
+		uris = asList(String.format("%s.datanet.cyfronet.pl", appName));
 
 		envVarsMap = new HashMap<String, String>();
 		envVarsMap.put("BUNDLE_WITHOUT", "test");
@@ -77,7 +88,7 @@ public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 	public void uploadAndStartApplication() throws IOException, URISyntaxException {
 		uploadApplication(new LinkedList<String>());		
 		startApplication();
-		CloudApplication app = client.getApplication(APP_NAME);
+		CloudApplication app = client.getApplication(appName);
 		assertNotNull(app);
 		assertEquals(CloudApplication.AppState.STARTED, app.getState());
 		deleteApplication();
@@ -85,39 +96,39 @@ public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 	
 	@Test
 	public void createService() {
-		createNewService();
-		assertNotNull("Service not registerred", client.getService(SERVICE_NAME));
-		deleteService();
+		createNewService(serviceName);
+		assertNotNull("Service not registerred", client.getService(serviceName));
+		deleteService(serviceName);
 	}
 	
 	@Test
 	public void uploadBindAndStartApplication() throws IOException, URISyntaxException {
 		
-		createNewService();
-		uploadApplication(asList(SERVICE_NAME));
+		createNewService(serviceName);
+		uploadApplication(asList(serviceName));
 		startApplication();
 		
-		CloudApplication app = client.getApplication(APP_NAME);
+		CloudApplication app = client.getApplication(appName);
 		
 		assertNotNull(app);
 		assertEquals(CloudApplication.AppState.STARTED, app.getState());
 
 		List<String> appServices = app.getServices();
 		assertEquals(1, appServices.size());
-		assertEquals(SERVICE_NAME, appServices.get(0));
+		assertEquals(serviceName, appServices.get(0));
 		
 		deleteApplication();
-		deleteService();
+		deleteService(serviceName);
 	}
 
 	//@Test
 	public void deleteApplication() {
-		client.deleteApplication(APP_NAME);
+		client.deleteApplication(appName);
 	}
 	
 	//@Test 
-	public void deleteService() {
-		client.deleteService(SERVICE_NAME);
+	public void deleteService(String serviceName) {
+		client.deleteService(serviceName);
 	}
 	
 	@Test
@@ -148,22 +159,22 @@ public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 	}
 		
 	private void uploadApplication(List<String> services) throws ZipException, IOException, URISyntaxException {
-		client.createApplication(APP_NAME, staging, MEMORY, uris, services);
+		client.createApplication(appName, staging, MEMORY, uris, services);
 		File unzipFolder = new File(UNZIP_PATH);
 		Unzip.extractOverridingAll(new File(this.getClass().getClassLoader().getResource(ZIP_NAME).toURI()), unzipFolder);
-		client.uploadApplication(APP_NAME, new File(unzipFolder, APP_FOLDER_NAME));
+		client.uploadApplication(appName, new File(unzipFolder, APP_FOLDER_NAME));
 		FileUtils.forceDelete(unzipFolder);
 	}
 	
 	private void startApplication() {
-		client.updateApplicationEnv(APP_NAME, envVarsMap);
-		client.startApplication(APP_NAME);
+		client.updateApplicationEnv(appName, envVarsMap);
+		client.startApplication(appName);
 	}
 
-	private void createNewService() {
+	private void createNewService(String serviceName) {
 		ServiceConfiguration serviceConfiguration = findServiceConfiguration(MONGODB_SERVICE_TYPE);
 		CloudService service = new CloudService();
-		service.setName(SERVICE_NAME);
+		service.setName(serviceName);
 		service.setTier(serviceConfiguration.getTiers().get(0).getType());
 		service.setType(serviceConfiguration.getType());
 		service.setVersion(serviceConfiguration.getVersion());

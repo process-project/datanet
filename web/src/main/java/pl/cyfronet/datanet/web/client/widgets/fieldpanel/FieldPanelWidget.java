@@ -11,6 +11,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.ListBox;
@@ -26,6 +27,7 @@ public class FieldPanelWidget extends Composite implements View {
 	@UiField(provided = true) ListBox type;
 	@UiField TextBox name;
 	@UiField Button remove;
+	@UiField CheckBox required;
 
 	public FieldPanelWidget() {
 		createTypeListBox();
@@ -48,6 +50,11 @@ public class FieldPanelWidget extends Composite implements View {
 		int selectedIndex = source.getSelectedIndex();
 		presenter.onFieldTypeChanged(Type.valueOf(source.getValue(selectedIndex)));
 	}
+	
+	@UiHandler("required")
+	void requiredFieldValueChanged(ValueChangeEvent<Boolean> event) {
+		presenter.onFieldRequiredChanged(event.getValue());
+	}
 
 	@Override
 	public void setPresenter(Presenter presenter) {
@@ -68,6 +75,7 @@ public class FieldPanelWidget extends Composite implements View {
 	public void setEditable(boolean editable) {
 		type.setEnabled(editable);
 		name.setEnabled(editable);
+		required.setEnabled(false);
 		remove.setVisible(editable);
 	}
 
@@ -77,5 +85,10 @@ public class FieldPanelWidget extends Composite implements View {
 		for(Type fieldType : Type.values()) {
 			type.addItem(fieldType.name());
 		}
+	}
+
+	@Override
+	public void setRequired(boolean requiredValue) {
+		required.setValue(requiredValue);
 	}
 }

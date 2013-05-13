@@ -6,13 +6,17 @@ import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.beans.validator.ModelValidator;
 import pl.cyfronet.datanet.model.beans.validator.ModelValidator.ModelError;
 import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
+import pl.cyfronet.datanet.web.client.messages.MessagePresenter;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginPresenter;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginWidget;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelWidget;
-import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelWidget;
+import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelWidget;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -24,6 +28,9 @@ public class ClientController {
 	private RpcErrorHandler rpcErrorHandler;
 	private ModelValidator modelValidator;
 	private MainPanelPresenter mainPanelPresenter;
+	private ModelBrowserPanelPresenter modelBrowserPanelPresenter;
+	private RepositoryBrowserPanelPresenter repositoryBrowserPanelPresenter;
+	private MessagePresenter messagePresenter;
 	
 	public ClientController(LoginServiceAsync loginService, ModelServiceAsync modelService,
 			RpcErrorHandler rpcErrorHandler, ModelValidator modelValidator) {
@@ -68,31 +75,34 @@ public class ClientController {
 	}
 	
 	
-	//TODO: check if presenter logic should be here or in presenter, this looks like presenter code
-	public void onSaveModel(ModelPanelPresenter modelPanelPresenter) {
-		List<ModelError> modelErrors = modelValidator.validateModel(modelPanelPresenter.getModel());
+	public void onSaveModel(final Model model) {
+		List<ModelError> modelErrors = modelValidator.validateModel(model);
 		
 		if(modelErrors.isEmpty()) {
-			modelService.saveModel(modelPanelPresenter.getModel(), new AsyncCallback<Model>() {
+			modelService.saveModel(model, new AsyncCallback<Model>() {
 				@Override
 				public void onFailure(Throwable t) {
 					rpcErrorHandler.handleRpcError(t);
 				}
 				@Override
 				public void onSuccess(Model m) {
-					mainPanelPresenter.displayModelSavedInfo();
+					messagePresenter.displayModelSavedMessage();
 					
-					mainPanelPresenter.addOrReplaceModel(m);
-					mainPanelPresenter.setMarked(m.getId());
-					mainPanelPresenter.onModelClicked(m.getId());
+					modelBrowserPanelPresenter.addOrReplaceModel(m);
+					modelBrowserPanelPresenter.setMarked(m.getId());
+					modelBrowserPanelPresenter.onModelClicked(m.getId());
 				}
 			});
 		} else {
-			mainPanelPresenter.displayModelSaveError(modelErrors.get(0));
+			messagePresenter.displayModelSaveError(modelErrors.get(0));
 		}
 	}
 	
-	public void onDeployModel(Model model) {
+	public MessagePresenter getMessagePresenter() {
+		return messagePresenter;
+	}
+	
+	public void onDeployModel(final Model model) {
 		//TODO: deployment needs proper validation and error handling, this was copied from onSaveModel()
 		List<ModelError> modelErrors = modelValidator.validateModel(model);
 		
@@ -104,23 +114,55 @@ public class ClientController {
 				}
 				@Override
 				public void onSuccess(Void v) {
-					mainPanelPresenter.displayModelDeployedInfo();
-					mainPanelPresenter.updateRepositoryList();
+					messagePresenter.displayModelDeployedMessage();
+					repositoryBrowserPanelPresenter.updateRepositoryList();
 				}
 			});
 		} else {
-			mainPanelPresenter.displayModelDeployError(modelErrors.get(0));
+			messagePresenter.displayModelDeployError(modelErrors.get(0));
 		}
 	}
 	
+	public void onUndeployRepository(String repositoryName) {
+		modelService.undeployRepository(repositoryName, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable t) {
+				rpcErrorHandler.handleRpcError(t);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				messagePresenter.displayRepositoryUndeployedMessage();
+				repositoryBrowserPanelPresenter.updateRepositoryList();
+			}
+			
+		});
+	}
+	
 	private void showMainPanel() {
+		MainPanelWidget mainPanelWidget = new MainPanelWidget();
 		mainPanelPresenter = new MainPanelPresenter(
-				new MainPanelWidget(), this, modelService, rpcErrorHandler);
+				mainPanelWidget, this);
+		
+		messagePresenter = new MessagePresenter(mainPanelPresenter);
+		
+		modelBrowserPanelPresenter = new ModelBrowserPanelPresenter(
+				new ModelBrowserPanelWidget(), this, modelService, rpcErrorHandler
+				);
+		
+		repositoryBrowserPanelPresenter = new RepositoryBrowserPanelPresenter(
+				new RepositoryBrowserPanelWidget(), this, modelService, rpcErrorHandler
+				);
+		
+		mainPanelWidget.setModelBrowser(modelBrowserPanelPresenter.getWidget());
+		mainPanelWidget.setRepositoryBrowser(repositoryBrowserPanelPresenter.getWidget());
+		
 		clearPanels();
 		RootPanel.get().add(RootLayoutPanel.get());
 		RootLayoutPanel.get().add(mainPanelPresenter.getWidget());
-		mainPanelPresenter.updateModelList();
-		mainPanelPresenter.updateRepositoryList();
+		modelBrowserPanelPresenter.updateModelList();
+		repositoryBrowserPanelPresenter.updateRepositoryList();
 	}
 
 	private void showLoginPanel() {

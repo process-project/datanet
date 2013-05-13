@@ -10,8 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pl.cyfronet.datanet.deployer.Deployer;
+import pl.cyfronet.datanet.deployer.DeployerException;
 import pl.cyfronet.datanet.deployer.marshaller.MarshallerException;
-import pl.cyfronet.datanet.deployer.marshaller.ModelMarshaller;
+import pl.cyfronet.datanet.deployer.marshaller.ModelSchemaGenerator;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
@@ -30,7 +31,7 @@ public class RpcModelService  implements ModelService {
 	@Autowired private ModelBuilder modelBuilder;
 	@Autowired private JaxbEntityListBuilder jaxbEntityListBuilder;
 	@Autowired private Deployer deployer;
-	@Autowired private ModelMarshaller modelMarshaller;
+	@Autowired private ModelSchemaGenerator modelMarshaller;
 	
 	@Override
 	public Model saveModel(Model model) throws ModelException {
@@ -81,11 +82,14 @@ public class RpcModelService  implements ModelService {
 	@Override
 	public void deployModel(Model model) throws ModelException {
 		try {
-			Map<String, String> models = modelMarshaller.marshall(model);
+			Map<String, String> models = modelMarshaller.generateSchema(model);
 			deployer.deployRepository(Deployer.RepositoryType.Mongo, model.getName(), models);
 		} catch (MarshallerException e) {
 			String message = "Could not marshall model";
 			log.error(message, e);
+			throw new ModelException(Code.ModelDeployError);
+		} catch (DeployerException de) {
+			log.error("Deployer authorization failure", de);
 			throw new ModelException(Code.ModelDeployError);
 		}
 	}
@@ -99,6 +103,16 @@ public class RpcModelService  implements ModelService {
 			String message = "Could not read available repositories";
 			log.error(message, e);
 			throw new ModelException(Code.RepositoryRetrievalError);
+		}
+	}
+
+	@Override
+	public void undeployRepository(String repositoryName) throws ModelException {
+		try {
+			deployer.undeployRepository(repositoryName);
+		} catch (DeployerException e) {
+			log.error("Deployer undeploy repository failure", e);
+			throw new ModelException(Code.RepositoryUndeployError);
 		}
 	}
 }

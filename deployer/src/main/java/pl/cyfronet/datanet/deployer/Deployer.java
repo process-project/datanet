@@ -11,6 +11,7 @@ import java.util.zip.ZipException;
 
 import org.cloudfoundry.client.lib.CloudApplication;
 import org.cloudfoundry.client.lib.CloudFoundryClient;
+import org.cloudfoundry.client.lib.CloudFoundryException;
 import org.cloudfoundry.client.lib.CloudService;
 import org.slf4j.Logger;
 
@@ -50,10 +51,11 @@ public class Deployer {
 	 * 
 	 * @param repositoryType
 	 * @param models key: entity name, value: entity JSON Schema
+	 * @throws DeployerException 
 	 * @throws IOException 
 	 * @throws ZipException 
 	 */
-	public void deployRepository(RepositoryType repositoryType, String repositoryName, Map<String, String> models) {
+	public void deployRepository(RepositoryType repositoryType, String repositoryName, Map<String, String> models) throws DeployerException {
 		MapperBuilder builder = builders.get(repositoryType);
 		if (builder == null) {
 			logger.warn(String.format("Mapper builder for service type '%s' not found", repositoryType.getServiceTypeName()));
@@ -90,7 +92,7 @@ public class Deployer {
 		client.logout();
 	}
 	
-	public List<String> listRepostories() {
+	public List<String> listRepostories() throws DeployerException {
 		logger.debug("Listing repositories");
 		CloudFoundryClient client = prepareNewClient();
 		List<CloudApplication> cloudApplications = client.getApplications();
@@ -101,7 +103,7 @@ public class Deployer {
 		return repositories;
 	}
 	
-	public void undeployRepository(String repositoryName) {
+	public void undeployRepository(String repositoryName) throws DeployerException {
 		logger.debug(String.format("Undeploying repository '%s'", repositoryName));
 		String appNameForRepo = DeployApplication.getAppNameForRepo(repositoryName);
 		CloudFoundryClient client = prepareNewClient();
@@ -123,9 +125,13 @@ public class Deployer {
 		return String.format("%s.%s", repositoryName, appConfig.getUriPostfix());
 	}
 	
-	private CloudFoundryClient prepareNewClient() {
+	private CloudFoundryClient prepareNewClient() throws DeployerException {
 		CloudFoundryClient client = new CloudFoundryClient(email, password, null, cloudControllerUrl);
-		client.login();
+		try {
+			client.login();
+		} catch (CloudFoundryException cfe) {
+			throw new DeployerException("Authorization failure.");
+		}
 		return client;
 	}
 	

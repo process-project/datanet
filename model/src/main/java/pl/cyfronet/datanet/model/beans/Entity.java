@@ -15,11 +15,15 @@ public class Entity implements Serializable {
 	public Entity() {
 		fields = new ArrayList<Field>();
 		
-		//there should always be an id field
-		Field idField = new Field();
-		idField.setName("id");
-		idField.setType(Type.Id);
-		fields.add(idField);
+	}
+	
+	public Entity(Entity entity) {
+		name = entity.name;
+		
+		fields = new ArrayList<Field>();
+		for (Field field : entity.getFields()) {
+			fields.add(new Field(field));
+		}
 	}
 	
 	public String getName() {

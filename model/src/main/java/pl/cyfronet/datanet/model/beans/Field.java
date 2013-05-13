@@ -6,19 +6,27 @@ public class Field implements Serializable {
 	private static final long serialVersionUID = 7956535573658372420L;
 	
 	public enum Type {
-		Id,
 		ObjectId, ObjectIdArray,
 		String, StringArray,
 		Integer, IntegerArray,
 		Float, FloatArray,
-		Boolean, BooleanArray
+		Boolean, BooleanArray,
+		File
 	}
 	
 	private String name;
 	private Type type;
+	private boolean required;
 	
 	public Field() {
-		type = Type.Id;
+		type = Type.String;
+		required = true;
+	}
+	
+	public Field(Field field) {
+		name = field.getName();
+		type = field.getType();
+		required = field.isRequired();
 	}
 	
 	public String getName() {
@@ -34,11 +42,20 @@ public class Field implements Serializable {
 		this.type = type;
 	}
 	
+	public boolean isRequired() {
+		return required;
+	}
+
+	public void setRequired(boolean required) {
+		this.required = required;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + (required ? 1231 : 1237);
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
@@ -57,6 +74,8 @@ public class Field implements Serializable {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
+		if (required != other.required)
+			return false;
 		if (type != other.type)
 			return false;
 		return true;
@@ -64,6 +83,7 @@ public class Field implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Field [name=" + name + ", type=" + type + "]";
+		return "Field [name=" + name + ", type=" + type + ", required="
+				+ required + "]";
 	}
 }
