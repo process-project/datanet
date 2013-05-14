@@ -9,6 +9,7 @@ import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
 import pl.cyfronet.datanet.web.client.messages.MessagePresenter;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
+import pl.cyfronet.datanet.web.client.services.RepositoryServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginPresenter;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginWidget;
 import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter;
@@ -31,13 +32,15 @@ public class ClientController {
 	private ModelBrowserPanelPresenter modelBrowserPanelPresenter;
 	private RepositoryBrowserPanelPresenter repositoryBrowserPanelPresenter;
 	private MessagePresenter messagePresenter;
+	private RepositoryServiceAsync repositoryService;
 	
 	public ClientController(LoginServiceAsync loginService, ModelServiceAsync modelService,
-			RpcErrorHandler rpcErrorHandler, ModelValidator modelValidator) {
+			RepositoryServiceAsync repositoryService, RpcErrorHandler rpcErrorHandler, ModelValidator modelValidator) {
 		this.loginService = loginService;
 		this.modelService = modelService;
 		this.rpcErrorHandler = rpcErrorHandler;
 		this.modelValidator = modelValidator;
+		this.repositoryService = repositoryService;
 	}
 	
 	public void start() {
@@ -107,7 +110,7 @@ public class ClientController {
 		List<ModelError> modelErrors = modelValidator.validateModel(model);
 		
 		if(modelErrors.isEmpty()) {
-			modelService.deployModel(model, new AsyncCallback<Void>() {
+			repositoryService.deployModel(model, new AsyncCallback<Void>() {
 				@Override
 				public void onFailure(Throwable t) {
 					rpcErrorHandler.handleRpcError(t);
@@ -124,7 +127,7 @@ public class ClientController {
 	}
 	
 	public void onUndeployRepository(String repositoryName) {
-		modelService.undeployRepository(repositoryName, new AsyncCallback<Void>() {
+		repositoryService.undeployRepository(repositoryName, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable t) {
@@ -152,7 +155,7 @@ public class ClientController {
 				);
 		
 		repositoryBrowserPanelPresenter = new RepositoryBrowserPanelPresenter(
-				new RepositoryBrowserPanelWidget(), this, modelService, rpcErrorHandler
+				new RepositoryBrowserPanelWidget(), this, repositoryService, rpcErrorHandler
 				);
 		
 		mainPanelWidget.setModelBrowser(modelBrowserPanelPresenter.getWidget());

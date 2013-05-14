@@ -6,7 +6,7 @@ import java.util.List;
 import pl.cyfronet.datanet.web.client.ClientController;
 import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
 import pl.cyfronet.datanet.web.client.messages.MessagePresenter;
-import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
+import pl.cyfronet.datanet.web.client.services.RepositoryServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelWidget;
 
@@ -27,17 +27,18 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 	
 	private View view;
 	private List<String> repositories;
-	private ModelServiceAsync modelService;
+	private RepositoryServiceAsync repositoryService;
 	private RpcErrorHandler rpcErrorHandler;
 	private ClientController clientController;
 	private MessagePresenter messagePresenter;
 	private RepositoryPanelPresenter repositoryPanelPresenter;
 	
-	public RepositoryBrowserPanelPresenter(View view, ClientController clientController, ModelServiceAsync modelServiceAsync, RpcErrorHandler errorHandler) {
+	public RepositoryBrowserPanelPresenter(View view, ClientController clientController,
+			RepositoryServiceAsync repositoryServiceAsync, RpcErrorHandler errorHandler) {
 		this.view = view;
 		this.clientController = clientController;
 		this.messagePresenter = clientController.getMessagePresenter();
-		this.modelService = modelServiceAsync;
+		this.repositoryService = repositoryServiceAsync;
 		this.rpcErrorHandler = errorHandler;
 		view.setPresenter(this);
 	}
@@ -64,7 +65,7 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 	}
 		
 	public void updateRepositoryList() {
-		modelService.getRepositories(new AsyncCallback<List<String>>() {
+		repositoryService.getRepositories(new AsyncCallback<List<String>>() {
 
 			@Override
 			public void onFailure(Throwable t) {
