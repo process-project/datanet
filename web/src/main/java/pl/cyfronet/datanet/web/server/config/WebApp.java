@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 
@@ -23,6 +24,11 @@ public class WebApp implements WebApplicationInitializer {
 		root.setServletContext(servletContext);
 		root.scan("pl.cyfronet.datanet.web.server.config");
 		root.refresh();
+		
+		FilterRegistration.Dynamic characterEncodingFilter = servletContext.addFilter("characterEncodingFilter", new CharacterEncodingFilter());
+		characterEncodingFilter.setInitParameter("encoding", "UTF-8");
+		characterEncodingFilter.setInitParameter("forceEncoding", "true");
+		characterEncodingFilter.addMappingForUrlPatterns(null, true, "/*");
 		
 		FilterRegistration.Dynamic requestFilter = servletContext.addFilter("requestContextFilter", new RequestContextFilter());
 		requestFilter.addMappingForUrlPatterns(null, true, "/rpcservices/*");
