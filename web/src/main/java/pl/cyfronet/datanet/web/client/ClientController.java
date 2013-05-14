@@ -19,6 +19,8 @@ import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPane
 import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelWidget;
 
+import com.google.gwt.http.client.UrlBuilder;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -124,6 +126,12 @@ public class ClientController {
 		} else {
 			messagePresenter.displayModelDeployError(modelErrors.get(0));
 		}
+	}
+
+	public void switchLocale(String locale) {
+		UrlBuilder builder = Window.Location.createUrlBuilder();
+		builder.setParameter("locale", locale);
+		Window.Location.assign(builder.buildString());
 	}
 	
 	public void onUndeployRepository(String repositoryName) {

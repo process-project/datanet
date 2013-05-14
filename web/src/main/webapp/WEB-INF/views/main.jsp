@@ -1,8 +1,10 @@
+<%@ include file="include.jsp" %>
+
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-		<title>Datanet Web Frontend</title>
+		<meta charset="UTF-8"/>
+		<title><spring:message code="main.page.title"/></title>
 		<link href="img/favicon.ico" rel="icon" type="image/x-icon" />
 		<script type="text/javascript" src="ria/ria.nocache.js"></script>
 		<link href='http://fonts.googleapis.com/css?family=Titillium+Web&subset=latin,latin-ext' rel='stylesheet' type='text/css'>

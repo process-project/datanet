@@ -32,6 +32,11 @@ public class MainPanelPresenter implements Presenter, MessageDispatcher {
 		clientController.onLogout();
 	}
 	
+	@Override
+	public void onSwitchLocale(String locale) {
+		clientController.switchLocale(locale);
+	}
+	
 	public void displayMessage(String message, MessageType type) {
 		view.displayMessage(message, type);
 	}

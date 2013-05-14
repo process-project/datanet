@@ -15,4 +15,9 @@ public class MainController {
 	public String main() throws IOException {
 		return "main";
 	}
+	
+	@RequestMapping("/help")
+	public String help() throws IOException {
+		return "help";
+	}
 }

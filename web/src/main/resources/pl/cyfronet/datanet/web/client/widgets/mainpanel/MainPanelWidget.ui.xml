@@ -1,9 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:with
-		type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelMessages"
-		field="messages" />
+	<ui:with type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelMessages" field="messages" />
 	<ui:style
 		type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelWidget.MainPanelWidgetStyles">
 			.main-panel {
@@ -39,13 +37,23 @@
 			.logo {
 				float: left;
 			}
+			.footer-right {
+				float: right;
+				padding-left: 2px;
+				padding-right: 2px;
+			}
+			.footer-left {
+				float: left;
+				padding-left: 2px;
+				padding-right: 2px;
+			}
 		</ui:style>
 	<g:DockLayoutPanel>
 		<g:north size="40">
 			<g:FlowPanel styleName="{style.header}">
 				<g:Image url="img/datanet-logo-143x40.png" altText="{messages.datanetMain}" styleName="{style.logo}"/>
 				<g:Label ui:field="messageLabel" styleName="gwt-Label {style.errorLabel}"
-					visible="false" />
+					visible="false"/>
 				<g:Image ui:field="logout" url="img/logout.png" altText="{messages.logout}" title="{messages.logout}" styleName="{style.logout-button}"/>
 			</g:FlowPanel>
 		</g:north>
@@ -53,17 +61,25 @@
 			<g:TabLayoutPanel barHeight="25">
 				<g:tab>
 					<g:header>
-						<ui:text from="{messages.models}" />
+						<ui:text from="{messages.models}"/>
 					</g:header>
-					<g:LayoutPanel ui:field="modelsPanel" />
+					<g:LayoutPanel ui:field="modelsPanel"/>
 				</g:tab>
 				<g:tab>
 					<g:header>
-						<ui:text from="{messages.repositories}" />
+						<ui:text from="{messages.repositories}"/>
 					</g:header>
-					<g:LayoutPanel ui:field="repositoriesPanel" />
+					<g:LayoutPanel ui:field="repositoriesPanel"/>
 				</g:tab>
 			</g:TabLayoutPanel>
 		</g:center>
+		<g:south size="20">
+			<g:FlowPanel>
+				<g:Anchor href="help"><img src="img/help.png" title="{messages.helpLinkLabel}"/></g:Anchor>
+				<g:Anchor ui:field="switchToPl" styleName="get-Anchor {style.footer-right}" href="#">PL</g:Anchor>
+				<g:Label styleName="{style.footer-right}">|</g:Label>
+				<g:Anchor ui:field="switchToEn" styleName="get-Anchor {style.footer-right}" href="#">EN</g:Anchor>
+			</g:FlowPanel>
+		</g:south>
 	</g:DockLayoutPanel>
 </ui:UiBinder>

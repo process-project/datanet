@@ -47,6 +47,14 @@ public class MainPanelWidget extends Composite implements View {
 	void logoutClicked(ClickEvent event) {
 		presenter.onLogout();
 	}
+	@UiHandler("switchToPl")
+	void onSwitchToPl(ClickEvent event) {
+		presenter.onSwitchLocale("pl");
+	}
+	@UiHandler("switchToEn")
+	void onSwitchToEn(ClickEvent event) {
+		presenter.onSwitchLocale("en");
+	}
 
 	public void displayMessage(String message, MessageType messageType) {
 		switch(messageType) {
@@ -82,5 +90,4 @@ public class MainPanelWidget extends Composite implements View {
 	public void setRepositoryBrowser(IsWidget widget) {
 		repositoriesPanel.add(widget);
 	}
-	
 }
