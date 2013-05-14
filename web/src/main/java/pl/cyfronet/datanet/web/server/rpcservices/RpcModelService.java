@@ -2,17 +2,14 @@ package pl.cyfronet.datanet.web.server.rpcservices;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
-import pl.cyfronet.datanet.deployer.Deployer;
-import pl.cyfronet.datanet.deployer.DeployerException;
-import pl.cyfronet.datanet.deployer.marshaller.MarshallerException;
-import pl.cyfronet.datanet.deployer.marshaller.ModelSchemaGenerator;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
@@ -21,28 +18,34 @@ import pl.cyfronet.datanet.web.client.errors.ModelException;
 import pl.cyfronet.datanet.web.client.errors.ModelException.Code;
 import pl.cyfronet.datanet.web.client.services.ModelService;
 import pl.cyfronet.datanet.web.server.db.HibernateModelDao;
+import pl.cyfronet.datanet.web.server.db.HibernateUserDao;
 import pl.cyfronet.datanet.web.server.db.beans.ModelDbEntity;
+import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
 
 @Service("modelService")
 public class RpcModelService  implements ModelService {
 	private static final Logger log = LoggerFactory.getLogger(RpcModelService.class);
 	
 	@Autowired private HibernateModelDao modelDao;
+	@Autowired private HibernateUserDao userDao;
 	@Autowired private ModelBuilder modelBuilder;
 	@Autowired private JaxbEntityListBuilder jaxbEntityListBuilder;
-	@Autowired private Deployer deployer;
-	@Autowired private ModelSchemaGenerator modelMarshaller;
 	
 	@Override
 	public Model saveModel(Model model) throws ModelException {
 		log.info("Processing model save request for model {}", model);
 
 		try {
+			UserDbEntity user = getUser();
 			ModelDbEntity modelDbEntity = new ModelDbEntity();
 			modelDbEntity.setId(model.getId());
 			modelDbEntity.setName(model.getName());
 			modelDbEntity.setVersion(model.getVersion());
 			modelDbEntity.setExperimentBody(jaxbEntityListBuilder.serialize(model.getEntities()));
+			if(modelDbEntity.getOwners() == null) {
+				modelDbEntity.setOwners(new ArrayList<UserDbEntity>());
+			}
+			modelDbEntity.getOwners().add(user);
 			modelDao.saveModel(modelDbEntity);
 			
 			//return model id, updated by hibernate with new unique id
@@ -60,8 +63,9 @@ public class RpcModelService  implements ModelService {
 	public List<Model> getModels() throws ModelException {
 		try {
 			List<Model> result = new ArrayList<>();
+			UserDbEntity user = getUser();
 			
-			for(ModelDbEntity modelDbEntity : modelDao.getModels()) {
+			for(ModelDbEntity modelDbEntity : modelDao.getUserModels(user.getLogin())) {
 				Model model = new Model();
 				List<Entity> entitiesList = jaxbEntityListBuilder.deserialize(modelDbEntity.getExperimentBody());
 				model.setId(modelDbEntity.getId());
@@ -78,41 +82,11 @@ public class RpcModelService  implements ModelService {
 			throw new ModelException(Code.ModelRetrievalError);
 		}
 	}
-
-	@Override
-	public void deployModel(Model model) throws ModelException {
-		try {
-			Map<String, String> models = modelMarshaller.generateSchema(model);
-			deployer.deployRepository(Deployer.RepositoryType.Mongo, model.getName(), models);
-		} catch (MarshallerException e) {
-			String message = "Could not marshall model";
-			log.error(message, e);
-			throw new ModelException(Code.ModelDeployError);
-		} catch (DeployerException de) {
-			log.error("Deployer authorization failure", de);
-			throw new ModelException(Code.ModelDeployError);
-		}
-	}
-
-	@Override
-	public List<String> getRepositories() throws ModelException {
-		try {
-			List<String> repositoryNames = deployer.listRepostories();
-			return repositoryNames;
-		} catch (Exception e) {
-			String message = "Could not read available repositories";
-			log.error(message, e);
-			throw new ModelException(Code.RepositoryRetrievalError);
-		}
-	}
-
-	@Override
-	public void undeployRepository(String repositoryName) throws ModelException {
-		try {
-			deployer.undeployRepository(repositoryName);
-		} catch (DeployerException e) {
-			log.error("Deployer undeploy repository failure", e);
-			throw new ModelException(Code.RepositoryUndeployError);
-		}
+	
+	private UserDbEntity getUser() {
+		String login = (String) RequestContextHolder.getRequestAttributes().
+				getAttribute("userLogin", RequestAttributes.SCOPE_SESSION);
+		UserDbEntity user = userDao.getUser(login);
+		return user;
 	}
 }

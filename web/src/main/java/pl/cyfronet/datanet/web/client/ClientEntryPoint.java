@@ -6,6 +6,8 @@ import pl.cyfronet.datanet.web.client.services.LoginService;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 import pl.cyfronet.datanet.web.client.services.ModelService;
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
+import pl.cyfronet.datanet.web.client.services.RepositoryService;
+import pl.cyfronet.datanet.web.client.services.RepositoryServiceAsync;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -15,9 +17,10 @@ public class ClientEntryPoint implements EntryPoint {
 	public void onModuleLoad() {
 		LoginServiceAsync loginService = GWT.create(LoginService.class);
 		ModelServiceAsync modelService = GWT.create(ModelService.class);
+		RepositoryServiceAsync repositoryService = GWT.create(RepositoryService.class);
 		RpcErrorHandler rpcErrorHandler = new RpcErrorHandler();
 		ClientController clientController = new ClientController(loginService,
-				modelService, rpcErrorHandler, new ModelValidator());
+				modelService, repositoryService, rpcErrorHandler, new ModelValidator());
 		clientController.start();
 	}
 }
