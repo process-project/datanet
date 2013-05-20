@@ -22,12 +22,12 @@ public class RpcRepositoryService implements RepositoryService {
 	private static final Logger log = LoggerFactory.getLogger(RpcRepositoryService.class);
 	
 	@Autowired private Deployer deployer;
-	@Autowired private ModelSchemaGenerator modelMarshaller;
+	@Autowired private ModelSchemaGenerator modelSchemaGenerator;
 	
 	@Override
 	public void deployModel(Model model) throws ModelException {
 		try {
-			Map<String, String> models = modelMarshaller.generateSchema(model);
+			Map<String, String> models = modelSchemaGenerator.generateSchema(model);
 			deployer.deployRepository(Deployer.RepositoryType.Mongo, model.getName(), models);
 		} catch (MarshallerException e) {
 			String message = "Could not marshall model";
