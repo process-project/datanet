@@ -55,6 +55,9 @@ public class MessagePresenter {
 		case EMPTY_MODEL_NAME:
 			message += messages.errorEmptyModelName();
 			break;
+		case INVALID_CHARS_MODEL_NAME:
+			message += messages.errorInvalidCharsInModelName();
+			break;
 		case EMPTY_MODEL_VERSION:
 			message += messages.errorEmptyModelVersion();
 			break;
@@ -87,6 +90,9 @@ public class MessagePresenter {
 			break;
 		case EMPTY_MODEL_NAME:
 			message += messages.errorEmptyModelName();
+			break;
+		case INVALID_CHARS_MODEL_NAME:
+			message += messages.errorInvalidCharsInModelName();
 			break;
 		case EMPTY_MODEL_VERSION:
 			message += messages.errorEmptyModelVersion();

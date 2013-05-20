@@ -11,6 +11,7 @@ public interface MessagePresenterMessages extends Messages {
 	String errorNullModel();
 	String errorEmptyFieldName();
 	String errorEmptyModelName();
+	String errorInvalidCharsInModelName();
 	String errorModelNameNotUnique();
 	String errorEmptyModelVersion();
 	String errorNullEntityList();

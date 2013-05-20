@@ -1,7 +1,10 @@
 package pl.cyfronet.datanet.model.beans.validator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
@@ -9,9 +12,13 @@ import pl.cyfronet.datanet.model.beans.Model;
 
 
 public class ModelValidator {
+	
+	private static final List<String> INVALID_CHARS_MODEL_NAME = new LinkedList<String>(Arrays.asList(" "));
+	
 	public enum ModelError {
 		NULL_MODEL,
 		EMPTY_MODEL_NAME,
+		INVALID_CHARS_MODEL_NAME,
 		EMPTY_MODEL_VERSION,
 		NULL_ENTITY_LIST,
 		EMPTY_ENTITY_NAME,
@@ -26,6 +33,15 @@ public class ModelValidator {
 		if(model != null) {
 			if(model.getName() == null || model.getName().trim().isEmpty()) {
 				result.add(ModelError.EMPTY_MODEL_NAME);
+			}
+			
+			if(model.getName() != null) {
+				for(String ch : INVALID_CHARS_MODEL_NAME) {
+					if(model.getName().contains(ch)) {
+						result.add(ModelError.INVALID_CHARS_MODEL_NAME);
+						break;
+					}
+				}
 			}
 			
 			if(model.getVersion() == null || model.getVersion().trim().isEmpty()) {
