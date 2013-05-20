@@ -5,6 +5,8 @@ import java.util.List;
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.beans.validator.ModelValidator;
 import pl.cyfronet.datanet.model.beans.validator.ModelValidator.ModelError;
+import pl.cyfronet.datanet.web.client.errors.ModelException;
+import pl.cyfronet.datanet.web.client.errors.ModelException.Code;
 import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
 import pl.cyfronet.datanet.web.client.messages.MessagePresenter;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
@@ -87,7 +89,16 @@ public class ClientController {
 			modelService.saveModel(model, new AsyncCallback<Model>() {
 				@Override
 				public void onFailure(Throwable t) {
-					rpcErrorHandler.handleRpcError(t);
+					//TODO: redesign exception handling
+					if(t instanceof ModelException) {
+						ModelException modelException = (ModelException) t;
+						if(modelException.getErrorCode() == Code.ModelNameNotUnique) {
+							//show name-not-unique message
+							messagePresenter.errorModelNameNotUnique();
+						}
+					} else {
+						rpcErrorHandler.handleRpcError(t);
+					}
 				}
 				@Override
 				public void onSuccess(Model m) {

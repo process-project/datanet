@@ -19,6 +19,10 @@ public class MessagePresenter {
 		dispatcher.displayMessage(messages.errorNoModelPresent(), MessageType.ERROR);
 	}
 	
+	public void errorModelNameNotUnique() {
+		dispatcher.displayMessage(messages.errorModelNameNotUnique(), MessageType.ERROR);
+	}
+	
 	public void errorNoRepositoryPresent() {
 		dispatcher.displayMessage(messages.errorNoRepositoryPresent(), MessageType.ERROR);
 	}

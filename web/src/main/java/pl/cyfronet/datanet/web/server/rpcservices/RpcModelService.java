@@ -36,6 +36,14 @@ public class RpcModelService  implements ModelService {
 		log.info("Processing model save request for model {}", model);
 
 		try {
+			//check for unique model name
+			List<ModelDbEntity> availableModels = modelDao.getModels();
+			for(ModelDbEntity dbModel : availableModels) {
+				if(model.getName().equals(dbModel.getName()) && model.getId() != dbModel.getId()) {
+					throw new ModelException(Code.ModelNameNotUnique);
+				}
+			}
+			
 			UserDbEntity user = getUser();
 			ModelDbEntity modelDbEntity = new ModelDbEntity();
 			modelDbEntity.setId(model.getId());
@@ -52,6 +60,8 @@ public class RpcModelService  implements ModelService {
 			model.setId(modelDbEntity.getId());
 			
 			return model;
+		} catch (ModelException me) {
+			throw me;
 		} catch (Exception e) {
 			String message = "Could not save model " + model;
 			log.error(message, e);
