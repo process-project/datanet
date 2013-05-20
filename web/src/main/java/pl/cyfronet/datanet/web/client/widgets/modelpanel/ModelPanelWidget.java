@@ -31,8 +31,10 @@ public class ModelPanelWidget extends Composite implements View {
 
 	@UiField
 	TextBox modelName;
+	/*
 	@UiField
 	TextBox modelVersion;
+	*/
 	@UiField
 	Panel entityContainer;
 	
@@ -50,7 +52,7 @@ public class ModelPanelWidget extends Composite implements View {
 		presenter.onModelNameChanged(event.getValue());
 	}
 
-	@UiHandler("modelVersion")
+//	@UiHandler("modelVersion")
 	void modelVersionChanged(ValueChangeEvent<String> event) {
 		presenter.onModelVersionChanged(event.getValue());
 	}
@@ -68,7 +70,7 @@ public class ModelPanelWidget extends Composite implements View {
 	}
 
 	public void setModelVersion(String version) {
-		modelVersion.setText(version);
+//		modelVersion.setText(version);
 	}
 
 }
