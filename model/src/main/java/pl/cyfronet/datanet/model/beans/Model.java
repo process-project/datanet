@@ -17,6 +17,7 @@ public class Model implements Serializable {
 	private List<Entity> entities;
 	
 	public Model() {
+		version = "null";
 		entities = new ArrayList<Entity>();
 	}
 	

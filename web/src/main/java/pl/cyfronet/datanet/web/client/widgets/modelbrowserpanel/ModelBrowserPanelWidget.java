@@ -86,7 +86,8 @@ public class ModelBrowserPanelWidget extends Composite implements View {
 	public void addModel(final long id, String name, String version) {
 		ModelLabel modelLabel = new ModelLabel();
 		modelLabel.setModelId(id);
-		modelLabel.setText(name + "(" + version + ")");
+//		modelLabel.setText(name + "(" + version + ")");
+		modelLabel.setText(name);
 		modelLabel.setStyleName(style.modelLabel(), true);
 		modelLabel.addClickHandler(new ClickHandler() {
 			@Override
