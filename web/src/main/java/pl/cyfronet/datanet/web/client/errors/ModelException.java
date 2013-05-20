@@ -6,6 +6,7 @@ public class ModelException extends Exception {
 	public enum Code {
 		Unknown,
 		ModelSaveError,
+		ModelNameNotUnique,
 		ModelRetrievalError,
 		ModelDeployError,
 		RepositoryRetrievalError,
@@ -19,7 +20,17 @@ public class ModelException extends Exception {
 		errorCode = Code.Unknown;
 	}
 	
+	public ModelException(String message) {
+		super(message);
+		errorCode = Code.Unknown;
+	}
+	
 	public ModelException(Code errorCode) {
+		this.errorCode = errorCode;
+	}
+	
+	public ModelException(Code errorCode, String message) {
+		super(message);
 		this.errorCode = errorCode;
 	}
 	
