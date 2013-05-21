@@ -81,34 +81,37 @@ public class ClientController {
 		});
 	}
 	
+	private void saveModel(final Model model) {
+		modelService.saveModel(model, new AsyncCallback<Model>() {
+			@Override
+			public void onFailure(Throwable t) {
+				//TODO: redesign exception handling
+				if(t instanceof ModelException) {
+					ModelException modelException = (ModelException) t;
+					if(modelException.getErrorCode() == Code.ModelNameNotUnique) {
+						//show name-not-unique message
+						messagePresenter.errorModelNameNotUnique();
+					}
+				} else {
+					rpcErrorHandler.handleRpcError(t);
+				}
+			}
+			@Override
+			public void onSuccess(Model m) {
+				messagePresenter.displayModelSavedMessage();
+				
+				modelBrowserPanelPresenter.addOrReplaceModel(m);
+				modelBrowserPanelPresenter.setMarked(m.getId());
+				modelBrowserPanelPresenter.onModelClicked(m.getId());
+			}
+		});
+	}
 	
-	public void onSaveModel(final Model model) {
+	public void onSaveModel(Model model) {
 		List<ModelError> modelErrors = modelValidator.validateModel(model);
 		
 		if(modelErrors.isEmpty()) {
-			modelService.saveModel(model, new AsyncCallback<Model>() {
-				@Override
-				public void onFailure(Throwable t) {
-					//TODO: redesign exception handling
-					if(t instanceof ModelException) {
-						ModelException modelException = (ModelException) t;
-						if(modelException.getErrorCode() == Code.ModelNameNotUnique) {
-							//show name-not-unique message
-							messagePresenter.errorModelNameNotUnique();
-						}
-					} else {
-						rpcErrorHandler.handleRpcError(t);
-					}
-				}
-				@Override
-				public void onSuccess(Model m) {
-					messagePresenter.displayModelSavedMessage();
-					
-					modelBrowserPanelPresenter.addOrReplaceModel(m);
-					modelBrowserPanelPresenter.setMarked(m.getId());
-					modelBrowserPanelPresenter.onModelClicked(m.getId());
-				}
-			});
+			saveModel(model);
 		} else {
 			messagePresenter.displayModelSaveError(modelErrors.get(0));
 		}
@@ -118,22 +121,28 @@ public class ClientController {
 		return messagePresenter;
 	}
 	
-	public void onDeployModel(final Model model) {
+	private void deployModel(final Model model) {
+		repositoryService.deployModel(model, new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable t) {
+				rpcErrorHandler.handleRpcError(t);
+			}
+			@Override
+			public void onSuccess(Void v) {
+				messagePresenter.displayModelDeployedMessage();
+				repositoryBrowserPanelPresenter.updateRepositoryList();
+			}
+		});
+	}
+	
+	public void onDeployModel(Model model) {
 		//TODO: deployment needs proper validation and error handling, this was copied from onSaveModel()
 		List<ModelError> modelErrors = modelValidator.validateModel(model);
 		
 		if(modelErrors.isEmpty()) {
-			repositoryService.deployModel(model, new AsyncCallback<Void>() {
-				@Override
-				public void onFailure(Throwable t) {
-					rpcErrorHandler.handleRpcError(t);
-				}
-				@Override
-				public void onSuccess(Void v) {
-					messagePresenter.displayModelDeployedMessage();
-					repositoryBrowserPanelPresenter.updateRepositoryList();
-				}
-			});
+			saveModel(model);
+			//TODO: check saveModel outcome
+			deployModel(model);
 		} else {
 			messagePresenter.displayModelDeployError(modelErrors.get(0));
 		}
