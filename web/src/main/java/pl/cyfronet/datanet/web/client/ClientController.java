@@ -47,6 +47,22 @@ public class ClientController {
 		this.repositoryService = repositoryService;
 	}
 	
+	private class Outcome {
+		private boolean success;
+		
+		public Outcome() {
+			success = false;
+		}
+
+		public boolean isSuccess() {
+			return success;
+		}
+
+		public void setSuccess(boolean success) {
+			this.success = success;
+		}
+	}
+	
 	public void start() {
 		loginService.isUserLoggedIn(new AsyncCallback<Boolean>() {
 			@Override
@@ -81,10 +97,11 @@ public class ClientController {
 		});
 	}
 	
-	private void saveModel(final Model model) {
+	private void saveModel(final Model model, final Outcome outcome) {
 		modelService.saveModel(model, new AsyncCallback<Model>() {
 			@Override
 			public void onFailure(Throwable t) {
+				outcome.setSuccess(false);
 				//TODO: redesign exception handling
 				if(t instanceof ModelException) {
 					ModelException modelException = (ModelException) t;
@@ -98,6 +115,7 @@ public class ClientController {
 			}
 			@Override
 			public void onSuccess(Model m) {
+				outcome.setSuccess(true);
 				messagePresenter.displayModelSavedMessage();
 				
 				modelBrowserPanelPresenter.addOrReplaceModel(m);
@@ -110,8 +128,9 @@ public class ClientController {
 	public void onSaveModel(Model model) {
 		List<ModelError> modelErrors = modelValidator.validateModel(model);
 		
+		Outcome outcome = new Outcome();
 		if(modelErrors.isEmpty()) {
-			saveModel(model);
+			saveModel(model, outcome);
 		} else {
 			messagePresenter.displayModelSaveError(modelErrors.get(0));
 		}
@@ -139,10 +158,13 @@ public class ClientController {
 		//TODO: deployment needs proper validation and error handling, this was copied from onSaveModel()
 		List<ModelError> modelErrors = modelValidator.validateModel(model);
 		
+		Outcome saveOutcome = new Outcome();
 		if(modelErrors.isEmpty()) {
-			saveModel(model);
+			saveModel(model, saveOutcome);
 			//TODO: check saveModel outcome
-			deployModel(model);
+			if(saveOutcome.isSuccess()) {
+				deployModel(model);
+			}
 		} else {
 			messagePresenter.displayModelDeployError(modelErrors.get(0));
 		}
