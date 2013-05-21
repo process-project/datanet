@@ -26,6 +26,11 @@ public class HibernateRepositoryDao {
 	}
 	
 	@Transactional
+	public RepositoryDbEntity getRepositoryByName(String name) {
+		return (RepositoryDbEntity) sessionFactory.getCurrentSession().createCriteria(RepositoryDbEntity.class).add(Restrictions.eq("name", name)).uniqueResult();
+	}
+	
+	@Transactional
 	@SuppressWarnings("unchecked")
 	public List<RepositoryDbEntity> getRepositories() {
 		return sessionFactory.getCurrentSession().createCriteria(RepositoryDbEntity.class).list();
@@ -42,4 +47,10 @@ public class HibernateRepositoryDao {
 		
 		return user.getRepositories();
 	}
+	
+	@Transactional
+	public void deleteRepository(RepositoryDbEntity repository) {
+		sessionFactory.getCurrentSession().delete(repository);
+	}
+	
 }

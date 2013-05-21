@@ -36,7 +36,7 @@ public class RpcModelService  implements ModelService {
 		log.info("Processing model save request for model {}", model);
 
 		try {
-			//check for unique model name
+			//TODO: Create optimized DAO method for this case
 			List<ModelDbEntity> availableModels = modelDao.getModels();
 			for(ModelDbEntity dbModel : availableModels) {
 				if(model.getName().equals(dbModel.getName()) && model.getId() != dbModel.getId()) {
