@@ -22,6 +22,7 @@ import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryB
 import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelWidget;
 
 import com.google.gwt.http.client.UrlBuilder;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -45,22 +46,6 @@ public class ClientController {
 		this.rpcErrorHandler = rpcErrorHandler;
 		this.modelValidator = modelValidator;
 		this.repositoryService = repositoryService;
-	}
-	
-	private class Outcome {
-		private boolean success;
-		
-		public Outcome() {
-			success = false;
-		}
-
-		public boolean isSuccess() {
-			return success;
-		}
-
-		public void setSuccess(boolean success) {
-			this.success = success;
-		}
 	}
 	
 	public void start() {
@@ -97,11 +82,10 @@ public class ClientController {
 		});
 	}
 	
-	private void saveModel(final Model model, final Outcome outcome) {
+	private void saveModel(final Model model, final Command onSuccess) {
 		modelService.saveModel(model, new AsyncCallback<Model>() {
 			@Override
 			public void onFailure(Throwable t) {
-				outcome.setSuccess(false);
 				//TODO: redesign exception handling
 				if(t instanceof ModelException) {
 					ModelException modelException = (ModelException) t;
@@ -115,7 +99,10 @@ public class ClientController {
 			}
 			@Override
 			public void onSuccess(Model m) {
-				outcome.setSuccess(true);
+				if(onSuccess != null) {
+					onSuccess.execute();
+				}
+				
 				messagePresenter.displayModelSavedMessage();
 				
 				modelBrowserPanelPresenter.addOrReplaceModel(m);
@@ -127,10 +114,9 @@ public class ClientController {
 	
 	public void onSaveModel(Model model) {
 		List<ModelError> modelErrors = modelValidator.validateModel(model);
-		
-		Outcome outcome = new Outcome();
+
 		if(modelErrors.isEmpty()) {
-			saveModel(model, outcome);
+			saveModel(model, null);
 		} else {
 			messagePresenter.displayModelSaveError(modelErrors.get(0));
 		}
@@ -154,17 +140,17 @@ public class ClientController {
 		});
 	}
 	
-	public void onDeployModel(Model model) {
+	public void onDeployModel(final Model model) {
 		//TODO: deployment needs proper validation and error handling, this was copied from onSaveModel()
 		List<ModelError> modelErrors = modelValidator.validateModel(model);
-		
-		Outcome saveOutcome = new Outcome();
+
 		if(modelErrors.isEmpty()) {
-			saveModel(model, saveOutcome);
-			//TODO: check saveModel outcome
-			if(saveOutcome.isSuccess()) {
-				deployModel(model);
-			}
+			saveModel(model, new Command() {
+				@Override
+				public void execute() {
+					deployModel(model);
+				}
+			});
 		} else {
 			messagePresenter.displayModelDeployError(modelErrors.get(0));
 		}
