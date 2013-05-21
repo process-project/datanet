@@ -15,6 +15,8 @@ public class UserDbEntity {
 	private String login;
 	@ManyToMany(mappedBy = "owners")
 	private List<ModelDbEntity> models;
+	@ManyToMany(mappedBy = "owners")
+	private List<RepositoryDbEntity> repositories;
 	private Date lastLogin;
 	
 	public List<ModelDbEntity> getModels() {
@@ -41,4 +43,11 @@ public class UserDbEntity {
 	public void setLastLogin(Date lastLogin) {
 		this.lastLogin = lastLogin;
 	}
+	public List<RepositoryDbEntity> getRepositories() {
+		return repositories;
+	}
+	public void setRepositories(List<RepositoryDbEntity> repositories) {
+		this.repositories = repositories;
+	}
+	
 }
