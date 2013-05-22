@@ -62,7 +62,7 @@ public class DeployerTest extends CloudFoundryTest {
 	@Test
 	public void deployAndCleanup() throws DeployerException {
 		sampleDeploy();
-		sampleUndeploy();
+//		sampleUndeploy();
 	}
 
 }
