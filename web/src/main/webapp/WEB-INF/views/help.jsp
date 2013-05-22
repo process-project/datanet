@@ -10,7 +10,9 @@
 		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
 	</head>
 	<body>
-		<h1>Hello, world!</h1>
+		<h1><spring:message code="help.main.title"/></h1>
+		<p><spring:message code="help.coming.soon"/></p>
+		
 		<script src="http://code.jquery.com/jquery.js"></script>
 		<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
 	</body>
