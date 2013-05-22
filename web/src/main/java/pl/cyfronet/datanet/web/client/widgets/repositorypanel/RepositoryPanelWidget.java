@@ -6,6 +6,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Panel;
@@ -26,10 +27,9 @@ public class RepositoryPanelWidget extends Composite implements View {
 
 	private Presenter presenter;
 
-	@UiField
-	TextBox repositoryName;
-	@UiField
-	Panel repositoryContainer;
+	@UiField TextBox repositoryName;
+	@UiField Panel repositoryContainer;
+	@UiField Anchor repositoryLink;
 	
 	public RepositoryPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -47,4 +47,8 @@ public class RepositoryPanelWidget extends Composite implements View {
 		repositoryName.setText(name);
 	}
 
+	@Override
+	public void setRepositoryLink(String link) {
+		repositoryLink.setHref(link);
+	}
 }
