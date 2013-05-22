@@ -83,7 +83,7 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 	public void onUndeployRepository() {
 		if(repositoryPanelPresenter != null) {
 			String applicationName = repositoryPanelPresenter.getRepository();
-			String repositoryName = applicationName.substring(4);
+			String repositoryName = applicationName;//.substring(4);
 			clientController.onUndeployRepository(repositoryName);
 			view.clearRepository();
 			repositoryPanelPresenter = null;
