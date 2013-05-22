@@ -25,7 +25,7 @@ public class RepositoryPanelPresenter implements Presenter {
 	public void setRepository(Repository repository) {
 		this.repository = repository;
 		view.setRepositoryName(repository.getName());
-		view.setRepositoryLink(REPO_TEMPLATE.replace("{repo}", repositoryName));
+		view.setRepositoryLink(REPO_TEMPLATE.replace("{repo}", repository.getName()));
 	}
 	
 	public Repository getRepository() {
