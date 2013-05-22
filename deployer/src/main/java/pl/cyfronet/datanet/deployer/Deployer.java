@@ -9,10 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipException;
 
-import org.cloudfoundry.client.lib.CloudApplication;
+import org.cloudfoundry.client.lib.CloudCredentials;
 import org.cloudfoundry.client.lib.CloudFoundryClient;
 import org.cloudfoundry.client.lib.CloudFoundryException;
-import org.cloudfoundry.client.lib.CloudService;
+import org.cloudfoundry.client.lib.domain.CloudApplication;
+import org.cloudfoundry.client.lib.domain.CloudService;
 import org.slf4j.Logger;
 
 public class Deployer {
@@ -126,7 +127,8 @@ public class Deployer {
 	}
 	
 	private CloudFoundryClient prepareNewClient() throws DeployerException {
-		CloudFoundryClient client = new CloudFoundryClient(email, password, null, cloudControllerUrl);
+		CloudCredentials creds = new CloudCredentials(email, password);
+		CloudFoundryClient client = new CloudFoundryClient(creds, cloudControllerUrl);
 		try {
 			client.login();
 		} catch (CloudFoundryException cfe) {

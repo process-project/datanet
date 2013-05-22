@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -17,12 +18,13 @@ import java.util.Random;
 import java.util.zip.ZipException;
 
 import org.apache.commons.io.FileUtils;
-import org.cloudfoundry.client.lib.CloudApplication;
+import org.cloudfoundry.client.lib.CloudCredentials;
 import org.cloudfoundry.client.lib.CloudFoundryClient;
-import org.cloudfoundry.client.lib.CloudService;
-import org.cloudfoundry.client.lib.ServiceConfiguration;
-import org.cloudfoundry.client.lib.ServiceConfiguration.Tier;
-import org.cloudfoundry.client.lib.Staging;
+import org.cloudfoundry.client.lib.domain.CloudApplication;
+import org.cloudfoundry.client.lib.domain.CloudService;
+import org.cloudfoundry.client.lib.domain.ServiceConfiguration;
+import org.cloudfoundry.client.lib.domain.ServiceConfiguration.Tier;
+import org.cloudfoundry.client.lib.domain.Staging;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -73,7 +75,8 @@ public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 		Assert.assertNotNull(CF_TARGET);
 		Assert.assertNotNull(CF_USER);
 		Assert.assertNotNull(CF_PASS);
-		client = new CloudFoundryClient(CF_USER, CF_PASS, CF_TARGET);
+		CloudCredentials creds = new CloudCredentials(CF_USER, CF_PASS);
+		client = new CloudFoundryClient(creds, new URL(CF_TARGET));
 		client.login();
 	}
 	

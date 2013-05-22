@@ -4,8 +4,8 @@ import static java.util.Arrays.asList;
 
 import java.io.File;
 
-import org.cloudfoundry.client.lib.CloudApplication;
 import org.cloudfoundry.client.lib.CloudFoundryClient;
+import org.cloudfoundry.client.lib.domain.CloudApplication;
 import org.slf4j.Logger;
 
 public class DeployApplication {

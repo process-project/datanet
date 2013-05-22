@@ -3,7 +3,7 @@ package pl.cyfronet.datanet.deployer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cloudfoundry.client.lib.Staging;
+import org.cloudfoundry.client.lib.domain.Staging;
 
 /**
  * @author bwilk
