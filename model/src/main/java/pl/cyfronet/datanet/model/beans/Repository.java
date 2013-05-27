@@ -1,7 +1,11 @@
 package pl.cyfronet.datanet.model.beans;
 
+import java.io.Serializable;
 
-public class Repository {
+
+public class Repository implements Serializable {
+	private static final long serialVersionUID = 6983667746241352161L;
+	
 	private long id;
 	private String name;
 	private Model sourceModel;
