@@ -3,8 +3,8 @@ package pl.cyfronet.datanet.deployer;
 import java.util.List;
 
 import org.cloudfoundry.client.lib.CloudFoundryClient;
-import org.cloudfoundry.client.lib.domain.CloudService;
-import org.cloudfoundry.client.lib.domain.ServiceConfiguration;
+import org.cloudfoundry.client.lib.CloudService;
+import org.cloudfoundry.client.lib.ServiceConfiguration;
 import org.slf4j.Logger;
 
 public class DeployService {
