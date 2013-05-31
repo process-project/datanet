@@ -16,6 +16,7 @@ import pl.cyfronet.datanet.deployer.DeployerException;
 import pl.cyfronet.datanet.deployer.marshaller.MarshallerException;
 import pl.cyfronet.datanet.deployer.marshaller.ModelSchemaGenerator;
 import pl.cyfronet.datanet.model.beans.Model;
+import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
 import pl.cyfronet.datanet.web.client.errors.ModelException.Code;
 import pl.cyfronet.datanet.web.client.services.RepositoryService;
@@ -65,16 +66,19 @@ public class RpcRepositoryService implements RepositoryService {
 	}
 
 	@Override
-	public List<String> getRepositories() throws ModelException {
+	public List<Repository> getRepositories() throws ModelException {
 		try {
 			UserDbEntity userDbEntity = getUser();
 			
-			List<String> repositoryNames = new LinkedList<>();
+			List<Repository> repositories = new LinkedList<>();
 			for(RepositoryDbEntity repositoryDbEntity : repositoryDao.getUserRepositories(userDbEntity.getLogin())) {
-				String repositoryName = repositoryDbEntity.getName();
-				repositoryNames.add(repositoryName);
+				Repository repository = new Repository();
+				repository.setId(repositoryDbEntity.getId());
+				repository.setName(repositoryDbEntity.getName());
+				repository.setSourceModel(repository.getSourceModel());
+				repositories.add(repository);
 			}
-			return repositoryNames;
+			return repositories;
 		} catch (Exception e) {
 			String message = "Could not read available repositories";
 			log.error(message, e);
@@ -83,10 +87,13 @@ public class RpcRepositoryService implements RepositoryService {
 	}
 
 	@Override
-	public void undeployRepository(String repositoryName) throws ModelException {
+	public void undeployRepository(long repositoryId) throws ModelException {
 		try {
+			RepositoryDbEntity repository = repositoryDao.getRepository(repositoryId);
+			String repositoryName = repository.getName().substring(4);
+			
 			deployer.undeployRepository(repositoryName);
-			RepositoryDbEntity repository = repositoryDao.getRepositoryByName(repositoryName);
+			
 			repositoryDao.deleteRepository(repository);
 		} catch (DeployerException e) {
 			log.error("Deployer undeploy repository failure", e);

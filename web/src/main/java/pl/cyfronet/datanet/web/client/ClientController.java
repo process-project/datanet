@@ -162,8 +162,8 @@ public class ClientController {
 		Window.Location.assign(builder.buildString());
 	}
 	
-	public void onUndeployRepository(String repositoryName) {
-		repositoryService.undeployRepository(repositoryName, new AsyncCallback<Void>() {
+	public void onUndeployRepository(long repositoryId) {
+		repositoryService.undeployRepository(repositoryId, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable t) {

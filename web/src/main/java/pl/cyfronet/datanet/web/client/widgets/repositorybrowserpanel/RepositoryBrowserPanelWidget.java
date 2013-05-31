@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel;
 
+import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelPresenter.View;
 
 import com.google.gwt.core.client.GWT;
@@ -25,14 +26,14 @@ public class RepositoryBrowserPanelWidget extends Composite implements View {
 	}
 	
 	private class RepositoryLabel extends Label {
-		private String repositoryName;
+		private long repositoryId;
 
-		public String getRepositoryName() {
-			return repositoryName;
+		public long getRepositoryId() {
+			return repositoryId;
 		}
 
-		public void setRepositoryName(String repositoryName) {
-			this.repositoryName = repositoryName;
+		public void setRepositoryId(long repositoryId) {
+			this.repositoryId = repositoryId;
 		}
 	}
 
@@ -78,16 +79,18 @@ public class RepositoryBrowserPanelWidget extends Composite implements View {
 	}
 
 	@Override
-	public void addRepository(final String repositoryName) {
+	public void addRepository(Repository repository) {
+		final long repositoryId = repository.getId();
+		
 		RepositoryLabel repositorylabel = new RepositoryLabel();
-		repositorylabel.setText(repositoryName);
-		repositorylabel.setRepositoryName(repositoryName);
+		repositorylabel.setText(repository.getName());
+		repositorylabel.setRepositoryId(repositoryId);
 		repositorylabel.setStyleName(style.repositoryLabel(), true);
 		repositorylabel.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				presenter.onRepositoryClicked(repositoryName);
+				presenter.onRepositoryClicked(repositoryId);
 			}
 			
 		});
@@ -105,12 +108,12 @@ public class RepositoryBrowserPanelWidget extends Composite implements View {
 		repositoryContainer.add(widget);
 	}
 
-	private RepositoryLabel getRepositoryLabelByRepositoryName(String repositoryName) {
+	private RepositoryLabel getRepositoryLabelByRepositoryId(long repositoryId) {
 		for (int i = 0; i < repositoryListContainer.getWidgetCount(); i++) {
 			Widget w = repositoryListContainer.getWidget(i);
 			if (w instanceof RepositoryLabel) {
 				RepositoryLabel repositoryLabel = (RepositoryLabel) w;
-				if (repositoryLabel.getRepositoryName().equals(repositoryName)) {
+				if (repositoryLabel.getRepositoryId() == repositoryId) {
 					return repositoryLabel;
 				}
 			}
@@ -119,9 +122,9 @@ public class RepositoryBrowserPanelWidget extends Composite implements View {
 	}
 
 	@Override
-	public void markRepository(String repositoryName) {
+	public void markRepository(long repositoryId) {
 		unmarkRepository();
-		RepositoryLabel activeRepository = getRepositoryLabelByRepositoryName(repositoryName);
+		RepositoryLabel activeRepository = getRepositoryLabelByRepositoryId(repositoryId);
 		if (activeRepository != null ) {
 			activeRepository.setStyleName(style.marked(), true);
 		}

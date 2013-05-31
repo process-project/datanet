@@ -1,8 +1,10 @@
 package pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.ClientController;
 import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
 import pl.cyfronet.datanet.web.client.messages.MessagePresenter;
@@ -17,16 +19,16 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 	interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
 		void clearRepositories();
-		void addRepository(String repositoryName);
+		void addRepository(Repository repository);
 		void displayNoRepositoriesLabel();
-		void markRepository(String repositoryName);
+		void markRepository(long id);
 		void unmarkRepository();
 		void clearRepository();
 		void setRepositoryPanel(IsWidget widget);
 	}
 	
 	private View view;
-	private List<String> repositories;
+	private List<Repository> repositories;
 	private RepositoryServiceAsync repositoryService;
 	private RpcErrorHandler rpcErrorHandler;
 	private ClientController clientController;
@@ -50,13 +52,20 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 	protected void refreshRepositoryList() {
 		view.clearRepositories();
 
-		Collections.sort(repositories);
+		Collections.sort(repositories, new Comparator<Repository>() {
+
+			@Override
+			public int compare(Repository o1, Repository o2) {
+				return o1.getName().compareToIgnoreCase(o2.getName());
+			}
+			
+		});
 		if (repositories.size() > 0) {
-			for(String repositoryName : repositories) {
-				view.addRepository(repositoryName);
+			for(Repository repository : repositories) {
+				view.addRepository(repository);
 				
-				if(repositoryPanelPresenter != null && repositoryPanelPresenter.getRepository().equals(repositoryName)) {
-					view.markRepository(repositoryName);
+				if(repositoryPanelPresenter != null && repositoryPanelPresenter.getRepository().getId() == repository.getId()) {
+					view.markRepository(repository.getId());
 				}
 			}
 		} else {
@@ -65,14 +74,14 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 	}
 		
 	public void updateRepositoryList() {
-		repositoryService.getRepositories(new AsyncCallback<List<String>>() {
+		repositoryService.getRepositories(new AsyncCallback<List<Repository>>() {
 
 			@Override
 			public void onFailure(Throwable t) {
 				rpcErrorHandler.handleRpcError(t);
 			}
 			@Override
-			public void onSuccess(List<String> repositories) {
+			public void onSuccess(List<Repository> repositories) {
 				RepositoryBrowserPanelPresenter.this.repositories = repositories;
 				refreshRepositoryList();
 			}
@@ -82,9 +91,8 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 	@Override
 	public void onUndeployRepository() {
 		if(repositoryPanelPresenter != null) {
-			String applicationName = repositoryPanelPresenter.getRepository();
-			String repositoryName = applicationName;//.substring(4);
-			clientController.onUndeployRepository(repositoryName);
+			Repository repository = repositoryPanelPresenter.getRepository();
+			clientController.onUndeployRepository(repository.getId());
 			view.clearRepository();
 			repositoryPanelPresenter = null;
 		} else {
@@ -93,17 +101,33 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 	}
 
 	@Override
-	public void onRepositoryClicked(String repositoryName) {
-		if(repositoryPanelPresenter != null && repositoryPanelPresenter.getRepository().equals(repositoryName)) {
+	public void onRepositoryClicked(long repositoryId) {
+		if(repositoryPanelPresenter != null && repositoryPanelPresenter.getRepository().getId() == repositoryId) {
+			return;
+		}
+		
+		Repository repo = getRepositoryById(repositoryId);
+		if(repo == null) {
+			//clicked repository not in list?
 			return;
 		}
 		
 		view.clearRepository();
 		repositoryPanelPresenter = new RepositoryPanelPresenter(new RepositoryPanelWidget());
-		repositoryPanelPresenter.setRepository(repositoryName);
+		repositoryPanelPresenter.setRepository(repo);
 		
 		view.setRepositoryPanel(repositoryPanelPresenter.getWidget());
-		view.markRepository(repositoryName);
+		view.markRepository(repo.getId());
+	}
+	
+	private Repository getRepositoryById(long repositoryId) {
+		Repository repo = null;
+		for(Repository repository : repositories) {
+			if (repository.getId() == repositoryId) {
+				repo = repository;
+			}
+		}
+		return repo;
 	}
 	
 }
