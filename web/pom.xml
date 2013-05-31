@@ -94,6 +94,7 @@
 			<artifactId>deployer</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
 		<!-- Servlet 3 dependencies -->
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
@@ -175,6 +176,11 @@
 			<artifactId>gwt-user</artifactId>
 			<version>${gwt.version}</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.gwtbootstrap</groupId>
+			<artifactId>gwt-bootstrap</artifactId>
+			<version>${gwt.bootstrap.version}</version>
 		</dependency>
 		
 		<!-- Commons dependencies -->
