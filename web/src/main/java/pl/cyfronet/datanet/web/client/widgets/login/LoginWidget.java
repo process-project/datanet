@@ -1,8 +1,10 @@
 package pl.cyfronet.datanet.web.client.widgets.login;
 
-import pl.cyfronet.datanet.web.client.widgets.login.Presenter;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginPresenter.View;
 
+import com.github.gwtbootstrap.client.ui.Alert;
+import com.github.gwtbootstrap.client.ui.PasswordTextBox;
+import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -10,12 +12,8 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class LoginWidget extends Composite implements View {
@@ -24,8 +22,7 @@ public class LoginWidget extends Composite implements View {
 	
 	@UiField TextBox loginField;
 	@UiField PasswordTextBox passwordField;
-	@UiField Button loginButton;
-	@UiField Label errorLabel;
+	@UiField Alert errorLabel;
 	
 	private LoginMessages messages;
 	private Presenter presenter;
@@ -72,20 +69,28 @@ public class LoginWidget extends Composite implements View {
 	@Override
 	public void errorLoginOrPasswordEmpty() {
 		errorLabel.setText(messages.loginOrPasswordEmpty());
+		alertVisible(true);
 	}
 
 	@Override
 	public void errorUnknownDuringLogin() {
 		errorLabel.setText(messages.unknownLoginError());
+		alertVisible(true);
 	}
 
 	@Override
 	public void clearErrors() {
 		errorLabel.setText("");
+		alertVisible(false);
 	}
 
 	@Override
 	public void errorWrongLoginOrPassword() {
 		errorLabel.setText(messages.wrongLoginOrPassword());
+		alertVisible(true);
+	}
+	
+	private void alertVisible(boolean visible) {
+		errorLabel.setVisible(visible);
 	}
 }

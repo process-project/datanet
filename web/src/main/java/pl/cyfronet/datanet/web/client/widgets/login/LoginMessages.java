@@ -10,4 +10,7 @@ public interface LoginMessages extends Messages {
 	String loginOrPasswordEmpty();
 	String unknownLoginError();
 	String wrongLoginOrPassword();
+	String loginGhostLabel();
+	String passwordGhostLabel();
+	String datanetLogoAlt();
 }

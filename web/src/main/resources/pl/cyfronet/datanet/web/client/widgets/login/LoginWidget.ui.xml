@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-		xmlns:g="urn:import:com.google.gwt.user.client.ui">
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.datanet.web.client.widgets.login.LoginMessages" field="messages"/>
 	<ui:style>
 		.loginPanel {
@@ -12,49 +13,32 @@
 			box-shadow: 0px 0px 5px #888888;
 			padding: 15px;
 		}
-		.loginHeader {
-			text-align: center;
-			margin-bottom: 10px;
-			font-size: larger;
-		}
-		.submit {
-			text-align: center;
-			margin-top: 10px;
-		}
-		.label {
-			width: 10em;
-			text-align: right;
+		.logo {
+			margin: 0px auto 20px;
 			display: block;
-			float: left;
-			margin-right:5px; 
-		}
-		.errorLabel {
-			color: red;
-			text-align: center;
-			margin-top: 10px;
-		}
-		.input {
-			width: 12em;
-		}
-		.input-section {
-			margin-top: 5px;
 		}
 	</ui:style>
 	<g:HTMLPanel styleName="{style.loginPanel}">
-		<div class="{style.loginHeader}"><ui:text from="{messages.loginHeader}"/></div>
-		<div class="{style.input-section}">
-			<span class="{style.label}"><ui:text from="{messages.loginLabel}"/></span>
-			<g:TextBox ui:field="loginField" styleName="{style.input}"/>
-		</div>
-		<div class="{style.input-section}">
-			<span class="{style.label}"><ui:text from="{messages.passwordLabel}"/></span>
-			<g:PasswordTextBox ui:field="passwordField" styleName="{style.input}"/>
-		</div>
-		<div class="{style.submit}">
-			<g:Button ui:field="loginButton" text="{messages.submitLabel}"/>
-		</div>
-		<div class="{style.errorLabel}">
-			<g:Label ui:field="errorLabel"/>
-		</div>
+	    <g:Image url="img/datanet-logo-143x40.png" altText="{messages.datanetLogoAlt}" styleName="{style.logo}"/>
+		<b:Form type="HORIZONTAL">
+		    <b:Fieldset>
+		        <b:ControlGroup>
+		            <b:ControlLabel for="login"><ui:text from="{messages.loginLabel}"/></b:ControlLabel>
+		            <b:Controls>
+		                <b:TextBox ui:field="loginField" placeholder="{messages.loginGhostLabel}"/>
+		            </b:Controls>
+		        </b:ControlGroup>
+		        <b:ControlGroup>
+		            <b:ControlLabel for="password"><ui:text from="{messages.passwordLabel}"/></b:ControlLabel>
+		            <b:Controls>
+		                <b:PasswordTextBox ui:field="passwordField" placeholder="{messages.passwordGhostLabel}"/>
+		            </b:Controls>
+		        </b:ControlGroup>
+		    </b:Fieldset>
+		    <b:FormActions>
+		        <b:Button type="PRIMARY" ui:field="loginButton"><ui:text from="{messages.submitLabel}"/></b:Button>
+		    </b:FormActions>
+		</b:Form>
+		<b:Alert ui:field="errorLabel" type="ERROR" close="false" visible="false"/>
 	</g:HTMLPanel>
 </ui:UiBinder>
