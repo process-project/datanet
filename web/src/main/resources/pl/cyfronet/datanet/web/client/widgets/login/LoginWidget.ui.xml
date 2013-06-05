@@ -3,6 +3,7 @@
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.datanet.web.client.widgets.login.LoginMessages" field="messages"/>
+	<ui:with type="pl.cyfronet.datanet.web.client.AppProperties" field="constants"/>
 	<ui:style>
 		.loginPanel {
 			margin-top: 100px;
@@ -17,28 +18,51 @@
 			margin: 0px auto 20px;
 			display: block;
 		}
+		.right {
+			float: right;
+		}
+		.left {
+			float: left;
+		}
+		.clear {
+			clear: both;
+		}
+		.margin-bottom {
+			margin-bottom: 20px;
+		}
 	</ui:style>
 	<g:HTMLPanel styleName="{style.loginPanel}">
-	    <g:Image url="img/datanet-logo-143x40.png" altText="{messages.datanetLogoAlt}" styleName="{style.logo}"/>
-		<b:Form type="HORIZONTAL">
-		    <b:Fieldset>
-		        <b:ControlGroup>
-		            <b:ControlLabel for="login"><ui:text from="{messages.loginLabel}"/></b:ControlLabel>
-		            <b:Controls>
-		                <b:TextBox ui:field="loginField" placeholder="{messages.loginGhostLabel}"/>
-		            </b:Controls>
-		        </b:ControlGroup>
-		        <b:ControlGroup>
-		            <b:ControlLabel for="password"><ui:text from="{messages.passwordLabel}"/></b:ControlLabel>
-		            <b:Controls>
-		                <b:PasswordTextBox ui:field="passwordField" placeholder="{messages.passwordGhostLabel}"/>
-		            </b:Controls>
-		        </b:ControlGroup>
-		    </b:Fieldset>
-		    <b:FormActions>
-		        <b:Button type="PRIMARY" ui:field="loginButton"><ui:text from="{messages.submitLabel}"/></b:Button>
-		    </b:FormActions>
-		</b:Form>
-		<b:Alert ui:field="errorLabel" type="ERROR" close="false" visible="false"/>
+	    <g:HTMLPanel addStyleNames="{style.margin-bottom}">
+	        <b:Label addStyleNames="{style.right}"><ui:text from="{messages.versionLabel}"/>: <ui:text from="{constants.version}"/></b:Label>
+	        <g:Anchor ui:field="switchToPl" addStyleNames="{style.left}" href="#">PL</g:Anchor>
+			<g:Label addStyleNames="{style.left}">|</g:Label>
+			<g:Anchor ui:field="switchToEn" addStyleNames="{style.left}" href="#">EN</g:Anchor>
+			<div class="{style.clear}"></div>
+	    </g:HTMLPanel>
+	    <g:HTMLPanel>
+	    	<g:Image url="img/datanet-logo-143x40.png" altText="{messages.datanetLogoAlt}" styleName="{style.logo}"/>
+	    </g:HTMLPanel>
+	    <g:HTMLPanel>
+			<b:Form type="HORIZONTAL">
+			    <b:Fieldset>
+			        <b:ControlGroup>
+			            <b:ControlLabel for="login"><ui:text from="{messages.loginLabel}"/></b:ControlLabel>
+			            <b:Controls>
+			                <b:TextBox ui:field="loginField" placeholder="{messages.loginGhostLabel}"/>
+			            </b:Controls>
+			        </b:ControlGroup>
+			        <b:ControlGroup>
+			            <b:ControlLabel for="password"><ui:text from="{messages.passwordLabel}"/></b:ControlLabel>
+			            <b:Controls>
+			                <b:PasswordTextBox ui:field="passwordField" placeholder="{messages.passwordGhostLabel}"/>
+			            </b:Controls>
+			        </b:ControlGroup>
+			    </b:Fieldset>
+			    <b:FormActions>
+			        <b:Button type="PRIMARY" ui:field="loginButton"><ui:text from="{messages.submitLabel}"/></b:Button>
+			    </b:FormActions>
+			</b:Form>
+			<b:Alert ui:field="errorLabel" type="ERROR" close="false" visible="false"/>
+		</g:HTMLPanel>
 	</g:HTMLPanel>
 </ui:UiBinder>

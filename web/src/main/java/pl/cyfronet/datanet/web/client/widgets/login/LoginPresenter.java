@@ -75,4 +75,9 @@ public class LoginPresenter implements Presenter {
 			}
 		});
 	}
+
+	@Override
+	public void onSwitchLocale(String locale) {
+		clientController.switchLocale(locale);
+	}
 }

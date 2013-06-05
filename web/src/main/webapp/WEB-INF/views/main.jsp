@@ -4,7 +4,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<meta name="gwt:property" content="locale=${pageContext.request.locale.language}"/>
+		<meta name="gwt:property" content="locale=${locale}">
 		<title><spring:message code="main.page.title"/></title>
 		<link href="img/favicon.ico" rel="icon" type="image/x-icon" />
 		<!--[if lt IE 9]>

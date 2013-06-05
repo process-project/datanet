@@ -24,6 +24,23 @@
 	<build>
 		<finalName>datanet</finalName>
 		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
+		<resources>
+		    <!-- file filtering configuration below: filtering only the AppProperties.properties file -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>pl/cyfronet/datanet/web/client/AppProperties.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>pl/cyfronet/datanet/web/client/AppProperties.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -94,7 +111,7 @@
 			<artifactId>deployer</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<!-- Servlet 3 dependencies -->
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
@@ -141,7 +158,7 @@
 			<artifactId>cglib</artifactId>
 			<version>2.2.2</version>
 		</dependency>
-		
+
 		<!-- Hibernate dependencies -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -182,7 +199,7 @@
 			<artifactId>gwt-bootstrap</artifactId>
 			<version>${gwt.bootstrap.version}</version>
 		</dependency>
-		
+
 		<!-- Commons dependencies -->
 		<dependency>
 			<groupId>commons-codec</groupId>

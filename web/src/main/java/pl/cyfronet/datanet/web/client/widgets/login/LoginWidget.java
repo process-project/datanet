@@ -36,19 +36,25 @@ public class LoginWidget extends Composite implements View {
 	void loginClicked(ClickEvent event) {
 		presenter.onLogin();
 	}
-	
 	@UiHandler("loginField")
 	void loginTyping(KeyUpEvent event) {
 		if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 			presenter.onLogin();
 		}
 	}
-	
 	@UiHandler("passwordField")
 	void passwordTyping(KeyUpEvent event) {
 		if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 			presenter.onLogin();
 		}
+	}
+	@UiHandler("switchToPl")
+	void onSwitchToPl(ClickEvent event) {
+		presenter.onSwitchLocale("pl");
+	}
+	@UiHandler("switchToEn")
+	void onSwitchToEn(ClickEvent event) {
+		presenter.onSwitchLocale("en");
 	}
 
 	@Override

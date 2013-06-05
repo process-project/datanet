@@ -38,14 +38,17 @@ public class ClientController {
 	private RepositoryBrowserPanelPresenter repositoryBrowserPanelPresenter;
 	private MessagePresenter messagePresenter;
 	private RepositoryServiceAsync repositoryService;
+	private AppProperties properties;
 	
 	public ClientController(LoginServiceAsync loginService, ModelServiceAsync modelService,
-			RepositoryServiceAsync repositoryService, RpcErrorHandler rpcErrorHandler, ModelValidator modelValidator) {
+			RepositoryServiceAsync repositoryService, RpcErrorHandler rpcErrorHandler,
+			ModelValidator modelValidator) {
 		this.loginService = loginService;
 		this.modelService = modelService;
 		this.rpcErrorHandler = rpcErrorHandler;
 		this.modelValidator = modelValidator;
 		this.repositoryService = repositoryService;
+		this.properties = properties;
 	}
 	
 	public void start() {

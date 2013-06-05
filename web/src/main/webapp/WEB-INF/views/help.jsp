@@ -4,6 +4,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
+		<meta name="gwt:property" content="locale=${pageContext.request.locale.language}"/>
 		<title><spring:message code="help.page.title"/></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<link href="img/favicon.ico" rel="icon" type="image/x-icon" />
