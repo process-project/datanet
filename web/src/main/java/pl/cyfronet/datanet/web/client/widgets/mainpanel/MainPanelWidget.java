@@ -33,7 +33,6 @@ public class MainPanelWidget extends Composite implements View {
 	@UiField Label messageLabel;
 	@UiField MainPanelWidgetStyles style;
 	
-	
 	public MainPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
@@ -54,6 +53,10 @@ public class MainPanelWidget extends Composite implements View {
 	@UiHandler("switchToEn")
 	void onSwitchToEn(ClickEvent event) {
 		presenter.onSwitchLocale("en");
+	}
+	@UiHandler("help")
+	void onHelp(ClickEvent event) {
+		presenter.onHelp();
 	}
 
 	public void displayMessage(String message, MessageType messageType) {

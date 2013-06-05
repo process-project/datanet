@@ -1,16 +1,13 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelMessages" field="messages" />
 	<ui:style
 		type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelWidget.MainPanelWidgetStyles">
 			.main-panel {
 				margin: 20px auto;
 				width: 80%;
-			}
-			.logout-button {
-				float: right;
-				cursor: pointer;
 			}
 			.datanet-label {
 				float: left;
@@ -47,14 +44,19 @@
 				padding-left: 2px;
 				padding-right: 2px;
 			}
+			.header-buttons {
+				float: right;
+			}
 		</ui:style>
 	<g:DockLayoutPanel>
 		<g:north size="40">
 			<g:FlowPanel styleName="{style.header}">
 				<g:Image url="img/datanet-logo-143x40.png" altText="{messages.datanetMain}" styleName="{style.logo}"/>
-				<g:Label ui:field="messageLabel" styleName="gwt-Label {style.errorLabel}"
-					visible="false"/>
-				<g:Image ui:field="logout" url="img/logout.png" altText="{messages.logout}" title="{messages.logout}" styleName="{style.logout-button}"/>
+				<g:Label ui:field="messageLabel" styleName="gwt-Label {style.errorLabel}" visible="false"/>
+				<b:ButtonGroup addStyleNames="{style.header-buttons}">
+				    <b:Button ui:field="help" icon="QUESTION_SIGN" type="INFO"><ui:text from="{messages.help}"/></b:Button>
+					<b:Button ui:field="logout" icon="OFF" type="DANGER"><ui:text from="{messages.logout}"/></b:Button>
+				</b:ButtonGroup>
 			</g:FlowPanel>
 		</g:north>
 		<g:center>
@@ -75,7 +77,6 @@
 		</g:center>
 		<g:south size="20">
 			<g:FlowPanel>
-				<g:Anchor href="help"><img src="img/help.png" title="{messages.helpLinkLabel}"/></g:Anchor>
 				<g:Anchor ui:field="switchToPl" styleName="get-Anchor {style.footer-right}" href="#">PL</g:Anchor>
 				<g:Label styleName="{style.footer-right}">|</g:Label>
 				<g:Anchor ui:field="switchToEn" styleName="get-Anchor {style.footer-right}" href="#">EN</g:Anchor>
