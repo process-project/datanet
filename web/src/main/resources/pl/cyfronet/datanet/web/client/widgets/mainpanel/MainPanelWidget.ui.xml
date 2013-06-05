@@ -3,60 +3,49 @@
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelMessages" field="messages" />
-	<ui:style
-		type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelWidget.MainPanelWidgetStyles">
+	<ui:with type="pl.cyfronet.datanet.web.client.AppProperties" field="constants"/>
+	<ui:style>
 			.main-panel {
 				margin: 20px auto;
 				width: 80%;
 			}
-			.datanet-label {
-				float: left;
-			}
 			.header {
 				margin: 3px;
 			}
-			.errorLabel {
-				color: white;
-				background-color: red;
-				font-weight: bold;
+			.messageLabel {
 				float: left;
-				padding: 2px;
-				margin-left: 20em;
-			}
-			.infoLabel {
-				color: white;
-				background-color: green;
-				font-weight: bold;
-				float: left;
-				padding: 2px;
 				margin-left: 20em;
 			}
 			.logo {
 				float: left;
 			}
-			.footer-right {
-				float: right;
-				padding-left: 2px;
-				padding-right: 2px;
-			}
-			.footer-left {
-				float: left;
-				padding-left: 2px;
-				padding-right: 2px;
-			}
 			.header-buttons {
 				float: right;
+				margin-right: 10px;
+			}
+			.span {
+				display: inline;
+			}
+			.version-label {
+				margin-left: 20px;
+				float: left;
 			}
 		</ui:style>
 	<g:DockLayoutPanel>
-		<g:north size="40">
+		<g:north size="50">
 			<g:FlowPanel styleName="{style.header}">
 				<g:Image url="img/datanet-logo-143x40.png" altText="{messages.datanetMain}" styleName="{style.logo}"/>
-				<g:Label ui:field="messageLabel" styleName="gwt-Label {style.errorLabel}" visible="false"/>
+				<b:Label addStyleNames="{style.version-label}"><ui:text from="{messages.versionLabel}"/>: <ui:text from="{constants.version}"/></b:Label>
+				<b:Alert ui:field="messageLabel" close="false" visible="false" addStyleNames="{style.messageLabel}"/>
 				<b:ButtonGroup addStyleNames="{style.header-buttons}">
 				    <b:Button ui:field="help" icon="QUESTION_SIGN" type="INFO"><ui:text from="{messages.help}"/></b:Button>
 					<b:Button ui:field="logout" icon="OFF" type="DANGER"><ui:text from="{messages.logout}"/></b:Button>
 				</b:ButtonGroup>
+				<g:FlowPanel addStyleNames="{style.header-buttons}">
+					<g:Anchor ui:field="switchToPl" href="#">PL</g:Anchor>
+					<g:Label addStyleNames="{style.span}">|</g:Label>
+					<g:Anchor ui:field="switchToEn" href="#">EN</g:Anchor>
+				</g:FlowPanel>
 			</g:FlowPanel>
 		</g:north>
 		<g:center>
@@ -75,12 +64,5 @@
 				</g:tab>
 			</g:TabLayoutPanel>
 		</g:center>
-		<g:south size="20">
-			<g:FlowPanel>
-				<g:Anchor ui:field="switchToPl" styleName="get-Anchor {style.footer-right}" href="#">PL</g:Anchor>
-				<g:Label styleName="{style.footer-right}">|</g:Label>
-				<g:Anchor ui:field="switchToEn" styleName="get-Anchor {style.footer-right}" href="#">EN</g:Anchor>
-			</g:FlowPanel>
-		</g:south>
 	</g:DockLayoutPanel>
 </ui:UiBinder>

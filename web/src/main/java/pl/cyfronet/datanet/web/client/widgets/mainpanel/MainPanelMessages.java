@@ -8,4 +8,5 @@ public interface MainPanelMessages extends Messages {
 	String models();
 	String repositories();
 	String help();
+	String versionLabel();
 }
