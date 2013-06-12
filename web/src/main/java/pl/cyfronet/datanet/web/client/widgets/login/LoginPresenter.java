@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
 
 public class LoginPresenter implements Presenter {
-	interface View {
+	public interface View {
 		void setPresenter(Presenter presenter);
 		HasText getLogin();
 		HasText getPassword();
@@ -68,7 +68,6 @@ public class LoginPresenter implements Presenter {
 							view.errorWrongLoginOrPassword();
 						break;
 					}
-					
 				} else {
 					rpcErrorHandler.handleRpcError(t);
 				}

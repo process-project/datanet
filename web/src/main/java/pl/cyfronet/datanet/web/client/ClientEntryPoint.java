@@ -20,9 +20,9 @@ public class ClientEntryPoint implements EntryPoint {
 		RepositoryServiceAsync repositoryService = GWT.create(RepositoryService.class);
 		RpcErrorHandler rpcErrorHandler = new RpcErrorHandler();
 		AppProperties properties = GWT.create(AppProperties.class);
-//		Window.alert(properties.version());
+		ModelValidator modelValidator = new ModelValidator();
 		ClientController clientController = new ClientController(loginService,
-				modelService, repositoryService, rpcErrorHandler, new ModelValidator());
+				modelService, repositoryService, rpcErrorHandler, modelValidator);
 		clientController.start();
 	}
 }
