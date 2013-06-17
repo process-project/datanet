@@ -27,6 +27,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.inject.Inject;
 
 public class ClientController {
 	private LoginServiceAsync loginService;
@@ -38,8 +39,8 @@ public class ClientController {
 	private RepositoryBrowserPanelPresenter repositoryBrowserPanelPresenter;
 	private MessagePresenter messagePresenter;
 	private RepositoryServiceAsync repositoryService;
-	private AppProperties properties;
 	
+	@Inject
 	public ClientController(LoginServiceAsync loginService, ModelServiceAsync modelService,
 			RepositoryServiceAsync repositoryService, RpcErrorHandler rpcErrorHandler,
 			ModelValidator modelValidator) {
@@ -48,7 +49,6 @@ public class ClientController {
 		this.rpcErrorHandler = rpcErrorHandler;
 		this.modelValidator = modelValidator;
 		this.repositoryService = repositoryService;
-		this.properties = properties;
 	}
 	
 	public void start() {
@@ -183,6 +183,7 @@ public class ClientController {
 	}
 	
 	private void showMainPanel() {
+		//TODO(DH): use the MainLayout widget here
 		MainPanelWidget mainPanelWidget = new MainPanelWidget();
 		mainPanelPresenter = new MainPanelPresenter(
 				mainPanelWidget, this);

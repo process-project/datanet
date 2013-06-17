@@ -5,7 +5,11 @@
 	<inherits name="com.google.gwt.user.User"/>
 	<inherits name="com.google.gwt.i18n.I18N"/>
 	<inherits name="com.google.gwt.user.theme.chrome.Chrome"/>
+	
+	<inherits name="com.google.gwt.inject.Inject"/>
+	
 	<inherits name="com.github.gwtbootstrap.Bootstrap" />
+	
 	<inherits name="pl.cyfronet.datanet.model"/>
 	
 	<source path="client"/>
