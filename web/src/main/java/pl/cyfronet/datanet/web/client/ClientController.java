@@ -20,6 +20,8 @@ import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPane
 import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelWidget;
+import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPanel;
+import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPresenter;
 
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.user.client.Command;
@@ -187,7 +189,9 @@ public class ClientController {
 		mainPanelPresenter = new MainPanelPresenter(
 				mainPanelWidget, this);
 		
-		messagePresenter = new MessagePresenter(mainPanelPresenter);
+		TopNavPresenter topNavPresenter = new TopNavPresenter(new TopNavPanel(), this);
+		
+		messagePresenter = new MessagePresenter(topNavPresenter);
 		
 		modelBrowserPanelPresenter = new ModelBrowserPanelPresenter(
 				new ModelBrowserPanelWidget(), this, modelService, rpcErrorHandler
@@ -195,8 +199,9 @@ public class ClientController {
 		
 		repositoryBrowserPanelPresenter = new RepositoryBrowserPanelPresenter(
 				new RepositoryBrowserPanelWidget(), this, repositoryService, rpcErrorHandler
-				);
+				);		
 		
+		mainPanelWidget.setTopNav(topNavPresenter.getWidget());
 		mainPanelWidget.setModelBrowser(modelBrowserPanelPresenter.getWidget());
 		mainPanelWidget.setRepositoryBrowser(repositoryBrowserPanelPresenter.getWidget());
 		

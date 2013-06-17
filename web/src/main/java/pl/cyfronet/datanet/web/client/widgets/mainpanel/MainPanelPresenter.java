@@ -1,18 +1,16 @@
 package pl.cyfronet.datanet.web.client.widgets.mainpanel;
 
 import pl.cyfronet.datanet.web.client.ClientController;
-import pl.cyfronet.datanet.web.client.messages.MessageDispatcher;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MainPanelPresenter implements Presenter, MessageDispatcher {
+public class MainPanelPresenter implements Presenter {
 	interface View {
 		void setPresenter(Presenter presenter);
 		void setModelBrowser(IsWidget widget);
 		void setRepositoryBrowser(IsWidget widget);
-		void displayMessage(String message, MessageType type);
 	}
 
 	private View view;
@@ -45,9 +43,5 @@ public class MainPanelPresenter implements Presenter, MessageDispatcher {
 		}
 		
 		Window.open(Window.Location.createUrlBuilder().setPath(path + "/help").buildString(), "_blank", "");
-	}
-	
-	public void displayMessage(String message, MessageType type) {
-		view.displayMessage(message, type);
 	}
 }

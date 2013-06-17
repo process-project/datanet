@@ -5,48 +5,11 @@
 	<ui:with type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelMessages" field="messages" />
 	<ui:with type="pl.cyfronet.datanet.web.client.AppProperties" field="constants"/>
 	<ui:style>
-			.main-panel {
-				margin: 20px auto;
-				width: 80%;
-			}
-			.header {
-				margin: 3px;
-			}
-			.messageLabel {
-				float: left;
-				margin-left: 20em;
-			}
-			.logo {
-				float: left;
-			}
-			.header-buttons {
-				float: right;
-				margin-right: 10px;
-			}
-			.span {
-				display: inline;
-			}
-			.version-label {
-				margin-left: 20px;
-				float: left;
-			}
-		</ui:style>
+					
+	</ui:style>
 	<g:DockLayoutPanel>
 		<g:north size="50">
-			<g:FlowPanel styleName="{style.header}">
-				<g:Image url="img/datanet-logo-143x40.png" altText="{messages.datanetMain}" styleName="{style.logo}"/>
-				<b:Label addStyleNames="{style.version-label}"><ui:text from="{messages.versionLabel}"/>: <ui:text from="{constants.version}"/></b:Label>
-				<b:Alert ui:field="messageLabel" close="false" visible="false" addStyleNames="{style.messageLabel}"/>
-				<b:ButtonGroup addStyleNames="{style.header-buttons}">
-				    <b:Button ui:field="help" icon="QUESTION_SIGN" type="INFO"><ui:text from="{messages.help}"/></b:Button>
-					<b:Button ui:field="logout" icon="OFF" type="DANGER"><ui:text from="{messages.logout}"/></b:Button>
-				</b:ButtonGroup>
-				<g:FlowPanel addStyleNames="{style.header-buttons}">
-					<g:Anchor ui:field="switchToPl" href="#">PL</g:Anchor>
-					<g:Label addStyleNames="{style.span}">|</g:Label>
-					<g:Anchor ui:field="switchToEn" href="#">EN</g:Anchor>
-				</g:FlowPanel>
-			</g:FlowPanel>
+		    <g:LayoutPanel ui:field="topNavPanel"></g:LayoutPanel>		    
 		</g:north>
 		<g:center>
 			<g:TabLayoutPanel barHeight="25">
