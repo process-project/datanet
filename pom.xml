@@ -52,8 +52,7 @@
 	</build>
 
 	<modules>
-		<module>deployer</module>
-		<module>test-mongodb</module>
+		<module>deployer</module>		
 		<module>web</module>
 		<module>model</module>
 	</modules>
