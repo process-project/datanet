@@ -5,6 +5,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainLayout extends Composite {
@@ -17,5 +19,17 @@ public class MainLayout extends Composite {
 
 	public MainLayout() {
 		initWidget(uiBinder.createAndBindUi(this));
+	}
+	
+	public void setHeader(IsWidget header) {
+		this.header.add(header);
+	}
+	
+	public void setWest(IsWidget west) {
+		this.west.add(west);
+	}
+	
+	public Panel getCenter() {
+		return center;
 	}
 }

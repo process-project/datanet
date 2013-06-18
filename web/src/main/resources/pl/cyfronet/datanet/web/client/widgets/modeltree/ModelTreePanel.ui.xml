@@ -1,0 +1,26 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:c="urn:import:com.google.gwt.user.cellview.client"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with
+		type="pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelMessageses"
+		field="messages" />
+	<ui:style>
+		.buttons {
+
+		}
+	</ui:style>
+	<g:VerticalPanel>
+		<g:HorizontalPanel ui:field="buttons">
+			<b:ButtonGroup>
+				<b:Button ui:field="add" icon="PLUS" type="SUCCESS" size="MINI"></b:Button>
+				<b:Button ui:field="remove" icon="REMOVE" type="DANGER"
+					size="MINI" enabled="false"></b:Button>
+				<b:Button ui:field="deploy" icon="CLOUD_UPLOAD" size="MINI"
+					enabled="false"></b:Button>
+			</b:ButtonGroup>
+		</g:HorizontalPanel>
+
+		<c:CellTree ui:field="modelsTree" />		
+	</g:VerticalPanel>
+</ui:UiBinder>

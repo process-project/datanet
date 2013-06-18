@@ -1,10 +1,14 @@
 package pl.cyfronet.datanet.web.client.widgets.topnav;
 
 import pl.cyfronet.datanet.web.client.ClientController;
+import pl.cyfronet.datanet.web.client.event.NotificationEvent;
+import pl.cyfronet.datanet.web.client.event.NotificationEvent.NotificationType;
+import pl.cyfronet.datanet.web.client.event.NotificationEventHandler;
 import pl.cyfronet.datanet.web.client.messages.MessageDispatcher;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.event.shared.EventBus;
 
 public class TopNavPresenter implements Presenter, MessageDispatcher {
 
@@ -17,10 +21,26 @@ public class TopNavPresenter implements Presenter, MessageDispatcher {
 	private ClientController clientController;
 	private View view;
 
-	public TopNavPresenter(View view, ClientController clientController) {
+	public TopNavPresenter(View view, ClientController clientController,
+			EventBus eventBus) {
 		this.view = view;
 		this.clientController = clientController;
+
 		view.setPresenter(this);
+
+		eventBus.addHandler(NotificationEvent.TYPE,
+				new NotificationEventHandler() {
+					@Override
+					public void onNotificationEvent(NotificationEvent event) {
+						TopNavPresenter.this.view.displayMessage(
+								event.getMessage(), getType(event));
+					}
+
+					private MessageType getType(NotificationEvent event) {
+						return event.getType() == NotificationType.ERROR ? MessageType.ERROR
+								: MessageType.INFO;
+					}
+				});
 	}
 
 	@Override

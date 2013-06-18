@@ -12,8 +12,12 @@
 	
 	<inherits name="pl.cyfronet.datanet.model"/>
 	
+	<inherits name="com.google.gwt.activity.Activity"/>
+  	<inherits name="com.google.gwt.place.Place"/>
+  	<inherits name="com.google.web.bindery.event.Event"/>
+	
 	<source path="client"/>
-	<entry-point class="pl.cyfronet.datanet.web.client.ClientEntryPoint"/>
+	<entry-point class="pl.cyfronet.datanet.web.client.ClientEntryPoint"/>	
 	
 	<!-- locale setup -->
 	<extend-property name="locale" values="en,pl"/>
