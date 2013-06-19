@@ -6,7 +6,9 @@ import java.util.List;
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.web.client.ModelController;
 import pl.cyfronet.datanet.web.client.ModelController.ModelCallback;
+import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
 
+import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
@@ -19,12 +21,15 @@ public class ModelTreePanelPresenter implements Presenter {
 
 	private View view;
 	private ModelController modelController;
+	private PlaceController placeController;
 
 	@Inject
-	public ModelTreePanelPresenter(View view, ModelController modelController) {
+	public ModelTreePanelPresenter(View view, ModelController modelController,
+			PlaceController placeController) {
 		this.view = view;
 		this.modelController = modelController;
-		
+		this.placeController = placeController;
+
 		view.setPresenter(this);
 	}
 
@@ -35,7 +40,8 @@ public class ModelTreePanelPresenter implements Presenter {
 
 	@Override
 	public boolean isLeaf(TreeItem value) {
-		return value.getType() == ItemType.MODEL || value.getType() == ItemType.LOADING;
+		return value.getType() == ItemType.MODEL
+				|| value.getType() == ItemType.LOADING;
 	}
 
 	@Override
@@ -57,6 +63,6 @@ public class ModelTreePanelPresenter implements Presenter {
 
 	@Override
 	public void onAddNewModel() {
-		
+		placeController.goTo(new ModelPlace(null));
 	}
 }

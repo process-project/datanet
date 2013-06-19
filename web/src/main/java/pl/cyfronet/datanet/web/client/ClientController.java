@@ -10,6 +10,9 @@ import pl.cyfronet.datanet.web.client.errors.ModelException.Code;
 import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
 import pl.cyfronet.datanet.web.client.layout.MainLayout;
 import pl.cyfronet.datanet.web.client.messages.MessagePresenter;
+import pl.cyfronet.datanet.web.client.mvp.AppActivityMapper;
+import pl.cyfronet.datanet.web.client.mvp.AppPlaceHistoryMapper;
+import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
 import pl.cyfronet.datanet.web.client.services.RepositoryServiceAsync;
@@ -22,35 +25,65 @@ import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryB
 import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPresenter;
 
+import com.google.gwt.activity.shared.ActivityManager;
+import com.google.gwt.activity.shared.ActivityMapper;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
+import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.place.shared.PlaceHistoryHandler;
+import com.google.gwt.place.shared.PlaceHistoryMapper;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 
 public class ClientController {
 	private LoginServiceAsync loginService;
+
+	@Deprecated
 	private ModelServiceAsync modelService;
+
+	@Deprecated
 	private RpcErrorHandler rpcErrorHandler;
+
+	@Deprecated
 	private ModelValidator modelValidator;
+
+	@Deprecated
 	private ModelBrowserPanelPresenter modelBrowserPanelPresenter;
+
+	@Deprecated
 	private RepositoryBrowserPanelPresenter repositoryBrowserPanelPresenter;
+
+	@Deprecated
 	private MessagePresenter messagePresenter;
+
+	@Deprecated
 	private RepositoryServiceAsync repositoryService;
+
 	private TopNavPresenter topNavPresenter;
 	private ModelTreePanelPresenter modelTreePresenter;
+	private PlaceController placeController;
+	private EventBus eventBus;
+	private PlaceHistoryMapper historyMapper;
 
 	@Inject
-	public ClientController(TopNavPresenter topNavPresenter,
+	public ClientController(EventBus eventBus, TopNavPresenter topNavPresenter,
 			ModelTreePanelPresenter modelTreePresenter,
-			LoginServiceAsync loginService,
-			ModelServiceAsync modelService,
+			PlaceController placeController, PlaceHistoryMapper historyMapper,
+			LoginServiceAsync loginService, ModelServiceAsync modelService,
 			RepositoryServiceAsync repositoryService,
 			RpcErrorHandler rpcErrorHandler, ModelValidator modelValidator) {
+		this.eventBus = eventBus;
 		this.topNavPresenter = topNavPresenter;
 		this.modelTreePresenter = modelTreePresenter;
+		this.placeController = placeController;
+		this.historyMapper = historyMapper;
+
 		this.loginService = loginService;
 		this.modelService = modelService;
 		this.rpcErrorHandler = rpcErrorHandler;
@@ -197,9 +230,34 @@ public class ClientController {
 
 	private void showMainPanel() {
 		MainLayout layout = new MainLayout();
+		SimplePanel appWidget = new SimplePanel();
 
+		layout.setHeader(topNavPresenter.getWidget());
+		layout.setWest(modelTreePresenter.getWidget());
+		layout.setCenter(appWidget);
+
+		// activities & places
+		ActivityMapper activityMapper = new AppActivityMapper();
+		ActivityManager activityManager = new ActivityManager(activityMapper,
+				eventBus);
+		activityManager.setDisplay(appWidget);
+
+		PlaceHistoryHandler historyHandler = new PlaceHistoryHandler(
+				historyMapper);
+		historyHandler.register(placeController, eventBus, new WelcomePlace());
+
+		clearPanels();
+		RootPanel.get().add(RootLayoutPanel.get());
+		RootLayoutPanel.get().add(layout);
+
+		deprecated();
+		
+		historyHandler.handleCurrentHistory();
+	}
+
+	@Deprecated
+	private void deprecated() {
 		messagePresenter = new MessagePresenter(topNavPresenter);
-
 		modelBrowserPanelPresenter = new ModelBrowserPanelPresenter(
 				new ModelBrowserPanelWidget(), this, modelService,
 				rpcErrorHandler);
@@ -208,12 +266,6 @@ public class ClientController {
 				new RepositoryBrowserPanelWidget(), this, repositoryService,
 				rpcErrorHandler);
 
-		layout.setHeader(topNavPresenter.getWidget());
-		layout.setWest(modelTreePresenter.getWidget());
-
-		clearPanels();
-		RootPanel.get().add(RootLayoutPanel.get());
-		RootLayoutPanel.get().add(layout);
 		modelBrowserPanelPresenter.updateModelList();
 		repositoryBrowserPanelPresenter.updateRepositoryList();
 	}
