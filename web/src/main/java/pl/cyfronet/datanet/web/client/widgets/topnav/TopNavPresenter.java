@@ -8,11 +8,11 @@ import pl.cyfronet.datanet.web.client.messages.MessageDispatcher;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class TopNavPresenter implements Presenter, MessageDispatcher {
-
-	interface View {
+	public interface View {
 		void setPresenter(Presenter presenter);
 
 		void displayMessage(String message, MessageType type);
@@ -21,10 +21,9 @@ public class TopNavPresenter implements Presenter, MessageDispatcher {
 	private ClientController clientController;
 	private View view;
 
-	public TopNavPresenter(View view, ClientController clientController,
-			EventBus eventBus) {
+	@Inject
+	public TopNavPresenter(View view, EventBus eventBus) {
 		this.view = view;
-		this.clientController = clientController;
 
 		view.setPresenter(this);
 

@@ -13,7 +13,7 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.inject.Inject;
 
 public class ModelTreePanelPresenter implements Presenter {
-	interface View extends IsWidget {
+	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
 	}
 
@@ -53,5 +53,10 @@ public class ModelTreePanelPresenter implements Presenter {
 				dataProvider.updateRowData(0, modelTreeItems);
 			}
 		});
+	}
+
+	@Override
+	public void onAddNewModel() {
+		
 	}
 }

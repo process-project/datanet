@@ -9,4 +9,6 @@ public interface Presenter {
 	boolean isLeaf(TreeItem value);
 
 	void loadChildren(TreeItem parent, AsyncDataProvider<TreeItem> dataProvider);
+
+	void onAddNewModel();
 }

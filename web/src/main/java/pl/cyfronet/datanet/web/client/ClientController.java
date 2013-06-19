@@ -17,11 +17,9 @@ import pl.cyfronet.datanet.web.client.widgets.login.LoginPresenter;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginWidget;
 import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelWidget;
-import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanel;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelWidget;
-import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPanel;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPresenter;
 
 import com.google.gwt.http.client.UrlBuilder;
@@ -31,7 +29,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.inject.Inject;
-import com.google.web.bindery.event.shared.EventBus;
 
 public class ClientController {
 	private LoginServiceAsync loginService;
@@ -42,16 +39,18 @@ public class ClientController {
 	private RepositoryBrowserPanelPresenter repositoryBrowserPanelPresenter;
 	private MessagePresenter messagePresenter;
 	private RepositoryServiceAsync repositoryService;
-	private ModelController modelController;
-	private EventBus eventBus;
+	private TopNavPresenter topNavPresenter;
+	private ModelTreePanelPresenter modelTreePresenter;
 
 	@Inject
-	public ClientController(EventBus eventBus, ModelController modelController,
-			LoginServiceAsync loginService, ModelServiceAsync modelService,
+	public ClientController(TopNavPresenter topNavPresenter,
+			ModelTreePanelPresenter modelTreePresenter,
+			LoginServiceAsync loginService,
+			ModelServiceAsync modelService,
 			RepositoryServiceAsync repositoryService,
 			RpcErrorHandler rpcErrorHandler, ModelValidator modelValidator) {
-		this.eventBus = eventBus;
-		this.modelController = modelController;
+		this.topNavPresenter = topNavPresenter;
+		this.modelTreePresenter = modelTreePresenter;
 		this.loginService = loginService;
 		this.modelService = modelService;
 		this.rpcErrorHandler = rpcErrorHandler;
@@ -198,11 +197,6 @@ public class ClientController {
 
 	private void showMainPanel() {
 		MainLayout layout = new MainLayout();
-
-		TopNavPresenter topNavPresenter = new TopNavPresenter(
-				new TopNavPanel(), this, eventBus);
-		ModelTreePanelPresenter modelTreePresenter = new ModelTreePanelPresenter(
-				new ModelTreePanel(), modelController);
 
 		messagePresenter = new MessagePresenter(topNavPresenter);
 
