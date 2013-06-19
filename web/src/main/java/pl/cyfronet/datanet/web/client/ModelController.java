@@ -27,8 +27,6 @@ public class ModelController {
 			@Override
 			public void onSuccess(List<Model> result) {
 				callback.setModels(result);
-				eventBus.fireEvent(new NotificationEvent(
-						"Testing message", NotificationType.NOTE));
 			}
 
 			@Override

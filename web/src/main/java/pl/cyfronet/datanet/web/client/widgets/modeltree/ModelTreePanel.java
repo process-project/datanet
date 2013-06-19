@@ -1,7 +1,5 @@
 package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
-import java.util.List;
-
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter.View;
 
 import com.google.gwt.core.client.GWT;
@@ -25,8 +23,6 @@ public class ModelTreePanel extends Composite implements View {
 	@UiField
 	HorizontalPanel buttons;
 
-	private Presenter presenter;
-
 	private ModelTreeViewModel model;
 
 	private ModelTreePanelMessageses messages;
@@ -44,12 +40,6 @@ public class ModelTreePanel extends Composite implements View {
 
 	@Override
 	public void setPresenter(Presenter presenter) {
-		this.presenter = presenter;
 		model.setPresenter(presenter);
-	}
-
-	@Override
-	public void showModels(List<TreeItem> models) {
-
 	}
 }

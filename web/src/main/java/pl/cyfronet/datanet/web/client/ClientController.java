@@ -15,7 +15,6 @@ import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
 import pl.cyfronet.datanet.web.client.services.RepositoryServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginPresenter;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginWidget;
-import pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanel;
@@ -39,7 +38,6 @@ public class ClientController {
 	private ModelServiceAsync modelService;
 	private RpcErrorHandler rpcErrorHandler;
 	private ModelValidator modelValidator;
-	private MainPanelPresenter mainPanelPresenter;
 	private ModelBrowserPanelPresenter modelBrowserPanelPresenter;
 	private RepositoryBrowserPanelPresenter repositoryBrowserPanelPresenter;
 	private MessagePresenter messagePresenter;
@@ -199,12 +197,7 @@ public class ClientController {
 	}
 
 	private void showMainPanel() {
-		// TODO(DH): use the MainLayout widget here
 		MainLayout layout = new MainLayout();
-
-		// MainPanelWidget mainPanelWidget = new MainPanelWidget();
-		// mainPanelPresenter = new MainPanelPresenter(
-		// mainPanelWidget, this);
 
 		TopNavPresenter topNavPresenter = new TopNavPresenter(
 				new TopNavPanel(), this, eventBus);
@@ -223,11 +216,6 @@ public class ClientController {
 
 		layout.setHeader(topNavPresenter.getWidget());
 		layout.setWest(modelTreePresenter.getWidget());
-		// layout.getCenter().add(repositoryBrowserPanelPresenter.getWidget());
-
-		// mainPanelWidget.setTopNav(topNavPresenter.getWidget());
-		// mainPanelWidget.setModelBrowser(modelBrowserPanelPresenter.getWidget());
-		// mainPanelWidget.setRepositoryBrowser(repositoryBrowserPanelPresenter.getWidget());
 
 		clearPanels();
 		RootPanel.get().add(RootLayoutPanel.get());

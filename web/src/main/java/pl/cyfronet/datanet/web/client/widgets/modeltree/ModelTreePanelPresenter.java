@@ -7,7 +7,6 @@ import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.web.client.ModelController;
 import pl.cyfronet.datanet.web.client.ModelController.ModelCallback;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
@@ -15,7 +14,6 @@ import com.google.inject.Inject;
 
 public class ModelTreePanelPresenter implements Presenter {
 	interface View extends IsWidget {
-		void showModels(List<TreeItem> models);
 		void setPresenter(Presenter presenter);
 	}
 
