@@ -9,6 +9,7 @@ import pl.cyfronet.datanet.web.client.messages.MessageDispatcher;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class TopNavPresenter implements Presenter, MessageDispatcher {
@@ -18,15 +19,17 @@ public class TopNavPresenter implements Presenter, MessageDispatcher {
 		void displayMessage(String message, MessageType type);
 	}
 
-	private ClientController clientController;
+	private Provider<ClientController> clientController;
+	
 	private View view;
 
 	@Inject
-	public TopNavPresenter(View view, EventBus eventBus) {
+	public TopNavPresenter(View view, EventBus eventBus, Provider<ClientController> clientController) {
 		this.view = view;
-
-		view.setPresenter(this);
-
+		this.clientController = clientController;
+		
+		view.setPresenter(this);		
+		
 		eventBus.addHandler(NotificationEvent.TYPE,
 				new NotificationEventHandler() {
 					@Override
@@ -44,12 +47,12 @@ public class TopNavPresenter implements Presenter, MessageDispatcher {
 
 	@Override
 	public void onLogout() {
-		clientController.onLogout();
+		clientController.get().onLogout();
 	}
 
 	@Override
 	public void onSwitchLocale(String locale) {
-		clientController.switchLocale(locale);
+		clientController.get().switchLocale(locale);
 	}
 
 	@Override
