@@ -9,12 +9,15 @@ import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 public class ModelActivity extends AbstractActivity {
 
 	private ModelPlace place;
 
-	public ModelActivity(ModelPlace place) {
+	@Inject
+	public ModelActivity(@Assisted ModelPlace place) {
 		this.place = place;
 	}
 
