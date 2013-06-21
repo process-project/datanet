@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.server.db;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -38,6 +39,10 @@ public class HibernateModelDao {
 		//let's make sure lazy loading does not surprise us
 		if(user.getModels() != null) {
 			user.getModels().size();
+		}
+		
+		if(user.getModels() == null) {
+			return new ArrayList<>();
 		}
 		
 		return user.getModels();
