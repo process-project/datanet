@@ -10,6 +10,8 @@
 	
 	<inherits name="com.github.gwtbootstrap.Bootstrap" />
 	
+	<inherits name="com.google.gwt.logging.Logging"/>	
+	
 	<inherits name="pl.cyfronet.datanet.model"/>
 	
 	<inherits name="com.google.gwt.activity.Activity"/>

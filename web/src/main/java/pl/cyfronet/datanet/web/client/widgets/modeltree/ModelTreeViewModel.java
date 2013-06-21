@@ -1,6 +1,8 @@
 package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
@@ -11,6 +13,9 @@ import com.google.gwt.view.client.TreeViewModel;
 
 public class ModelTreeViewModel implements TreeViewModel {
 
+	private static final Logger logger = Logger
+			.getLogger(ModelTreeViewModel.class.getName());
+	
 	private Presenter presenter;
 	private TreeItemsAsyncDataProvider rootDataProvider;
 	private ModelTreePanelMessageses messages;
@@ -65,13 +70,16 @@ public class ModelTreeViewModel implements TreeViewModel {
 		}
 
 		public void reload() {
+			logger.log(Level.INFO, "Reloading childs for " + parent);
 			loading();
 			if (presenter != null) {
 				presenter.loadChildren(parent, this);
+			} else {
+				logger.log(Level.INFO, "Presenter is null");
 			}
 		}
 
-		private void loading() {
+		private void loading() {			
 			updateRowCount(1, true);
 			updateRowData(0, Arrays.asList(new TreeItem(null, messages
 					.loading(), ItemType.LOADING)));

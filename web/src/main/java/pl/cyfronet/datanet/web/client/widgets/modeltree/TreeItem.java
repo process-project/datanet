@@ -22,4 +22,9 @@ public class TreeItem {
 	public ItemType getType() {
 		return type;
 	}
+
+	@Override
+	public String toString() {
+		return "TreeItem [name=" + name + ", id=" + id + ", type=" + type + "]";
+	}
 }

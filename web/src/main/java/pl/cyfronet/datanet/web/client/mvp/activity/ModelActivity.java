@@ -24,5 +24,4 @@ public class ModelActivity extends AbstractActivity {
 		Presenter presenter = new ModelPanelPresenter(new ModelPanel(), place.getModelId());
 		panel.setWidget(presenter.getWidget());
 	}
-
 }

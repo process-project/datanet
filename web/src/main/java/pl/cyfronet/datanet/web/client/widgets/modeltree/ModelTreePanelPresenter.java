@@ -2,6 +2,8 @@ package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.web.client.ModelController;
@@ -15,6 +17,9 @@ import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.inject.Inject;
 
 public class ModelTreePanelPresenter implements Presenter {
+	private static final Logger logger = Logger
+			.getLogger(ModelTreePanelPresenter.class.getName());
+
 	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
 	}
@@ -47,6 +52,7 @@ public class ModelTreePanelPresenter implements Presenter {
 	@Override
 	public void loadChildren(TreeItem parent,
 			final AsyncDataProvider<TreeItem> dataProvider) {
+		logger.log(Level.INFO, "Loading children for " + parent);
 		modelController.loadModels(new ModelCallback() {
 			@Override
 			public void setModels(List<Model> models) {
