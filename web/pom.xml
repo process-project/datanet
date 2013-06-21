@@ -31,6 +31,7 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>pl/cyfronet/datanet/web/client/AppProperties.properties</include>
+					<include>datanet.properties</include>
 				</includes>
 			</resource>
 			<resource>
@@ -38,6 +39,7 @@
 				<filtering>false</filtering>
 				<excludes>
 					<exclude>pl/cyfronet/datanet/web/client/AppProperties.properties</exclude>
+					<exclude>datanet.properties</exclude>
 				</excludes>
 			</resource>
 		</resources>
