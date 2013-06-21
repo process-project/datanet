@@ -11,7 +11,6 @@ import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
 import pl.cyfronet.datanet.web.client.layout.MainLayout;
 import pl.cyfronet.datanet.web.client.messages.MessagePresenter;
 import pl.cyfronet.datanet.web.client.mvp.AppActivityMapper;
-import pl.cyfronet.datanet.web.client.mvp.AppPlaceHistoryMapper;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
@@ -26,8 +25,6 @@ import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryB
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPresenter;
 
 import com.google.gwt.activity.shared.ActivityManager;
-import com.google.gwt.activity.shared.ActivityMapper;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
@@ -71,14 +68,19 @@ public class ClientController {
 	private EventBus eventBus;
 	private PlaceHistoryMapper historyMapper;
 
+	private AppActivityMapper appActivityMapper;
+
 	@Inject
-	public ClientController(EventBus eventBus, TopNavPresenter topNavPresenter,
+	public ClientController(EventBus eventBus,
+			AppActivityMapper appActivityMapper,
+			TopNavPresenter topNavPresenter,
 			ModelTreePanelPresenter modelTreePresenter,
 			PlaceController placeController, PlaceHistoryMapper historyMapper,
 			LoginServiceAsync loginService, ModelServiceAsync modelService,
 			RepositoryServiceAsync repositoryService,
 			RpcErrorHandler rpcErrorHandler, ModelValidator modelValidator) {
 		this.eventBus = eventBus;
+		this.appActivityMapper = appActivityMapper;
 		this.topNavPresenter = topNavPresenter;
 		this.modelTreePresenter = modelTreePresenter;
 		this.placeController = placeController;
@@ -237,9 +239,8 @@ public class ClientController {
 		layout.setCenter(appWidget);
 
 		// activities & places
-		ActivityMapper activityMapper = new AppActivityMapper();
-		ActivityManager activityManager = new ActivityManager(activityMapper,
-				eventBus);
+		ActivityManager activityManager = new ActivityManager(
+				appActivityMapper, eventBus);
 		activityManager.setDisplay(appWidget);
 
 		PlaceHistoryHandler historyHandler = new PlaceHistoryHandler(
@@ -251,7 +252,7 @@ public class ClientController {
 		RootLayoutPanel.get().add(layout);
 
 		deprecated();
-		
+
 		historyHandler.handleCurrentHistory();
 	}
 
