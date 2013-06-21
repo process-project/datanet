@@ -3,8 +3,11 @@ package pl.cyfronet.datanet.web.client.event;
 import com.google.gwt.event.shared.GwtEvent;
 
 public class NotificationEvent extends GwtEvent<NotificationEventHandler> {
-
 	public static Type<NotificationEventHandler> TYPE = new Type<NotificationEventHandler>();
+	
+	public enum NotificationType {
+		SUCCESS, WARNING, ERROR, NOTE
+	}
 
 	private NotificationType type;
 	private String message;
@@ -30,9 +33,5 @@ public class NotificationEvent extends GwtEvent<NotificationEventHandler> {
 
 	public String getMessage() {
 		return message;
-	}
-
-	public enum NotificationType {
-		SUCCESS, WARNING, ERROR, NOTE
 	}
 }
