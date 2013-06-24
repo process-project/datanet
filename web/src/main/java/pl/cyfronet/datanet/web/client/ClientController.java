@@ -11,6 +11,7 @@ import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
 import pl.cyfronet.datanet.web.client.layout.MainLayout;
 import pl.cyfronet.datanet.web.client.messages.MessagePresenter;
 import pl.cyfronet.datanet.web.client.mvp.AppActivityMapper;
+import pl.cyfronet.datanet.web.client.mvp.WestActivityMapper;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
@@ -19,7 +20,6 @@ import pl.cyfronet.datanet.web.client.widgets.login.LoginPresenter;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginWidget;
 import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel.ModelBrowserPanelWidget;
-import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.repositorybrowserpanel.RepositoryBrowserPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPresenter;
@@ -63,18 +63,18 @@ public class ClientController {
 	private RepositoryServiceAsync repositoryService;
 
 	private TopNavPresenter topNavPresenter;
-	private ModelTreePanelPresenter modelTreePresenter;
 	private PlaceController placeController;
 	private EventBus eventBus;
 	private PlaceHistoryMapper historyMapper;
 
 	private AppActivityMapper appActivityMapper;
+	private WestActivityMapper westActivityMapper;
 
 	@Inject
 	public ClientController(EventBus eventBus,
 			AppActivityMapper appActivityMapper,
 			TopNavPresenter topNavPresenter,
-			ModelTreePanelPresenter modelTreePresenter,
+			WestActivityMapper westActivityManager,
 			PlaceController placeController, PlaceHistoryMapper historyMapper,
 			LoginServiceAsync loginService, ModelServiceAsync modelService,
 			RepositoryServiceAsync repositoryService,
@@ -82,7 +82,7 @@ public class ClientController {
 		this.eventBus = eventBus;
 		this.appActivityMapper = appActivityMapper;
 		this.topNavPresenter = topNavPresenter;
-		this.modelTreePresenter = modelTreePresenter;
+		this.westActivityMapper = westActivityManager;
 		this.placeController = placeController;
 		this.historyMapper = historyMapper;
 
@@ -233,15 +233,22 @@ public class ClientController {
 	private void showMainPanel() {
 		MainLayout layout = new MainLayout();
 		SimplePanel appWidget = new SimplePanel();
+		SimplePanel westWidget = new SimplePanel();
 
 		layout.setHeader(topNavPresenter.getWidget());
-		layout.setWest(modelTreePresenter.getWidget());
+		layout.setWest(westWidget);
 		layout.setCenter(appWidget);
 
 		// activities & places
+		// center
 		ActivityManager activityManager = new ActivityManager(
 				appActivityMapper, eventBus);
 		activityManager.setDisplay(appWidget);
+
+		// west
+		ActivityManager westActivityManager = new ActivityManager(
+				westActivityMapper, eventBus);
+		westActivityManager.setDisplay(westWidget);
 
 		PlaceHistoryHandler historyHandler = new PlaceHistoryHandler(
 				historyMapper);
