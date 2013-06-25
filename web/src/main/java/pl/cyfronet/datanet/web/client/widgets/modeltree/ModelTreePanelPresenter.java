@@ -36,9 +36,7 @@ public class ModelTreePanelPresenter implements Presenter {
 		this.view = view;
 		this.modelController = modelController;
 		this.placeController = placeController;
-
-		view.setPresenter(this);
-		view.reload();
+		view.setPresenter(this);		
 	}
 
 	@Override
@@ -70,6 +68,10 @@ public class ModelTreePanelPresenter implements Presenter {
 		});
 	}
 
+	public void reload() {
+		view.reload();
+	}
+	
 	@Override
 	public void onAddNewModel() {
 		placeController.goTo(new NewModelPlace());

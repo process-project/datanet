@@ -21,6 +21,7 @@ public class BrowserActivity extends AbstractActivity {
 	@Override
 	public void start(AcceptsOneWidget panel, EventBus eventBus) {
 		panel.setWidget(modelTreePanelPresenter.getWidget());
+		modelTreePanelPresenter.reload();
 	}
 
 	public void setPlace(ModelPlace place) {
