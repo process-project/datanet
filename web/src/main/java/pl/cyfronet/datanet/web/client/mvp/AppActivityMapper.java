@@ -16,7 +16,9 @@ import com.google.inject.Inject;
 public class AppActivityMapper implements ActivityMapper {
 
 	private ModelActivityFactory modelActivityFactory;
-
+	private Place currentPlace;
+	private Activity currentActivity;
+	
 	@Inject
 	public AppActivityMapper(ModelActivityFactory modelActivityFactory) {
 		this.modelActivityFactory = modelActivityFactory;
@@ -25,13 +27,20 @@ public class AppActivityMapper implements ActivityMapper {
 	@Override
 	public Activity getActivity(Place place) {
 		GWT.log("Get activity for " + place);
+		Activity activity = null;
 		if (place instanceof WelcomePlace) {
-			return new WelcomeActivity();
+			activity = new WelcomeActivity();
 		} else if(place instanceof ModelPlace) {
-			return modelActivityFactory.create((ModelPlace) place);
+			if(place.equals(currentPlace)) {
+				activity = currentActivity;
+			}else {
+				activity = modelActivityFactory.create((ModelPlace) place);
+			}
 		} else if(place instanceof NewModelPlace) {
-			return new NewModelActivity();
+			activity = new NewModelActivity();
 		}
-		return null;
+		currentActivity = activity;
+		currentPlace = place;
+		return activity;
 	}
 }
