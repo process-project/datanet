@@ -2,17 +2,21 @@ package pl.cyfronet.datanet.web.client.widgets.modelpanel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelWidget;
-import pl.cyfronet.datanet.web.client.widgets.modelpanel.Presenter;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public class ModelPanelPresenter implements Presenter {
+	private static final Logger logger = Logger
+			.getLogger(ModelPanelPresenter.class.getName());
+	
 	private List<EntityPanelPresenter> entityPanelPresenters;
 	private Model model;
 	private View view;
@@ -36,6 +40,7 @@ public class ModelPanelPresenter implements Presenter {
 	}
 	
 	public void removeEntity(EntityPanelPresenter entityPanelPresenter) {
+		logger.log(Level.INFO, "Removing entity from model: " + entityPanelPresenter.getEntity());
 		view.getEntityContainer().remove(entityPanelPresenter.getWidget().asWidget());
 		entityPanelPresenters.remove(entityPanelPresenter);
 		model.getEntities().remove(entityPanelPresenter.getEntity());
@@ -58,6 +63,7 @@ public class ModelPanelPresenter implements Presenter {
 	}
 
 	private void displayEntity(Entity entity) {
+		logger.log(Level.INFO, "Adding entity to model: " + entity);
 		EntityPanelPresenter entityPanelPresenter = new EntityPanelPresenter(this, new EntityPanelWidget());
 		entityPanelPresenter.setEntity(entity);
 		entityPanelPresenters.add(entityPanelPresenter);
@@ -67,6 +73,7 @@ public class ModelPanelPresenter implements Presenter {
 
 	@Override
 	public void onNewEntity() {
+		logger.log(Level.INFO, "Adding new entity to model");
 		EntityPanelPresenter entityPanelPresenter = new EntityPanelPresenter(this, new EntityPanelWidget());
 		entityPanelPresenters.add(entityPanelPresenter);
 		view.getEntityContainer().add(entityPanelPresenter.getWidget().asWidget());

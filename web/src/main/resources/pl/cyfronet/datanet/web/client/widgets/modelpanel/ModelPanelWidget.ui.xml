@@ -19,8 +19,12 @@
 			margin-top: 5px;
 			cursor: pointer;
 		}
+		/* https://groups.google.com/forum/#!topic/gwt-platform/EPnHwOTQ44Y */
+ 		.dockLayoutPanel {
+        	position: static !important;
+    	}
 	</ui:style>
-	<g:DockLayoutPanel>
+	<g:DockLayoutPanel addStyleNames="{style.dockLayoutPanel}">
 		<g:north size="40">
 			<g:FlowPanel styleName="{style.modelPanelSection}">
 				<g:Label text="{messages.modelName}" styleName="gwt-Label {style.modelPropertyLabel}"/>
