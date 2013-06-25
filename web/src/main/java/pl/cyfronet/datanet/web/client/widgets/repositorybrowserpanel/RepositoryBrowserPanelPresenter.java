@@ -7,13 +7,16 @@ import java.util.List;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.ClientController;
 import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
-import pl.cyfronet.datanet.web.client.messages.MessagePresenter;
+import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
+import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
+import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
 import pl.cyfronet.datanet.web.client.services.RepositoryServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelWidget;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.web.bindery.event.shared.EventBus;
 
 public class RepositoryBrowserPanelPresenter implements Presenter {
 	interface View extends IsWidget {
@@ -32,16 +35,17 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 	private RepositoryServiceAsync repositoryService;
 	private RpcErrorHandler rpcErrorHandler;
 	private ClientController clientController;
-	private MessagePresenter messagePresenter;
 	private RepositoryPanelPresenter repositoryPanelPresenter;
+	private EventBus eventBus;
 	
 	public RepositoryBrowserPanelPresenter(View view, ClientController clientController,
-			RepositoryServiceAsync repositoryServiceAsync, RpcErrorHandler errorHandler) {
+			RepositoryServiceAsync repositoryServiceAsync, RpcErrorHandler errorHandler,
+			EventBus eventBus) {
 		this.view = view;
 		this.clientController = clientController;
-		this.messagePresenter = clientController.getMessagePresenter();
 		this.repositoryService = repositoryServiceAsync;
 		this.rpcErrorHandler = errorHandler;
+		this.eventBus = eventBus;
 		view.setPresenter(this);
 	}
 
@@ -96,7 +100,7 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 			view.clearRepository();
 			repositoryPanelPresenter = null;
 		} else {
-			messagePresenter.errorNoRepositoryPresent();
+			eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryNotPresent, NotificationType.ERROR));
 		}
 	}
 

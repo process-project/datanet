@@ -1,4 +1,5 @@
-package pl.cyfronet.datanet.web.client.event;
+package pl.cyfronet.datanet.web.client.event.notification;
+
 
 import com.google.gwt.event.shared.EventHandler;
 

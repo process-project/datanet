@@ -7,13 +7,16 @@ import java.util.List;
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.web.client.ClientController;
 import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
-import pl.cyfronet.datanet.web.client.messages.MessagePresenter;
+import pl.cyfronet.datanet.web.client.event.notification.ModelNotificationMessage;
+import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
+import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelWidget;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.web.bindery.event.shared.EventBus;
 
 public class ModelBrowserPanelPresenter implements Presenter {
 	interface View extends IsWidget {
@@ -34,14 +37,14 @@ public class ModelBrowserPanelPresenter implements Presenter {
 	private ModelServiceAsync modelService;
 	private RpcErrorHandler rpcErrorHandler;
 	private ClientController clientController;
-	private MessagePresenter messagePresenter;
+	private EventBus eventBus;
 	
-	public ModelBrowserPanelPresenter(View view, ClientController clientController, ModelServiceAsync modelServiceAsync, RpcErrorHandler errorHandler) {
+	public ModelBrowserPanelPresenter(View view, ClientController clientController, ModelServiceAsync modelServiceAsync, RpcErrorHandler errorHandler, EventBus eventBus) {
 		this.view = view;
 		this.clientController = clientController;
-		this.messagePresenter = clientController.getMessagePresenter();
 		this.modelService = modelServiceAsync;
 		this.rpcErrorHandler = errorHandler;
+		this.eventBus = eventBus;
 		view.setPresenter(this);
 	}
 
@@ -62,7 +65,7 @@ public class ModelBrowserPanelPresenter implements Presenter {
 		if(modelPanelPresenter != null) {
 			clientController.onSaveModel(modelPanelPresenter.getModel());
 		} else {
-			messagePresenter.errorNoModelPresent();
+			eventBus.fireEvent(new NotificationEvent(ModelNotificationMessage.modelNotPresent, NotificationType.ERROR));
 		}
 	}
 	
@@ -71,7 +74,7 @@ public class ModelBrowserPanelPresenter implements Presenter {
 		if(modelPanelPresenter != null) {
 			clientController.onDeployModel(modelPanelPresenter.getModel());
 		} else {
-			messagePresenter.errorNoModelPresent();
+			eventBus.fireEvent(new NotificationEvent(ModelNotificationMessage.modelNotPresent, NotificationType.ERROR));
 		}
 	}
 	

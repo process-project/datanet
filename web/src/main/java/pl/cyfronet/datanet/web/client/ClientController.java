@@ -8,8 +8,11 @@ import pl.cyfronet.datanet.model.beans.validator.ModelValidator.ModelError;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
 import pl.cyfronet.datanet.web.client.errors.ModelException.Code;
 import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
+import pl.cyfronet.datanet.web.client.event.notification.ModelNotificationMessage;
+import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
+import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
+import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.layout.MainLayout;
-import pl.cyfronet.datanet.web.client.messages.MessagePresenter;
 import pl.cyfronet.datanet.web.client.mvp.AppActivityMapper;
 import pl.cyfronet.datanet.web.client.mvp.WestActivityMapper;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
@@ -55,9 +58,6 @@ public class ClientController {
 
 	@Deprecated
 	private RepositoryBrowserPanelPresenter repositoryBrowserPanelPresenter;
-
-	@Deprecated
-	private MessagePresenter messagePresenter;
 
 	@Deprecated
 	private RepositoryServiceAsync repositoryService;
@@ -137,8 +137,8 @@ public class ClientController {
 				if (t instanceof ModelException) {
 					ModelException modelException = (ModelException) t;
 					if (modelException.getErrorCode() == Code.ModelNameNotUnique) {
-						// show name-not-unique message
-						messagePresenter.errorModelNameNotUnique();
+						eventBus.fireEvent(new NotificationEvent(
+								ModelNotificationMessage.modelNameNotUnique, NotificationType.ERROR));
 					}
 				} else {
 					rpcErrorHandler.handleRpcError(t);
@@ -151,7 +151,8 @@ public class ClientController {
 					onSuccess.execute();
 				}
 
-				messagePresenter.displayModelSavedMessage();
+				eventBus.fireEvent(new NotificationEvent(
+						ModelNotificationMessage.modelSaved, NotificationType.SUCCESS));
 
 				modelBrowserPanelPresenter.addOrReplaceModel(m);
 				modelBrowserPanelPresenter.setMarked(m.getId());
@@ -166,12 +167,9 @@ public class ClientController {
 		if (modelErrors.isEmpty()) {
 			saveModel(model, null);
 		} else {
-			messagePresenter.displayModelSaveError(modelErrors.get(0));
+			eventBus.fireEvent(new NotificationEvent(
+					ModelNotificationMessage.modelSaveError, NotificationType.ERROR, modelErrors.get(0).name()));
 		}
-	}
-
-	public MessagePresenter getMessagePresenter() {
-		return messagePresenter;
 	}
 
 	private void deployModel(final Model model) {
@@ -183,7 +181,8 @@ public class ClientController {
 
 			@Override
 			public void onSuccess(Void v) {
-				messagePresenter.displayModelDeployedMessage();
+				eventBus.fireEvent(new NotificationEvent(
+						ModelNotificationMessage.modelDeployed, NotificationType.SUCCESS));
 				repositoryBrowserPanelPresenter.updateRepositoryList();
 			}
 		});
@@ -202,7 +201,8 @@ public class ClientController {
 				}
 			});
 		} else {
-			messagePresenter.displayModelDeployError(modelErrors.get(0));
+			eventBus.fireEvent(new NotificationEvent(
+					ModelNotificationMessage.modelDeployError, NotificationType.ERROR, modelErrors.get(0).name()));
 		}
 	}
 
@@ -223,7 +223,8 @@ public class ClientController {
 
 					@Override
 					public void onSuccess(Void result) {
-						messagePresenter.displayRepositoryUndeployedMessage();
+						eventBus.fireEvent(new NotificationEvent(
+								RepositoryNotificationMessage.repositoryDeployed, NotificationType.SUCCESS));
 						repositoryBrowserPanelPresenter.updateRepositoryList();
 					}
 
@@ -265,14 +266,13 @@ public class ClientController {
 
 	@Deprecated
 	private void deprecated() {
-		messagePresenter = new MessagePresenter(topNavPresenter);
 		modelBrowserPanelPresenter = new ModelBrowserPanelPresenter(
 				new ModelBrowserPanelWidget(), this, modelService,
-				rpcErrorHandler);
+				rpcErrorHandler, eventBus);
 
 		repositoryBrowserPanelPresenter = new RepositoryBrowserPanelPresenter(
 				new RepositoryBrowserPanelWidget(), this, repositoryService,
-				rpcErrorHandler);
+				rpcErrorHandler, eventBus);
 
 		modelBrowserPanelPresenter.updateModelList();
 		repositoryBrowserPanelPresenter.updateRepositoryList();

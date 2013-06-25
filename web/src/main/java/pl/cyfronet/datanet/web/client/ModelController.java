@@ -6,8 +6,9 @@ import java.util.logging.Logger;
 
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
-import pl.cyfronet.datanet.web.client.event.NotificationEvent;
-import pl.cyfronet.datanet.web.client.event.NotificationEvent.NotificationType;
+import pl.cyfronet.datanet.web.client.event.notification.ModelNotificationMessage;
+import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
+import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter;
 
@@ -44,7 +45,7 @@ public class ModelController {
 						"Unable to load models, sending notification. "
 								+ caught.getMessage());
 				eventBus.fireEvent(new NotificationEvent(
-						"Unable to load models", NotificationType.ERROR));
+						ModelNotificationMessage.modelListLoadError, NotificationType.ERROR));
 			}
 		});
 	}
@@ -66,17 +67,18 @@ public class ModelController {
 					if (caught instanceof ModelException) {
 						ModelException e = (ModelException) caught;
 						eventBus.fireEvent(new NotificationEvent(
-								"Unable to load models because of "
-										+ e.getErrorCode(),
-								NotificationType.ERROR));
+								ModelNotificationMessage.modelLoadError,
+								NotificationType.ERROR, e.getErrorCode().name()));
 					} else {
 						eventBus.fireEvent(new NotificationEvent(
-								"Unable to load models", NotificationType.ERROR));
+								ModelNotificationMessage.modelLoadErrorNoCause,
+								NotificationType.ERROR));
 					}
 				}
 			});
 		} catch (NumberFormatException e) {
-			eventBus.fireEvent(new NotificationEvent("Wrong model id format",
+			eventBus.fireEvent(new NotificationEvent(
+					ModelNotificationMessage.modelWrongIdFormat,
 					NotificationType.ERROR));
 		}
 	}

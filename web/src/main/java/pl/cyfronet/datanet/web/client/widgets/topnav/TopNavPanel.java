@@ -1,6 +1,5 @@
 package pl.cyfronet.datanet.web.client.widgets.topnav;
 
-import pl.cyfronet.datanet.web.client.messages.MessageDispatcher.MessageType;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.Alert;
@@ -18,11 +17,15 @@ public class TopNavPanel extends Composite implements View {
 	private static TopNavPanelUiBinder uiBinder = GWT.create(TopNavPanelUiBinder.class);
 	interface TopNavPanelUiBinder extends UiBinder<Widget, TopNavPanel> {}
 	
+	public enum MessageType {
+		ERROR,
+		INFO
+	}
+	
 	private Timer messageLabelTimer;
 	private Presenter presenter;
 
-	@UiField
-	Alert messageLabel;
+	@UiField Alert messageLabel;
 
 	public TopNavPanel() {
 		initWidget(uiBinder.createAndBindUi(this));

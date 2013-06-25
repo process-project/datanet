@@ -1,4 +1,5 @@
-package pl.cyfronet.datanet.web.client.event;
+package pl.cyfronet.datanet.web.client.event.notification;
+
 
 import com.google.gwt.event.shared.GwtEvent;
 
@@ -10,11 +11,17 @@ public class NotificationEvent extends GwtEvent<NotificationEventHandler> {
 	}
 
 	private NotificationType type;
-	private String message;
+	private NotificationMessage messageCode;
+	private String[] messageParams;
 
-	public NotificationEvent(String message, NotificationType type) {
-		this.message = message;
+	public NotificationEvent(NotificationMessage messageCode, NotificationType type) {
+		this.messageCode = messageCode;
 		this.type = type;
+	}
+	
+	public NotificationEvent(NotificationMessage messageCode, NotificationType type, String ... messageParams) {
+		this(messageCode, type);
+		this.messageParams = messageParams;
 	}
 
 	@Override
@@ -31,7 +38,11 @@ public class NotificationEvent extends GwtEvent<NotificationEventHandler> {
 		return type;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getMessageCode() {
+		return messageCode.getMessageCode();
+	}
+	
+	public String[] getMessageParams() {
+		return messageParams;
 	}
 }
