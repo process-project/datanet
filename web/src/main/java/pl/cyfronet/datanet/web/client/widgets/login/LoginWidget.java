@@ -3,6 +3,7 @@ package pl.cyfronet.datanet.web.client.widgets.login;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.Alert;
+import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.core.client.GWT;
@@ -23,6 +24,7 @@ public class LoginWidget extends Composite implements View {
 	@UiField TextBox loginField;
 	@UiField PasswordTextBox passwordField;
 	@UiField Alert errorLabel;
+	@UiField Button loginButton;
 	
 	private LoginMessages messages;
 	private Presenter presenter;
@@ -77,19 +79,19 @@ public class LoginWidget extends Composite implements View {
 		errorLabel.setText(messages.loginOrPasswordEmpty());
 		alertVisible(true);
 	}
-
+	
 	@Override
 	public void errorUnknownDuringLogin() {
 		errorLabel.setText(messages.unknownLoginError());
 		alertVisible(true);
 	}
-
+	
 	@Override
 	public void clearErrors() {
 		errorLabel.setText("");
 		alertVisible(false);
 	}
-
+	
 	@Override
 	public void errorWrongLoginOrPassword() {
 		errorLabel.setText(messages.wrongLoginOrPassword());
@@ -98,5 +100,14 @@ public class LoginWidget extends Composite implements View {
 	
 	private void alertVisible(boolean visible) {
 		errorLabel.setVisible(visible);
+	}
+
+	@Override
+	public void setBusyState(boolean busy) {
+		if(busy) {
+			loginButton.state().loading();
+		} else {
+			loginButton.state().complete();
+		}
 	}
 }

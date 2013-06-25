@@ -18,6 +18,7 @@ public class LoginPresenter implements Presenter {
 		void errorUnknownDuringLogin();
 		void clearErrors();
 		void errorWrongLoginOrPassword();
+		void setBusyState(boolean busy);
 	}
 	
 	private ClientController clientController;
@@ -50,13 +51,16 @@ public class LoginPresenter implements Presenter {
 		}
 		
 		view.clearErrors();
+		view.setBusyState(true);
 		loginService.login(login, password, new AsyncCallback<Void>() {
 			@Override
 			public void onSuccess(Void result) {
+				view.setBusyState(false);
 				clientController.onLogin();
 			}
 			@Override
 			public void onFailure(Throwable t) {
+				view.setBusyState(false);
 				if(t instanceof LoginException) {
 					LoginException e = (LoginException) t;
 					
