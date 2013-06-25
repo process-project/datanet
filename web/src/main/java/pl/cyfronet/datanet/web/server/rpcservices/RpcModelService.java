@@ -23,42 +23,49 @@ import pl.cyfronet.datanet.web.server.db.beans.ModelDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
 
 @Service("modelService")
-public class RpcModelService  implements ModelService {
-	private static final Logger log = LoggerFactory.getLogger(RpcModelService.class);
-	
-	@Autowired private HibernateModelDao modelDao;
-	@Autowired private HibernateUserDao userDao;
-	@Autowired private ModelBuilder modelBuilder;
-	@Autowired private JaxbEntityListBuilder jaxbEntityListBuilder;
-	
+public class RpcModelService implements ModelService {
+	private static final Logger log = LoggerFactory
+			.getLogger(RpcModelService.class);
+
+	@Autowired
+	private HibernateModelDao modelDao;
+	@Autowired
+	private HibernateUserDao userDao;
+	@Autowired
+	private ModelBuilder modelBuilder;
+	@Autowired
+	private JaxbEntityListBuilder jaxbEntityListBuilder;
+
 	@Override
 	public Model saveModel(Model model) throws ModelException {
 		log.info("Processing model save request for model {}", model);
 
 		try {
-			//TODO: Create optimized DAO method for this case
+			// TODO: Create optimized DAO method for this case
 			List<ModelDbEntity> availableModels = modelDao.getModels();
-			for(ModelDbEntity dbModel : availableModels) {
-				if(model.getName().equals(dbModel.getName()) && model.getId() != dbModel.getId()) {
+			for (ModelDbEntity dbModel : availableModels) {
+				if (model.getName().equals(dbModel.getName())
+						&& model.getId() != dbModel.getId()) {
 					throw new ModelException(Code.ModelNameNotUnique);
 				}
 			}
-			
+
 			UserDbEntity user = getUser();
 			ModelDbEntity modelDbEntity = new ModelDbEntity();
 			modelDbEntity.setId(model.getId());
 			modelDbEntity.setName(model.getName());
 			modelDbEntity.setVersion(model.getVersion());
-			modelDbEntity.setExperimentBody(jaxbEntityListBuilder.serialize(model.getEntities()));
-			if(modelDbEntity.getOwners() == null) {
+			modelDbEntity.setExperimentBody(jaxbEntityListBuilder
+					.serialize(model.getEntities()));
+			if (modelDbEntity.getOwners() == null) {
 				modelDbEntity.setOwners(new ArrayList<UserDbEntity>());
 			}
 			modelDbEntity.getOwners().add(user);
 			modelDao.saveModel(modelDbEntity);
-			
-			//return model id, updated by hibernate with new unique id
+
+			// return model id, updated by hibernate with new unique id
 			model.setId(modelDbEntity.getId());
-			
+
 			return model;
 		} catch (ModelException me) {
 			throw me;
@@ -74,17 +81,12 @@ public class RpcModelService  implements ModelService {
 		try {
 			List<Model> result = new ArrayList<>();
 			UserDbEntity user = getUser();
-			
-			for(ModelDbEntity modelDbEntity : modelDao.getUserModels(user.getLogin())) {
-				Model model = new Model();
-				List<Entity> entitiesList = jaxbEntityListBuilder.deserialize(modelDbEntity.getExperimentBody());
-				model.setId(modelDbEntity.getId());
-				model.setName(modelDbEntity.getName());
-				model.setVersion(modelDbEntity.getVersion());
-				model.setEntities(entitiesList);
-				result.add(model);
+
+			for (ModelDbEntity modelDbEntity : modelDao.getUserModels(user
+					.getLogin())) {
+				result.add(getModel(modelDbEntity));
 			}
-			
+
 			return result;
 		} catch (Exception e) {
 			String message = "Could not retrieve models";
@@ -92,11 +94,41 @@ public class RpcModelService  implements ModelService {
 			throw new ModelException(Code.ModelRetrievalError);
 		}
 	}
-	
+
+	private Model getModel(ModelDbEntity modelDbEntity) throws ModelException {
+		try {
+			Model model = new Model();
+			List<Entity> entitiesList = jaxbEntityListBuilder
+					.deserialize(modelDbEntity.getExperimentBody());
+			model.setId(modelDbEntity.getId());
+			model.setName(modelDbEntity.getName());
+			model.setVersion(modelDbEntity.getVersion());
+			model.setEntities(entitiesList);
+
+			return model;
+		} catch (Exception e) {
+			String message = "Could not retrieve models";
+			log.error(message, e);
+			throw new ModelException(Code.ModelRetrievalError);
+		}
+	}
+
 	private UserDbEntity getUser() {
-		String login = (String) RequestContextHolder.getRequestAttributes().
-				getAttribute("userLogin", RequestAttributes.SCOPE_SESSION);
+		String login = (String) RequestContextHolder.getRequestAttributes()
+				.getAttribute("userLogin", RequestAttributes.SCOPE_SESSION);
 		UserDbEntity user = userDao.getUser(login);
 		return user;
+	}
+
+	@Override
+	public Model getModel(long modelId) throws ModelException {
+		UserDbEntity user = getUser();
+		ModelDbEntity modelDbEntity = modelDao.getModel(user.getLogin(), modelId);
+
+		if (modelDbEntity == null) {
+			throw new ModelException(ModelException.Code.ModelRetrievalError);
+		}
+
+		return getModel(modelDbEntity);
 	}
 }

@@ -1,7 +1,7 @@
 package pl.cyfronet.datanet.web.client.mvp.activity;
 
 import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
-import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
+import pl.cyfronet.datanet.web.client.mvp.place.NewModelPlace;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter;
 
 import com.google.gwt.activity.shared.AbstractActivity;
@@ -27,7 +27,7 @@ public class BrowserActivity extends AbstractActivity {
 
 	}
 
-	public void setPlace(WelcomePlace place) {
+	public void setPlace(NewModelPlace place) {
 
 	}
 }

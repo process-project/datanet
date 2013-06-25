@@ -83,6 +83,7 @@ public class ModelPanelPresenter implements Presenter {
 		model.setVersion(versionName);
 	}
 	
+	@Override
 	public IsWidget getWidget() {
 		return view;
 	}

@@ -8,20 +8,36 @@ import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.view.client.AsyncDataProvider;
+import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
 
 public class ModelTreeViewModel implements TreeViewModel {
 
 	private static final Logger logger = Logger
 			.getLogger(ModelTreeViewModel.class.getName());
-	
+
 	private Presenter presenter;
 	private TreeItemsAsyncDataProvider rootDataProvider;
 	private ModelTreePanelMessageses messages;
+	private DefaultSelectionEventManager<TreeItem> manager;
+	private SingleSelectionModel<TreeItem> selection;
 
 	public ModelTreeViewModel(ModelTreePanelMessageses messages) {
 		this.messages = messages;
+		manager = DefaultSelectionEventManager.createDefaultManager();
+		selection = new SingleSelectionModel<TreeItem>();
+		selection.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				TreeItem selectedItem = selection.getSelectedObject();
+				if(selectedItem.getType() == ItemType.MODEL) {
+					presenter.onModelSelected(selectedItem.getId());
+				}
+			}
+		});
 	}
 
 	@Override
@@ -40,7 +56,8 @@ public class ModelTreeViewModel implements TreeViewModel {
 				sb.appendEscaped(value.getName());
 			}
 		};
-		return new DefaultNodeInfo<TreeItem>(dataProvider, cell);
+		return new DefaultNodeInfo<TreeItem>(dataProvider, cell, selection,
+				manager, null);
 	}
 
 	@Override
@@ -51,13 +68,13 @@ public class ModelTreeViewModel implements TreeViewModel {
 	}
 
 	public void setPresenter(Presenter presenter) {
-		this.presenter = presenter;		
+		this.presenter = presenter;
 	}
 
 	public void reload() {
 		rootDataProvider.reload();
 	}
-	
+
 	private class TreeItemsAsyncDataProvider extends
 			AsyncDataProvider<TreeItem> {
 
@@ -82,7 +99,7 @@ public class ModelTreeViewModel implements TreeViewModel {
 			}
 		}
 
-		private void loading() {			
+		private void loading() {
 			updateRowCount(1, true);
 			updateRowData(0, Arrays.asList(new TreeItem(null, messages
 					.loading(), ItemType.LOADING)));

@@ -7,8 +7,9 @@ import java.util.logging.Logger;
 
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.web.client.ModelController;
-import pl.cyfronet.datanet.web.client.ModelController.ModelCallback;
+import pl.cyfronet.datanet.web.client.ModelController.ModelsCallback;
 import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
+import pl.cyfronet.datanet.web.client.mvp.place.NewModelPlace;
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -55,7 +56,7 @@ public class ModelTreePanelPresenter implements Presenter {
 	public void loadChildren(TreeItem parent,
 			final AsyncDataProvider<TreeItem> dataProvider) {
 		logger.log(Level.INFO, "Loading children for " + parent);
-		modelController.loadModels(new ModelCallback() {
+		modelController.loadModels(new ModelsCallback() {
 			@Override
 			public void setModels(List<Model> models) {
 				List<TreeItem> modelTreeItems = new ArrayList<TreeItem>();
@@ -71,6 +72,11 @@ public class ModelTreePanelPresenter implements Presenter {
 
 	@Override
 	public void onAddNewModel() {
-		placeController.goTo(new ModelPlace(null));
+		placeController.goTo(new NewModelPlace());
+	}
+
+	@Override
+	public void onModelSelected(String modelId) {
+		placeController.goTo(new ModelPlace(modelId));
 	}
 }

@@ -3,6 +3,7 @@ package pl.cyfronet.datanet.web.server.db;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +47,15 @@ public class HibernateModelDao {
 		}
 		
 		return user.getModels();
+	}
+	
+	@Transactional(readOnly = true)
+	public ModelDbEntity getModel(String userLogin, long id) {
+		Criteria c = sessionFactory.getCurrentSession().createCriteria(ModelDbEntity.class, "model");
+		c.createAlias("model.owners", "owner");
+		c.add(Restrictions.eq("model.id", id));
+		c.add(Restrictions.eq("owner.login", userLogin));
+		
+		return (ModelDbEntity)c.uniqueResult();
 	}
 }

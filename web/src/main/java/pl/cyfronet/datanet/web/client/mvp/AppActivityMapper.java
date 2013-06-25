@@ -1,8 +1,10 @@
 package pl.cyfronet.datanet.web.client.mvp;
 
 import pl.cyfronet.datanet.web.client.di.factory.ModelActivityFactory;
+import pl.cyfronet.datanet.web.client.mvp.activity.NewModelActivity;
 import pl.cyfronet.datanet.web.client.mvp.activity.WelcomeActivity;
 import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
+import pl.cyfronet.datanet.web.client.mvp.place.NewModelPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 
 import com.google.gwt.activity.shared.Activity;
@@ -27,6 +29,8 @@ public class AppActivityMapper implements ActivityMapper {
 			return new WelcomeActivity();
 		} else if(place instanceof ModelPlace) {
 			return modelActivityFactory.create((ModelPlace) place);
+		} else if(place instanceof NewModelPlace) {
+			return new NewModelActivity();
 		}
 		return null;
 	}

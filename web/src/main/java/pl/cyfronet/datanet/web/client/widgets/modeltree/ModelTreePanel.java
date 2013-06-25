@@ -39,7 +39,7 @@ public class ModelTreePanel extends Composite implements View {
 	private void initTree() {
 		messages = GWT.create(ModelTreePanelMessageses.class);
 		model = new ModelTreeViewModel(messages);
-		modelsTree = new CellTree(model, null);
+		modelsTree = new CellTree(model, null);		
 	}	
 	
 	@UiHandler("add")

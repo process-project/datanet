@@ -11,4 +11,6 @@ public interface Presenter {
 	void loadChildren(TreeItem parent, AsyncDataProvider<TreeItem> dataProvider);
 
 	void onAddNewModel();
+
+	void onModelSelected(String modelId);
 }
