@@ -22,6 +22,7 @@ public class ModelTreePanelPresenter implements Presenter {
 
 	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
+		void reload();
 	}
 
 	private View view;
@@ -36,6 +37,7 @@ public class ModelTreePanelPresenter implements Presenter {
 		this.placeController = placeController;
 
 		view.setPresenter(this);
+		view.reload();
 	}
 
 	@Override

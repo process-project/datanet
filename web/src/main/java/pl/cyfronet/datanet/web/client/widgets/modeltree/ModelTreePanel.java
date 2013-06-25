@@ -52,4 +52,9 @@ public class ModelTreePanel extends Composite implements View {
 		this.presenter = presenter;
 		model.setPresenter(presenter);
 	}
+
+	@Override
+	public void reload() {
+		model.reload();
+	}
 }

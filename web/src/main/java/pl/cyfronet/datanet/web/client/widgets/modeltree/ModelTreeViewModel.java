@@ -51,10 +51,13 @@ public class ModelTreeViewModel implements TreeViewModel {
 	}
 
 	public void setPresenter(Presenter presenter) {
-		this.presenter = presenter;
-		rootDataProvider.reload();
+		this.presenter = presenter;		
 	}
 
+	public void reload() {
+		rootDataProvider.reload();
+	}
+	
 	private class TreeItemsAsyncDataProvider extends
 			AsyncDataProvider<TreeItem> {
 
