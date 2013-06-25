@@ -40,6 +40,11 @@ public class ModelTreeViewModel implements TreeViewModel {
 		});
 	}
 
+	public void setSelected(TreeItem item) {
+		//TODO currently only model is shown but latter on we need to load tree before secting item
+		selection.setSelected(item, true);
+	}
+	
 	@Override
 	public <T> NodeInfo<?> getNodeInfo(T value) {
 		TreeItemsAsyncDataProvider dataProvider = new TreeItemsAsyncDataProvider(

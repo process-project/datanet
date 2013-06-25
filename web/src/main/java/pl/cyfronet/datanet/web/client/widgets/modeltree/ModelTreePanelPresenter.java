@@ -24,6 +24,7 @@ public class ModelTreePanelPresenter implements Presenter {
 	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
 		void reload();
+		void setSelected(TreeItem item);
 	}
 
 	private View view;
@@ -80,5 +81,9 @@ public class ModelTreePanelPresenter implements Presenter {
 	@Override
 	public void onModelSelected(String modelId) {
 		placeController.goTo(new ModelPlace(modelId));
+	}
+
+	public void setSelected(String modelId, ItemType type) {
+		view.setSelected(new TreeItem(modelId, null, type));
 	}
 }

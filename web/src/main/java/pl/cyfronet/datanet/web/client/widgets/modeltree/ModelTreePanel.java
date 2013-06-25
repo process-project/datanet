@@ -57,4 +57,9 @@ public class ModelTreePanel extends Composite implements View {
 	public void reload() {
 		model.reload();
 	}
+
+	@Override
+	public void setSelected(TreeItem item) {
+		model.setSelected(item);
+	}
 }
