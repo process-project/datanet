@@ -14,4 +14,5 @@ public interface LoginMessages extends Messages {
 	String passwordGhostLabel();
 	String datanetLogoAlt();
 	String versionLabel();
+	String loginInProgress();
 }
