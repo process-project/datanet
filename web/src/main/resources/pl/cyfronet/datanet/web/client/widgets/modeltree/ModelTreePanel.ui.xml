@@ -10,8 +10,8 @@
 
 		}
 	</ui:style>
-	<g:VerticalPanel>
-		<g:HorizontalPanel ui:field="buttons">
+	<g:FlowPanel>
+		<g:FlowPanel ui:field="buttons">
 			<b:ButtonGroup>
 				<b:Button ui:field="add" icon="PLUS" type="SUCCESS" size="MINI"></b:Button>
 				<b:Button ui:field="remove" icon="REMOVE" type="DANGER"
@@ -19,8 +19,8 @@
 				<b:Button ui:field="deploy" icon="CLOUD_UPLOAD" size="MINI"
 					enabled="false"></b:Button>
 			</b:ButtonGroup>
-		</g:HorizontalPanel>
+		</g:FlowPanel>
 
 		<c:CellTree ui:field="modelsTree" />		
-	</g:VerticalPanel>
+	</g:FlowPanel>
 </ui:UiBinder>

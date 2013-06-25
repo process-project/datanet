@@ -9,7 +9,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTree;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ModelTreePanel extends Composite implements View {
@@ -23,7 +23,7 @@ public class ModelTreePanel extends Composite implements View {
 	CellTree modelsTree;
 
 	@UiField
-	HorizontalPanel buttons;
+	Panel buttons;
 
 	private ModelTreeViewModel model;
 
