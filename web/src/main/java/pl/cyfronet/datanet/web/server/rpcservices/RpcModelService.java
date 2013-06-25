@@ -96,7 +96,15 @@ public class RpcModelService  implements ModelService {
 	private UserDbEntity getUser() {
 		String login = (String) RequestContextHolder.getRequestAttributes().
 				getAttribute("userLogin", RequestAttributes.SCOPE_SESSION);
+		
+		if(login == null) {
+			throw new IllegalArgumentException("Could not obtain user login from session");
+		}
+		
+		log.debug("Retrieving user bean from database for login {}", login);
+		
 		UserDbEntity user = userDao.getUser(login);
+		
 		return user;
 	}
 }
