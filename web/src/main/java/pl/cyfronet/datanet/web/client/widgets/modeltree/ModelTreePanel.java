@@ -2,6 +2,7 @@ package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter.View;
 
+import com.github.gwtbootstrap.client.ui.Button;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -9,8 +10,9 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTree;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 public class ModelTreePanel extends Composite implements View {
 	private static ModelTreePanelUiBinder uiBinder = GWT
@@ -23,13 +25,21 @@ public class ModelTreePanel extends Composite implements View {
 	CellTree modelsTree;
 
 	@UiField
-	Panel buttons;
+	Button remove;
+	
+	@UiField
+	Button save;
+	
+	@UiField
+	Button deploy;
 
 	private ModelTreeViewModel model;
 
 	private ModelTreePanelMessageses messages;
 
 	private Presenter presenter;
+
+	private SingleSelectionModel<TreeItem> selection;
 
 	public ModelTreePanel() {
 		initTree();
@@ -38,13 +48,29 @@ public class ModelTreePanel extends Composite implements View {
 
 	private void initTree() {
 		messages = GWT.create(ModelTreePanelMessageses.class);
-		model = new ModelTreeViewModel(messages);
-		modelsTree = new CellTree(model, null);		
-	}	
-	
+		selection = new SingleSelectionModel<TreeItem>();
+		selection.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				TreeItem selectedItem = selection.getSelectedObject();
+				if(selectedItem != null && selectedItem.getType() == ItemType.MODEL) {
+					presenter.onModelSelected(selectedItem.getId());
+				}
+			}
+		});
+		
+		model = new ModelTreeViewModel(messages, selection);
+		modelsTree = new CellTree(model, null);
+	}
+
 	@UiHandler("add")
 	void onAddNewModel(ClickEvent event) {
 		presenter.onAddNewModel();
+	}
+
+	@UiHandler("remove")
+	void onRemoveModel(ClickEvent event) {
+		presenter.onRemoveModel(selection.getSelectedObject());
 	}
 	
 	@Override
@@ -60,6 +86,10 @@ public class ModelTreePanel extends Composite implements View {
 
 	@Override
 	public void setSelected(TreeItem item) {
-		model.setSelected(item);
+		selection.setSelected(item, true);
+		
+		boolean actionEnabled = item != null;
+		remove.setEnabled(actionEnabled);
+		deploy.setEnabled(actionEnabled);
 	}
 }

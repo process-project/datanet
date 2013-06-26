@@ -10,6 +10,7 @@ import pl.cyfronet.datanet.web.client.ModelController;
 import pl.cyfronet.datanet.web.client.ModelController.ModelsCallback;
 import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.NewModelPlace;
+import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -55,7 +56,7 @@ public class ModelTreePanelPresenter implements Presenter {
 	public void loadChildren(TreeItem parent,
 			final AsyncDataProvider<TreeItem> dataProvider) {
 		logger.log(Level.INFO, "Loading children for " + parent);
-		modelController.loadModels(new ModelsCallback() {
+		modelController.getModels(new ModelsCallback() {
 			@Override
 			public void setModels(List<Model> models) {
 				List<TreeItem> modelTreeItems = new ArrayList<TreeItem>();
@@ -66,7 +67,7 @@ public class ModelTreePanelPresenter implements Presenter {
 				dataProvider.updateRowCount(modelTreeItems.size(), true);
 				dataProvider.updateRowData(0, modelTreeItems);
 			}
-		});
+		}, false);
 	}
 
 	public void reload() {
@@ -83,7 +84,13 @@ public class ModelTreePanelPresenter implements Presenter {
 		placeController.goTo(new ModelPlace(modelId));
 	}
 
-	public void setSelected(String modelId, ItemType type) {
-		view.setSelected(new TreeItem(modelId, null, type));
+	@Override
+	public void onRemoveModel(TreeItem selectedObject) {
+		//TODO actually remove model
+		placeController.goTo(new WelcomePlace());
+	}
+	
+	public void setSelected(TreeItem item) {
+		view.setSelected(item);
 	}
 }

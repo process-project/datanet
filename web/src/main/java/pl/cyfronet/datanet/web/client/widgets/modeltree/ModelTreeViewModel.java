@@ -8,10 +8,8 @@ import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.view.client.AsyncDataProvider;
-import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
+import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
 
 public class ModelTreeViewModel implements TreeViewModel {
@@ -22,29 +20,14 @@ public class ModelTreeViewModel implements TreeViewModel {
 	private Presenter presenter;
 	private TreeItemsAsyncDataProvider rootDataProvider;
 	private ModelTreePanelMessageses messages;
-	private DefaultSelectionEventManager<TreeItem> manager;
-	private SingleSelectionModel<TreeItem> selection;
+	private SelectionModel<TreeItem> selection;
 
-	public ModelTreeViewModel(ModelTreePanelMessageses messages) {
+	public ModelTreeViewModel(ModelTreePanelMessageses messages,
+			SelectionModel<TreeItem> selection) {
 		this.messages = messages;
-		manager = DefaultSelectionEventManager.createDefaultManager();
-		selection = new SingleSelectionModel<TreeItem>();
-		selection.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				TreeItem selectedItem = selection.getSelectedObject();
-				if(selectedItem.getType() == ItemType.MODEL) {
-					presenter.onModelSelected(selectedItem.getId());
-				}
-			}
-		});
+		this.selection = selection;
 	}
 
-	public void setSelected(TreeItem item) {
-		//TODO currently only model is shown but latter on we need to load tree before secting item
-		selection.setSelected(item, true);
-	}
-	
 	@Override
 	public <T> NodeInfo<?> getNodeInfo(T value) {
 		TreeItemsAsyncDataProvider dataProvider = new TreeItemsAsyncDataProvider(
@@ -62,7 +45,7 @@ public class ModelTreeViewModel implements TreeViewModel {
 			}
 		};
 		return new DefaultNodeInfo<TreeItem>(dataProvider, cell, selection,
-				manager, null);
+				null);
 	}
 
 	@Override

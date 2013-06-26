@@ -34,7 +34,7 @@ public class ModelActivity extends AbstractActivity {
 	@Override
 	public void start(final AcceptsOneWidget panel, EventBus eventBus) {
 		logger.log(Level.INFO, "Loading model with id: " + place.getModelId());
-		modelController.loadModel(place.getModelId(), new ModelCallback() {
+		modelController.getModel(place.getModelId(), new ModelCallback() {
 			@Override
 			public void setModel(Model model) {
 				ModelPanelPresenter presenter = new ModelPanelPresenter(

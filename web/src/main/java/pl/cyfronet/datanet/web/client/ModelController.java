@@ -24,10 +24,20 @@ public class ModelController {
 	private ModelServiceAsync modelService;
 	private EventBus eventBus;
 
+	private List<Model> models;
+
 	@Inject
 	public ModelController(ModelServiceAsync modelService, EventBus eventBus) {
 		this.modelService = modelService;
 		this.eventBus = eventBus;
+	}
+
+	public void getModels(final ModelsCallback callback, boolean forceRefresh) {
+		if (models == null || forceRefresh) {
+			loadModels(callback);
+		} else {
+			callback.setModels(models);
+		}
 	}
 
 	public void loadModels(final ModelsCallback callback) {
@@ -36,6 +46,7 @@ public class ModelController {
 			@Override
 			public void onSuccess(List<Model> result) {
 				logger.log(Level.INFO, "Models loaded");
+				models = result;
 				callback.setModels(result);
 			}
 
@@ -45,9 +56,31 @@ public class ModelController {
 						"Unable to load models, sending notification. "
 								+ caught.getMessage());
 				eventBus.fireEvent(new NotificationEvent(
-						ModelNotificationMessage.modelListLoadError, NotificationType.ERROR));
+						ModelNotificationMessage.modelListLoadError,
+						NotificationType.ERROR));
 			}
 		});
+	}
+
+	public void getModel(String modelId, final ModelCallback callback) {
+		Model model = getCachedModel(modelId);
+
+		if (model == null) {
+			loadModel(modelId, callback);
+		} else {
+			callback.setModel(model);
+		}
+	}
+
+	private Model getCachedModel(String modelId) {
+		if (models != null) {
+			for (Model m : models) {
+				if (String.valueOf(m.getId()).equals(modelId)) {
+					return m;
+				}
+			}
+		}
+		return null;
 	}
 
 	public void loadModel(String modelId, final ModelCallback callback) {

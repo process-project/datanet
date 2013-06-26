@@ -3,6 +3,7 @@ package pl.cyfronet.datanet.web.client.mvp;
 import pl.cyfronet.datanet.web.client.mvp.activity.BrowserActivity;
 import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.NewModelPlace;
+import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 
 import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.activity.shared.ActivityMapper;
@@ -24,6 +25,8 @@ public class WestActivityMapper implements ActivityMapper {
 			browserActivity.setPlace((ModelPlace) place);
 		} else if (place instanceof NewModelPlace) {
 			browserActivity.setPlace((NewModelPlace) place);
+		} else if (place instanceof WelcomePlace) {
+			browserActivity.setPlace((WelcomePlace) place);
 		}
 		return browserActivity;
 	}

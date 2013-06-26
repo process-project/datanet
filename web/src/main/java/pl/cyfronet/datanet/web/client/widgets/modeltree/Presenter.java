@@ -13,4 +13,6 @@ public interface Presenter {
 	void onAddNewModel();
 
 	void onModelSelected(String modelId);
+
+	void onRemoveModel(TreeItem selectedObject);
 }

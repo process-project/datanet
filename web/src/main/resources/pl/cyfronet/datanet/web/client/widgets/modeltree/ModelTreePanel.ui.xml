@@ -7,14 +7,16 @@
 		field="messages" />
 	<ui:style>
 		.buttons {
-
+			text-align: center;
 		}
 	</ui:style>
 	<g:FlowPanel>
-		<g:FlowPanel ui:field="buttons">
+		<g:FlowPanel styleName="{style.buttons}">
 			<b:ButtonGroup>
 				<b:Button ui:field="add" icon="PLUS" type="SUCCESS" size="MINI"></b:Button>
 				<b:Button ui:field="remove" icon="REMOVE" type="DANGER"
+					size="MINI" enabled="false"></b:Button>				
+				<b:Button ui:field="save" icon="SAVE"
 					size="MINI" enabled="false"></b:Button>
 				<b:Button ui:field="deploy" icon="CLOUD_UPLOAD" size="MINI"
 					enabled="false"></b:Button>
