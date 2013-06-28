@@ -14,7 +14,7 @@ public interface Presenter {
 
 	void onSave();
 	
-	void onModelSelected(Long modelId);
-
-	void onRemoveModel(TreeItem selectedObject);
+	void onRemove();
+	
+	void onSelected();	
 }

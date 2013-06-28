@@ -33,12 +33,17 @@ public class ModelTreePanelPresenter implements Presenter {
 		void setPresenter(Presenter presenter);
 
 		void reload();
+
 		void setSelected(TreeItem item);
+
 		void updateTreeItem(TreeItem item);
+
 		TreeItem getSelectedObject();
-		
+
 		void setSaveEnabled(boolean enabled);
+
 		void setRemoveEnabled(boolean enabled);
+
 		void setDeployEnabled(boolean enabled);
 	}
 
@@ -80,9 +85,9 @@ public class ModelTreePanelPresenter implements Presenter {
 				view.updateTreeItem(item);
 				enableSaveIfDirtyAndSelected(item);
 			}
-		});		
-	}	
-	
+		});
+	}
+
 	private void enableSaveIfDirtyAndSelected(TreeItem item) {
 		TreeItem selectedItem = view.getSelectedObject();
 		if (item.equals(selectedItem)) {
@@ -129,29 +134,39 @@ public class ModelTreePanelPresenter implements Presenter {
 	}
 
 	@Override
-	public void onModelSelected(Long modelId) {
-		placeController.goTo(new ModelPlace(modelId));
+	public void onSelected() {
+		TreeItem item = view.getSelectedObject();
+		if (item != null) {
+			if (isModel(item)) {
+				placeController.goTo(new ModelPlace(item.getId()));
+			}
+			// XXX other elements
+		}
+	}
+
+	private boolean isModel(TreeItem item) {
+		return item.getType() == ItemType.MODEL;
 	}
 
 	@Override
-	public void onRemoveModel(TreeItem selectedObject) {
+	public void onRemove() {
 		// TODO actually remove model
 		placeController.goTo(new WelcomePlace());
 	}
 
 	@Override
 	public void onSave() {
-		TreeItem selected = view.getSelectedObject();
-		if(selected.getType() == ItemType.MODEL) {
-			modelController.saveModel(selected.getId());
+		TreeItem item = view.getSelectedObject();
+		if (isModel(item)) {
+			modelController.saveModel(item.getId());
 		}
 	}
-	
+
 	public void setSelected(TreeItem item) {
 		view.setSelected(item);
-		
+
 		boolean actionEnabled = item != null;
 		view.setRemoveEnabled(actionEnabled);
 		view.setDeployEnabled(actionEnabled);
-	}	
+	}
 }

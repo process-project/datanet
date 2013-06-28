@@ -54,11 +54,7 @@ public class ModelTreePanel extends Composite implements View {
 		selection.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				TreeItem selectedItem = selection.getSelectedObject();
-				if (selectedItem != null
-						&& selectedItem.getType() == ItemType.MODEL) {
-					presenter.onModelSelected(selectedItem.getId());
-				}
+				presenter.onSelected();
 			}
 		});
 
@@ -73,9 +69,9 @@ public class ModelTreePanel extends Composite implements View {
 
 	@UiHandler("remove")
 	void onRemoveModel(ClickEvent event) {
-		presenter.onRemoveModel(selection.getSelectedObject());
+		presenter.onRemove();
 	}
-	
+
 	@UiHandler("save")
 	void onSaveModel(ClickEvent event) {
 		presenter.onSave();
