@@ -59,6 +59,7 @@ public class DeployerTest extends CloudFoundryTest {
 		deployer.undeployRepository(repositoryName);
 	}
 	
+	@Ignore
 	@Test
 	public void deployAndCleanup() throws DeployerException {
 		sampleDeploy();

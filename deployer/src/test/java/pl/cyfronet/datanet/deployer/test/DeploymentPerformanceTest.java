@@ -8,6 +8,7 @@ import org.cloudfoundry.client.lib.CloudFoundryClient;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class DeploymentPerformanceTest {
@@ -37,6 +38,7 @@ public class DeploymentPerformanceTest {
 		}
 	}
 	
+	@Ignore
 	@Test
 	public void cfEnvCheck() {
 		Assert.assertTrue(client.getCloudInfo() != null);
