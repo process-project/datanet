@@ -53,15 +53,22 @@ public class FieldPanelPresenter implements Presenter {
 	@Override
 	public void onFieldNameChanged(String fieldName) {
 		field.setName(fieldName);
+		fieldModified();
 	}
 
 	@Override
 	public void onFieldTypeChanged(Type value) {
 		field.setType(value);
+		fieldModified();
 	}
 
 	@Override
 	public void onFieldRequiredChanged(boolean value) {
 		field.setRequired(value);
+		fieldModified();
+	}
+	
+	private void fieldModified() {
+		entityPanelPresenter.entityChanged();
 	}
 }

@@ -8,15 +8,19 @@ import java.util.logging.Logger;
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.web.client.ModelController;
 import pl.cyfronet.datanet.web.client.ModelController.ModelsCallback;
+import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
+import pl.cyfronet.datanet.web.client.event.model.ModelChangedEventHandler;
 import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.NewModelPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 
 public class ModelTreePanelPresenter implements Presenter {
 	private static final Logger logger = Logger
@@ -34,11 +38,18 @@ public class ModelTreePanelPresenter implements Presenter {
 
 	@Inject
 	public ModelTreePanelPresenter(View view, ModelController modelController,
-			PlaceController placeController) {
+			PlaceController placeController, EventBus eventBus) {
 		this.view = view;
 		this.modelController = modelController;
 		this.placeController = placeController;
 		view.setPresenter(this);		
+		
+		eventBus.addHandler(ModelChangedEvent.TYPE, new ModelChangedEventHandler() {
+			@Override
+			public void onModelChangedEvent(ModelChangedEvent event) {
+				GWT.log("Model changed " + event.getModelId());				
+			}
+		});
 	}
 
 	@Override

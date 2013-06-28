@@ -11,8 +11,9 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 public class NewModelActivity extends AbstractActivity {
 
 	@Override
-	public void start(AcceptsOneWidget panel, EventBus eventBus) {
-		Presenter presenter = new ModelPanelPresenter(new ModelPanelWidget());
+	public void start(AcceptsOneWidget panel, final EventBus eventBus) {
+		Presenter presenter = new ModelPanelPresenter(new ModelPanelWidget(),
+				eventBus);
 		panel.setWidget(presenter.getWidget());
 	}
 }
