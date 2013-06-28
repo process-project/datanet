@@ -28,10 +28,10 @@ public class ModelTreePanel extends Composite implements View {
 
 	@UiField
 	Button remove;
-	
+
 	@UiField
 	Button save;
-	
+
 	@UiField
 	Button deploy;
 
@@ -55,12 +55,13 @@ public class ModelTreePanel extends Composite implements View {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
 				TreeItem selectedItem = selection.getSelectedObject();
-				if(selectedItem != null && selectedItem.getType() == ItemType.MODEL) {
+				if (selectedItem != null
+						&& selectedItem.getType() == ItemType.MODEL) {
 					presenter.onModelSelected(selectedItem.getId());
 				}
 			}
 		});
-		
+
 		model = new ModelTreeViewModel(messages, selection);
 		modelsTree = new CellTree(model, null);
 	}
@@ -74,7 +75,7 @@ public class ModelTreePanel extends Composite implements View {
 	void onRemoveModel(ClickEvent event) {
 		presenter.onRemoveModel(selection.getSelectedObject());
 	}
-	
+
 	@Override
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
@@ -89,7 +90,7 @@ public class ModelTreePanel extends Composite implements View {
 	@Override
 	public void setSelected(TreeItem item) {
 		selection.setSelected(item, true);
-		
+
 		boolean actionEnabled = item != null;
 		remove.setEnabled(actionEnabled);
 		deploy.setEnabled(actionEnabled);
@@ -98,10 +99,10 @@ public class ModelTreePanel extends Composite implements View {
 	@Override
 	public void updateTreeItem(TreeItem item) {
 		GWT.log("Updating item: " + item);
-		if(item.getType() == ItemType.MODEL) {
+		if (item.getType() == ItemType.MODEL) {
 			List<TreeItem> models = model.getModelProvider().getChildren();
 			for (TreeItem m : models) {
-				if(item.equals(m)) {
+				if (item.equals(m)) {
 					GWT.log("Updating is dirty and name");
 					m.setDirty(item.isDirty());
 					m.setName(item.getName());
@@ -109,6 +110,14 @@ public class ModelTreePanel extends Composite implements View {
 			}
 			GWT.log("updating models");
 			model.getModelProvider().updateRowData(0, models);
+			enableSaveIfDirtyAndSelected(item);
+		}
+	}
+
+	private void enableSaveIfDirtyAndSelected(TreeItem item) {
+		TreeItem selectedItem = selection.getSelectedObject();
+		if (item.equals(selectedItem)) {
+			save.setEnabled(item.isDirty());
 		}
 	}
 }
