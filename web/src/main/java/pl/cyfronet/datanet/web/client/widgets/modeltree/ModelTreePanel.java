@@ -90,10 +90,6 @@ public class ModelTreePanel extends Composite implements View {
 	@Override
 	public void setSelected(TreeItem item) {
 		selection.setSelected(item, true);
-
-		boolean actionEnabled = item != null;
-		remove.setEnabled(actionEnabled);
-		deploy.setEnabled(actionEnabled);
 	}
 
 	@Override
@@ -110,14 +106,26 @@ public class ModelTreePanel extends Composite implements View {
 			}
 			GWT.log("updating models");
 			model.getModelProvider().updateRowData(0, models);
-			enableSaveIfDirtyAndSelected(item);
 		}
 	}
 
-	private void enableSaveIfDirtyAndSelected(TreeItem item) {
-		TreeItem selectedItem = selection.getSelectedObject();
-		if (item.equals(selectedItem)) {
-			save.setEnabled(item.isDirty());
-		}
+	@Override
+	public void setSaveEnabled(boolean enabled) {
+		save.setEnabled(enabled);
+	}
+
+	@Override
+	public void setRemoveEnabled(boolean enabled) {
+		remove.setEnabled(enabled);
+	}
+
+	@Override
+	public void setDeployEnabled(boolean enabled) {
+		deploy.setEnabled(enabled);
+	}
+
+	@Override
+	public TreeItem getSelectedObject() {
+		return selection.getSelectedObject();
 	}
 }

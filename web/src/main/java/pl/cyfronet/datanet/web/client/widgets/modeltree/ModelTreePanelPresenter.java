@@ -31,10 +31,13 @@ public class ModelTreePanelPresenter implements Presenter {
 		void setPresenter(Presenter presenter);
 
 		void reload();
-
 		void setSelected(TreeItem item);
-
 		void updateTreeItem(TreeItem item);
+		TreeItem getSelectedObject();
+		
+		void setSaveEnabled(boolean enabled);
+		void setRemoveEnabled(boolean enabled);
+		void setDeployEnabled(boolean enabled);
 	}
 
 	private View view;
@@ -67,8 +70,16 @@ public class ModelTreePanelPresenter implements Presenter {
 						ItemType.MODEL);
 				item.setDirty(true);
 				view.updateTreeItem(item);
+				enableSaveIfDirtyAndSelected(item);
 			}
-		});
+		});		
+	}
+	
+	private void enableSaveIfDirtyAndSelected(TreeItem item) {
+		TreeItem selectedItem = view.getSelectedObject();
+		if (item.equals(selectedItem)) {
+			view.setSaveEnabled(item.isDirty());
+		}
 	}
 
 	@Override
@@ -122,5 +133,9 @@ public class ModelTreePanelPresenter implements Presenter {
 
 	public void setSelected(TreeItem item) {
 		view.setSelected(item);
+		
+		boolean actionEnabled = item != null;
+		view.setRemoveEnabled(actionEnabled);
+		view.setDeployEnabled(actionEnabled);
 	}
 }
