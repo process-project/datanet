@@ -1,5 +1,7 @@
 package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
+import java.util.List;
+
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -26,10 +28,10 @@ public class ModelTreePanel extends Composite implements View {
 
 	@UiField
 	Button remove;
-	
+
 	@UiField
 	Button save;
-	
+
 	@UiField
 	Button deploy;
 
@@ -53,12 +55,13 @@ public class ModelTreePanel extends Composite implements View {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
 				TreeItem selectedItem = selection.getSelectedObject();
-				if(selectedItem != null && selectedItem.getType() == ItemType.MODEL) {
+				if (selectedItem != null
+						&& selectedItem.getType() == ItemType.MODEL) {
 					presenter.onModelSelected(selectedItem.getId());
 				}
 			}
 		});
-		
+
 		model = new ModelTreeViewModel(messages, selection);
 		modelsTree = new CellTree(model, null);
 	}
@@ -72,7 +75,7 @@ public class ModelTreePanel extends Composite implements View {
 	void onRemoveModel(ClickEvent event) {
 		presenter.onRemoveModel(selection.getSelectedObject());
 	}
-	
+
 	@Override
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
@@ -87,9 +90,39 @@ public class ModelTreePanel extends Composite implements View {
 	@Override
 	public void setSelected(TreeItem item) {
 		selection.setSelected(item, true);
-		
-		boolean actionEnabled = item != null;
-		remove.setEnabled(actionEnabled);
-		deploy.setEnabled(actionEnabled);
+	}
+
+	@Override
+	public void updateTreeItem(TreeItem item) {
+		if (item.getType() == ItemType.MODEL) {
+			List<TreeItem> models = model.getModelProvider().getChildren();
+			for (TreeItem m : models) {
+				if (item.equals(m)) {
+					m.setDirty(item.isDirty());
+					m.setName(item.getName());
+				}
+			}
+			model.getModelProvider().updateRowData(0, models);
+		}
+	}
+
+	@Override
+	public void setSaveEnabled(boolean enabled) {
+		save.setEnabled(enabled);
+	}
+
+	@Override
+	public void setRemoveEnabled(boolean enabled) {
+		remove.setEnabled(enabled);
+	}
+
+	@Override
+	public void setDeployEnabled(boolean enabled) {
+		deploy.setEnabled(enabled);
+	}
+
+	@Override
+	public TreeItem getSelectedObject() {
+		return selection.getSelectedObject();
 	}
 }

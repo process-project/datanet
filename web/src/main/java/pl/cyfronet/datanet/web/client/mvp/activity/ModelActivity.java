@@ -32,13 +32,13 @@ public class ModelActivity extends AbstractActivity {
 	}
 
 	@Override
-	public void start(final AcceptsOneWidget panel, EventBus eventBus) {
+	public void start(final AcceptsOneWidget panel, final EventBus eventBus) {
 		logger.log(Level.INFO, "Loading model with id: " + place.getModelId());
 		modelController.getModel(place.getModelId(), new ModelCallback() {
 			@Override
 			public void setModel(Model model) {
 				ModelPanelPresenter presenter = new ModelPanelPresenter(
-						new ModelPanelWidget());
+						new ModelPanelWidget(), eventBus);
 				presenter.setModel(model);
 				panel.setWidget(presenter.getWidget());
 			}

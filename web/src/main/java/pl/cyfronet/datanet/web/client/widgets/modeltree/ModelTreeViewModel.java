@@ -1,6 +1,7 @@
 package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,12 +36,15 @@ public class ModelTreeViewModel implements TreeViewModel {
 
 		if (value == null) {
 			rootDataProvider = dataProvider;
-		}
-
+		}		
+		
 		Cell<TreeItem> cell = new AbstractCell<TreeItem>() {
 			@Override
 			public void render(Context context, TreeItem value,
 					SafeHtmlBuilder sb) {
+				if(value.isDirty()) {
+					sb.appendEscaped("* ");
+				}
 				sb.appendEscaped(value.getName());
 			}
 		};
@@ -63,11 +67,16 @@ public class ModelTreeViewModel implements TreeViewModel {
 		rootDataProvider.reload();
 	}
 
-	private class TreeItemsAsyncDataProvider extends
+	public TreeItemsAsyncDataProvider getModelProvider() {
+		return rootDataProvider;
+	}
+	
+	public class TreeItemsAsyncDataProvider extends
 			AsyncDataProvider<TreeItem> {
 
 		private TreeItem parent;
-
+		private List<TreeItem> children;
+		
 		public TreeItemsAsyncDataProvider(TreeItem parent) {
 			this.parent = parent;
 		}
@@ -85,8 +94,18 @@ public class ModelTreeViewModel implements TreeViewModel {
 			} else {
 				logger.log(Level.INFO, "Presenter is null");
 			}
+		}		
+		
+		@Override
+		public void updateRowData(int start, List<TreeItem> values) {
+			children = values;
+			super.updateRowData(start, values);
 		}
 
+		public List<TreeItem> getChildren() {
+			return children;
+		}
+		
 		private void loading() {
 			updateRowCount(1, true);
 			updateRowData(0, Arrays.asList(new TreeItem(null, messages

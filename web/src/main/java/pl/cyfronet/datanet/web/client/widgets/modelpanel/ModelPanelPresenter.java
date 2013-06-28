@@ -7,11 +7,13 @@ import java.util.logging.Logger;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Model;
+import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelWidget;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.web.bindery.event.shared.EventBus;
 
 public class ModelPanelPresenter implements Presenter {
 	private static final Logger logger = Logger
@@ -20,6 +22,7 @@ public class ModelPanelPresenter implements Presenter {
 	private List<EntityPanelPresenter> entityPanelPresenters;
 	private Model model;
 	private View view;
+	private EventBus eventBus;
 
 	interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
@@ -32,18 +35,12 @@ public class ModelPanelPresenter implements Presenter {
 
 	}
 	
-	public ModelPanelPresenter(View view) {
+	public ModelPanelPresenter(View view, EventBus eventBus) {
 		this.view = view;
+		this.eventBus = eventBus;
 		entityPanelPresenters = new ArrayList<EntityPanelPresenter>();
 		model = new Model();
 		view.setPresenter(this);
-	}
-	
-	public void removeEntity(EntityPanelPresenter entityPanelPresenter) {
-		logger.log(Level.INFO, "Removing entity from model: " + entityPanelPresenter.getEntity());
-		view.getEntityContainer().remove(entityPanelPresenter.getWidget().asWidget());
-		entityPanelPresenters.remove(entityPanelPresenter);
-		model.getEntities().remove(entityPanelPresenter.getEntity());
 	}
 
 	public Model getModel() {
@@ -69,8 +66,7 @@ public class ModelPanelPresenter implements Presenter {
 		entityPanelPresenters.add(entityPanelPresenter);
 		view.getEntityContainer().add(entityPanelPresenter.getWidget().asWidget());
 	}
-
-
+	
 	@Override
 	public void onNewEntity() {
 		logger.log(Level.INFO, "Adding new entity to model");
@@ -78,16 +74,33 @@ public class ModelPanelPresenter implements Presenter {
 		entityPanelPresenters.add(entityPanelPresenter);
 		view.getEntityContainer().add(entityPanelPresenter.getWidget().asWidget());
 		model.getEntities().add(entityPanelPresenter.getEntity());
+		
+		modelChanged();
 	}
 
+	public void removeEntity(EntityPanelPresenter entityPanelPresenter) {
+		logger.log(Level.INFO, "Removing entity from model: " + entityPanelPresenter.getEntity());
+		view.getEntityContainer().remove(entityPanelPresenter.getWidget().asWidget());
+		entityPanelPresenters.remove(entityPanelPresenter);
+		model.getEntities().remove(entityPanelPresenter.getEntity());
+		
+		modelChanged();
+	}
+	
 	@Override
 	public void onModelNameChanged(String modelName) {
 		model.setName(modelName);
+		modelChanged();
 	}
 
 	@Override
 	public void onModelVersionChanged(String versionName) {
 		model.setVersion(versionName);
+		modelChanged();
+	}
+	
+	public void modelChanged() {
+		eventBus.fireEvent(new ModelChangedEvent(model.getId()));
 	}
 	
 	@Override

@@ -4,25 +4,29 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 
 public class ModelPlace extends Place {
-	private String modelId;
+	private Long modelId;
 
-	public ModelPlace(String modelId) {
+	public ModelPlace(Long modelId) {
 		this.modelId = modelId;
 	}
 
-	public String getModelId() {
+	public Long getModelId() {
 		return modelId;
 	}
-	
+
 	public static class Tokenizer implements PlaceTokenizer<ModelPlace> {
 		@Override
 		public String getToken(ModelPlace place) {
-			return place.getModelId();
+			return String.valueOf(place.getModelId());
 		}
 
 		@Override
 		public ModelPlace getPlace(String token) {
-			return new ModelPlace(token);
+			try {
+				return new ModelPlace(Long.valueOf(token));
+			} catch (NumberFormatException e) {
+				return new ModelPlace(null);
+			}
 		}
 	}
 

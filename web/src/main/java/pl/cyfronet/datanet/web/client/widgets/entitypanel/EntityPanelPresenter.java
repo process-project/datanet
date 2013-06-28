@@ -37,11 +37,6 @@ public class EntityPanelPresenter implements Presenter {
 		return view;
 	}
 
-	public void removeField(FieldPanelPresenter fieldPanelPresenter) {
-		view.getFieldContainer().remove(fieldPanelPresenter.getWidget().asWidget());
-		fieldPanelPresenters.remove(fieldPanelPresenter);
-	}
-
 	public Entity getEntity() {
 		return entity;
 	}
@@ -62,7 +57,7 @@ public class EntityPanelPresenter implements Presenter {
 
 	@Override
 	public void onRemoveEntity() {
-		modelPanelPresenter.removeEntity(this);
+		modelPanelPresenter.removeEntity(this);		
 	}
 
 	@Override
@@ -71,10 +66,22 @@ public class EntityPanelPresenter implements Presenter {
 		fieldPanelPresenters.add(fieldPanelPresenter);
 		view.getFieldContainer().add(fieldPanelPresenter.getWidget().asWidget());
 		entity.getFields().add(fieldPanelPresenter.getField());
+		entityChanged();
 	}
 
+	public void removeField(FieldPanelPresenter fieldPanelPresenter) {
+		view.getFieldContainer().remove(fieldPanelPresenter.getWidget().asWidget());
+		fieldPanelPresenters.remove(fieldPanelPresenter);
+		entityChanged();
+	}
+	
 	@Override
 	public void onEntityNameChanged(String entityName) {
 		entity.setName(entityName);
+		entityChanged();
+	}
+	
+	public void entityChanged() {
+		modelPanelPresenter.modelChanged();
 	}
 }
