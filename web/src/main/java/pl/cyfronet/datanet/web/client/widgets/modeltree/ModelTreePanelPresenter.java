@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.web.client.ModelController;
+import pl.cyfronet.datanet.web.client.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.ModelController.ModelsCallback;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEventHandler;
@@ -28,8 +29,12 @@ public class ModelTreePanelPresenter implements Presenter {
 
 	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
+
 		void reload();
+
 		void setSelected(TreeItem item);
+
+		void updateTreeItem(TreeItem item);
 	}
 
 	private View view;
@@ -42,12 +47,26 @@ public class ModelTreePanelPresenter implements Presenter {
 		this.view = view;
 		this.modelController = modelController;
 		this.placeController = placeController;
-		view.setPresenter(this);		
-		
-		eventBus.addHandler(ModelChangedEvent.TYPE, new ModelChangedEventHandler() {
+		view.setPresenter(this);
+
+		eventBus.addHandler(ModelChangedEvent.TYPE,
+				new ModelChangedEventHandler() {
+					@Override
+					public void onModelChangedEvent(ModelChangedEvent event) {
+						GWT.log("Model changed " + event.getModelId());
+						modelChanged(event.getModelId());
+					}
+				});
+	}
+
+	private void modelChanged(final Long modelId) {
+		modelController.getModel(modelId, new ModelCallback() {
 			@Override
-			public void onModelChangedEvent(ModelChangedEvent event) {
-				GWT.log("Model changed " + event.getModelId());				
+			public void setModel(Model model) {
+				TreeItem item = new TreeItem(model.getId(), model.getName(),
+						ItemType.MODEL);
+				item.setDirty(true);
+				view.updateTreeItem(item);
 			}
 		});
 	}
@@ -72,8 +91,8 @@ public class ModelTreePanelPresenter implements Presenter {
 			public void setModels(List<Model> models) {
 				List<TreeItem> modelTreeItems = new ArrayList<TreeItem>();
 				for (Model model : models) {
-					modelTreeItems.add(new TreeItem(String.valueOf(model
-							.getId()), model.getName(), ItemType.MODEL));
+					modelTreeItems.add(new TreeItem(model.getId(), model
+							.getName(), ItemType.MODEL));
 				}
 				dataProvider.updateRowCount(modelTreeItems.size(), true);
 				dataProvider.updateRowData(0, modelTreeItems);
@@ -84,23 +103,23 @@ public class ModelTreePanelPresenter implements Presenter {
 	public void reload() {
 		view.reload();
 	}
-	
+
 	@Override
 	public void onAddNewModel() {
 		placeController.goTo(new NewModelPlace());
 	}
 
 	@Override
-	public void onModelSelected(String modelId) {
+	public void onModelSelected(Long modelId) {
 		placeController.goTo(new ModelPlace(modelId));
 	}
 
 	@Override
 	public void onRemoveModel(TreeItem selectedObject) {
-		//TODO actually remove model
+		// TODO actually remove model
 		placeController.goTo(new WelcomePlace());
 	}
-	
+
 	public void setSelected(TreeItem item) {
 		view.setSelected(item);
 	}

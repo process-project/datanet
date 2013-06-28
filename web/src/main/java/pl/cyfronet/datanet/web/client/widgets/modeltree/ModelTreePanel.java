@@ -1,5 +1,7 @@
 package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
+import java.util.List;
+
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -91,5 +93,22 @@ public class ModelTreePanel extends Composite implements View {
 		boolean actionEnabled = item != null;
 		remove.setEnabled(actionEnabled);
 		deploy.setEnabled(actionEnabled);
+	}
+
+	@Override
+	public void updateTreeItem(TreeItem item) {
+		GWT.log("Updating item: " + item);
+		if(item.getType() == ItemType.MODEL) {
+			List<TreeItem> models = model.getModelProvider().getChildren();
+			for (TreeItem m : models) {
+				if(item.equals(m)) {
+					GWT.log("Updating is dirty and name");
+					m.setDirty(item.isDirty());
+					m.setName(item.getName());
+				}
+			}
+			GWT.log("updating models");
+			model.getModelProvider().updateRowData(0, models);
+		}
 	}
 }

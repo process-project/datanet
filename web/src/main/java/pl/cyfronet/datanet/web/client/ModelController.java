@@ -62,7 +62,7 @@ public class ModelController {
 		});
 	}
 
-	public void getModel(String modelId, final ModelCallback callback) {
+	public void getModel(Long modelId, final ModelCallback callback) {
 		Model model = getCachedModel(modelId);
 
 		if (model == null) {
@@ -72,10 +72,10 @@ public class ModelController {
 		}
 	}
 
-	private Model getCachedModel(String modelId) {
+	private Model getCachedModel(Long modelId) {
 		if (models != null) {
 			for (Model m : models) {
-				if (String.valueOf(m.getId()).equals(modelId)) {
+				if (modelId.equals(m.getId())) {
 					return m;
 				}
 			}
@@ -83,12 +83,10 @@ public class ModelController {
 		return null;
 	}
 
-	public void loadModel(String modelId, final ModelCallback callback) {
+	public void loadModel(Long modelId, final ModelCallback callback) {
 		logger.log(Level.INFO, "Loading model " + modelId);
 		try {
-			long id = Long.parseLong(modelId);
-
-			modelService.getModel(id, new AsyncCallback<Model>() {
+			modelService.getModel(modelId, new AsyncCallback<Model>() {
 
 				@Override
 				public void onSuccess(Model model) {

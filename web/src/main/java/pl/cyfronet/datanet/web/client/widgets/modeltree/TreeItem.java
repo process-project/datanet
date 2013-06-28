@@ -2,20 +2,25 @@ package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
 public class TreeItem {
 	private String name;
-	private String id;
+	private Long id;
 	private ItemType type;
+	private boolean dirty;
 
-	public TreeItem(String id, String name, ItemType type) {
+	public TreeItem(Long id, String name, ItemType type) {
 		this.id = id;
 		this.name = name;
 		this.type = type;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	public String getName() {
 		return name;
 	}
 
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -23,6 +28,14 @@ public class TreeItem {
 		return type;
 	}
 
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
+	
+	public boolean isDirty() {
+		return dirty;
+	}	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -53,6 +66,7 @@ public class TreeItem {
 
 	@Override
 	public String toString() {
-		return "TreeItem [name=" + name + ", id=" + id + ", type=" + type + "]";
+		return "TreeItem [name=" + name + ", id=" + id + ", type=" + type
+				+ ", dirty=" + dirty + "]";
 	}
 }
