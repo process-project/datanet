@@ -12,6 +12,8 @@ public interface Presenter {
 
 	void onAddNewModel();
 
+	void onSave();
+	
 	void onModelSelected(Long modelId);
 
 	void onRemoveModel(TreeItem selectedObject);

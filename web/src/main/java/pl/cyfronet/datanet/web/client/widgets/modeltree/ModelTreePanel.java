@@ -75,6 +75,11 @@ public class ModelTreePanel extends Composite implements View {
 	void onRemoveModel(ClickEvent event) {
 		presenter.onRemoveModel(selection.getSelectedObject());
 	}
+	
+	@UiHandler("save")
+	void onSaveModel(ClickEvent event) {
+		presenter.onSave();
+	}
 
 	@Override
 	public void setPresenter(Presenter presenter) {

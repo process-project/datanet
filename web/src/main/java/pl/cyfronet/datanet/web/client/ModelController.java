@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
+import pl.cyfronet.datanet.web.client.event.model.ModelSavedEvent;
 import pl.cyfronet.datanet.web.client.event.notification.ModelNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
@@ -112,6 +113,30 @@ public class ModelController {
 					ModelNotificationMessage.modelWrongIdFormat,
 					NotificationType.ERROR));
 		}
+	}
+
+	public void saveModel(Long id) {
+		getModel(id, new ModelCallback() {
+			@Override
+			public void setModel(Model model) {
+				modelService.saveModel(model, new AsyncCallback<Model>() {
+					@Override
+					public void onSuccess(Model result) {
+						eventBus.fireEvent(new ModelSavedEvent(result.getId()));
+						eventBus.fireEvent(new NotificationEvent(
+								ModelNotificationMessage.modelSaved,
+								NotificationType.SUCCESS));
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						eventBus.fireEvent(new NotificationEvent(
+								ModelNotificationMessage.modelSaveError,
+								NotificationType.ERROR, caught.getMessage()));
+					}
+				});
+			}
+		});
 	}
 
 	public interface ModelsCallback {
