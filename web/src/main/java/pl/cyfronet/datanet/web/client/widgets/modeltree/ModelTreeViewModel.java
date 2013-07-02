@@ -90,7 +90,7 @@ public class ModelTreeViewModel implements TreeViewModel {
 			logger.log(Level.INFO, "Reloading childs for " + parent);
 			loading();
 			if (presenter != null) {
-				presenter.loadChildren(parent, this);
+				presenter.loadChildren(parent);
 			} else {
 				logger.log(Level.INFO, "Presenter is null");
 			}

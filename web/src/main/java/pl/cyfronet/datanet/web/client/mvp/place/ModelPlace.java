@@ -3,7 +3,7 @@ package pl.cyfronet.datanet.web.client.mvp.place;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 
-public class ModelPlace extends Place implements PlaceWithModel {
+public class ModelPlace extends Place {
 	private Long modelId;
 
 	public ModelPlace(Long modelId) {

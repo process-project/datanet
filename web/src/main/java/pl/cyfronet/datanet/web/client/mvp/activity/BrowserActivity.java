@@ -1,7 +1,6 @@
 package pl.cyfronet.datanet.web.client.mvp.activity;
 
 import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
-import pl.cyfronet.datanet.web.client.mvp.place.NewModelPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter;
@@ -30,11 +29,6 @@ public class BrowserActivity extends AbstractActivity {
 	public void setPlace(ModelPlace place) {
 		modelTreePanelPresenter.setSelected(new TreeItem(place.getModelId(),
 				null, ItemType.MODEL));
-	}
-
-	public void setPlace(NewModelPlace place) {
-		//XXX: new entry in browser should be created
-		modelTreePanelPresenter.addNewModel(place.getModelId());
 	}
 
 	public void setPlace(WelcomePlace place) {
