@@ -6,13 +6,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import pl.cyfronet.datanet.model.beans.Model;
-import pl.cyfronet.datanet.web.client.ModelController;
-import pl.cyfronet.datanet.web.client.ModelController.ModelCallback;
-import pl.cyfronet.datanet.web.client.ModelController.ModelsCallback;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEventHandler;
 import pl.cyfronet.datanet.web.client.event.model.ModelSavedEvent;
 import pl.cyfronet.datanet.web.client.event.model.ModelSavedEventHandler;
+import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
+import pl.cyfronet.datanet.web.client.event.model.NewModelEventHandler;
+import pl.cyfronet.datanet.web.client.model.ModelController;
+import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
+import pl.cyfronet.datanet.web.client.model.ModelController.ModelsCallback;
+import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.NewModelPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
@@ -45,6 +48,8 @@ public class ModelTreePanelPresenter implements Presenter {
 		void setRemoveEnabled(boolean enabled);
 
 		void setDeployEnabled(boolean enabled);
+
+		void addTreeItem(TreeItem newItem);
 	}
 
 	private View view;
@@ -67,10 +72,18 @@ public class ModelTreePanelPresenter implements Presenter {
 						modelChanged(event.getModelId(), true);
 					}
 				});
+
 		eventBus.addHandler(ModelSavedEvent.TYPE, new ModelSavedEventHandler() {
 			@Override
 			public void onModelSavedEvent(ModelSavedEvent event) {
 				modelChanged(event.getModelId(), false);
+			}
+		});
+
+		eventBus.addHandler(NewModelEvent.TYPE, new NewModelEventHandler() {
+			@Override
+			public void onNewModelEvent(NewModelEvent event) {
+				
 			}
 		});
 	}
@@ -78,7 +91,7 @@ public class ModelTreePanelPresenter implements Presenter {
 	private void modelChanged(final Long modelId, final boolean dirty) {
 		modelController.getModel(modelId, new ModelCallback() {
 			@Override
-			public void setModel(Model model) {
+			public void setModel(ModelProxy model) {
 				TreeItem item = new TreeItem(model.getId(), model.getName(),
 						ItemType.MODEL);
 				item.setDirty(dirty);
@@ -112,7 +125,7 @@ public class ModelTreePanelPresenter implements Presenter {
 		logger.log(Level.INFO, "Loading children for " + parent);
 		modelController.getModels(new ModelsCallback() {
 			@Override
-			public void setModels(List<Model> models) {
+			public void setModels(List<ModelProxy> models) {
 				List<TreeItem> modelTreeItems = new ArrayList<TreeItem>();
 				for (Model model : models) {
 					modelTreeItems.add(new TreeItem(model.getId(), model
@@ -130,7 +143,13 @@ public class ModelTreePanelPresenter implements Presenter {
 
 	@Override
 	public void onAddNewModel() {
-		placeController.goTo(new NewModelPlace());
+		modelController.createNewModel(new ModelCallback() {
+			@Override
+			public void setModel(ModelProxy model) {
+				GWT.log("Going to new model place " + model.getId());
+				placeController.goTo(new NewModelPlace(model.getId()));
+			}
+		});		
 	}
 
 	@Override
@@ -168,5 +187,21 @@ public class ModelTreePanelPresenter implements Presenter {
 		boolean actionEnabled = item != null;
 		view.setRemoveEnabled(actionEnabled);
 		view.setDeployEnabled(actionEnabled);
+	}
+
+	public void addNewModel(Long modelId) {
+		modelController.getModel(modelId, new ModelCallback() {
+			
+			@Override
+			public void setModel(ModelProxy model) {
+				TreeItem newItem = new TreeItem(model.getId(), model.getName(), ItemType.MODEL);
+				newItem.setDirty(model.isDirty());
+				view.addTreeItem(newItem);
+				view.setSelected(newItem);
+				view.setSaveEnabled(true);
+				view.setRemoveEnabled(true);
+				view.setDeployEnabled(true);				
+			}
+		});		
 	}
 }

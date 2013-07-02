@@ -3,10 +3,9 @@ package pl.cyfronet.datanet.web.client.mvp.activity;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import pl.cyfronet.datanet.model.beans.Model;
-import pl.cyfronet.datanet.web.client.ModelController;
-import pl.cyfronet.datanet.web.client.ModelController.ModelCallback;
-import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
+import pl.cyfronet.datanet.web.client.model.ModelController;
+import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
+import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelWidget;
 
@@ -22,21 +21,22 @@ public class ModelActivity extends AbstractActivity {
 			.getName());
 
 	private ModelController modelController;
-	private ModelPlace place;
+
+	private Long modelId;
 
 	@Inject
 	public ModelActivity(ModelController modelController,
-			@Assisted ModelPlace place) {
+			@Assisted Long modelId) {
 		this.modelController = modelController;
-		this.place = place;
+		this.modelId = modelId;
 	}
 
 	@Override
 	public void start(final AcceptsOneWidget panel, final EventBus eventBus) {
-		logger.log(Level.INFO, "Loading model with id: " + place.getModelId());
-		modelController.getModel(place.getModelId(), new ModelCallback() {
+		logger.log(Level.INFO, "Loading model with id: " + modelId);
+		modelController.getModel(modelId, new ModelCallback() {
 			@Override
-			public void setModel(Model model) {
+			public void setModel(ModelProxy model) {
 				ModelPanelPresenter presenter = new ModelPanelPresenter(
 						new ModelPanelWidget(), eventBus);
 				presenter.setModel(model);

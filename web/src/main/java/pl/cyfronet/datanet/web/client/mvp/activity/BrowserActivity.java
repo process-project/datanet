@@ -34,7 +34,7 @@ public class BrowserActivity extends AbstractActivity {
 
 	public void setPlace(NewModelPlace place) {
 		//XXX: new entry in browser should be created
-		modelTreePanelPresenter.setSelected(null);
+		modelTreePanelPresenter.addNewModel(place.getModelId());
 	}
 
 	public void setPlace(WelcomePlace place) {

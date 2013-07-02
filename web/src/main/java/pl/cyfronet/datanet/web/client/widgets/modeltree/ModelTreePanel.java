@@ -126,4 +126,13 @@ public class ModelTreePanel extends Composite implements View {
 	public TreeItem getSelectedObject() {
 		return selection.getSelectedObject();
 	}
+
+	@Override
+	public void addTreeItem(TreeItem newItem) {
+		if (newItem.getType() == ItemType.MODEL) {
+			List<TreeItem> models = model.getModelProvider().getChildren();
+			models.add(0, newItem);
+			model.getModelProvider().updateRowData(0, models);
+		}
+	}
 }

@@ -1,5 +1,6 @@
-package pl.cyfronet.datanet.web.client;
+package pl.cyfronet.datanet.web.client.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -7,12 +8,14 @@ import java.util.logging.Logger;
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
 import pl.cyfronet.datanet.web.client.event.model.ModelSavedEvent;
+import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
 import pl.cyfronet.datanet.web.client.event.notification.ModelNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -25,8 +28,8 @@ public class ModelController {
 	private ModelServiceAsync modelService;
 	private EventBus eventBus;
 
-	private List<Model> models;
-
+	private List<ModelProxy> models;
+	
 	@Inject
 	public ModelController(ModelServiceAsync modelService, EventBus eventBus) {
 		this.modelService = modelService;
@@ -46,9 +49,12 @@ public class ModelController {
 		modelService.getModels(new AsyncCallback<List<Model>>() {
 			@Override
 			public void onSuccess(List<Model> result) {
-				logger.log(Level.INFO, "Models loaded");
-				models = result;
-				callback.setModels(result);
+				logger.log(Level.INFO, "Models loaded");				
+				models = new ArrayList<ModelProxy>();
+				for (Model model : result) {
+					models.add(new ModelProxy(model));
+				}
+				callback.setModels(models);
 			}
 
 			@Override
@@ -64,7 +70,7 @@ public class ModelController {
 	}
 
 	public void getModel(Long modelId, final ModelCallback callback) {
-		Model model = getCachedModel(modelId);
+		ModelProxy model = getCachedModel(modelId);
 
 		if (model == null) {
 			loadModel(modelId, callback);
@@ -73,9 +79,11 @@ public class ModelController {
 		}
 	}
 
-	private Model getCachedModel(Long modelId) {
+	private ModelProxy getCachedModel(Long modelId) {
+		GWT.log("Get cached model: " + modelId + " " + models);
 		if (models != null) {
-			for (Model m : models) {
+			for (ModelProxy m : models) {
+				GWT.log("checking " + modelId + " <<>> " + m.getId());
 				if (modelId.equals(m.getId())) {
 					return m;
 				}
@@ -91,7 +99,7 @@ public class ModelController {
 
 				@Override
 				public void onSuccess(Model model) {
-					callback.setModel(model);
+					callback.setModel(new ModelProxy(model));
 				}
 
 				@Override
@@ -118,8 +126,8 @@ public class ModelController {
 	public void saveModel(Long id) {
 		getModel(id, new ModelCallback() {
 			@Override
-			public void setModel(Model model) {
-				modelService.saveModel(model, new AsyncCallback<Model>() {
+			public void setModel(ModelProxy modelProxy) {
+				modelService.saveModel(modelProxy.getModel(), new AsyncCallback<Model>() {
 					@Override
 					public void onSuccess(Model result) {
 						eventBus.fireEvent(new ModelSavedEvent(result.getId()));
@@ -139,11 +147,25 @@ public class ModelController {
 		});
 	}
 
+	public void createNewModel(final ModelCallback callback) {
+		final ModelProxy newModel = new ModelProxy(new Model(), System.currentTimeMillis());
+		newModel.setName("New model"); //TODO externalize string
+		newModel.setDirty(true);
+		getModels(new ModelsCallback() {
+			@Override
+			public void setModels(List<ModelProxy> models) {
+				models.add(0, newModel);				
+				eventBus.fireEvent(new NewModelEvent(newModel.getId()));
+				callback.setModel(newModel);
+			}
+		}, false);
+	}
+	
 	public interface ModelsCallback {
-		void setModels(List<Model> models);
+		void setModels(List<ModelProxy> models);
 	}
 
 	public interface ModelCallback {
-		void setModel(Model model);
+		void setModel(ModelProxy model);
 	}
 }
