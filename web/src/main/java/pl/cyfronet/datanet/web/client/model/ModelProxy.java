@@ -93,4 +93,30 @@ public class ModelProxy extends Model {
 		return "ModelProxy [newModelId=" + newModelId + ", model=" + model
 				+ ", dirty=" + dirty + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((newModelId == null) ? 0 : newModelId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ModelProxy other = (ModelProxy) obj;
+		if (newModelId == null) {
+			if (other.newModelId != null)
+				return false;
+		} else if (!newModelId.equals(other.newModelId))
+			return false;
+		return true;
+	}
 }
