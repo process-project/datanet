@@ -58,4 +58,11 @@ public class HibernateModelDao {
 		
 		return (ModelDbEntity)c.uniqueResult();
 	}
+
+	@Transactional
+	public void deleteModel(String login, long modelId) {
+		//XXX check if model have versions. If yes than throw exception
+		ModelDbEntity model = getModel(login, modelId);
+		sessionFactory.getCurrentSession().delete(model);
+	}
 }

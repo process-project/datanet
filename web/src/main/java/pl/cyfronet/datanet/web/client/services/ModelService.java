@@ -13,4 +13,5 @@ public interface ModelService extends RemoteService {
 	Model saveModel(Model model) throws ModelException;
 	List<Model> getModels() throws ModelException;
 	Model getModel(long modelId) throws ModelException;
+	void deleteModel(long modelId) throws ModelException;
 }

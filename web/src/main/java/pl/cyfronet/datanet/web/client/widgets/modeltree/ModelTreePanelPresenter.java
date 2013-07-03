@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import pl.cyfronet.datanet.web.client.callback.NextCallback;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEventHandler;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
@@ -42,10 +43,6 @@ public class ModelTreePanelPresenter implements Presenter {
 		void setDeployEnabled(boolean enabled);
 
 		void setModels(List<TreeItem> modelTreeItems);
-	}
-
-	private interface NextCallback {
-		void next();
 	}
 
 	private View view;
@@ -155,8 +152,18 @@ public class ModelTreePanelPresenter implements Presenter {
 
 	@Override
 	public void onRemove() {
-		// TODO actually remove model
-		placeController.goTo(new WelcomePlace());
+		final TreeItem item = view.getSelectedObject();
+		modelController.deleteModel(item.getId(), new NextCallback() {
+			@Override
+			public void next() {
+				refreshModelList(new NextCallback() {
+					@Override
+					public void next() {
+						placeController.goTo(new WelcomePlace());						
+					}
+				});
+			}
+		});		
 	}
 
 	@Override

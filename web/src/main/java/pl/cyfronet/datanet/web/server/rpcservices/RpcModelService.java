@@ -131,4 +131,10 @@ public class RpcModelService implements ModelService {
 
 		return getModel(modelDbEntity);
 	}
+
+	@Override
+	public void deleteModel(long modelId) throws ModelException {
+		UserDbEntity user = getUser();
+		modelDao.deleteModel(user.getLogin(), modelId);		
+	}
 }
