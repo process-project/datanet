@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.client.widgets.modelbrowserpanel;
 
+@Deprecated
 public interface Presenter {
 	void onNewModel();
 	void onSaveModel();

@@ -10,6 +10,7 @@ import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
 import pl.cyfronet.datanet.web.client.event.notification.ModelNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
+import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelWidget;
@@ -18,6 +19,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
 
+@Deprecated
 public class ModelBrowserPanelPresenter implements Presenter {
 	interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
@@ -88,7 +90,7 @@ public class ModelBrowserPanelPresenter implements Presenter {
 		modelPanelPresenter = new ModelPanelPresenter(new ModelPanelWidget(), eventBus);
 		Model model = getModelById(id);
 		//let's work on copy of stored model, and save it when requested
-		modelPanelPresenter.setModel(new Model(model));
+		modelPanelPresenter.setModel(new ModelProxy(new Model(model)));
 
 		view.setModelPanel(modelPanelPresenter.getWidget());
 		view.markModel(model.getId());

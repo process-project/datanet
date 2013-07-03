@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
+import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelWidget;
 
@@ -20,7 +21,7 @@ public class ModelPanelPresenter implements Presenter {
 			.getLogger(ModelPanelPresenter.class.getName());
 	
 	private List<EntityPanelPresenter> entityPanelPresenters;
-	private Model model;
+	private ModelProxy model;
 	private View view;
 	private EventBus eventBus;
 
@@ -39,7 +40,6 @@ public class ModelPanelPresenter implements Presenter {
 		this.view = view;
 		this.eventBus = eventBus;
 		entityPanelPresenters = new ArrayList<EntityPanelPresenter>();
-		model = new Model();
 		view.setPresenter(this);
 	}
 
@@ -47,7 +47,7 @@ public class ModelPanelPresenter implements Presenter {
 		return model;
 	}
 	
-	public void setModel(Model model) {
+	public void setModel(ModelProxy model) {
 		this.model = model;
 		view.setModelName(model.getName());
 		view.setModelVersion(model.getVersion());
@@ -100,6 +100,7 @@ public class ModelPanelPresenter implements Presenter {
 	}
 	
 	public void modelChanged() {
+		model.setDirty(true);
 		eventBus.fireEvent(new ModelChangedEvent(model.getId()));
 	}
 	

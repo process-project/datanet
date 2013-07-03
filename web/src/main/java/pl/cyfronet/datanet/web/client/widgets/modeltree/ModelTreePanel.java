@@ -94,20 +94,6 @@ public class ModelTreePanel extends Composite implements View {
 	}
 
 	@Override
-	public void updateTreeItem(TreeItem item) {
-		if (item.getType() == ItemType.MODEL) {
-			List<TreeItem> models = model.getModelProvider().getChildren();
-			for (TreeItem m : models) {
-				if (item.equals(m)) {
-					m.setDirty(item.isDirty());
-					m.setName(item.getName());
-				}
-			}
-			model.getModelProvider().updateRowData(0, models);
-		}
-	}
-
-	@Override
 	public void setSaveEnabled(boolean enabled) {
 		save.setEnabled(enabled);
 	}

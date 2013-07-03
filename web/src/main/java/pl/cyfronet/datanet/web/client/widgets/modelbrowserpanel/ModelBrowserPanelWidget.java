@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
+@Deprecated
 public class ModelBrowserPanelWidget extends Composite implements View {
 	private static ModelBrowserPanelWidgetUiBinder uiBinder = GWT
 			.create(ModelBrowserPanelWidgetUiBinder.class);

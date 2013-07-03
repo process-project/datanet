@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
-import pl.cyfronet.datanet.web.client.event.model.ModelSavedEvent;
+import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
 import pl.cyfronet.datanet.web.client.event.notification.ModelNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
@@ -15,7 +15,6 @@ import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.Notif
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -29,7 +28,7 @@ public class ModelController {
 	private EventBus eventBus;
 
 	private List<ModelProxy> models;
-	
+
 	@Inject
 	public ModelController(ModelServiceAsync modelService, EventBus eventBus) {
 		this.modelService = modelService;
@@ -49,7 +48,7 @@ public class ModelController {
 		modelService.getModels(new AsyncCallback<List<Model>>() {
 			@Override
 			public void onSuccess(List<Model> result) {
-				logger.log(Level.INFO, "Models loaded");				
+				logger.log(Level.INFO, "Models loaded");
 				models = new ArrayList<ModelProxy>();
 				for (Model model : result) {
 					models.add(new ModelProxy(model));
@@ -80,10 +79,8 @@ public class ModelController {
 	}
 
 	private ModelProxy getCachedModel(Long modelId) {
-		GWT.log("Get cached model: " + modelId + " " + models);
 		if (models != null) {
 			for (ModelProxy m : models) {
-				GWT.log("checking " + modelId + " <<>> " + m.getId());
 				if (modelId.equals(m.getId())) {
 					return m;
 				}
@@ -123,44 +120,61 @@ public class ModelController {
 		}
 	}
 
-	public void saveModel(Long id) {
+	public void saveModel(Long id, final ModelCallback callback) {
 		getModel(id, new ModelCallback() {
 			@Override
-			public void setModel(ModelProxy modelProxy) {
-				modelService.saveModel(modelProxy.getModel(), new AsyncCallback<Model>() {
-					@Override
-					public void onSuccess(Model result) {
-						eventBus.fireEvent(new ModelSavedEvent(result.getId()));
-						eventBus.fireEvent(new NotificationEvent(
-								ModelNotificationMessage.modelSaved,
-								NotificationType.SUCCESS));
-					}
+			public void setModel(final ModelProxy modelProxy) {
+				modelService.saveModel(modelProxy.getModel(),
+						new AsyncCallback<Model>() {
+							@Override
+							public void onSuccess(Model result) {
+								ModelProxy proxy = modelProxy;
+								if (modelProxy.isNew()) {
+									int index = models.indexOf(modelProxy);
+									models.remove(index);
+									proxy = new ModelProxy(result);
+									models.add(index, proxy);
+								}
+								proxy.setDirty(false);
+								
+								eventBus.fireEvent(new ModelChangedEvent(result
+										.getId()));
+								eventBus.fireEvent(new NotificationEvent(
+										ModelNotificationMessage.modelSaved,
+										NotificationType.SUCCESS));
+								
+								if (callback != null) {
+									callback.setModel(proxy);
+								}
+							}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						eventBus.fireEvent(new NotificationEvent(
-								ModelNotificationMessage.modelSaveError,
-								NotificationType.ERROR, caught.getMessage()));
-					}
-				});
+							@Override
+							public void onFailure(Throwable caught) {
+								eventBus.fireEvent(new NotificationEvent(
+										ModelNotificationMessage.modelSaveError,
+										NotificationType.ERROR, caught
+												.getMessage()));
+							}
+						});
 			}
 		});
 	}
 
 	public void createNewModel(final ModelCallback callback) {
-		final ModelProxy newModel = new ModelProxy(new Model(), System.currentTimeMillis());
-		newModel.setName("New model"); //TODO externalize string
+		final ModelProxy newModel = new ModelProxy(new Model(),
+				System.currentTimeMillis());
+		newModel.setName("New model"); // TODO externalize string
 		newModel.setDirty(true);
 		getModels(new ModelsCallback() {
 			@Override
 			public void setModels(List<ModelProxy> models) {
-				models.add(0, newModel);				
+				models.add(0, newModel);
 				eventBus.fireEvent(new NewModelEvent(newModel.getId()));
 				callback.setModel(newModel);
 			}
 		}, false);
 	}
-	
+
 	public interface ModelsCallback {
 		void setModels(List<ModelProxy> models);
 	}

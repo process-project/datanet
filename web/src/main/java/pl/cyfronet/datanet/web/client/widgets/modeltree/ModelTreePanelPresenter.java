@@ -7,8 +7,6 @@ import java.util.logging.Logger;
 
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEventHandler;
-import pl.cyfronet.datanet.web.client.event.model.ModelSavedEvent;
-import pl.cyfronet.datanet.web.client.event.model.ModelSavedEventHandler;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEventHandler;
 import pl.cyfronet.datanet.web.client.model.ModelController;
@@ -18,7 +16,6 @@ import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -35,8 +32,6 @@ public class ModelTreePanelPresenter implements Presenter {
 		void reload();
 
 		void setSelected(TreeItem item);
-
-		void updateTreeItem(TreeItem item);
 
 		TreeItem getSelectedObject();
 
@@ -69,17 +64,9 @@ public class ModelTreePanelPresenter implements Presenter {
 				new ModelChangedEventHandler() {
 					@Override
 					public void onModelChangedEvent(ModelChangedEvent event) {
-						GWT.log("Model changed " + event.getModelId());
-						modelChanged(event.getModelId(), true);
+						modelChanged(event.getModelId());
 					}
 				});
-
-		eventBus.addHandler(ModelSavedEvent.TYPE, new ModelSavedEventHandler() {
-			@Override
-			public void onModelSavedEvent(ModelSavedEvent event) {
-				modelChanged(event.getModelId(), false);
-			}
-		});
 
 		eventBus.addHandler(NewModelEvent.TYPE, new NewModelEventHandler() {
 			@Override
@@ -90,19 +77,15 @@ public class ModelTreePanelPresenter implements Presenter {
 	}
 
 	private void addModel(final Long modelId) {
-		refreshModelList(false, new NextCallback() {
+		refreshModelList(new NextCallback() {
 			@Override
 			public void next() {
-				view.setSelected(new TreeItem(modelId, null, ItemType.MODEL));
-				view.setSaveEnabled(true);
-				view.setRemoveEnabled(true);
-				view.setDeployEnabled(false);
+				setSelected(new TreeItem(modelId, null, ItemType.MODEL));
 			}
 		});
 	}
 
-	private void refreshModelList(boolean forceRefresh,
-			final NextCallback callback) {
+	private void refreshModelList(final NextCallback callback) {
 		modelController.getModels(new ModelsCallback() {
 			@Override
 			public void setModels(List<ModelProxy> models) {
@@ -118,27 +101,16 @@ public class ModelTreePanelPresenter implements Presenter {
 					callback.next();
 				}
 			}
-		}, forceRefresh);
+		}, false);
 	}
 
-	private void modelChanged(final Long modelId, final boolean dirty) {
-		modelController.getModel(modelId, new ModelCallback() {
+	private void modelChanged(final Long modelId) {
+		refreshModelList(new NextCallback() {
 			@Override
-			public void setModel(ModelProxy model) {
-				TreeItem item = new TreeItem(model.getId(), model.getName(),
-						ItemType.MODEL);
-				item.setDirty(dirty);
-				view.updateTreeItem(item);
-				enableSaveIfDirtyAndSelected(item);
+			public void next() {
+				setSelected(new TreeItem(modelId, null, ItemType.MODEL));
 			}
 		});
-	}
-
-	private void enableSaveIfDirtyAndSelected(TreeItem item) {
-		TreeItem selectedItem = view.getSelectedObject();
-		if (item.equals(selectedItem)) {
-			view.setSaveEnabled(item.isDirty());
-		}
 	}
 
 	@Override
@@ -161,7 +133,6 @@ public class ModelTreePanelPresenter implements Presenter {
 		modelController.createNewModel(new ModelCallback() {
 			@Override
 			public void setModel(ModelProxy model) {
-				GWT.log("Going to new model place " + model.getId());
 				placeController.goTo(new ModelPlace(model.getId()));
 			}
 		});
@@ -190,25 +161,53 @@ public class ModelTreePanelPresenter implements Presenter {
 
 	@Override
 	public void onSave() {
-		TreeItem item = view.getSelectedObject();
+		final TreeItem item = view.getSelectedObject();
 		if (isModel(item)) {
-			modelController.saveModel(item.getId());
+			modelController.saveModel(item.getId(), new ModelCallback() {
+				@Override
+				public void setModel(final ModelProxy model) {
+					refreshModelList(new NextCallback() {
+						@Override
+						public void next() {
+							if (item.getId() != model.getId()) {
+								placeController.goTo(new ModelPlace(model
+										.getId()));
+							}
+						}
+					});
+				}
+			});
 		}
 	}
 
-	public void setSelected(TreeItem item) {
-		view.setSelected(item);
+	public void setSelected(final TreeItem item) {
+		if (item != null) {
+			if (isModel(item)) {
+				modelController.getModel(item.getId(), new ModelCallback() {
+					@Override
+					public void setModel(ModelProxy model) {
+						view.setSelected(item);
 
-		boolean actionEnabled = item != null;
-		view.setRemoveEnabled(actionEnabled);
-		view.setDeployEnabled(actionEnabled);
+						boolean actionEnabled = item != null;
+						view.setRemoveEnabled(actionEnabled);
+						view.setDeployEnabled(!model.isNew());
+						view.setSaveEnabled(model.isDirty());
+					}
+				});
+			}
+			// XXX other tree elements
+		} else {
+			view.setRemoveEnabled(false);
+			view.setDeployEnabled(false);
+			view.setSaveEnabled(false);
+		}
 	}
 
 	@Override
 	public void loadChildren(TreeItem parent) {
 		logger.log(Level.INFO, "Loading children for " + parent);
 		if (parent == null) {
-			refreshModelList(false, null);
+			refreshModelList(null);
 		}
 	}
 }

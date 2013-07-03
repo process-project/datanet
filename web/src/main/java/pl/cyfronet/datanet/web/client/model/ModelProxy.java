@@ -83,4 +83,14 @@ public class ModelProxy extends Model {
 	public boolean isDirty() {
 		return dirty;
 	}
+	
+	public boolean isNew() {
+		return newModelId != null;
+	}
+
+	@Override
+	public String toString() {
+		return "ModelProxy [newModelId=" + newModelId + ", model=" + model
+				+ ", dirty=" + dirty + "]";
+	}
 }
