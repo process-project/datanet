@@ -2,35 +2,45 @@ package pl.cyfronet.datanet.web.client.widgets.login;
 
 import pl.cyfronet.datanet.web.client.ClientController;
 import pl.cyfronet.datanet.web.client.errors.LoginException;
-import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
+import pl.cyfronet.datanet.web.client.event.notification.GenericNotificationMessage;
+import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
+import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.event.shared.EventBus;
 
 public class LoginPresenter implements Presenter {
 	public interface View {
 		void setPresenter(Presenter presenter);
+
 		HasText getLogin();
+
 		HasText getPassword();
+
 		void errorLoginOrPasswordEmpty();
+
 		void errorUnknownDuringLogin();
+
 		void clearErrors();
+
 		void errorWrongLoginOrPassword();
+
 		void setBusyState(boolean busy);
 	}
-	
+
 	private ClientController clientController;
 	private LoginServiceAsync loginService;
-	private RpcErrorHandler rpcErrorHandler;
 	private View view;
+	private EventBus eventBus;
 
-	public LoginPresenter(LoginServiceAsync loginService,
-			RpcErrorHandler rpcErrorHandler, View view, ClientController clientController) {
+	public LoginPresenter(LoginServiceAsync loginService, View view,
+			ClientController clientController, EventBus eventBus) {
 		this.clientController = clientController;
 		this.loginService = loginService;
-		this.rpcErrorHandler = rpcErrorHandler;
+		this.eventBus = eventBus;
 		this.view = view;
 		view.setPresenter(this);
 	}
@@ -43,13 +53,13 @@ public class LoginPresenter implements Presenter {
 	public void onLogin() {
 		String login = view.getLogin().getText();
 		String password = view.getPassword().getText();
-		
-		if(login.isEmpty() || password.isEmpty()) {
+
+		if (login.isEmpty() || password.isEmpty()) {
 			view.errorLoginOrPasswordEmpty();
-			
+
 			return;
 		}
-		
+
 		view.clearErrors();
 		view.setBusyState(true);
 		loginService.login(login, password, new AsyncCallback<Void>() {
@@ -58,22 +68,25 @@ public class LoginPresenter implements Presenter {
 				view.setBusyState(false);
 				clientController.onLogin();
 			}
+
 			@Override
 			public void onFailure(Throwable t) {
 				view.setBusyState(false);
-				if(t instanceof LoginException) {
+				if (t instanceof LoginException) {
 					LoginException e = (LoginException) t;
-					
-					switch(e.getErrorCode()) {
-						case Unknown:
-							view.errorUnknownDuringLogin();
+
+					switch (e.getErrorCode()) {
+					case Unknown:
+						view.errorUnknownDuringLogin();
 						break;
-						case UserPasswordUnknown:
-							view.errorWrongLoginOrPassword();
+					case UserPasswordUnknown:
+						view.errorWrongLoginOrPassword();
 						break;
 					}
 				} else {
-					rpcErrorHandler.handleRpcError(t);
+					eventBus.fireEvent(new NotificationEvent(
+							GenericNotificationMessage.rpcError,
+							NotificationType.ERROR, t.getLocalizedMessage()));
 				}
 			}
 		});

@@ -14,6 +14,7 @@ import pl.cyfronet.datanet.web.client.services.RepositoryServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelWidget;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -94,14 +95,15 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 
 	@Override
 	public void onUndeployRepository() {
-		if(repositoryPanelPresenter != null) {
-			Repository repository = repositoryPanelPresenter.getRepository();
-			clientController.onUndeployRepository(repository.getId());
-			view.clearRepository();
-			repositoryPanelPresenter = null;
-		} else {
-			eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryNotPresent, NotificationType.ERROR));
-		}
+		Window.alert("Commented by MK");
+//		if(repositoryPanelPresenter != null) {
+//			Repository repository = repositoryPanelPresenter.getRepository();
+//			clientController.onUndeployRepository(repository.getId());
+//			view.clearRepository();
+//			repositoryPanelPresenter = null;
+//		} else {
+//			eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryNotPresent, NotificationType.ERROR));
+//		}
 	}
 
 	@Override

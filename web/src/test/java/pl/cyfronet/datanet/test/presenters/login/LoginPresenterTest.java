@@ -3,10 +3,10 @@ package pl.cyfronet.datanet.test.presenters.login;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,23 +20,23 @@ import pl.cyfronet.datanet.test.MockingUtil;
 import pl.cyfronet.datanet.web.client.ClientController;
 import pl.cyfronet.datanet.web.client.errors.LoginException;
 import pl.cyfronet.datanet.web.client.errors.LoginException.Code;
-import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginPresenter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.event.shared.EventBus;
 
 public class LoginPresenterTest {
 	@Mock private LoginPresenter loginPresenter;
 	@Mock private LoginServiceAsync loginService;
-	@Mock private RpcErrorHandler rpcErrorHandler;
 	@Mock private LoginPresenter.View view;
 	@Mock private ClientController clientController;
+	@Mock private EventBus eventBus;
 	
 	@Before
 	public void prepare() {
 		MockitoAnnotations.initMocks(this);
-		loginPresenter = new LoginPresenter(loginService, rpcErrorHandler, view, clientController);
+		loginPresenter = new LoginPresenter(loginService, view, clientController, eventBus);
 	}
 	
 	@Test
