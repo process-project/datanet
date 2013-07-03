@@ -6,6 +6,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import pl.cyfronet.datanet.model.beans.Model;
+import pl.cyfronet.datanet.model.beans.validator.ModelValidator;
+import pl.cyfronet.datanet.model.beans.validator.ModelValidator.ModelError;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
@@ -26,12 +28,14 @@ public class ModelController {
 
 	private ModelServiceAsync modelService;
 	private EventBus eventBus;
-
+	private ModelValidator modelValidator;
+	
 	private List<ModelProxy> models;
 
 	@Inject
-	public ModelController(ModelServiceAsync modelService, EventBus eventBus) {
+	public ModelController(ModelServiceAsync modelService, ModelValidator modelValidator, EventBus eventBus) {
 		this.modelService = modelService;
+		this.modelValidator = modelValidator;
 		this.eventBus = eventBus;
 	}
 
@@ -124,42 +128,54 @@ public class ModelController {
 		getModel(id, new ModelCallback() {
 			@Override
 			public void setModel(final ModelProxy modelProxy) {
-				modelService.saveModel(modelProxy.getModel(),
-						new AsyncCallback<Model>() {
-							@Override
-							public void onSuccess(Model result) {
-								ModelProxy proxy = modelProxy;
-								if (modelProxy.isNew()) {
-									int index = models.indexOf(modelProxy);
-									models.remove(index);
-									proxy = new ModelProxy(result);
-									models.add(index, proxy);
-								}
-								proxy.setDirty(false);
-								
-								eventBus.fireEvent(new ModelChangedEvent(result
-										.getId()));
-								eventBus.fireEvent(new NotificationEvent(
-										ModelNotificationMessage.modelSaved,
-										NotificationType.SUCCESS));
-								
-								if (callback != null) {
-									callback.setModel(proxy);
-								}
-							}
+				List<ModelError> modelErrors = modelValidator.validateModel(modelProxy.getModel());
 
-							@Override
-							public void onFailure(Throwable caught) {
-								eventBus.fireEvent(new NotificationEvent(
-										ModelNotificationMessage.modelSaveError,
-										NotificationType.ERROR, caught
-												.getMessage()));
-							}
-						});
+				if (modelErrors.isEmpty()) {
+					saveModel(modelProxy, callback);
+				} else {
+					eventBus.fireEvent(new NotificationEvent(
+							ModelNotificationMessage.modelSaveError,
+							NotificationType.ERROR, modelErrors.get(0).name()));
+				}			
 			}
 		});
 	}
 
+	private void saveModel(final ModelProxy modelProxy, final ModelCallback callback) {
+		modelService.saveModel(modelProxy.getModel(),
+				new AsyncCallback<Model>() {
+					@Override
+					public void onSuccess(Model result) {
+						ModelProxy proxy = modelProxy;
+						if (modelProxy.isNew()) {
+							int index = models.indexOf(modelProxy);
+							models.remove(index);
+							proxy = new ModelProxy(result);
+							models.add(index, proxy);
+						}
+						proxy.setDirty(false);
+						
+						eventBus.fireEvent(new ModelChangedEvent(result
+								.getId()));
+						eventBus.fireEvent(new NotificationEvent(
+								ModelNotificationMessage.modelSaved,
+								NotificationType.SUCCESS));
+						
+						if (callback != null) {
+							callback.setModel(proxy);
+						}
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						eventBus.fireEvent(new NotificationEvent(
+								ModelNotificationMessage.modelSaveError,
+								NotificationType.ERROR, caught
+										.getMessage()));
+					}
+				});
+	}
+	
 	public void createNewModel(final ModelCallback callback) {
 		final ModelProxy newModel = new ModelProxy(new Model(),
 				System.currentTimeMillis());
