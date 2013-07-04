@@ -5,6 +5,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +45,8 @@ public class ModelTreePanelPresenterTest {
 
 	private ModelProxy newModel;
 
+	private long selectedModelId;
+
 	@Before
 	public void prepare() {
 		MockitoAnnotations.initMocks(this);
@@ -65,8 +68,8 @@ public class ModelTreePanelPresenterTest {
 			public Void answer(InvocationOnMock invocation) throws Throwable {
 				ModelCallback callback = (ModelCallback) invocation
 						.getArguments()[0];
-				newModel = new ModelProxy(new Model(),
-						System.currentTimeMillis());
+				newModel = new ModelProxy(new Model(), System
+						.currentTimeMillis());
 				callback.setModel(newModel);
 				return null;
 			}
@@ -82,5 +85,26 @@ public class ModelTreePanelPresenterTest {
 				any(ModelCallback.class));
 		verify(placeController, times(1)).goTo(
 				argThat(new ModelPlaceMatcher(newModel.getId())));
+	}
+
+	@Test
+	public void shouldOpenModel() throws Exception {
+		givenModelSelectedByTheUser();
+		whenSelectingModel();
+		thenModelOpened();
+	}
+
+	private void givenModelSelectedByTheUser() {
+		when(view.getSelectedObject()).thenReturn(
+				new TreeItem(selectedModelId, null, ItemType.MODEL));
+	}
+
+	private void whenSelectingModel() {
+		presenter.onSelected();
+	}
+
+	private void thenModelOpened() {
+		verify(placeController, times(1)).goTo(
+				argThat(new ModelPlaceMatcher(selectedModelId)));
 	}
 }
