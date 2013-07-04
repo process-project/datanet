@@ -1,4 +1,4 @@
-package pl.cyfronet.datanet.web.model;
+package pl.cyfronet.datanet.web.client.model;
 
 import static com.google.gwtmockito.AsyncAnswers.returnFailure;
 import static com.google.gwtmockito.AsyncAnswers.returnSuccess;
