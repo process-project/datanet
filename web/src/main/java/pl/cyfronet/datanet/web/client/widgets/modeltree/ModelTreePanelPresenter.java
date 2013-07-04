@@ -7,9 +7,7 @@ import java.util.logging.Logger;
 
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
-import pl.cyfronet.datanet.web.client.event.model.ModelChangedEventHandler;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
-import pl.cyfronet.datanet.web.client.event.model.NewModelEventHandler;
 import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelsCallback;
@@ -17,13 +15,23 @@ import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
+import com.google.web.bindery.event.shared.binder.EventBinder;
+import com.google.web.bindery.event.shared.binder.EventHandler;
 
 public class ModelTreePanelPresenter implements Presenter {
+	interface ModelTreePanelEventBinder extends
+			EventBinder<ModelTreePanelPresenter> {
+	}
+
+	private final ModelTreePanelEventBinder eventBinder = GWT
+			.create(ModelTreePanelEventBinder.class);
+
 	private static final Logger logger = Logger
 			.getLogger(ModelTreePanelPresenter.class.getName());
 
@@ -55,31 +63,9 @@ public class ModelTreePanelPresenter implements Presenter {
 		this.view = view;
 		this.modelController = modelController;
 		this.placeController = placeController;
+
+		eventBinder.bindEventHandlers(this, eventBus);
 		view.setPresenter(this);
-
-		eventBus.addHandler(ModelChangedEvent.TYPE,
-				new ModelChangedEventHandler() {
-					@Override
-					public void onModelChangedEvent(ModelChangedEvent event) {
-						modelChanged(event.getModelId());
-					}
-				});
-
-		eventBus.addHandler(NewModelEvent.TYPE, new NewModelEventHandler() {
-			@Override
-			public void onNewModelEvent(NewModelEvent event) {
-				addModel(event.getModelId());
-			}
-		});
-	}
-
-	private void addModel(final Long modelId) {
-		refreshModelList(new NextCallback() {
-			@Override
-			public void next() {
-				setSelected(new TreeItem(modelId, null, ItemType.MODEL));
-			}
-		});
 	}
 
 	private void refreshModelList(final NextCallback callback) {
@@ -99,15 +85,6 @@ public class ModelTreePanelPresenter implements Presenter {
 				}
 			}
 		}, false);
-	}
-
-	private void modelChanged(final Long modelId) {
-		refreshModelList(new NextCallback() {
-			@Override
-			public void next() {
-				setSelected(new TreeItem(modelId, null, ItemType.MODEL));
-			}
-		});
 	}
 
 	@Override
@@ -159,11 +136,11 @@ public class ModelTreePanelPresenter implements Presenter {
 				refreshModelList(new NextCallback() {
 					@Override
 					public void next() {
-						placeController.goTo(new WelcomePlace());						
+						placeController.goTo(new WelcomePlace());
 					}
 				});
 			}
-		});		
+		});
 	}
 
 	@Override
@@ -216,5 +193,24 @@ public class ModelTreePanelPresenter implements Presenter {
 		if (parent == null) {
 			refreshModelList(null);
 		}
+	}
+
+	@EventHandler
+	void onModelChanged(final ModelChangedEvent event) {
+		refreshAndSelectModel(event.getModelId());
+	}
+
+	@EventHandler
+	void onNewModel(NewModelEvent event) {
+		refreshAndSelectModel(event.getModelId());
+	}
+
+	private void refreshAndSelectModel(final long modelId) {
+		refreshModelList(new NextCallback() {
+			@Override
+			public void next() {
+				setSelected(new TreeItem(modelId, null, ItemType.MODEL));
+			}
+		});
 	}
 }
