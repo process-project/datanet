@@ -27,11 +27,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class LoginPresenterTest {
-	@Mock private LoginPresenter loginPresenter;
 	@Mock private LoginServiceAsync loginService;
 	@Mock private LoginPresenter.View view;
 	@Mock private ClientController clientController;
 	@Mock private EventBus eventBus;
+	
+	private LoginPresenter loginPresenter;
 	
 	@Before
 	public void prepare() {

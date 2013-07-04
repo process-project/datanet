@@ -30,13 +30,13 @@ public class ModelController {
 
 	private ModelServiceAsync modelService;
 	private EventBus eventBus;
-	private ModelValidator modelValidator;
+	private MessageAwareModelValidator modelValidator;
 
 	private List<ModelProxy> models;
 
 	@Inject
 	public ModelController(ModelServiceAsync modelService,
-			ModelValidator modelValidator, EventBus eventBus) {
+			MessageAwareModelValidator modelValidator, EventBus eventBus) {
 		this.modelService = modelService;
 		this.modelValidator = modelValidator;
 		this.eventBus = eventBus;
@@ -151,7 +151,7 @@ public class ModelController {
 		getModel(id, new ModelCallback() {
 			@Override
 			public void setModel(final ModelProxy modelProxy) {
-				List<ModelError> modelErrors = modelValidator
+				List<String> modelErrors = modelValidator
 						.validateModel(modelProxy.getModel());
 
 				if (modelErrors.isEmpty()) {
@@ -159,7 +159,7 @@ public class ModelController {
 				} else {
 					eventBus.fireEvent(new NotificationEvent(
 							ModelNotificationMessage.modelSaveError,
-							NotificationType.ERROR, modelErrors.get(0).name()));
+							NotificationType.ERROR, modelErrors.get(0)));
 				}
 			}
 		});

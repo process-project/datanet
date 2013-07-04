@@ -2,7 +2,9 @@ package pl.cyfronet.datanet.web.model;
 
 import static com.google.gwtmockito.AsyncAnswers.returnFailure;
 import static com.google.gwtmockito.AsyncAnswers.returnSuccess;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.argThat;
@@ -25,12 +27,12 @@ import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Field.Type;
 import pl.cyfronet.datanet.model.beans.Model;
-import pl.cyfronet.datanet.model.beans.validator.ModelValidator;
 import pl.cyfronet.datanet.model.beans.validator.ModelValidator.ModelError;
 import pl.cyfronet.datanet.test.mock.matcher.NotificationEvenMatcher;
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
+import pl.cyfronet.datanet.web.client.model.MessageAwareModelValidator;
 import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelsCallback;
@@ -52,7 +54,7 @@ public class ModelControllerTest {
 	private ModelServiceAsync modelService;
 
 	@Mock
-	private ModelValidator modelValidator;
+	private MessageAwareModelValidator modelValidator;
 
 	@Mock
 	private EventBus eventBus;
@@ -261,7 +263,7 @@ public class ModelControllerTest {
 	private void givenNewModelWithErrors() {
 		givenNewModel();
 		when(modelValidator.validateModel(any(Model.class))).thenReturn(
-				Arrays.asList(ModelError.EMPTY_MODEL_NAME));
+				Arrays.asList("emptyModelName"));
 	}
 
 	@Test
