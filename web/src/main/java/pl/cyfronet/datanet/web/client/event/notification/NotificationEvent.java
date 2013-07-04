@@ -1,10 +1,9 @@
 package pl.cyfronet.datanet.web.client.event.notification;
 
 
-import com.google.gwt.event.shared.GwtEvent;
+import com.google.web.bindery.event.shared.binder.GenericEvent;
 
-public class NotificationEvent extends GwtEvent<NotificationEventHandler> {
-	public static Type<NotificationEventHandler> TYPE = new Type<NotificationEventHandler>();
+public class NotificationEvent extends GenericEvent {
 	
 	public enum NotificationType {
 		SUCCESS, WARNING, ERROR, NOTE
@@ -22,16 +21,6 @@ public class NotificationEvent extends GwtEvent<NotificationEventHandler> {
 	public NotificationEvent(NotificationMessage messageCode, NotificationType type, String ... messageParams) {
 		this(messageCode, type);
 		this.messageParams = messageParams;
-	}
-
-	@Override
-	public Type<NotificationEventHandler> getAssociatedType() {
-		return TYPE;
-	}
-
-	@Override
-	protected void dispatch(NotificationEventHandler handler) {
-		handler.onNotificationEvent(this);
 	}
 
 	public NotificationType getType() {

@@ -1,19 +1,23 @@
 package pl.cyfronet.datanet.web.client.widgets.topnav;
 
 import pl.cyfronet.datanet.web.client.ClientController;
-import pl.cyfronet.datanet.web.client.event.notification.ModelNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
-import pl.cyfronet.datanet.web.client.event.notification.NotificationEventHandler;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPanel.MessageType;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.web.bindery.event.shared.EventBus;
+import com.google.web.bindery.event.shared.binder.EventBinder;
+import com.google.web.bindery.event.shared.binder.EventHandler;
 
 public class TopNavPresenter implements Presenter {
+	interface TopNavEventBinder extends EventBinder<TopNavPresenter> {}
+	private final TopNavEventBinder eventBinder = GWT.create(TopNavEventBinder.class);
+	
 	public interface View {
 		void setPresenter(Presenter presenter);
 		void displayMessage(String message, MessageType type);
@@ -22,32 +26,17 @@ public class TopNavPresenter implements Presenter {
 	private Provider<ClientController> clientController;
 	private View view;
 	private NotificationMessages notificationMessages;
-	private EventBus eventBus;
 
 	@Inject
 	public TopNavPresenter(View view, EventBus eventBus, Provider<ClientController> clientController,
 			NotificationMessages notificationMessages) {
+		eventBinder.bindEventHandlers(this, eventBus);
+		
 		this.view = view;
 		this.clientController = clientController;
 		this.notificationMessages = notificationMessages;
-		this.eventBus = eventBus;
 		
 		view.setPresenter(this);		
-		
-		eventBus.addHandler(NotificationEvent.TYPE,
-				new NotificationEventHandler() {
-					@Override
-					public void onNotificationEvent(NotificationEvent event) {
-						String message = getMessage(event.getMessageCode(), event.getMessageParams());
-						TopNavPresenter.this.view.displayMessage(
-								message, getType(event));
-					}
-
-					private MessageType getType(NotificationEvent event) {
-						return event.getType() == NotificationType.ERROR ? MessageType.ERROR
-								: MessageType.INFO;
-					}
-				});
 	}
 
 	@Override
@@ -72,6 +61,18 @@ public class TopNavPresenter implements Presenter {
 				.buildString(), "_blank", "");
 	}
 
+	@EventHandler
+	void onNotification(NotificationEvent event) {
+		String message = getMessage(event.getMessageCode(), event.getMessageParams());
+		view.displayMessage(
+				message, getType(event));
+	}
+	
+	private MessageType getType(NotificationEvent event) {
+		return event.getType() == NotificationType.ERROR ? MessageType.ERROR
+				: MessageType.INFO;
+	}
+	
 	@Override
 	public Widget getWidget() {
 		return (Widget) view;

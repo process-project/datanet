@@ -17,6 +17,7 @@
 	<inherits name="com.google.gwt.activity.Activity"/>
   	<inherits name="com.google.gwt.place.Place"/>
   	<inherits name="com.google.web.bindery.event.Event"/>
+  	<inherits name='com.google.web.bindery.event.EventBinder'/>
 	
 	<source path="client"/>
 	<entry-point class="pl.cyfronet.datanet.web.client.ClientEntryPoint"/>	
