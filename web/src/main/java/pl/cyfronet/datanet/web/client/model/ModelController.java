@@ -50,7 +50,7 @@ public class ModelController {
 		}
 	}
 
-	public void loadModels(final ModelsCallback callback) {
+	private void loadModels(final ModelsCallback callback) {
 		logger.log(Level.INFO, "Loading user models");
 		modelService.getModels(new AsyncCallback<List<Model>>() {
 			@Override
@@ -75,14 +75,19 @@ public class ModelController {
 		});
 	}
 
-	public void getModel(Long modelId, final ModelCallback callback) {
-		ModelProxy model = getCachedModel(modelId);
+	public void getModel(final Long modelId, final ModelCallback callback) {
+		getModels(new ModelsCallback() {
+			@Override
+			public void setModels(List<ModelProxy> models) {
+				ModelProxy model = getCachedModel(modelId);
 
-		if (model == null) {
-			loadModel(modelId, callback);
-		} else {
-			callback.setModel(model);
-		}
+				if (model == null) {
+					loadModel(modelId, callback);
+				} else {
+					callback.setModel(model);
+				}
+			}
+		}, false);		
 	}
 
 	private ModelProxy getCachedModel(Long modelId) {
@@ -96,7 +101,7 @@ public class ModelController {
 		return null;
 	}
 
-	public void loadModel(Long modelId, final ModelCallback callback) {
+	private void loadModel(Long modelId, final ModelCallback callback) {
 		logger.log(Level.INFO, "Loading model " + modelId);
 		try {
 			modelService.getModel(modelId, new AsyncCallback<Model>() {
@@ -134,7 +139,7 @@ public class ModelController {
 		newModel.setDirty(true);
 		getModels(new ModelsCallback() {
 			@Override
-			public void setModels(List<ModelProxy> models) {
+			public void setModels(List<ModelProxy> models) {				
 				models.add(0, newModel);
 				eventBus.fireEvent(new NewModelEvent(newModel.getId()));
 				callback.setModel(newModel);
