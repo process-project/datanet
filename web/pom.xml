@@ -206,8 +206,19 @@
 			<artifactId>gin</artifactId>
 			<version>2.0.0</version>
 		</dependency>
-            
-
+        <dependency>
+      		<groupId>com.google.gwt.eventbinder</groupId>
+      		<artifactId>eventbinder</artifactId>
+      		<version>1.0.0</version>
+    	</dependency>
+		<dependency>
+		    <groupId>com.google.gwt.eventbinder</groupId>
+      		<artifactId>eventbinder</artifactId>
+      		<version>1.0.0</version>
+			<classifier>sources</classifier>
+			<scope>compile</scope>
+		</dependency>
+        
 		<!-- Commons dependencies -->
 		<dependency>
 			<groupId>commons-codec</groupId>

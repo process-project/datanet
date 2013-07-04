@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -21,10 +22,11 @@ import pl.cyfronet.datanet.web.client.event.notification.NotificationMessage;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPanel.MessageType;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPresenter.View;
 
+import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.inject.Provider;
-import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
 
+@RunWith(GwtMockitoTestRunner.class)
 public class TopNavPresenterTest {
 
 	@Mock
@@ -39,7 +41,7 @@ public class TopNavPresenterTest {
 	@Mock
 	private NotificationMessages notificationMessages;
 
-	private EventBus eventBus = new SimpleEventBus();
+	private TopNavPresenter topNavPresenter;
 
 	private Map<NotificationMessage, String> messagesMap;
 
@@ -47,7 +49,7 @@ public class TopNavPresenterTest {
 	public void prepare() {
 		MockitoAnnotations.initMocks(this);
 		when(clientControllerProvider.get()).thenReturn(clientController);
-		new TopNavPresenter(view, eventBus, clientControllerProvider,
+		topNavPresenter = new TopNavPresenter(view, new SimpleEventBus(), clientControllerProvider,
 				notificationMessages);
 		initMessages();
 	}
@@ -72,7 +74,7 @@ public class TopNavPresenterTest {
 	}
 
 	private void whenNotificationSent(NotificationType type) {
-		eventBus.fireEvent(new NotificationEvent(
+		topNavPresenter.onNotification(new NotificationEvent(
 				ModelNotificationMessage.modelDeployed, type));
 	}
 
@@ -94,7 +96,7 @@ public class TopNavPresenterTest {
 	}
 
 	private void whenSentNotificationWithMessage() {
-		eventBus.fireEvent(new NotificationEvent(
+		topNavPresenter.onNotification(new NotificationEvent(
 				ModelNotificationMessage.modelSaved, NotificationType.NOTE,
 				"msg"));
 	}
