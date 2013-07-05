@@ -171,9 +171,7 @@ public class ModelTreePanelPresenter implements Presenter {
 					@Override
 					public void setModel(ModelProxy model) {
 						view.setSelected(item);
-
-						boolean actionEnabled = item != null;
-						view.setRemoveEnabled(actionEnabled);
+						view.setRemoveEnabled(item != null);
 						view.setDeployEnabled(!model.isNew());
 						view.setSaveEnabled(model.isDirty());
 					}
@@ -181,6 +179,7 @@ public class ModelTreePanelPresenter implements Presenter {
 			}
 			// XXX other tree elements
 		} else {
+			view.setSelected(null);
 			view.setRemoveEnabled(false);
 			view.setDeployEnabled(false);
 			view.setSaveEnabled(false);

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static pl.cyfronet.datanet.test.mock.answer.CallbackAnswer.modelCallbackAnswer;
 import static pl.cyfronet.datanet.test.mock.answer.CallbackAnswer.nextCallbackAnswer;
 
 import java.util.Arrays;
@@ -23,6 +24,8 @@ import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.test.mock.matcher.ModelPlaceMatcher;
 import pl.cyfronet.datanet.test.mock.matcher.TreeItemMatcher;
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
+import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
+import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
 import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelsCallback;
@@ -75,7 +78,7 @@ public class ModelTreePanelPresenterTest {
 		m2 = new Model();
 		m2.setId(2);
 		m2.setName("m2");
-		
+
 		m3 = new Model();
 		m3.setId(3);
 		m3.setName("m3");
@@ -212,12 +215,12 @@ public class ModelTreePanelPresenterTest {
 						TreeItem.model(m2.getId()))));
 		verify(placeController, times(0)).goTo(any(Place.class));
 	}
-	
+
 	@Test
 	public void shouldSaveNewModel() throws Exception {
-		 givenNewModel();
-		 whenModelSaved();
-		 thenModelSavedAndOpened();
+		givenNewModel();
+		whenModelSaved();
+		thenModelSavedAndOpened();
 	}
 
 	private void givenNewModel() {
@@ -242,5 +245,124 @@ public class ModelTreePanelPresenterTest {
 				argThat(new TreeItemMatcher(TreeItem.model(m3.getId()),
 						TreeItem.model(m2.getId()))));
 		verify(placeController, times(1)).goTo(any(Place.class));
+	}
+
+	@Test
+	public void shouldSelectCleanModel() throws Exception {
+		ModelProxy model = givenModel(false, false);
+		whenUserClicksOnModel(model.getId());
+		thenModelSelected(model.getId(), true, false);
+	}
+
+	private ModelProxy givenModel(boolean newModel, boolean dirty) {
+		ModelProxy proxy;
+		if (newModel) {
+			proxy = new ModelProxy(m1, System.currentTimeMillis());
+		} else {
+			proxy = new ModelProxy(m1);
+		}
+		proxy.setDirty(dirty);
+
+		doAnswer(modelCallbackAnswer(1, proxy)).when(modelController).getModel(
+				eq(proxy.getId()), any(ModelCallback.class));
+
+		return proxy;
+	}
+
+	private void whenUserClicksOnModel(Long modelId) {
+		presenter.setSelected(TreeItem.model(modelId));
+	}
+
+	private void thenModelSelected(Long modelId, boolean deployEnabled,
+			boolean saveEnabled) {
+		verify(view, times(1)).setRemoveEnabled(true);
+		verify(view, times(1)).setDeployEnabled(deployEnabled);
+		verify(view, times(1)).setSaveEnabled(saveEnabled);
+		verify(view, times(1)).setSelected(eq(TreeItem.model(modelId)));
+	}
+
+	@Test
+	public void shouldSelectDirtyModel() throws Exception {
+		ModelProxy model = givenModel(false, true);
+		whenUserClicksOnModel(model.getId());
+		thenModelSelected(model.getId(), true, true);
+	}
+
+	@Test
+	public void shouldSelectNewModel() throws Exception {
+		ModelProxy model = givenModel(true, true);
+		whenUserClicksOnModel(model.getId());
+		thenModelSelected(model.getId(), false, true);
+	}
+
+	@Test
+	public void shouldSelectEmptyItem() throws Exception {
+		whenSelectEmptyItem();
+		thenNoItemSelected();
+	}
+
+	private void whenSelectEmptyItem() {
+		presenter.setSelected(null);
+	}
+
+	private void thenNoItemSelected() {
+		verify(view, times(1)).setRemoveEnabled(false);
+		verify(view, times(1)).setDeployEnabled(false);
+		verify(view, times(1)).setSaveEnabled(false);
+		verify(view, times(1)).setSelected(null);
+	}
+
+	@Test
+	public void shouldReloadModelsOnModelChanged() throws Exception {
+		givenModelsToReload();
+		whenModelChangedEventFired();
+		thenModelsRefreshedAndModelSelected();
+	}
+
+	private void givenModelsToReload() {
+		ModelProxy m1proxy = new ModelProxy(m1);
+		givenRefresh(m1proxy, new ModelProxy(m2));
+
+		doAnswer(modelCallbackAnswer(1, m1proxy)).when(modelController)
+				.getModel(eq(m1proxy.getId()), any(ModelCallback.class));
+	}
+
+	private void whenModelChangedEventFired() {
+		presenter.onModelChanged(new ModelChangedEvent(m1.getId()));
+	}
+
+	private void thenModelsRefreshedAndModelSelected() {
+		verify(view, times(1)).setModels(
+				argThat(new TreeItemMatcher(TreeItem.model(m1.getId()),
+						TreeItem.model(m2.getId()))));
+		verify(view, times(1)).setSelected(TreeItem.model(m1.getId()));
+	}
+
+	@Test
+	public void shouldReloadModelsOnNewModel() throws Exception {
+		givenModelsToReload();
+		whenNewModelEventFired();
+		thenModelsRefreshedAndModelSelected();
+	}
+
+	private void whenNewModelEventFired() {
+		presenter.onNewModel(new NewModelEvent(m1.getId()));
+	}
+	
+	@Test
+	public void shouldLoadModels() throws Exception {
+		 givenModelsToReload();
+		 whenLoadModels();
+		 thenModelsRefreshed();
+	}
+
+	private void whenLoadModels() {
+		presenter.loadChildren(null);
+	}
+
+	private void thenModelsRefreshed() {
+		verify(view, times(1)).setModels(
+				argThat(new TreeItemMatcher(TreeItem.model(m1.getId()),
+						TreeItem.model(m2.getId()))));		
 	}
 }
