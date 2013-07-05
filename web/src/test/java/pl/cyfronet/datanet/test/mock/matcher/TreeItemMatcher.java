@@ -7,11 +7,11 @@ import org.hamcrest.Description;
 
 import pl.cyfronet.datanet.web.client.widgets.modeltree.TreeItem;
 
-public class TreeModelMatcher extends BaseMatcher<List<TreeItem>> {
+public class TreeItemMatcher extends BaseMatcher<List<TreeItem>> {
 
 	private TreeItem[] treeItems;
 
-	public TreeModelMatcher(TreeItem... treeItems) {
+	public TreeItemMatcher(TreeItem... treeItems) {
 		this.treeItems = treeItems;
 	}
 	

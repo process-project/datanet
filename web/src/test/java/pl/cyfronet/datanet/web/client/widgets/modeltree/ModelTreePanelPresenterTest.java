@@ -21,7 +21,7 @@ import org.mockito.stubbing.Answer;
 
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.test.mock.matcher.ModelPlaceMatcher;
-import pl.cyfronet.datanet.test.mock.matcher.TreeModelMatcher;
+import pl.cyfronet.datanet.test.mock.matcher.TreeItemMatcher;
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
 import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
@@ -30,6 +30,7 @@ import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter.View;
 
+import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.web.bindery.event.shared.EventBus;
@@ -59,6 +60,8 @@ public class ModelTreePanelPresenterTest {
 
 	private Model m2;
 
+	private Model m3;
+
 	@Before
 	public void prepare() {
 		MockitoAnnotations.initMocks(this);
@@ -72,6 +75,10 @@ public class ModelTreePanelPresenterTest {
 		m2 = new Model();
 		m2.setId(2);
 		m2.setName("m2");
+		
+		m3 = new Model();
+		m3.setId(3);
+		m3.setName("m3");
 	}
 
 	@Test
@@ -136,22 +143,27 @@ public class ModelTreePanelPresenterTest {
 	}
 
 	private void givenModelToRemove() {
-		when(view.getSelectedObject()).thenReturn(
-				new TreeItem(selectedModelId, null, ItemType.MODEL));
+		givenSelectedModel(m1.getId());
 		doAnswer(nextCallbackAnswer(1)).when(modelController).deleteModel(
 				eq(m1.getId()), any(NextCallback.class));
+		givenRefresh(new ModelProxy(m2));
+	}
 
+	private void givenRefresh(final ModelProxy... models) {
 		doAnswer(new Answer<Void>() {
 			@Override
 			public Void answer(InvocationOnMock invocation) throws Throwable {
 				ModelsCallback callback = (ModelsCallback) invocation
 						.getArguments()[0];
-				callback.setModels(Arrays.asList(new ModelProxy(m2)));
+				callback.setModels(Arrays.asList(models));
 				return null;
 			}
 		}).when(modelController)
 				.getModels(any(ModelsCallback.class), eq(false));
+	}
 
+	private void givenSelectedModel(Long modelId) {
+		when(view.getSelectedObject()).thenReturn(TreeItem.model(modelId));
 	}
 
 	private void whenRemoveModel() {
@@ -161,7 +173,74 @@ public class ModelTreePanelPresenterTest {
 	private void thenModelRemovedFromCacheAndServer() {
 		verify(modelController, times(1)).deleteModel(eq(m1.getId()),
 				any(NextCallback.class));
-		verify(view, times(1)).setModels(argThat(new TreeModelMatcher(TreeItem.model(m2.getId()))));
+		verify(view, times(1)).setModels(
+				argThat(new TreeItemMatcher(TreeItem.model(m2.getId()))));
 		verify(placeController, times(1)).goTo(any(WelcomePlace.class));
+	}
+
+	@Test
+	public void shouldSaveModel() throws Exception {
+		givenModelToSave();
+		whenModelSaved();
+		thenModelListRefreshed();
+	}
+
+	private void givenModelToSave() {
+		givenSelectedModel(m1.getId());
+		doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				ModelCallback callback = (ModelCallback) invocation
+						.getArguments()[1];
+				callback.setModel(new ModelProxy(m1));
+				return null;
+			}
+		}).when(modelController).saveModel(eq(m1.getId()),
+				any(ModelCallback.class));
+		givenRefresh(new ModelProxy(m1), new ModelProxy(m2));
+	}
+
+	private void whenModelSaved() {
+		presenter.onSave();
+	}
+
+	private void thenModelListRefreshed() {
+		verify(modelController, times(1)).saveModel(eq(m1.getId()),
+				any(ModelCallback.class));
+		verify(view, times(1)).setModels(
+				argThat(new TreeItemMatcher(TreeItem.model(m1.getId()),
+						TreeItem.model(m2.getId()))));
+		verify(placeController, times(0)).goTo(any(Place.class));
+	}
+	
+	@Test
+	public void shouldSaveNewModel() throws Exception {
+		 givenNewModel();
+		 whenModelSaved();
+		 thenModelSavedAndOpened();
+	}
+
+	private void givenNewModel() {
+		givenSelectedModel(m1.getId());
+		doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				ModelCallback callback = (ModelCallback) invocation
+						.getArguments()[1];
+				callback.setModel(new ModelProxy(m3));
+				return null;
+			}
+		}).when(modelController).saveModel(eq(m1.getId()),
+				any(ModelCallback.class));
+		givenRefresh(new ModelProxy(m3), new ModelProxy(m2));
+	}
+
+	private void thenModelSavedAndOpened() {
+		verify(modelController, times(1)).saveModel(eq(m1.getId()),
+				any(ModelCallback.class));
+		verify(view, times(1)).setModels(
+				argThat(new TreeItemMatcher(TreeItem.model(m3.getId()),
+						TreeItem.model(m2.getId()))));
+		verify(placeController, times(1)).goTo(any(Place.class));
 	}
 }
