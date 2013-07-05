@@ -209,7 +209,7 @@ public class ModelTreePanelPresenter implements Presenter {
 		refreshModelList(new NextCallback() {
 			@Override
 			public void next() {
-				setSelected(new TreeItem(modelId, null, ItemType.MODEL));
+				setSelected(TreeItem.model(modelId));
 			}
 		});
 	}

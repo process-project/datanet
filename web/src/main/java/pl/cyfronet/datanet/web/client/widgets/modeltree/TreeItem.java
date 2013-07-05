@@ -69,4 +69,8 @@ public class TreeItem {
 		return "TreeItem [name=" + name + ", id=" + id + ", type=" + type
 				+ ", dirty=" + dirty + "]";
 	}
+	
+	public static TreeItem model(Long modelId) {
+		return new TreeItem(modelId, null, ItemType.MODEL);
+	}
 }
