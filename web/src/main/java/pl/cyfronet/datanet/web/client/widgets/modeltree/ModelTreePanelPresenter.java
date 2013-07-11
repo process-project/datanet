@@ -2,8 +2,6 @@ package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
@@ -24,6 +22,9 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.binder.EventBinder;
 import com.google.web.bindery.event.shared.binder.EventHandler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ModelTreePanelPresenter implements Presenter {
 	interface ModelTreePanelEventBinder extends
 			EventBinder<ModelTreePanelPresenter> {
@@ -32,7 +33,7 @@ public class ModelTreePanelPresenter implements Presenter {
 	private final ModelTreePanelEventBinder eventBinder = GWT
 			.create(ModelTreePanelEventBinder.class);
 
-	private static final Logger logger = Logger
+	private static final Logger logger = LoggerFactory
 			.getLogger(ModelTreePanelPresenter.class.getName());
 
 	public interface View extends IsWidget {
@@ -188,7 +189,7 @@ public class ModelTreePanelPresenter implements Presenter {
 
 	@Override
 	public void loadChildren(TreeItem parent) {
-		logger.log(Level.INFO, "Loading children for " + parent);
+		logger.debug("Loading children for {}", parent);
 		if (parent == null) {
 			refreshModelList(null);
 		}

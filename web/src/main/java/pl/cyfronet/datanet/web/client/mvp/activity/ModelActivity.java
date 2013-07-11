@@ -1,7 +1,7 @@
 package pl.cyfronet.datanet.web.client.mvp.activity;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
@@ -17,23 +17,22 @@ import com.google.inject.assistedinject.Assisted;
 
 public class ModelActivity extends AbstractActivity {
 
-	private static final Logger logger = Logger.getLogger(ModelActivity.class
-			.getName());
+	private static final Logger logger = LoggerFactory
+			.getLogger(ModelActivity.class.getName());
 
 	private ModelController modelController;
 
 	private Long modelId;
 
 	@Inject
-	public ModelActivity(ModelController modelController,
-			@Assisted Long modelId) {
+	public ModelActivity(ModelController modelController, @Assisted Long modelId) {
 		this.modelController = modelController;
 		this.modelId = modelId;
 	}
 
 	@Override
 	public void start(final AcceptsOneWidget panel, final EventBus eventBus) {
-		logger.log(Level.INFO, "Loading model with id: " + modelId);
+		logger.debug("Loading model with id: {}", modelId);
 		modelController.getModel(modelId, new ModelCallback() {
 			@Override
 			public void setModel(ModelProxy model) {

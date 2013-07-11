@@ -2,12 +2,11 @@ package pl.cyfronet.datanet.web.client.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.datanet.model.beans.Model;
-import pl.cyfronet.datanet.model.beans.validator.ModelValidator;
-import pl.cyfronet.datanet.model.beans.validator.ModelValidator.ModelError;
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
@@ -25,7 +24,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 public class ModelController {
 
-	private static final Logger logger = Logger
+	private static final Logger logger = LoggerFactory
 			.getLogger(ModelTreePanelPresenter.class.getName());
 
 	private ModelServiceAsync modelService;
@@ -51,11 +50,11 @@ public class ModelController {
 	}
 
 	private void loadModels(final ModelsCallback callback) {
-		logger.log(Level.INFO, "Loading user models");
+		logger.debug("Loading user models");
 		modelService.getModels(new AsyncCallback<List<Model>>() {
 			@Override
 			public void onSuccess(List<Model> result) {
-				logger.log(Level.INFO, "Models loaded");
+				logger.debug("Models loaded");
 				models = new ArrayList<ModelProxy>();
 				for (Model model : result) {
 					models.add(new ModelProxy(model));
@@ -65,9 +64,8 @@ public class ModelController {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				logger.log(Level.INFO,
-						"Unable to load models, sending notification. "
-								+ caught.getMessage());
+				logger.warn("Unable to load models, sending notification. {}",
+						caught.getMessage());
 				eventBus.fireEvent(new NotificationEvent(
 						ModelNotificationMessage.modelListLoadError,
 						NotificationType.ERROR));
@@ -87,7 +85,7 @@ public class ModelController {
 					callback.setModel(model);
 				}
 			}
-		}, false);		
+		}, false);
 	}
 
 	private ModelProxy getCachedModel(Long modelId) {
@@ -102,7 +100,7 @@ public class ModelController {
 	}
 
 	private void loadModel(Long modelId, final ModelCallback callback) {
-		logger.log(Level.INFO, "Loading model " + modelId);
+		logger.debug("Loading model {}", modelId);
 		try {
 			modelService.getModel(modelId, new AsyncCallback<Model>() {
 
@@ -139,7 +137,7 @@ public class ModelController {
 		newModel.setDirty(true);
 		getModels(new ModelsCallback() {
 			@Override
-			public void setModels(List<ModelProxy> models) {				
+			public void setModels(List<ModelProxy> models) {
 				models.add(0, newModel);
 				eventBus.fireEvent(new NewModelEvent(newModel.getId()));
 				callback.setModel(newModel);
