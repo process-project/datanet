@@ -1,4 +1,4 @@
-package pl.cyfronet.datanet.deployer.test;
+package pl.cyfronet.datanet.deployer.test.marshaller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

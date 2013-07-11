@@ -1,4 +1,4 @@
-package pl.cyfronet.datanet.deployer;
+package pl.cyfronet.datanet.deployer.test.deployer;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,15 +8,32 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import pl.cyfronet.datanet.deployer.ApplicationConfig;
 import pl.cyfronet.datanet.deployer.Deployer;
+import pl.cyfronet.datanet.deployer.DeployerException;
 import pl.cyfronet.datanet.deployer.MapperBuilder;
+import pl.cyfronet.datanet.deployer.ZipFileMapperBuilder;
+import pl.cyfronet.datanet.deployer.test.SpringTestContext;
 
-public class DeployerTest extends CloudFoundryTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class,
+		classes = SpringTestContext.class)
+public class DeployerTest {
+	private final static Logger log = LoggerFactory.getLogger(CloudfoundryInfrastructureTest.class);
 	
+	@Value("${cf.target}") private String cfTarget;
+	@Value("${cf.user}") private String cfUser;
+	@Value("${cf.pass}") private String cfPass;
+
 	private static final String REPOSITORY_NAME = "bwtest-mongodb";
 	private static final String ZIP_NAME = "datanet-skel-mongodb.zip";
 	private static final String UNZIP_PATH = "/tmp/cloudfoundry-test-trash";
@@ -38,32 +55,23 @@ public class DeployerTest extends CloudFoundryTest {
 		File zip = new File(this.getClass().getClassLoader().getResource(ZIP_NAME).toURI());
 		Map <Deployer.RepositoryType, MapperBuilder> builderMap = new HashMap<Deployer.RepositoryType, MapperBuilder>();
 		builderMap.put(Deployer.RepositoryType.Mongo, new ZipFileMapperBuilder(zip, new File(UNZIP_PATH), APP_FOLDER_NAME));
-		deployer = new Deployer(CF_USER,
-			CF_PASS, 
-			CF_TARGET,
-			new ApplicationConfig(), 
-			builderMap);
+		deployer = new Deployer(cfUser, cfPass, cfTarget, new ApplicationConfig(), builderMap);
 	}
 	
-	@Test
-	@Ignore
-	public void sampleDeploy() throws DeployerException {
-		Map<String, String> models = new HashMap<String, String>();
-		models.put("entity123", "test{\"type\": \"object\"}");
-		deployer.deployRepository(Deployer.RepositoryType.Mongo, repositoryName, models);
-	}
-	
-	@Test
-	@Ignore
-	public void sampleUndeploy() throws DeployerException {
-		deployer.undeployRepository(repositoryName);
-	}
-	
-	@Ignore
 	@Test
 	public void deployAndCleanup() throws DeployerException {
 		sampleDeploy();
-//		sampleUndeploy();
+		sampleUndeploy();
 	}
 
+	private void sampleDeploy() throws DeployerException {
+		Map<String, String> models = new HashMap<String, String>();
+		models.put("entity123", "test{\"type\": \"object\"}");
+		log.debug("deploying aplication: {}", models);
+		deployer.deployRepository(Deployer.RepositoryType.Mongo, repositoryName, models);
+	}
+
+	private void sampleUndeploy() throws DeployerException {
+		deployer.undeployRepository(repositoryName);
+	}
 }

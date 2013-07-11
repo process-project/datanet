@@ -1,4 +1,4 @@
-package pl.cyfronet.datanet.deployer.test;
+package pl.cyfronet.datanet.deployer.test.deployer;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -24,17 +24,30 @@ import org.cloudfoundry.client.lib.ServiceConfiguration;
 import org.cloudfoundry.client.lib.ServiceConfiguration.Tier;
 import org.cloudfoundry.client.lib.Staging;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import pl.cyfronet.datanet.deployer.CloudFoundryTest;
 import pl.cyfronet.datanet.deployer.Unzip;
+import pl.cyfronet.datanet.deployer.test.SpringTestContext;
 
-//TODO(DH): enable the tests when the CF platform is up and running 
-@Ignore
-public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class,
+		classes = SpringTestContext.class)
+public class CloudfoundryInfrastructureTest {
+	private final static Logger log = LoggerFactory.getLogger(CloudfoundryInfrastructureTest.class);
+	
+	@Value("${cf.target}") private String cfTarget;
+	@Value("${cf.user}") private String cfUser;
+	@Value("${cf.pass}") private String cfPass;
+	
+	private CloudFoundryClient client;
 	
 	private static final String MONGODB_SERVICE_TYPE = "mongodb";
 	private static final String ZIP_NAME = "datanet-skel-mongodb.zip";
@@ -53,7 +66,6 @@ public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 	private final String serviceName;
 				
 	public CloudfoundryInfrastructureTest() throws IOException {
-		
 		Date date = new Date();
 		Random random = new Random();
 		
@@ -73,10 +85,7 @@ public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 
 	@Before
 	public void setup() throws MalformedURLException {
-		Assert.assertNotNull(CF_TARGET);
-		Assert.assertNotNull(CF_USER);
-		Assert.assertNotNull(CF_PASS);
-		client = new CloudFoundryClient(CF_USER, CF_PASS, CF_TARGET);
+		client = new CloudFoundryClient(cfUser, cfPass, cfTarget);
 		client.login();
 	}
 	
@@ -124,25 +133,21 @@ public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 		deleteService(serviceName);
 	}
 
-	//@Test
-	public void deleteApplication() {
+	private void deleteApplication() {
 		client.deleteApplication(appName);
 	}
-	
-	//@Test 
-	public void deleteService(String serviceName) {
+	 
+	private void deleteService(String serviceName) {
 		client.deleteService(serviceName);
 	}
-	
-	@Test
-	public void printServices() {
+
+	private void printServices() {
 		for (CloudService service: client.getServices()) {
-			System.out.println(service.getName());
+			log.debug(service.getName());
 		}
 	}
 
-	//@Test 
-	public void printServiceConfiguration() {
+	private void printServiceConfiguration() {
 		for (ServiceConfiguration sc : client.getServiceConfigurations()) {
 			StringBuffer tiers = new StringBuffer();
 			if (sc.getTiers() != null)
@@ -157,7 +162,7 @@ public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 					sc.getDescription(), 
 					tiers
 					);
-			System.out.println(config);
+			log.debug(config);
 		}
 	}
 		
@@ -200,5 +205,4 @@ public class CloudfoundryInfrastructureTest extends CloudFoundryTest {
 		}
 		return databaseServiceConfiguration;
 	}
-
 }
