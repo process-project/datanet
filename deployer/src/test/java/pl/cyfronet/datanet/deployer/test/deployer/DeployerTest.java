@@ -2,12 +2,14 @@ package pl.cyfronet.datanet.deployer.test.deployer;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -39,17 +41,16 @@ public class DeployerTest {
 	private static final String UNZIP_PATH = "/tmp/cloudfoundry-test-trash";
 	private static final String APP_FOLDER_NAME = "datanet-skel-mongodb";
 	
-	private final String repositoryName;
+	private String repositoryName;
 	
 	private Deployer deployer;
 	
-	public DeployerTest() throws URISyntaxException, IOException  {
-		super();
+	@Before
+	public void prepare() throws URISyntaxException, MalformedURLException {
 		Date date = new Date();
 		Random random = new Random();
 		
 		String uniqueComponent = String.format("_%d_%d", date.getTime(), Math.abs(random.nextInt()));
-		
 		repositoryName = REPOSITORY_NAME + uniqueComponent;
 		
 		File zip = new File(this.getClass().getClassLoader().getResource(ZIP_NAME).toURI());
