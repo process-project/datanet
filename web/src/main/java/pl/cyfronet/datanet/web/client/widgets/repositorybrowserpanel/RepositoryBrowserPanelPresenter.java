@@ -6,16 +6,11 @@ import java.util.List;
 
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.ClientController;
-import pl.cyfronet.datanet.web.client.errors.RpcErrorHandler;
-import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
-import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
-import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
 import pl.cyfronet.datanet.web.client.services.RepositoryServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelWidget;
 
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -34,18 +29,16 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 	private View view;
 	private List<Repository> repositories;
 	private RepositoryServiceAsync repositoryService;
-	private RpcErrorHandler rpcErrorHandler;
 	private ClientController clientController;
 	private RepositoryPanelPresenter repositoryPanelPresenter;
 	private EventBus eventBus;
 	
 	public RepositoryBrowserPanelPresenter(View view, ClientController clientController,
-			RepositoryServiceAsync repositoryServiceAsync, RpcErrorHandler errorHandler,
+			RepositoryServiceAsync repositoryServiceAsync,
 			EventBus eventBus) {
 		this.view = view;
 		this.clientController = clientController;
 		this.repositoryService = repositoryServiceAsync;
-		this.rpcErrorHandler = errorHandler;
 		this.eventBus = eventBus;
 		view.setPresenter(this);
 	}
@@ -76,21 +69,6 @@ public class RepositoryBrowserPanelPresenter implements Presenter {
 		} else {
 			view.displayNoRepositoriesLabel();
 		}
-	}
-		
-	public void updateRepositoryList() {
-		repositoryService.getRepositories(new AsyncCallback<List<Repository>>() {
-
-			@Override
-			public void onFailure(Throwable t) {
-				rpcErrorHandler.handleRpcError(t);
-			}
-			@Override
-			public void onSuccess(List<Repository> repositories) {
-				RepositoryBrowserPanelPresenter.this.repositories = repositories;
-				refreshRepositoryList();
-			}
-		});
 	}
 
 	@Override
