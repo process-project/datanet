@@ -219,6 +219,12 @@
 			<scope>compile</scope>
 		</dependency>
         
+		<dependency>
+		    <groupId>de.benediktmeurer.gwt-slf4j</groupId>
+		    <artifactId>gwt-slf4j</artifactId>
+		    <version>0.0.2</version>
+		</dependency>
+		
 		<!-- Commons dependencies -->
 		<dependency>
 			<groupId>commons-codec</groupId>

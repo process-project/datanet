@@ -2,8 +2,9 @@ package pl.cyfronet.datanet.web.client.widgets.modelpanel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Model;
@@ -17,9 +18,9 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class ModelPanelPresenter implements Presenter {
-	private static final Logger logger = Logger
+	private static final Logger logger = LoggerFactory
 			.getLogger(ModelPanelPresenter.class.getName());
-	
+
 	private List<EntityPanelPresenter> entityPanelPresenters;
 	private ModelProxy model;
 	private View view;
@@ -35,7 +36,7 @@ public class ModelPanelPresenter implements Presenter {
 		void setModelVersion(String version);
 
 	}
-	
+
 	public ModelPanelPresenter(View view, EventBus eventBus) {
 		this.view = view;
 		this.eventBus = eventBus;
@@ -46,47 +47,53 @@ public class ModelPanelPresenter implements Presenter {
 	public Model getModel() {
 		return model;
 	}
-	
+
 	public void setModel(ModelProxy model) {
 		this.model = model;
 		view.setModelName(model.getName());
 		view.setModelVersion(model.getVersion());
 		view.getEntityContainer().clear();
 		entityPanelPresenters.clear();
-		
-		for(Entity entity : model.getEntities()) {
+
+		for (Entity entity : model.getEntities()) {
 			displayEntity(entity);
 		}
 	}
 
 	private void displayEntity(Entity entity) {
-		logger.log(Level.INFO, "Adding entity to model: " + entity);
-		EntityPanelPresenter entityPanelPresenter = new EntityPanelPresenter(this, new EntityPanelWidget());
+		logger.debug("Adding entity to model: " + entity);
+		EntityPanelPresenter entityPanelPresenter = new EntityPanelPresenter(
+				this, new EntityPanelWidget());
 		entityPanelPresenter.setEntity(entity);
 		entityPanelPresenters.add(entityPanelPresenter);
-		view.getEntityContainer().add(entityPanelPresenter.getWidget().asWidget());
+		view.getEntityContainer().add(
+				entityPanelPresenter.getWidget().asWidget());
 	}
-	
+
 	@Override
 	public void onNewEntity() {
-		logger.log(Level.INFO, "Adding new entity to model");
-		EntityPanelPresenter entityPanelPresenter = new EntityPanelPresenter(this, new EntityPanelWidget());
+		logger.debug("Adding new entity to model");
+		EntityPanelPresenter entityPanelPresenter = new EntityPanelPresenter(
+				this, new EntityPanelWidget());
 		entityPanelPresenters.add(entityPanelPresenter);
-		view.getEntityContainer().add(entityPanelPresenter.getWidget().asWidget());
+		view.getEntityContainer().add(
+				entityPanelPresenter.getWidget().asWidget());
 		model.getEntities().add(entityPanelPresenter.getEntity());
-		
+
 		modelChanged();
 	}
 
 	public void removeEntity(EntityPanelPresenter entityPanelPresenter) {
-		logger.log(Level.INFO, "Removing entity from model: " + entityPanelPresenter.getEntity());
-		view.getEntityContainer().remove(entityPanelPresenter.getWidget().asWidget());
+		logger.debug("Removing entity from model: "
+				+ entityPanelPresenter.getEntity());
+		view.getEntityContainer().remove(
+				entityPanelPresenter.getWidget().asWidget());
 		entityPanelPresenters.remove(entityPanelPresenter);
 		model.getEntities().remove(entityPanelPresenter.getEntity());
-		
+
 		modelChanged();
 	}
-	
+
 	@Override
 	public void onModelNameChanged(String modelName) {
 		model.setName(modelName);
@@ -98,12 +105,12 @@ public class ModelPanelPresenter implements Presenter {
 		model.setVersion(versionName);
 		modelChanged();
 	}
-	
+
 	public void modelChanged() {
 		model.setDirty(true);
 		eventBus.fireEvent(new ModelChangedEvent(model.getId()));
 	}
-	
+
 	@Override
 	public IsWidget getWidget() {
 		return view;
