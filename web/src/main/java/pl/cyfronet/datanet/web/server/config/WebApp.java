@@ -8,8 +8,10 @@ import javax.servlet.ServletRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.WebApplicationInitializer;
+import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 
@@ -24,6 +26,12 @@ public class WebApp implements WebApplicationInitializer {
 		root.setServletContext(servletContext);
 		root.scan("pl.cyfronet.datanet.web.server.config");
 		root.refresh();
+		
+		//TODO(DH): see if this could go away when spring-security is updated to a 3.2.x release
+		servletContext.addListener(new ContextLoaderListener(root));
+		
+		FilterRegistration.Dynamic securityFilter = servletContext.addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
+		securityFilter.addMappingForUrlPatterns(null, true, "/*");
 		
 		FilterRegistration.Dynamic characterEncodingFilter = servletContext.addFilter("characterEncodingFilter", new CharacterEncodingFilter());
 		characterEncodingFilter.setInitParameter("encoding", "UTF-8");

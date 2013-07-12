@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 
 import pl.cyfronet.datanet.deployer.Deployer;
 import pl.cyfronet.datanet.deployer.DeployerException;
@@ -26,6 +24,7 @@ import pl.cyfronet.datanet.web.server.db.HibernateUserDao;
 import pl.cyfronet.datanet.web.server.db.beans.ModelDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.RepositoryDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
+import pl.cyfronet.datanet.web.server.util.SpringSessionHelper;
 
 @Service("repositoryService")
 public class RpcRepositoryService implements RepositoryService {
@@ -43,7 +42,7 @@ public class RpcRepositoryService implements RepositoryService {
 			Map<String, String> models = modelSchemaGenerator.generateSchema(model);
 			deployer.deployRepository(Deployer.RepositoryType.Mongo, model.getName(), models);
 			
-			UserDbEntity user = getUser();
+			UserDbEntity user = userDao.getUser(SpringSessionHelper.getUserLogin());
 			ModelDbEntity modelDbEntity = modelDao.getModel(model.getId());
 			
 			RepositoryDbEntity repository = new RepositoryDbEntity();
@@ -68,10 +67,8 @@ public class RpcRepositoryService implements RepositoryService {
 	@Override
 	public List<Repository> getRepositories() throws ModelException {
 		try {
-			UserDbEntity userDbEntity = getUser();
-			
 			List<Repository> repositories = new LinkedList<>();
-			for(RepositoryDbEntity repositoryDbEntity : repositoryDao.getUserRepositories(userDbEntity.getLogin())) {
+			for(RepositoryDbEntity repositoryDbEntity : repositoryDao.getUserRepositories(SpringSessionHelper.getUserLogin())) {
 				Repository repository = new Repository();
 				repository.setId(repositoryDbEntity.getId());
 				repository.setName(repositoryDbEntity.getName());
@@ -99,12 +96,5 @@ public class RpcRepositoryService implements RepositoryService {
 			log.error("Deployer undeploy repository failure", e);
 			throw new ModelException(Code.RepositoryUndeployError);
 		}
-	}
-	
-	private UserDbEntity getUser() {
-		String login = (String) RequestContextHolder.getRequestAttributes().
-				getAttribute("userLogin", RequestAttributes.SCOPE_SESSION);
-		UserDbEntity user = userDao.getUser(login);
-		return user;
 	}
 }

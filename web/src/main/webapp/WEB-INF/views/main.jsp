@@ -13,7 +13,7 @@
 		<!--[if IE 7]>
  		<link rel="stylesheet" href="ria/css/font-awesome-ie7.css">
 		<![endif]-->
-		<script type="text/javascript" src="ria/ria.nocache.js"></script>
+		<script type="text/javascript" src="/datanet/ria/ria.nocache.js"></script>
 	</head>
 	<body>
     	<iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe>
