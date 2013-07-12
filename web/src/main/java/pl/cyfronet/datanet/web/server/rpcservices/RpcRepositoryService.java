@@ -7,6 +7,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import pl.cyfronet.datanet.deployer.Deployer;
@@ -24,9 +25,10 @@ import pl.cyfronet.datanet.web.server.db.HibernateUserDao;
 import pl.cyfronet.datanet.web.server.db.beans.ModelDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.RepositoryDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
-import pl.cyfronet.datanet.web.server.util.SpringSessionHelper;
+import pl.cyfronet.datanet.web.server.util.SpringSecurityHelper;
 
 @Service("repositoryService")
+@Secured("ROLE_USER")
 public class RpcRepositoryService implements RepositoryService {
 	private static final Logger log = LoggerFactory.getLogger(RpcRepositoryService.class);
 	
@@ -42,7 +44,7 @@ public class RpcRepositoryService implements RepositoryService {
 			Map<String, String> models = modelSchemaGenerator.generateSchema(model);
 			deployer.deployRepository(Deployer.RepositoryType.Mongo, model.getName(), models);
 			
-			UserDbEntity user = userDao.getUser(SpringSessionHelper.getUserLogin());
+			UserDbEntity user = userDao.getUser(SpringSecurityHelper.getUserLogin());
 			ModelDbEntity modelDbEntity = modelDao.getModel(model.getId());
 			
 			RepositoryDbEntity repository = new RepositoryDbEntity();
@@ -68,7 +70,7 @@ public class RpcRepositoryService implements RepositoryService {
 	public List<Repository> getRepositories() throws ModelException {
 		try {
 			List<Repository> repositories = new LinkedList<>();
-			for(RepositoryDbEntity repositoryDbEntity : repositoryDao.getUserRepositories(SpringSessionHelper.getUserLogin())) {
+			for(RepositoryDbEntity repositoryDbEntity : repositoryDao.getUserRepositories(SpringSecurityHelper.getUserLogin())) {
 				Repository repository = new Repository();
 				repository.setId(repositoryDbEntity.getId());
 				repository.setName(repositoryDbEntity.getName());

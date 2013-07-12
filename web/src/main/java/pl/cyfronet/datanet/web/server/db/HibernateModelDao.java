@@ -38,11 +38,11 @@ public class HibernateModelDao {
 		UserDbEntity user = (UserDbEntity) sessionFactory.getCurrentSession().createCriteria(UserDbEntity.class).add(Restrictions.eq("login", userLogin)).uniqueResult();
 		
 		//let's make sure lazy loading does not surprise us
-		if(user.getModels() != null) {
+		if(user != null && user.getModels() != null) {
 			user.getModels().size();
 		}
 		
-		if(user.getModels() == null) {
+		if(user == null || user.getModels() == null) {
 			return new ArrayList<>();
 		}
 		

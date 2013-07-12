@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import pl.cyfronet.datanet.model.beans.Entity;
@@ -19,9 +20,10 @@ import pl.cyfronet.datanet.web.server.db.HibernateModelDao;
 import pl.cyfronet.datanet.web.server.db.HibernateUserDao;
 import pl.cyfronet.datanet.web.server.db.beans.ModelDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
-import pl.cyfronet.datanet.web.server.util.SpringSessionHelper;
+import pl.cyfronet.datanet.web.server.util.SpringSecurityHelper;
 
 @Service("modelService")
+@Secured("ROLE_USER")
 public class RpcModelService implements ModelService {
 	private static final Logger log = LoggerFactory
 			.getLogger(RpcModelService.class);
@@ -49,7 +51,7 @@ public class RpcModelService implements ModelService {
 				}
 			}
 
-			UserDbEntity user = userDao.getUser(SpringSessionHelper.getUserLogin());
+			UserDbEntity user = userDao.getUser(SpringSecurityHelper.getUserLogin());
 			ModelDbEntity modelDbEntity = new ModelDbEntity();
 			modelDbEntity.setId(model.getId());
 			modelDbEntity.setName(model.getName());
@@ -80,7 +82,7 @@ public class RpcModelService implements ModelService {
 		try {
 			List<Model> result = new ArrayList<>();
 
-			for (ModelDbEntity modelDbEntity : modelDao.getUserModels(SpringSessionHelper.getUserLogin())) {
+			for (ModelDbEntity modelDbEntity : modelDao.getUserModels(SpringSecurityHelper.getUserLogin())) {
 				result.add(getModel(modelDbEntity));
 			}
 
@@ -94,7 +96,7 @@ public class RpcModelService implements ModelService {
 	
 	@Override
 	public Model getModel(long modelId) throws ModelException {
-		ModelDbEntity modelDbEntity = modelDao.getModel(SpringSessionHelper.getUserLogin(), modelId);
+		ModelDbEntity modelDbEntity = modelDao.getModel(SpringSecurityHelper.getUserLogin(), modelId);
 
 		if (modelDbEntity == null) {
 			throw new ModelException(ModelException.Code.ModelRetrievalError);
@@ -105,7 +107,7 @@ public class RpcModelService implements ModelService {
 
 	@Override
 	public void deleteModel(long modelId) throws ModelException {
-		modelDao.deleteModel(SpringSessionHelper.getUserLogin(), modelId);		
+		modelDao.deleteModel(SpringSecurityHelper.getUserLogin(), modelId);		
 	}
 
 	private Model getModel(ModelDbEntity modelDbEntity) throws ModelException {

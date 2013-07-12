@@ -7,7 +7,14 @@
 				          http://www.springframework.org/schema/security/spring-security.xsd">
 	
 	<beans:bean id="customAuthenticationManager" class="pl.cyfronet.datanet.web.server.security.PortalAuthenticationManager"/>
-	<http pattern="/*" security="none"/>
+	<!-- This is a semi-dummy configuration of the http element so the filterProxyChain processes the requests
+	     and stores the security context holder in the session. The real security is done at the methos level
+	     and by the RPC login service. -->
+	<http use-expressions="true">
+	    <intercept-url pattern="/*" access="permitAll"/>
+	    <form-login login-page="/"/>
+	    <anonymous username="anonymousUser"/>
+	</http>
 	<global-method-security secured-annotations="enabled"/>
 	<authentication-manager/>
 </beans:beans>

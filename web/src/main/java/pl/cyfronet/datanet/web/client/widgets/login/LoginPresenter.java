@@ -2,9 +2,6 @@ package pl.cyfronet.datanet.web.client.widgets.login;
 
 import pl.cyfronet.datanet.web.client.ClientController;
 import pl.cyfronet.datanet.web.client.errors.LoginException;
-import pl.cyfronet.datanet.web.client.event.notification.GenericNotificationMessage;
-import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
-import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -72,6 +69,7 @@ public class LoginPresenter implements Presenter {
 			@Override
 			public void onFailure(Throwable t) {
 				view.setBusyState(false);
+				
 				if (t instanceof LoginException) {
 					LoginException e = (LoginException) t;
 
@@ -84,9 +82,7 @@ public class LoginPresenter implements Presenter {
 						break;
 					}
 				} else {
-					eventBus.fireEvent(new NotificationEvent(
-							GenericNotificationMessage.rpcError,
-							NotificationType.ERROR, t.getLocalizedMessage()));
+					view.errorUnknownDuringLogin();
 				}
 			}
 		});
