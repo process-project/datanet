@@ -3,32 +3,32 @@ package pl.cyfronet.datanet.web.client.layout;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MainLayout extends Composite {
+public class MainLayout extends ResizeComposite {
 	private static MainLayoutUiBinder uiBinder = GWT.create(MainLayoutUiBinder.class);
 	interface MainLayoutUiBinder extends UiBinder<Widget, MainLayout> {}
 	
-	@UiField FlowPanel header;
-	@UiField FlowPanel west;
-	@UiField FlowPanel center;
+	@UiField SimpleLayoutPanel header;
+	@UiField SimpleLayoutPanel west;
+	@UiField SimpleLayoutPanel center;
 
 	public MainLayout() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 	
-	public void setHeader(IsWidget header) {
-		this.header.add(header);
+	public AcceptsOneWidget getHeaderContainer() {
+		return header;
 	}
 	
-	public void setWest(IsWidget west) {
-		this.west.add(west);
+	public AcceptsOneWidget getWestContainer() {
+		return west;
 	}
 	
-	public void setCenter(IsWidget center) {
-		this.center.add(center);
+	public AcceptsOneWidget getCenterContainer() {
+		return center;
 	}
 }

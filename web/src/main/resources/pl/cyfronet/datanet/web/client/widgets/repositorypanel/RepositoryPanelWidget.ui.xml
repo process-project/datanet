@@ -31,7 +31,7 @@
 		</g:north>
 		<g:center>
 			<g:FlowPanel ui:field="repositoryContainer">
-			    <g:Anchor ui:field="repositoryLink" href="" target="_blank" text="{messages.repositoryLink}"/>
+				<g:Anchor ui:field="repositoryLink" href="" target="_blank" text="{messages.repositoryLink}"/>
 			</g:FlowPanel>
 		</g:center>
 	</g:DockLayoutPanel>

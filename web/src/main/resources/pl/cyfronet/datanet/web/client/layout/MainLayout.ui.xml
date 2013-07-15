@@ -3,15 +3,15 @@
 		xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<g:DockLayoutPanel>
 	    <g:north size="50">
-	        <g:FlowPanel ui:field="header"/>
+	        <g:SimpleLayoutPanel ui:field="header"/>
 		</g:north>
 		<g:center>
 		    <g:SplitLayoutPanel>
 		        <g:west size="300">
-		            <g:FlowPanel ui:field="west"/>
+		            <g:SimpleLayoutPanel ui:field="west"/>
 		        </g:west>
 		        <g:center>
-		            <g:FlowPanel ui:field="center"/>
+		            <g:SimpleLayoutPanel ui:field="center"/>
 		        </g:center>
 		    </g:SplitLayoutPanel>
 		</g:center>

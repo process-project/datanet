@@ -7,13 +7,13 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class RepositoryPanelWidget extends Composite implements View {
+public class RepositoryPanelWidget extends ResizeComposite implements View {
 
 	private static RepositoryPanelWidgetUiBinder uiBinder = GWT
 			.create(RepositoryPanelWidgetUiBinder.class);

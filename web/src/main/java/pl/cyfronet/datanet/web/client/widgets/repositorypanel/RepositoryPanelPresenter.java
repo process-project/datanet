@@ -12,9 +12,7 @@ public class RepositoryPanelPresenter implements Presenter {
 
 	interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
-
 		HasWidgets getRepositoryContainer();
-
 		void setRepositoryName(String name);
 		void setRepositoryLink(String link);
 	}

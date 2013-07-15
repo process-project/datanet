@@ -101,23 +101,18 @@ public class ClientController {
 
 	private void showMainPanel() {
 		MainLayout layout = new MainLayout();
-		SimplePanel appWidget = new SimplePanel();
-		SimplePanel westWidget = new SimplePanel();
-
-		layout.setHeader(topNavPresenter.getWidget());
-		layout.setWest(westWidget);
-		layout.setCenter(appWidget);
+		layout.getHeaderContainer().setWidget(topNavPresenter.getWidget());
 
 		// activities & places
 		// center
 		ActivityManager activityManager = new ActivityManager(
 				appActivityMapper, eventBus);
-		activityManager.setDisplay(appWidget);
+		activityManager.setDisplay(layout.getCenterContainer());
 
 		// west
 		ActivityManager westActivityManager = new ActivityManager(
 				westActivityMapper, eventBus);
-		westActivityManager.setDisplay(westWidget);
+		westActivityManager.setDisplay(layout.getWestContainer());
 
 		PlaceHistoryHandler historyHandler = new PlaceHistoryHandler(
 				historyMapper);
