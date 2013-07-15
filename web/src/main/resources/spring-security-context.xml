@@ -5,8 +5,7 @@
 				          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 				          http://www.springframework.org/schema/security
 				          http://www.springframework.org/schema/security/spring-security.xsd">
-	
-	<beans:bean id="customAuthenticationManager" class="pl.cyfronet.datanet.web.server.security.PortalAuthenticationManager"/>
+
 	<!-- This is a semi-dummy configuration of the http element so the filterProxyChain processes the requests
 	     and stores the security context holder in the session. The real security is done at the methos level
 	     and by the RPC login service. -->

@@ -1,4 +1,4 @@
-package pl.cyfronet.datanet.web.server.security;
+package pl.cyfronet.datanet.web.server.services.security;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,10 +10,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Service;
 
 import pl.cyfronet.datanet.web.client.errors.LoginException;
 import pl.cyfronet.datanet.web.server.services.portallogin.PortalLoginHandler;
 
+@Service
 public class PortalAuthenticationManager implements AuthenticationManager {
 	private final static String USER_ROLE = "ROLE_USER";
 	
