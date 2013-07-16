@@ -11,4 +11,5 @@ public interface RepositoryServiceAsync {
 	void deployModel(Model model, AsyncCallback<Void> asyncCallback);
 	void getRepositories(AsyncCallback<List<Repository>> asyncCallback);
 	void undeployRepository(long repositoryId, AsyncCallback<Void> asyncCallback);
+	void getRepository(long repositoryId, AsyncCallback<Repository> asyncCallback);
 }

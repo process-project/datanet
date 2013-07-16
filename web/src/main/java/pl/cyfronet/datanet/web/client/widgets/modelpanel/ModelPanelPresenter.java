@@ -28,13 +28,9 @@ public class ModelPanelPresenter implements Presenter {
 
 	interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
-
 		HasWidgets getEntityContainer();
-
 		void setModelName(String name);
-
 		void setModelVersion(String version);
-
 	}
 
 	public ModelPanelPresenter(View view, EventBus eventBus) {

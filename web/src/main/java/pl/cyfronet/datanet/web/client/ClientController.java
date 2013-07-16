@@ -120,7 +120,6 @@ public class ClientController {
 		clearPanels();
 		RootPanel.get().add(RootLayoutPanel.get());
 		RootLayoutPanel.get().add(layout);
-
 		historyHandler.handleCurrentHistory();
 	}
 

@@ -14,4 +14,5 @@ public interface RepositoryService extends RemoteService {
 	void deployModel(Model model) throws ModelException;
 	List<Repository> getRepositories() throws ModelException;
 	void undeployRepository(long repositoryId) throws ModelException;
+	Repository getRepository(long repositoryId);
 }

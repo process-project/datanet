@@ -2,12 +2,16 @@ package pl.cyfronet.datanet.web.client.di;
 
 import pl.cyfronet.datanet.web.client.ClientController;
 import pl.cyfronet.datanet.web.client.di.factory.ModelActivityFactory;
+import pl.cyfronet.datanet.web.client.di.factory.RepositoryActivityFactory;
 import pl.cyfronet.datanet.web.client.di.provider.PlaceControllerProvider;
 import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.mvp.AppPlaceHistoryMapper;
 import pl.cyfronet.datanet.web.client.mvp.activity.ModelActivity;
+import pl.cyfronet.datanet.web.client.mvp.activity.RepositoryActivity;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanel;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPanel;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPresenter;
 
@@ -38,10 +42,13 @@ public class DatanetClientModule extends AbstractGinModule {
 	private void configureViews() {
 		bind(TopNavPresenter.View.class).to(TopNavPanel.class);
 		bind(ModelTreePanelPresenter.View.class).to(ModelTreePanel.class);
+		bind(RepositoryPanelPresenter.View.class).to(RepositoryPanelWidget.class);
 	}
 
 	private void configureActivities() {
 		install(new GinFactoryModuleBuilder().implement(Activity.class,
 				ModelActivity.class).build(ModelActivityFactory.class));
+		install(new GinFactoryModuleBuilder().implement(Activity.class,
+				RepositoryActivity.class).build(RepositoryActivityFactory.class));
 	}
 }

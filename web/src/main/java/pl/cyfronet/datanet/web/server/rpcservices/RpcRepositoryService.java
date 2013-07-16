@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.server.rpcservices;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,9 @@ import pl.cyfronet.datanet.deployer.Deployer;
 import pl.cyfronet.datanet.deployer.DeployerException;
 import pl.cyfronet.datanet.deployer.marshaller.MarshallerException;
 import pl.cyfronet.datanet.deployer.marshaller.ModelSchemaGenerator;
+import pl.cyfronet.datanet.model.beans.Entity;
+import pl.cyfronet.datanet.model.beans.Field;
+import pl.cyfronet.datanet.model.beans.Field.Type;
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
@@ -49,9 +53,11 @@ public class RpcRepositoryService implements RepositoryService {
 			
 			RepositoryDbEntity repository = new RepositoryDbEntity();
 			repository.setName(model.getName());
+			
 			if(repository.getOwners() == null) {
 				repository.setOwners(new LinkedList<UserDbEntity>());
 			}
+			
 			repository.getOwners().add(user);
 			repository.setSourceModel(modelDbEntity);
 			
@@ -70,6 +76,7 @@ public class RpcRepositoryService implements RepositoryService {
 	public List<Repository> getRepositories() throws ModelException {
 		try {
 			List<Repository> repositories = new LinkedList<>();
+			
 			for(RepositoryDbEntity repositoryDbEntity : repositoryDao.getUserRepositories(SpringSecurityHelper.getUserLogin())) {
 				Repository repository = new Repository();
 				repository.setId(repositoryDbEntity.getId());
@@ -77,6 +84,7 @@ public class RpcRepositoryService implements RepositoryService {
 				repository.setSourceModel(repository.getSourceModel());
 				repositories.add(repository);
 			}
+			
 			return repositories;
 		} catch (Exception e) {
 			String message = "Could not read available repositories";
@@ -90,13 +98,59 @@ public class RpcRepositoryService implements RepositoryService {
 		try {
 			RepositoryDbEntity repository = repositoryDao.getRepository(repositoryId);
 			String repositoryName = repository.getName().substring(4);
-			
 			deployer.undeployRepository(repositoryName);
-			
 			repositoryDao.deleteRepository(repository);
 		} catch (DeployerException e) {
 			log.error("Deployer undeploy repository failure", e);
 			throw new ModelException(Code.RepositoryUndeployError);
 		}
+	}
+
+	@Override
+	public Repository getRepository(long repositoryId) {
+		Repository repository = new Repository();
+		repository.setName("helloworld");
+		repository.setId(1);
+		
+		Model model = new Model();
+		model.setName("BasicModel");
+		model.setEntities(new ArrayList<Entity>());
+		
+		Field field = new Field();
+		field.setName("field1");
+		field.setType(Type.String);
+		field.setRequired(true);
+		
+		Entity e1 = new Entity();
+		e1.setName("Entity1");
+		e1.setFields(new ArrayList<Field>());
+		e1.getFields().add(field);
+		model.getEntities().add(e1);
+		
+		field = new Field();
+		field.setName("field2");
+		field.setType(Type.String);
+		field.setRequired(true);
+		
+		Entity e2 = new Entity();
+		e2.setName("Entity2");
+		e2.setFields(new ArrayList<Field>());
+		e2.getFields().add(field);
+		model.getEntities().add(e2);
+		
+		field = new Field();
+		field.setName("field3");
+		field.setType(Type.String);
+		field.setRequired(true);
+		
+		Entity e3 = new Entity();
+		e3.setName("Entity3");
+		e3.setFields(new ArrayList<Field>());
+		e3.getFields().add(field);
+		model.getEntities().add(e3);
+		
+		repository.setSourceModel(model);
+		
+		return repository;
 	}
 }
