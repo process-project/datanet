@@ -324,27 +324,4 @@ public class ModelTreePanelPresenter implements Presenter {
 		});
 	}
 
-	// this method may be unnecessary -> check if tree treates nodes as flat    
-	@Override
-	public void getParentHierarchy(TreeItem item,
-			final TreeItemWrapperCallback callback) {
-		
-		final TreeItemWrapper model = TreeItemWrapper.createFirst(item);
-		
-		if (isRoot(item))
-			; // do nothing on callback
-		else if (isModel(item))
-			callback.treeItemWrapperProvided(model);
-		else if (isVersion(item)) 
-			versionController.getVersion(item.getId(), new VersionCallback() {
-				@Override
-				public void setVersion(Version version) {
-					callback.treeItemWrapperProvided(model.appendParent(TreeItem.newModel(version.getModelId())));
-				}
-			});
-		
-		// TODO - add repository...
-		
-	}
-
 }

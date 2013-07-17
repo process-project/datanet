@@ -19,10 +19,4 @@ public interface Presenter {
 
 	void loadChildren(TreeItem parent);	
 	
-	void getParentHierarchy(TreeItem item, TreeItemWrapperCallback callback);
-	
-	interface TreeItemWrapperCallback {
-		void treeItemWrapperProvided(TreeItemWrapper wrapper);
-	}
-	
 }
