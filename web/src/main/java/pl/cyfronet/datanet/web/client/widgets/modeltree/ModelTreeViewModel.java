@@ -1,13 +1,25 @@
 package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
+import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.isModel;
+import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.isRoot;
+import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.isVersion;
+
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.github.gwtbootstrap.client.ui.Icon;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.IconCellDecorator;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.SelectionModel;
@@ -20,34 +32,78 @@ public class ModelTreeViewModel implements TreeViewModel {
 
 	private Presenter presenter;
 	private TreeItemsAsyncDataProvider rootDataProvider;
+	/**
+	 * A mapping from model id to version data provider
+	 */
+	private Map<Long, TreeItemsAsyncDataProvider> versionDataProviders;  
+	private Map<Long, TreeItemsAsyncDataProvider> repositoryDataProviders;  
 	private ModelTreePanelMessageses messages;
 	private SelectionModel<TreeItem> selection;
-
+	
+	
 	public ModelTreeViewModel(ModelTreePanelMessageses messages,
 			SelectionModel<TreeItem> selection) {
 		this.messages = messages;
 		this.selection = selection;
+		this.versionDataProviders = new HashMap<Long, TreeItemsAsyncDataProvider>();
+		this.repositoryDataProviders = new HashMap<Long, TreeItemsAsyncDataProvider>();
 	}
 
 	@Override
 	public <T> NodeInfo<?> getNodeInfo(T value) {
-		TreeItemsAsyncDataProvider dataProvider = new TreeItemsAsyncDataProvider(
-				(TreeItem) value);
-
-		if (value == null) {
-			rootDataProvider = dataProvider;
-		}		
 		
-		Cell<TreeItem> cell = new AbstractCell<TreeItem>() {
-			@Override
-			public void render(Context context, TreeItem value,
-					SafeHtmlBuilder sb) {
-				if(value.isDirty()) {
-					sb.appendEscaped("* ");
+		TreeItem treeItem = (TreeItem) value;
+		TreeItemsAsyncDataProvider dataProvider = new TreeItemsAsyncDataProvider(treeItem);
+		
+		Cell<TreeItem> cell = null;
+		if (isRoot(treeItem)) {
+			rootDataProvider = dataProvider;
+			cell = new AbstractCell<TreeItem>() {
+				@Override
+				public void render(Context context, TreeItem value,
+						SafeHtmlBuilder sb) {
+					if (value.isDirty()) {
+						sb.appendEscaped("* ");
+					}
+					sb.appendHtmlConstant("<i style=\"margin-right: 5px\" class=\""
+							+ IconType.SITEMAP.get() + "\"></i>");
+					sb.appendEscaped(value.getName());
 				}
-				sb.appendEscaped(value.getName());
-			}
-		};
+			};
+		} else if (isModel(treeItem)) {
+			long modelId = treeItem.getId();
+			versionDataProviders.put(modelId, dataProvider);
+			cell = new AbstractCell<TreeItem>() {
+				@Override
+				public void render(Context context, TreeItem value,
+						SafeHtmlBuilder sb) {
+					sb.appendHtmlConstant("<i style=\"margin-right: 5px\" class=\""
+							+ IconType.BRIEFCASE.get() + "\"></i>");
+					sb.appendEscaped(value.getName());
+				}
+			};
+		} else if (isVersion(treeItem)) {
+			long modelId = treeItem.getId();
+			repositoryDataProviders.put(modelId, dataProvider);
+			cell = new AbstractCell<TreeItem>() {
+				@Override
+				public void render(Context context, TreeItem value,
+						SafeHtmlBuilder sb) {
+					sb.appendHtmlConstant("<i style=\"margin-right: 5px\" class=\""
+							+ IconType.CLOUD.get() + "\"></i>	");
+					sb.appendEscaped(value.getName());
+				}
+			};
+		} else {
+			cell = new AbstractCell<TreeItem>() {
+				@Override
+				public void render(Context context, TreeItem value,
+						SafeHtmlBuilder sb) {
+					sb.appendEscaped(value.getName());
+				}
+			};
+		}
+
 		return new DefaultNodeInfo<TreeItem>(dataProvider, cell, selection,
 				null);
 	}
@@ -55,7 +111,7 @@ public class ModelTreeViewModel implements TreeViewModel {
 	@Override
 	public boolean isLeaf(Object value) {
 		return value != null
-				|| (presenter != null ? presenter.isLeaf((TreeItem) value)
+				&& (presenter != null ? presenter.isLeaf((TreeItem) value)
 						: false);
 	}
 
@@ -69,6 +125,14 @@ public class ModelTreeViewModel implements TreeViewModel {
 
 	public TreeItemsAsyncDataProvider getModelProvider() {
 		return rootDataProvider;
+	}
+	
+	public TreeItemsAsyncDataProvider getVersionProvider(long modelId) {
+		return versionDataProviders.get(modelId);
+	}
+	
+	public TreeItemsAsyncDataProvider getRepositoryProvider(long versionId) {
+		return repositoryDataProviders.get(versionId);
 	}
 	
 	public class TreeItemsAsyncDataProvider extends
@@ -87,7 +151,7 @@ public class ModelTreeViewModel implements TreeViewModel {
 		}
 
 		public void reload() {
-			logger.log(Level.INFO, "Reloading childs for " + parent);
+			logger.log(Level.INFO, "Reloading children for " + parent);
 			loading();
 			if (presenter != null) {
 				presenter.loadChildren(parent);
@@ -108,8 +172,7 @@ public class ModelTreeViewModel implements TreeViewModel {
 		
 		private void loading() {
 			updateRowCount(1, true);
-			updateRowData(0, Arrays.asList(new TreeItem(null, messages
-					.loading(), ItemType.LOADING)));
+			updateRowData(0, Arrays.asList(TreeItem.newLoading(messages.loading())));
 		}
 	}
 }

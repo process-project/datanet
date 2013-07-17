@@ -1,8 +1,11 @@
 package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
+import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.isRoot;
+
 import java.util.List;
 
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter.View;
+import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreeViewModel.TreeItemsAsyncDataProvider;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.google.gwt.core.client.GWT;
@@ -11,6 +14,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTree;
+import com.google.gwt.user.cellview.client.TreeNode;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -34,6 +38,9 @@ public class ModelTreePanel extends Composite implements View {
 
 	@UiField
 	Button deploy;
+	
+	@UiField
+	Button releaseVersion;
 
 	private ModelTreeViewModel model;
 
@@ -77,6 +84,11 @@ public class ModelTreePanel extends Composite implements View {
 		presenter.onSave();
 	}
 
+	@UiHandler("releaseVersion")
+	void onReleaseVersion(ClickEvent event) {
+		presenter.onReleaseVersion();
+	}
+	
 	@Override
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
@@ -89,8 +101,29 @@ public class ModelTreePanel extends Composite implements View {
 	}
 
 	@Override
-	public void setSelected(TreeItem item) {
+	public void setSelected(final TreeItem item) {
+		selection.setSelected(item, true);		
+	}
+	
+	@Override
+	public void setOpenedAndSelected(final TreeItem item) {
+		if (!isRoot(item))
+			expandTree(modelsTree.getRootTreeNode(), item);
 		selection.setSelected(item, true);
+	}
+
+	private void expandTree(TreeNode node, TreeItem item) {
+		Integer childIndex = getChildIndex(node, item);
+		if (childIndex != null) 
+			node.setChildOpen(childIndex, true);
+	}
+	
+	private Integer getChildIndex(TreeNode treeNode, TreeItem item) {
+		for (int i = 0; i < treeNode.getChildCount(); i++) {
+			if (item.equals(treeNode.getChildValue(i)))
+				return i;
+		}
+		return null;
 	}
 
 	@Override
@@ -101,6 +134,11 @@ public class ModelTreePanel extends Composite implements View {
 	@Override
 	public void setRemoveEnabled(boolean enabled) {
 		remove.setEnabled(enabled);
+	}
+	
+	@Override
+	public void setReleaseVersionEnabled(boolean enabled) {
+		releaseVersion.setEnabled(enabled);
 	}
 
 	@Override
@@ -118,4 +156,20 @@ public class ModelTreePanel extends Composite implements View {
 		model.getModelProvider().updateRowCount(modelTreeItems.size(), true);
 		model.getModelProvider().updateRowData(0, modelTreeItems);
 	}
+
+	@Override
+	public void setVersions(long modelId, List<TreeItem> versionTreeItems) {
+		TreeItemsAsyncDataProvider versionProvider = model.getVersionProvider(modelId);
+		versionProvider.updateRowCount(versionTreeItems.size(), true);
+		versionProvider.updateRowData(0, versionTreeItems);
+	}
+
+	@Override
+	public void setRepositories(long versionId, List<TreeItem> repoTreeItems) {
+		TreeItemsAsyncDataProvider reposotoriesProvider = model.getRepositoryProvider(versionId);
+		reposotoriesProvider.updateRowCount(repoTreeItems.size(), true);
+		reposotoriesProvider.updateRowData(0, repoTreeItems);
+	}
+
+
 }

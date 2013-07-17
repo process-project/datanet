@@ -8,7 +8,7 @@ public class Repository implements Serializable {
 	
 	private long id;
 	private String name;
-	private Model sourceModel;
+	private Version sourceModelVersion; 
 	public long getId() {
 		return id;
 	}
@@ -21,16 +21,16 @@ public class Repository implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Model getSourceModel() {
-		return sourceModel;
+	public Version getSourceModelVersion() {
+		return sourceModelVersion;
 	}
-	public void setSourceModel(Model sourceModel) {
-		this.sourceModel = sourceModel;
+	public void setSourceModelVersion(Version sourceModelVersion) {
+		this.sourceModelVersion = sourceModelVersion;
 	}
 	@Override
 	public String toString() {
-		return "Repository [id=" + id + ", name=" + name + ", sourceModel="
-				+ sourceModel + "]";
+		return "Repository [id=" + id + ", name=" + name
+				+ ", sourceModelVersion=" + sourceModelVersion + "]";
 	}
 	@Override
 	public int hashCode() {
@@ -38,8 +38,10 @@ public class Repository implements Serializable {
 		int result = 1;
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result
-				+ ((sourceModel == null) ? 0 : sourceModel.hashCode());
+		result = prime
+				* result
+				+ ((sourceModelVersion == null) ? 0 : sourceModelVersion
+						.hashCode());
 		return result;
 	}
 	@Override
@@ -58,13 +60,14 @@ public class Repository implements Serializable {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (sourceModel == null) {
-			if (other.sourceModel != null)
+		if (sourceModelVersion == null) {
+			if (other.sourceModelVersion != null)
 				return false;
-		} else if (!sourceModel.equals(other.sourceModel))
+		} else if (!sourceModelVersion.equals(other.sourceModelVersion))
 			return false;
 		return true;
 	}
+
 	
 	
 }

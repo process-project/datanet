@@ -38,10 +38,6 @@ public class ModelValidator {
 				result.add(ModelError.INVALID_CHARS_MODEL_NAME);
 			}
 			
-			if(model.getVersion() == null || model.getVersion().trim().isEmpty()) {
-				result.add(ModelError.EMPTY_MODEL_VERSION);
-			}
-			
 			validateEntities(model.getEntities(), result);
 		} else {
 			result.add(ModelError.NULL_MODEL);

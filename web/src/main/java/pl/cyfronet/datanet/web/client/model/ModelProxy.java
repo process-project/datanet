@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.client.model;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -57,13 +58,13 @@ public class ModelProxy extends Model {
 	}
 
 	@Override
-	public String getVersion() {
-		return model.getVersion();
+	public Date getTimestamp() {
+		return model.getTimestamp();
 	}
 
 	@Override
-	public void setVersion(String version) {
-		model.setVersion(version);
+	public void setTimestamp(Date timestamp) {
+		model.setTimestamp(timestamp);
 	}
 
 	@Override

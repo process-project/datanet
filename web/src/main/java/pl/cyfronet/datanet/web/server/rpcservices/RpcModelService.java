@@ -1,7 +1,10 @@
 package pl.cyfronet.datanet.web.server.rpcservices;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +15,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Model;
+import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
 import pl.cyfronet.datanet.model.util.ModelBuilder;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
@@ -19,8 +23,10 @@ import pl.cyfronet.datanet.web.client.errors.ModelException.Code;
 import pl.cyfronet.datanet.web.client.services.ModelService;
 import pl.cyfronet.datanet.web.server.db.HibernateModelDao;
 import pl.cyfronet.datanet.web.server.db.HibernateUserDao;
+import pl.cyfronet.datanet.web.server.db.HibernateVersionDao;
 import pl.cyfronet.datanet.web.server.db.beans.ModelDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
+import pl.cyfronet.datanet.web.server.db.beans.VersionDbEntity;
 
 @Service("modelService")
 public class RpcModelService implements ModelService {
@@ -30,12 +36,15 @@ public class RpcModelService implements ModelService {
 	@Autowired
 	private HibernateModelDao modelDao;
 	@Autowired
+	private HibernateVersionDao versionDao;
+	@Autowired
 	private HibernateUserDao userDao;
 	@Autowired
 	private ModelBuilder modelBuilder;
 	@Autowired
 	private JaxbEntityListBuilder jaxbEntityListBuilder;
 
+	
 	@Override
 	public Model saveModel(Model model) throws ModelException {
 		log.info("Processing model save request for model {}", model);
@@ -54,8 +63,8 @@ public class RpcModelService implements ModelService {
 			ModelDbEntity modelDbEntity = new ModelDbEntity();
 			modelDbEntity.setId(model.getId());
 			modelDbEntity.setName(model.getName());
-			modelDbEntity.setVersion(model.getVersion());
-			modelDbEntity.setExperimentBody(jaxbEntityListBuilder
+			modelDbEntity.setTimestamp(model.getTimestamp());
+			modelDbEntity.setModelXml(jaxbEntityListBuilder
 					.serialize(model.getEntities()));
 			if (modelDbEntity.getOwners() == null) {
 				modelDbEntity.setOwners(new ArrayList<UserDbEntity>());
@@ -99,12 +108,11 @@ public class RpcModelService implements ModelService {
 		try {
 			Model model = new Model();
 			List<Entity> entitiesList = jaxbEntityListBuilder
-					.deserialize(modelDbEntity.getExperimentBody());
+					.deserialize(modelDbEntity.getModelXml());
 			model.setId(modelDbEntity.getId());
 			model.setName(modelDbEntity.getName());
-			model.setVersion(modelDbEntity.getVersion());
 			model.setEntities(entitiesList);
-
+			model.setTimestamp(modelDbEntity.getTimestamp());
 			return model;
 		} catch (Exception e) {
 			String message = "Could not retrieve models";
@@ -137,4 +145,65 @@ public class RpcModelService implements ModelService {
 		UserDbEntity user = getUser();
 		modelDao.deleteModel(user.getLogin(), modelId);		
 	}
+	
+	private Version getVersion(VersionDbEntity versionDbEnt) throws JAXBException  {
+		List<Entity> entitiesList = jaxbEntityListBuilder
+				.deserialize(versionDbEnt.getModelXml());
+		Version version = new Version();
+		version.setId(versionDbEnt.getId());
+		version.setName(versionDbEnt.getName());
+		version.setTimestamp(versionDbEnt.getTimestamp());
+		version.setEntities(entitiesList);
+		version.setModelId(versionDbEnt.getModel().getId());
+		return version;
+	}
+	
+	@Override
+	public List<Version> getVersions(long modelId) throws ModelException {
+		try {	
+			List<VersionDbEntity> versionDbEnts = versionDao.getVersions(modelId);
+			List<Version> versions = new ArrayList<>();
+			if (versionDbEnts != null)
+				for (VersionDbEntity versionDbEnt : versionDbEnts)
+					versions.add(getVersion(versionDbEnt));
+			return versions;
+		} catch (Exception e) {
+			String message = "Could not retrieve versions for model " + modelId;
+			log.error(message, e);
+			throw new ModelException(Code.VersionRetreivalError);
+		}
+	}
+	
+	@Override
+	public Version getVersion(long versionId) throws ModelException {
+		VersionDbEntity versionDbEntity = versionDao.getVersion(versionId);
+		Version version;
+		try {
+			version = getVersion(versionDbEntity);
+			return version;
+		} catch (Exception e) {
+			String message = "Could not retrieve version" + versionId;
+			log.error(message, e);
+			throw new ModelException(Code.VersionRetreivalError);
+		}
+	}
+
+	@Override
+	public Version addVersion(long modelId, Version version)
+			throws ModelException {
+		try {	
+			VersionDbEntity versionDbEntity = new VersionDbEntity();		
+			versionDbEntity.setName(version.getName());
+			versionDbEntity.setModelXml(jaxbEntityListBuilder.serialize(version.getEntities()));
+			versionDbEntity.setTimestamp(version.getTimestamp());
+			versionDao.saveVersion(modelId, versionDbEntity);
+			version.setId(versionDbEntity.getId());
+			return version;
+		} catch (Exception e) {
+			String message = "Could not add version for model " + modelId;
+			log.error(message, e);
+			throw new ModelException(Code.ModelSaveError);
+		}
+	}
+
 }

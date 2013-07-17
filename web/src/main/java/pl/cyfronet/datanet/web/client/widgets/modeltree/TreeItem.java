@@ -1,12 +1,13 @@
 package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
 public class TreeItem {
+	 
 	private String name;
 	private Long id;
 	private ItemType type;
 	private boolean dirty;
 
-	public TreeItem(Long id, String name, ItemType type) {
+	private TreeItem(Long id, String name, ItemType type) {
 		this.id = id;
 		this.name = name;
 		this.type = type;
@@ -27,6 +28,10 @@ public class TreeItem {
 	public ItemType getType() {
 		return type;
 	}
+	
+	public boolean isOfType(ItemType type) {
+		return type == this.type;
+	}
 
 	public void setDirty(boolean dirty) {
 		this.dirty = dirty;
@@ -35,7 +40,7 @@ public class TreeItem {
 	public boolean isDirty() {
 		return dirty;
 	}	
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -70,7 +75,28 @@ public class TreeItem {
 				+ ", dirty=" + dirty + "]";
 	}
 	
-	public static TreeItem model(Long modelId) {
-		return new TreeItem(modelId, null, ItemType.MODEL);
+	public static TreeItem newModel(Long id, String name) {
+		return new TreeItem(id, name, ItemType.MODEL);
 	}
+	
+	public static TreeItem newModel(Long id) {
+		return newModel(id, null);
+	}
+	
+	public static TreeItem newVersion(Long id, String name) {
+		return new TreeItem(id, name, ItemType.VERSION);
+	}
+	
+	public static TreeItem newVersion(Long id) {
+		return newVersion(id, null);
+	}
+	
+	public static TreeItem newRepository(Long id, String name) {
+		return new TreeItem(id, name, ItemType.REPOSITORY);
+	}
+
+	public static TreeItem newLoading(String message) {
+		return new TreeItem(null, message, ItemType.LOADING);
+	}
+	
 }

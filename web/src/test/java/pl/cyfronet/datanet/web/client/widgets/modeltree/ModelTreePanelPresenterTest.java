@@ -30,6 +30,8 @@ import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelsCallback;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
+import pl.cyfronet.datanet.web.client.model.RepositoryController;
+import pl.cyfronet.datanet.web.client.model.VersionController;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter.View;
 
@@ -46,7 +48,13 @@ public class ModelTreePanelPresenterTest {
 
 	@Mock
 	private ModelController modelController;
+	
+	@Mock
+	private VersionController versionController;
 
+	@Mock
+	private RepositoryController repositoryController;
+	
 	@Mock
 	private PlaceController placeController;
 
@@ -68,8 +76,8 @@ public class ModelTreePanelPresenterTest {
 	@Before
 	public void prepare() {
 		MockitoAnnotations.initMocks(this);
-		presenter = new ModelTreePanelPresenter(view, modelController,
-				placeController, eventBus);
+		presenter = new ModelTreePanelPresenter(view, modelController, versionController,
+				repositoryController, placeController, eventBus);
 
 		m1 = new Model();
 		m1.setId(1);
@@ -126,7 +134,7 @@ public class ModelTreePanelPresenterTest {
 
 	private void givenModelSelectedByTheUser() {
 		when(view.getSelectedObject()).thenReturn(
-				new TreeItem(selectedModelId, null, ItemType.MODEL));
+				TreeItem.newModel(selectedModelId, null));
 	}
 
 	private void whenSelectingModel() {
@@ -166,7 +174,7 @@ public class ModelTreePanelPresenterTest {
 	}
 
 	private void givenSelectedModel(Long modelId) {
-		when(view.getSelectedObject()).thenReturn(TreeItem.model(modelId));
+		when(view.getSelectedObject()).thenReturn(TreeItem.newModel(modelId));
 	}
 
 	private void whenRemoveModel() {
@@ -177,7 +185,7 @@ public class ModelTreePanelPresenterTest {
 		verify(modelController, times(1)).deleteModel(eq(m1.getId()),
 				any(NextCallback.class));
 		verify(view, times(1)).setModels(
-				argThat(new TreeItemMatcher(TreeItem.model(m2.getId()))));
+				argThat(new TreeItemMatcher(TreeItem.newModel(m2.getId()))));
 		verify(placeController, times(1)).goTo(any(WelcomePlace.class));
 	}
 
@@ -211,8 +219,8 @@ public class ModelTreePanelPresenterTest {
 		verify(modelController, times(1)).saveModel(eq(m1.getId()),
 				any(ModelCallback.class));
 		verify(view, times(1)).setModels(
-				argThat(new TreeItemMatcher(TreeItem.model(m1.getId()),
-						TreeItem.model(m2.getId()))));
+				argThat(new TreeItemMatcher(TreeItem.newModel(m1.getId()),
+						TreeItem.newModel(m2.getId()))));
 		verify(placeController, times(0)).goTo(any(Place.class));
 	}
 
@@ -242,8 +250,8 @@ public class ModelTreePanelPresenterTest {
 		verify(modelController, times(1)).saveModel(eq(m1.getId()),
 				any(ModelCallback.class));
 		verify(view, times(1)).setModels(
-				argThat(new TreeItemMatcher(TreeItem.model(m3.getId()),
-						TreeItem.model(m2.getId()))));
+				argThat(new TreeItemMatcher(TreeItem.newModel(m3.getId()),
+						TreeItem.newModel(m2.getId()))));
 		verify(placeController, times(1)).goTo(any(Place.class));
 	}
 
@@ -270,7 +278,7 @@ public class ModelTreePanelPresenterTest {
 	}
 
 	private void whenUserClicksOnModel(Long modelId) {
-		presenter.setSelected(TreeItem.model(modelId));
+		presenter.setSelected(TreeItem.newModel(modelId));
 	}
 
 	private void thenModelSelected(Long modelId, boolean deployEnabled,
@@ -278,7 +286,7 @@ public class ModelTreePanelPresenterTest {
 		verify(view, times(1)).setRemoveEnabled(true);
 		verify(view, times(1)).setDeployEnabled(deployEnabled);
 		verify(view, times(1)).setSaveEnabled(saveEnabled);
-		verify(view, times(1)).setSelected(eq(TreeItem.model(modelId)));
+		verify(view, times(1)).setSelected(eq(TreeItem.newModel(modelId)));
 	}
 
 	@Test
@@ -333,9 +341,9 @@ public class ModelTreePanelPresenterTest {
 
 	private void thenModelsRefreshedAndModelSelected() {
 		verify(view, times(1)).setModels(
-				argThat(new TreeItemMatcher(TreeItem.model(m1.getId()),
-						TreeItem.model(m2.getId()))));
-		verify(view, times(1)).setSelected(TreeItem.model(m1.getId()));
+				argThat(new TreeItemMatcher(TreeItem.newModel(m1.getId()),
+						TreeItem.newModel(m2.getId()))));
+		verify(view, times(1)).setSelected(TreeItem.newModel(m1.getId()));
 	}
 
 	@Test
@@ -362,7 +370,7 @@ public class ModelTreePanelPresenterTest {
 
 	private void thenModelsRefreshed() {
 		verify(view, times(1)).setModels(
-				argThat(new TreeItemMatcher(TreeItem.model(m1.getId()),
-						TreeItem.model(m2.getId()))));		
+				argThat(new TreeItemMatcher(TreeItem.newModel(m1.getId()),
+						TreeItem.newModel(m2.getId()))));		
 	}
 }

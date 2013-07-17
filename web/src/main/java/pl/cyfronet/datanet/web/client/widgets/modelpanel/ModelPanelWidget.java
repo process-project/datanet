@@ -52,11 +52,6 @@ public class ModelPanelWidget extends Composite implements View {
 		presenter.onModelNameChanged(event.getValue());
 	}
 
-//	@UiHandler("modelVersion")
-	void modelVersionChanged(ValueChangeEvent<String> event) {
-		presenter.onModelVersionChanged(event.getValue());
-	}
-
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
 	}
@@ -67,10 +62,6 @@ public class ModelPanelWidget extends Composite implements View {
 
 	public void setModelName(String name) {
 		modelName.setText(name);
-	}
-
-	public void setModelVersion(String version) {
-//		modelVersion.setText(version);
 	}
 
 }

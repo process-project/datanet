@@ -1,6 +1,8 @@
 package pl.cyfronet.datanet.web.server.db.beans;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -8,15 +10,31 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.Type;
 
 @Entity
 public class ModelDbEntity {
-	@Id @GeneratedValue
-	private long id;
+	
 	private String name;
-	private String version;
-	@Column(length = 17000000) //should map to longtext or equivalent
-	private String experimentBody;
+	
+	@Id @GeneratedValue
+	protected long id;
+	
+	@Type(type="date")
+	protected Date timestamp;
+	
+	@Column(length = 17000000) 
+	protected String modelXml;
+		
+	public ModelDbEntity() {
+		super();
+	}
+
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+	private List<VersionDbEntity> versions;
+	
 	@ManyToMany(cascade = {CascadeType.PERSIST})
 	private List<UserDbEntity> owners;
 	
@@ -26,11 +44,11 @@ public class ModelDbEntity {
 	public void setOwners(List<UserDbEntity> owners) {
 		this.owners = owners;
 	}
-	public long getId() {
-		return id;
+	public List<VersionDbEntity> getVersions() {
+		return versions;
 	}
-	public void setId(long id) {
-		this.id = id;
+	public void setVersions(List<VersionDbEntity> versions) {
+		this.versions = versions;
 	}
 	public String getName() {
 		return name;
@@ -38,22 +56,29 @@ public class ModelDbEntity {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getExperimentBody() {
-		return experimentBody;
+	public long getId() {
+		return id;
 	}
-	public void setExperimentBody(String experimentBody) {
-		this.experimentBody = experimentBody;
+	public void setId(long id) {
+		this.id = id;
 	}
-	public String getVersion() {
-		return version;
+	public Date getTimestamp() {
+		return timestamp;
 	}
-	public void setVersion(String version) {
-		this.version = version;
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
+	}
+	public String getModelXml() {
+		return modelXml;
+	}
+	public void setModelXml(String modelXml) {
+		this.modelXml = modelXml;
 	}
 	@Override
 	public String toString() {
-		return "ModelDbEntity [id=" + id + ", name=" + name + ", version="
-				+ version + ", experimentBody=" + experimentBody + ", owners="
-				+ owners + "]";
+		return "ModelDbEntity [name=" + name + ", id=" + id + ", timestamp="
+				+ timestamp + ", modelXml=" + modelXml + ", versions="
+				+ versions + ", owners=" + owners + "]";
 	}
+	
 }

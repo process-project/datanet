@@ -1,13 +1,12 @@
 package pl.cyfronet.datanet.web.client.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import pl.cyfronet.datanet.model.beans.Model;
-import pl.cyfronet.datanet.model.beans.validator.ModelValidator;
-import pl.cyfronet.datanet.model.beans.validator.ModelValidator.ModelError;
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
@@ -80,7 +79,6 @@ public class ModelController {
 			@Override
 			public void setModels(List<ModelProxy> models) {
 				ModelProxy model = getCachedModel(modelId);
-
 				if (model == null) {
 					loadModel(modelId, callback);
 				} else {
@@ -167,6 +165,7 @@ public class ModelController {
 
 	private void saveModel(final ModelProxy modelProxy,
 			final ModelCallback callback) {
+		modelProxy.setTimestamp(new Date());
 		modelService.saveModel(modelProxy.getModel(),
 				new AsyncCallback<Model>() {
 					@Override

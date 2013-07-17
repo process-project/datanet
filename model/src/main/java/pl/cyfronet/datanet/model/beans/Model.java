@@ -2,6 +2,7 @@ package pl.cyfronet.datanet.model.beans;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -9,22 +10,23 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class Model implements Serializable {
+
 	private static final long serialVersionUID = 7356373514701080184L;
 
 	private long id;
 	private String name;
-	private String version;
+	private Date timestamp; 
 	private List<Entity> entities;
 	
 	public Model() {
-		version = "null";
+	
 		entities = new ArrayList<Entity>();
 	}
 	
 	public Model(Model model) {
 		id = model.getId();
 		name = model.getName();
-		version = model.version;
+		timestamp = model.timestamp;
 		entities = new ArrayList<Entity>();
 		
 		if(model.getEntities() != null) {
@@ -50,14 +52,6 @@ public class Model implements Serializable {
 		this.name = name;
 	}
 	
-	@XmlAttribute
-	public String getVersion() {
-		return version;
-	}
-	public void setVersion(String version) {
-		this.version = version;
-	}
-	
 	public List<Entity> getEntities() {
 		return entities;
 	}
@@ -65,10 +59,17 @@ public class Model implements Serializable {
 		this.entities = entities;
 	}
 	
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
+	}
+	
 	@Override
 	public String toString() {
-		return "Model [id=" + id + ", name=" + name + ", version=" + version
-				+ ", entities=" + entities + "]";
+		return "Model [id=" + id + ", name=" + name + ", entities=" + entities + "]";
 	}
 
 	@Override
@@ -79,7 +80,7 @@ public class Model implements Serializable {
 				+ ((entities == null) ? 0 : entities.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
 		return result;
 	}
 
@@ -104,10 +105,11 @@ public class Model implements Serializable {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (version == null) {
-			if (other.version != null)
+		if (timestamp == null) {
+			if (other.timestamp != null)
 				return false;
-		} else if (!version.equals(other.version))
+		}
+		else if (!timestamp.equals(other.timestamp))
 			return false;
 		return true;
 	}

@@ -2,10 +2,12 @@ package pl.cyfronet.datanet.web.client.di;
 
 import pl.cyfronet.datanet.web.client.ClientController;
 import pl.cyfronet.datanet.web.client.di.factory.ModelActivityFactory;
+import pl.cyfronet.datanet.web.client.di.factory.VersionActivityFactory;
 import pl.cyfronet.datanet.web.client.di.provider.PlaceControllerProvider;
 import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.mvp.AppPlaceHistoryMapper;
 import pl.cyfronet.datanet.web.client.mvp.activity.ModelActivity;
+import pl.cyfronet.datanet.web.client.mvp.activity.VersionActivity;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanel;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPanel;
@@ -43,5 +45,7 @@ public class DatanetClientModule extends AbstractGinModule {
 	private void configureActivities() {
 		install(new GinFactoryModuleBuilder().implement(Activity.class,
 				ModelActivity.class).build(ModelActivityFactory.class));
+		install(new GinFactoryModuleBuilder().implement(Activity.class,
+				VersionActivity.class).build(VersionActivityFactory.class));
 	}
 }

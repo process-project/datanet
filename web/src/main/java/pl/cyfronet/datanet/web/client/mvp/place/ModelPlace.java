@@ -1,9 +1,6 @@
 package pl.cyfronet.datanet.web.client.mvp.place;
 
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceTokenizer;
-
-public class ModelPlace extends Place {
+public class ModelPlace extends TokenizablePlace {
 	private Long modelId;
 
 	public ModelPlace(Long modelId) {
@@ -14,20 +11,16 @@ public class ModelPlace extends Place {
 		return modelId;
 	}
 
-	public static class Tokenizer implements PlaceTokenizer<ModelPlace> {
+	public static class Tokenizer extends GenericTokenizer<ModelPlace> {
 		@Override
-		public String getToken(ModelPlace place) {
-			return String.valueOf(place.getModelId());
+		ModelPlace createPlaceInstance(Long itemId) {
+			return new ModelPlace(itemId);
 		}
-
-		@Override
-		public ModelPlace getPlace(String token) {
-			try {
-				return new ModelPlace(Long.valueOf(token));
-			} catch (NumberFormatException e) {
-				return new ModelPlace(null);
-			}
-		}
+	}
+	
+	@Override
+	public Long getToken() {
+		return modelId;
 	}
 
 	@Override
@@ -54,4 +47,6 @@ public class ModelPlace extends Place {
 			return false;
 		return true;
 	}
+
+	
 }

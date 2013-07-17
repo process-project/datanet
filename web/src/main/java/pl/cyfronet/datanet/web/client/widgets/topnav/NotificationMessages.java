@@ -13,6 +13,10 @@ public interface NotificationMessages extends ConstantsWithLookup {
 	String modelLoadErrorNoCause();
 	String modelWrongIdFormat();
 	String modelNotPresent();
+	String versionLoadError();
+	String versionListLoadError();
+	String versionReleased();
+	String versionReleaseError();
 	
 	String repositoryDeployed();
 	String repositoryNotPresent();
