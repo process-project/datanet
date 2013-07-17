@@ -1,15 +1,13 @@
 package pl.cyfronet.datanet.web.client.widgets.repositorypanel;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import pl.cyfronet.datanet.model.beans.Entity;
-import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.controller.repository.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.repository.RepositoryController.RepositoryCallback;
+import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
@@ -20,23 +18,25 @@ public class RepositoryPanelPresenter implements Presenter {
 	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
 		void setRepositoryLink(String link);
-		void addEntity(String entityName, List<String> fieldNames);
+		void addEntity(String entityName, IsWidget isWidget);
 		void showEntity(int entityIndex);
-	}
-	
-	public interface DataCallback {
-		void onData(List<Map<String, String>> data);
+		Map<String, String> getSearchFieldValues();
 	}
 
 	private View view;
 	private long repositoryId;
 	private RepositoryController repositoryController;
+	private EntityDataPanelPresenterFactory entityDataPanelPresenterFactory;
+	private Map<String, EntityDataPanelPresenter> entityDataPanelPresenters;
 	
 	@Inject
-	public RepositoryPanelPresenter(View view, RepositoryController repositoryController) {
+	public RepositoryPanelPresenter(View view, RepositoryController repositoryController,
+			EntityDataPanelPresenterFactory entityDataPanelPresenterFactory) {
 		this.view = view;
 		this.repositoryController = repositoryController;
+		this.entityDataPanelPresenterFactory = entityDataPanelPresenterFactory;
 		view.setPresenter(this);
+		entityDataPanelPresenters = new HashMap<String, EntityDataPanelPresenter>();
 	}
 	
 	public void setRepository(long repositoryId) {
@@ -52,36 +52,15 @@ public class RepositoryPanelPresenter implements Presenter {
 		return view;
 	}
 	
-	@Override
-	public void getEntityRows(String entityName, int start, int length, DataCallback dataCallback) {
-		//TODO(DH): make the data call through repository controller
-		if(dataCallback != null) {
-			List<Map<String, String>> result = new ArrayList<Map<String, String>>();
-			
-			for(int i = start; i < start + length; i++) {
-				Map<String, String> row = new HashMap<String, String>();
-				row.put("field1", "value " + i);
-				result.add(row);
-			}
-			
-			dataCallback.onData(result);
-		}
-	}
-	
 	private void showRepository(Repository repository) {
 		view.setRepositoryLink(REPO_TEMPLATE.replace("{repo}", repository.getName()));
 		
 		if(repository.getSourceModel() != null && repository.getSourceModel().getEntities() != null) {
 			for(Entity entity : repository.getSourceModel().getEntities()) {
-				List<String> fieldNames = new ArrayList<String>();
-				
-				if(entity.getFields() != null) {
-					for(Field field : entity.getFields()) {
-						fieldNames.add(field.getName());
-					}
-				}
-				
-				view.addEntity(entity.getName(), fieldNames);
+				entityDataPanelPresenters.put(entity.getName(),
+						entityDataPanelPresenterFactory.create(repositoryId, entity.getName()));
+				view.addEntity(entity.getName(), entityDataPanelPresenters.get(entity.getName()).getWidget());
+				entityDataPanelPresenters.get(entity.getName()).show();
 			}
 			
 			if(repository.getSourceModel().getEntities().size() > 0) {

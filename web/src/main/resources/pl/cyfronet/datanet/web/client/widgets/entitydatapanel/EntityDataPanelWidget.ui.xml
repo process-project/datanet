@@ -1,0 +1,19 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
+	<ui:with type="pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelMessages" field="messages"/>
+	<ui:style>
+		
+	</ui:style>
+	<g:FlowPanel>
+		<b:Form>
+			<b:Fieldset ui:field="searchFieldSet">
+				<b:Legend><ui:text from="{messages.repositorySearchLabel}"/></b:Legend>
+			</b:Fieldset>
+			<b:Button type="SUCCESS" ui:field="searchButton"><ui:text from="{messages.repositorySearchLabel}"/></b:Button>
+		</b:Form>
+		<b:SimplePager ui:field="pager" location="RIGHT"/>
+		<b:CellTable ui:field="dataTable" striped="true" condensed="true" pageSize="10"/>
+	</g:FlowPanel>
+</ui:UiBinder>

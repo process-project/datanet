@@ -1,28 +1,37 @@
-package pl.cyfronet.datanet.web.client.widgets.repositorypanel;
+package pl.cyfronet.datanet.web.client.widgets.entitydatapanel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPresenter.DataCallback;
+import pl.cyfronet.datanet.web.client.controller.repository.RepositoryController;
+import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter.DataCallback;
 
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.Range;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 public class EntityRowDataProvider extends AsyncDataProvider<EntityRow> {
 	private Presenter presenter;
 	private String entityName;
+	private RepositoryController repositoryController;
+	private long repositoryId;
 	
-	public EntityRowDataProvider(String entityName, Presenter presenter) {
+	@Inject
+	public EntityRowDataProvider(@Assisted long repositoryId, @Assisted String entityName,
+			@Assisted Presenter presenter, RepositoryController repositoryController) {
+		this.repositoryId = repositoryId;
 		this.entityName = entityName;
 		this.presenter = presenter;
+		this.repositoryController = repositoryController;
 	}
 	
 	@Override
 	protected void onRangeChanged(HasData<EntityRow> display) {
 		final Range range = display.getVisibleRange();
-		presenter.getEntityRows(entityName, range.getStart(), range.getLength(), new DataCallback() {
+		repositoryController.getEntityRows(repositoryId, entityName, range.getStart(), range.getLength(), new DataCallback() {
 			@Override
 			public void onData(List<Map<String, String>> data) {
 				List<EntityRow> values = new ArrayList<EntityRow>();

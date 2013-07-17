@@ -8,8 +8,13 @@ import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.mvp.AppPlaceHistoryMapper;
 import pl.cyfronet.datanet.web.client.mvp.activity.ModelActivity;
 import pl.cyfronet.datanet.web.client.mvp.activity.RepositoryActivity;
+import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelWidget;
+import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityRowDataProvider;
+import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityRowDataProviderFactory;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanel;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.repositorypanel.EntityDataPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPanel;
@@ -43,6 +48,7 @@ public class DatanetClientModule extends AbstractGinModule {
 		bind(TopNavPresenter.View.class).to(TopNavPanel.class);
 		bind(ModelTreePanelPresenter.View.class).to(ModelTreePanel.class);
 		bind(RepositoryPanelPresenter.View.class).to(RepositoryPanelWidget.class);
+		bind(EntityDataPanelPresenter.View.class).to(EntityDataPanelWidget.class);
 	}
 
 	private void configureActivities() {
@@ -50,5 +56,9 @@ public class DatanetClientModule extends AbstractGinModule {
 				ModelActivity.class).build(ModelActivityFactory.class));
 		install(new GinFactoryModuleBuilder().implement(Activity.class,
 				RepositoryActivity.class).build(RepositoryActivityFactory.class));
+		install(new GinFactoryModuleBuilder().implement(EntityDataPanelPresenter.class,
+				EntityDataPanelPresenter.class).build(EntityDataPanelPresenterFactory.class));
+		install(new GinFactoryModuleBuilder().implement(EntityRowDataProvider.class,
+				EntityRowDataProvider.class).build(EntityRowDataProviderFactory.class));
 	}
 }

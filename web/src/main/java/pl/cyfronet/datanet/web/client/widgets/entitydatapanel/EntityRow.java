@@ -1,4 +1,4 @@
-package pl.cyfronet.datanet.web.client.widgets.repositorypanel;
+package pl.cyfronet.datanet.web.client.widgets.entitydatapanel;
 
 import java.util.Map;
 
