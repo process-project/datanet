@@ -1,4 +1,4 @@
-package pl.cyfronet.datanet.web.client.widgets.repositorypanel;
+package pl.cyfronet.datanet.web.client.di.factory;
 
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter;
 

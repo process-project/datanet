@@ -1,6 +1,7 @@
 package pl.cyfronet.datanet.web.client.di;
 
 import pl.cyfronet.datanet.web.client.ClientController;
+import pl.cyfronet.datanet.web.client.di.factory.EntityDataPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.di.factory.ModelActivityFactory;
 import pl.cyfronet.datanet.web.client.di.factory.RepositoryActivityFactory;
 import pl.cyfronet.datanet.web.client.di.factory.VersionActivityFactory;
@@ -16,7 +17,6 @@ import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityRowDataProvi
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityRowDataProviderFactory;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanel;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter;
-import pl.cyfronet.datanet.web.client.widgets.repositorypanel.EntityDataPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPanel;
@@ -44,6 +44,8 @@ public class DatanetClientModule extends AbstractGinModule {
 
 		configureViews();
 		configureActivities();
+		configurePresenterFactories();
+		configureDataProviderFactories();
 	}
 
 	private void configureViews() {
@@ -59,9 +61,15 @@ public class DatanetClientModule extends AbstractGinModule {
 		install(new GinFactoryModuleBuilder().implement(Activity.class,
 				VersionActivity.class).build(VersionActivityFactory.class));
 		install(new GinFactoryModuleBuilder().implement(Activity.class,
-				RepositoryActivity.class).build(RepositoryActivityFactory.class));
+				RepositoryActivity.class).build(RepositoryActivityFactory.class));		
+	}
+	
+	private void configurePresenterFactories() {
 		install(new GinFactoryModuleBuilder().implement(EntityDataPanelPresenter.class,
-				EntityDataPanelPresenter.class).build(EntityDataPanelPresenterFactory.class));
+				EntityDataPanelPresenter.class).build(EntityDataPanelPresenterFactory.class));		
+	}
+	
+	private void configureDataProviderFactories() {
 		install(new GinFactoryModuleBuilder().implement(EntityRowDataProvider.class,
 				EntityRowDataProvider.class).build(EntityRowDataProviderFactory.class));
 	}
