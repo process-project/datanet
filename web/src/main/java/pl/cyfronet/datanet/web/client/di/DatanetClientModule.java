@@ -1,6 +1,6 @@
 package pl.cyfronet.datanet.web.client.di;
 
-import pl.cyfronet.datanet.web.client.ClientController;
+import pl.cyfronet.datanet.web.client.controller.ClientController;
 import pl.cyfronet.datanet.web.client.di.factory.ModelActivityFactory;
 import pl.cyfronet.datanet.web.client.di.factory.RepositoryActivityFactory;
 import pl.cyfronet.datanet.web.client.di.factory.VersionActivityFactory;

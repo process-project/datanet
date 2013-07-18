@@ -5,12 +5,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class Model implements Serializable {
-
 	private static final long serialVersionUID = 7356373514701080184L;
 
 	private long id;
@@ -19,7 +17,6 @@ public class Model implements Serializable {
 	private List<Entity> entities;
 	
 	public Model() {
-	
 		entities = new ArrayList<Entity>();
 	}
 	

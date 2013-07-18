@@ -1,11 +1,25 @@
 package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
+import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.isLoading;
+import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.isModel;
+import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.isRepository;
+import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.isRoot;
+import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.isVersion;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController;
+import pl.cyfronet.datanet.web.client.controller.VersionController;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoriesCallback;
+import pl.cyfronet.datanet.web.client.controller.VersionController.VersionCallback;
+import pl.cyfronet.datanet.web.client.controller.VersionController.VersionsCallback;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
 import pl.cyfronet.datanet.web.client.event.model.VersionReleasedEvent;
@@ -13,11 +27,6 @@ import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelsCallback;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
-import pl.cyfronet.datanet.web.client.model.RepositoryController;
-import pl.cyfronet.datanet.web.client.model.RepositoryController.RepositoriesCallback;
-import pl.cyfronet.datanet.web.client.model.VersionController;
-import pl.cyfronet.datanet.web.client.model.VersionController.VersionCallback;
-import pl.cyfronet.datanet.web.client.model.VersionController.VersionsCallback;
 import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.RepositoryPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.VersionPlace;
@@ -31,11 +40,6 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.binder.EventBinder;
 import com.google.web.bindery.event.shared.binder.EventHandler;
-
-import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ModelTreePanelPresenter implements Presenter {
 	private static final Logger logger = LoggerFactory.getLogger(ModelTreePanelPresenter.class.getName());
@@ -65,7 +69,8 @@ public class ModelTreePanelPresenter implements Presenter {
 	private RepositoryController repositoryController;
 
 	@Inject
-	public ModelTreePanelPresenter(View view, ModelController modelController, VersionController versionController, RepositoryController repositoryController, 
+	public ModelTreePanelPresenter(View view, ModelController modelController,
+			VersionController versionController, RepositoryController repositoryController, 
 			PlaceController placeController, EventBus eventBus) {
 		this.view = view;
 		this.modelController = modelController;
@@ -290,10 +295,10 @@ public class ModelTreePanelPresenter implements Presenter {
 	
 	private void loadRepositoriesForVersion(final long versionId, final NextCallback callback) {
 		repositoryController.getRepositories(versionId, new RepositoriesCallback() {
-			
 			@Override
 			public void setRepositories(List<Repository> list) {
 				List<TreeItem> repoTreeItems = new ArrayList<TreeItem>();
+				
 				if (list != null) 
 					for (Repository version : list) {
 						TreeItem item = TreeItem.newRepository(version.getId(),
@@ -301,6 +306,7 @@ public class ModelTreePanelPresenter implements Presenter {
 						repoTreeItems.add(item);
 					}
 				view.setRepositories(versionId, repoTreeItems);
+				
 				if (callback != null) {
 					callback.next();
 				}

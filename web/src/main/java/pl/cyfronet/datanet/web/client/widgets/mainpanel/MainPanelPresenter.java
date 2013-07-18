@@ -1,6 +1,6 @@
 package pl.cyfronet.datanet.web.client.widgets.mainpanel;
 
-import pl.cyfronet.datanet.web.client.ClientController;
+import pl.cyfronet.datanet.web.client.controller.ClientController;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;

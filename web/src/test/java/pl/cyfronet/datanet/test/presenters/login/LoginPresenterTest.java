@@ -17,7 +17,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import pl.cyfronet.datanet.test.MockingUtil;
-import pl.cyfronet.datanet.web.client.ClientController;
+import pl.cyfronet.datanet.web.client.controller.ClientController;
 import pl.cyfronet.datanet.web.client.errors.LoginException;
 import pl.cyfronet.datanet.web.client.errors.LoginException.Code;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;

@@ -1,4 +1,4 @@
-package pl.cyfronet.datanet.web.client;
+package pl.cyfronet.datanet.web.client.controller;
 
 import com.google.gwt.i18n.client.Constants;
 

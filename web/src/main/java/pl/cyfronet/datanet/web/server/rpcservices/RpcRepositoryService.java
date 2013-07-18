@@ -17,13 +17,11 @@ import pl.cyfronet.datanet.deployer.DeployerException;
 import pl.cyfronet.datanet.deployer.marshaller.MarshallerException;
 import pl.cyfronet.datanet.deployer.marshaller.ModelSchemaGenerator;
 import pl.cyfronet.datanet.model.beans.Entity;
-import pl.cyfronet.datanet.model.beans.Field;
-import pl.cyfronet.datanet.model.beans.Field.Type;
-import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.model.beans.Version;
-import pl.cyfronet.datanet.web.client.errors.ModelException;
-import pl.cyfronet.datanet.web.client.errors.ModelException.Code;
+import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
+import pl.cyfronet.datanet.web.client.errors.RepositoryException;
+import pl.cyfronet.datanet.web.client.errors.RepositoryException.Code;
 import pl.cyfronet.datanet.web.client.services.RepositoryService;
 import pl.cyfronet.datanet.web.server.db.HibernateModelDao;
 import pl.cyfronet.datanet.web.server.db.HibernateRepositoryDao;
@@ -45,9 +43,10 @@ public class RpcRepositoryService implements RepositoryService {
 	@Autowired private HibernateModelDao modelDao;
 	@Autowired private HibernateVersionDao versionDao;
 	@Autowired private HibernateRepositoryDao repositoryDao;
+	@Autowired private JaxbEntityListBuilder jaxbEntityListBuilder;
 
 	@Override
-	public void deployModelVersion(Version modelVersion, String repositoryName) throws ModelException {
+	public void deployModelVersion(Version modelVersion, String repositoryName) throws RepositoryException {
 		try {
 			Map<String, String> models = modelSchemaGenerator.generateSchema(modelVersion);
 			deployer.deployRepository(Deployer.RepositoryType.Mongo, repositoryName, models);
@@ -58,27 +57,26 @@ public class RpcRepositoryService implements RepositoryService {
 			RepositoryDbEntity repository = new RepositoryDbEntity();
 			repository.setName(repositoryName);
 
-			if(repository.getOwners() == null) {
+			if (repository.getOwners() == null) {
 				repository.setOwners(new LinkedList<UserDbEntity>());
 			}
 			
 			repository.getOwners().add(user);
 			repository.setSourceModelVersion(versionDbEntity);
-			
 			repositoryDao.saveRepository(repository);
 		} catch (MarshallerException e) {
 			String message = "Could not marshall model";
 			log.error(message, e);
-			throw new ModelException(Code.ModelDeployError);
+			throw new RepositoryException(Code.ModelDeployError);
 		} catch (DeployerException de) {
 			log.error("Deployer authorization failure", de);
-			throw new ModelException(Code.ModelDeployError);
+			throw new RepositoryException(Code.ModelDeployError);
 		}
 	}
 
 	
 	@Override
-	public List<Repository> getRepositories() throws ModelException {
+	public List<Repository> getRepositories() throws RepositoryException {
 		try {
 			List<Repository> repositories = new LinkedList<>();
 			
@@ -94,12 +92,12 @@ public class RpcRepositoryService implements RepositoryService {
 		} catch (Exception e) {
 			String message = "Could not read available repositories";
 			log.error(message, e);
-			throw new ModelException(Code.RepositoryRetrievalError);
+			throw new RepositoryException(Code.RepositoryRetrievalError);
 		}
 	}
 
 	@Override
-	public void undeployRepository(long repositoryId) throws ModelException {
+	public void undeployRepository(long repositoryId) throws RepositoryException {
 		try {
 			RepositoryDbEntity repository = repositoryDao.getRepository(repositoryId);
 			String repositoryName = repository.getName().substring(4);
@@ -107,56 +105,37 @@ public class RpcRepositoryService implements RepositoryService {
 			repositoryDao.deleteRepository(repository);
 		} catch (DeployerException e) {
 			log.error("Deployer undeploy repository failure", e);
-			throw new ModelException(Code.RepositoryUndeployError);
+			throw new RepositoryException(Code.RepositoryUndeployError);
 		}
 	}
 
 	@Override
-	public Repository getRepository(long repositoryId) {
-		Repository repository = new Repository();
-		repository.setName("helloworld");
-		repository.setId(1);
+	public Repository getRepository(long repositoryId) throws RepositoryException {
+		try {
+			log.debug("Retrieving repository DB bean for id {}", repositoryId);
+			
+			RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
+			Repository repository = new Repository();
+			repository.setId(repositoryDbEntity.getId());
+			repository.setName(repositoryDbEntity.getName());
+			
+			VersionDbEntity versionDbEntity = repositoryDbEntity.getSourceModelVersion();
+			List<Entity> entitiesList = jaxbEntityListBuilder.deserialize(versionDbEntity.getModelXml());
+			Version version = new Version();
+			version.setId(versionDbEntity.getId());
+			version.setName(versionDbEntity.getName());
+			version.setTimestamp(versionDbEntity.getTimestamp());
+			version.setEntities(entitiesList);
+			version.setModelId(versionDbEntity.getModel().getId());
+			repository.setSourceModelVersion(version);
+			
+			return repository;
+		} catch (Exception e) {
+			String message = "Could not fetch repository bean from DB";
+			log.error(message, e);
+			throw new RepositoryException(Code.RepositoryRetrievalError);
+		}
 		
-		Version version = new Version();
-		version.setName("BasicModel");
-		version.setEntities(new ArrayList<Entity>());
-		
-		Field field = new Field();
-		field.setName("field1");
-		field.setType(Type.String);
-		field.setRequired(true);
-		
-		Entity e1 = new Entity();
-		e1.setName("Entity1");
-		e1.setFields(new ArrayList<Field>());
-		e1.getFields().add(field);
-		version.getEntities().add(e1);
-		
-		field = new Field();
-		field.setName("field2");
-		field.setType(Type.String);
-		field.setRequired(true);
-		
-		Entity e2 = new Entity();
-		e2.setName("Entity2");
-		e2.setFields(new ArrayList<Field>());
-		e2.getFields().add(field);
-		version.getEntities().add(e2);
-		
-		field = new Field();
-		field.setName("field3");
-		field.setType(Type.String);
-		field.setRequired(true);
-		
-		Entity e3 = new Entity();
-		e3.setName("Entity3");
-		e3.setFields(new ArrayList<Field>());
-		e3.getFields().add(field);
-		version.getEntities().add(e3);
-		
-		repository.setSourceModelVersion(version);
-		
-		return repository;
 	}
 
 	@Override

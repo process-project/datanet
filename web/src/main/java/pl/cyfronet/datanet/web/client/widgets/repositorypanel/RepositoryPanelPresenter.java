@@ -5,8 +5,8 @@ import java.util.Map;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Repository;
-import pl.cyfronet.datanet.web.client.controller.repository.RepositoryController;
-import pl.cyfronet.datanet.web.client.controller.repository.RepositoryController.RepositoryCallback;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter;
 
 import com.google.gwt.user.client.ui.IsWidget;

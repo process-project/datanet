@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.client;
 
+import pl.cyfronet.datanet.web.client.controller.ClientController;
 import pl.cyfronet.datanet.web.client.di.DatanetGinjector;
 
 import com.google.gwt.core.client.EntryPoint;

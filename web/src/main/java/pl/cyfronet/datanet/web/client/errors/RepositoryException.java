@@ -1,32 +1,31 @@
 package pl.cyfronet.datanet.web.client.errors;
 
-public class ModelException extends Exception {
+public class RepositoryException extends Exception {
 	private static final long serialVersionUID = 7569975052885032757L;
 
 	public enum Code {
 		Unknown,
-		ModelSaveError,
-		ModelNameNotUnique,
-		ModelRetrievalError,
-		VersionRetrievalError
+		RepositoryRetrievalError,
+		RepositoryUndeployError,
+		ModelDeployError
 	}
 	
 	private Code errorCode;
 	
-	public ModelException() {
+	public RepositoryException() {
 		errorCode = Code.Unknown;
 	}
 	
-	public ModelException(String message) {
+	public RepositoryException(String message) {
 		super(message);
 		errorCode = Code.Unknown;
 	}
 	
-	public ModelException(Code errorCode) {
+	public RepositoryException(Code errorCode) {
 		this.errorCode = errorCode;
 	}
 	
-	public ModelException(Code errorCode, String message) {
+	public RepositoryException(Code errorCode, String message) {
 		super(message);
 		this.errorCode = errorCode;
 	}

@@ -3,7 +3,7 @@
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.datanet.web.client.widgets.mainpanel.MainPanelMessages" field="messages" />
-	<ui:with type="pl.cyfronet.datanet.web.client.AppProperties" field="constants"/>
+	<ui:with type="pl.cyfronet.datanet.web.client.controller.AppProperties" field="constants"/>
 	<ui:style>
 					
 	</ui:style>

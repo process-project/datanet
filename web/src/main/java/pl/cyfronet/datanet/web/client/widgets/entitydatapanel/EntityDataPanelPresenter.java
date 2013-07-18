@@ -8,8 +8,8 @@ import java.util.Map;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Field.Type;
-import pl.cyfronet.datanet.web.client.controller.repository.RepositoryController;
-import pl.cyfronet.datanet.web.client.controller.repository.RepositoryController.EntityCallback;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController.EntityCallback;
 
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
