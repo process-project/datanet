@@ -79,18 +79,18 @@ public class RepositoryController {
 		});
 	}
 
-	public void getEntityRows(long repositoryId, String entityName, int start, int length, DataCallback dataCallback) {
-		//TODO(DH): make the data call to the server
-		if(dataCallback != null) {
-			List<Map<String, String>> result = new ArrayList<Map<String, String>>();
-			
-			for(int i = start; i < start + length; i++) {
-				Map<String, String> row = new HashMap<String, String>();
-				row.put("field1", "value " + i);
-				result.add(row);
+	public void getEntityRows(long repositoryId, final String entityName, int start, int length, final DataCallback dataCallback) {
+		repositoryService.getData(repositoryId, entityName, start, length, new AsyncCallback<List<Map<String, String>>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				eventBus.fireEvent(new NotificationEvent(
+						RepositoryNotificationMessage.repositoryEntityDataLoadError, NotificationType.ERROR, entityName));
 			}
-			
-			dataCallback.onData(result);
-		}
+			@Override
+			public void onSuccess(List<Map<String, String>> result) {
+				if (dataCallback != null) {
+					dataCallback.onData(result);
+				}
+			}});
 	}
 }

@@ -4,6 +4,7 @@ public enum RepositoryNotificationMessage implements NotificationMessage {
 	repositoryDeployed,
 	repositoryNotPresent,
 	repositoryLoadError,
+	repositoryEntityDataLoadError,
 	;
 
 	@Override

@@ -1,6 +1,7 @@
 package pl.cyfronet.datanet.web.server.rpcservices;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -152,5 +153,19 @@ public class RpcRepositoryService implements RepositoryService {
 		repository.setSourceModel(model);
 		
 		return repository;
+	}
+
+	@Override
+	public List<Map<String, String>> getData(long repositoryId, String entityName, int start, int length) {
+		//TODO(DH): make a repository call
+		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+		
+		for(int i = start; i < start + length; i++) {
+			Map<String, String> row = new HashMap<String, String>();
+			row.put("field1", "value " + i);
+			result.add(row);
+		}
+		
+		return result;
 	}
 }
