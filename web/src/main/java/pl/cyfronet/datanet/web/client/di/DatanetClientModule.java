@@ -1,6 +1,6 @@
 package pl.cyfronet.datanet.web.client.di;
 
-import pl.cyfronet.datanet.web.client.ClientController;
+import pl.cyfronet.datanet.web.client.controller.ClientController;
 import pl.cyfronet.datanet.web.client.di.factory.EntityDataPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.di.factory.EntityPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.di.factory.FieldPanelPresenterFactory;

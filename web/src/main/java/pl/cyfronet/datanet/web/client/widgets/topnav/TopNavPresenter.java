@@ -1,6 +1,6 @@
 package pl.cyfronet.datanet.web.client.widgets.topnav;
 
-import pl.cyfronet.datanet.web.client.ClientController;
+import pl.cyfronet.datanet.web.client.controller.ClientController;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPanel.MessageType;

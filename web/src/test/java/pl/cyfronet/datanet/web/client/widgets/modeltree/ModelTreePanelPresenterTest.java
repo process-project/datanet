@@ -24,14 +24,14 @@ import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.test.mock.matcher.ModelPlaceMatcher;
 import pl.cyfronet.datanet.test.mock.matcher.TreeItemMatcher;
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController;
+import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
 import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelsCallback;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
-import pl.cyfronet.datanet.web.client.model.RepositoryController;
-import pl.cyfronet.datanet.web.client.model.VersionController;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter.View;
 

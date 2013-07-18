@@ -1,4 +1,4 @@
-package pl.cyfronet.datanet.web.client;
+package pl.cyfronet.datanet.web.client.controller;
 
 import pl.cyfronet.datanet.web.client.event.notification.GenericNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;

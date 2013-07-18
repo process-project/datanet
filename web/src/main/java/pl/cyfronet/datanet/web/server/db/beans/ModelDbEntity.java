@@ -2,7 +2,6 @@ package pl.cyfronet.datanet.web.server.db.beans;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

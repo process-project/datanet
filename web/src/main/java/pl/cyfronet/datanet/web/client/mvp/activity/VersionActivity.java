@@ -5,8 +5,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import pl.cyfronet.datanet.model.beans.Version;
-import pl.cyfronet.datanet.web.client.model.VersionController;
-import pl.cyfronet.datanet.web.client.model.VersionController.VersionsCallback;
+import pl.cyfronet.datanet.web.client.controller.VersionController;
+import pl.cyfronet.datanet.web.client.controller.VersionController.VersionsCallback;
 
 import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.event.shared.EventBus;

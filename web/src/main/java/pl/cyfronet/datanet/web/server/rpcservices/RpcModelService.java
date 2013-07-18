@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Model;
@@ -32,19 +30,13 @@ import pl.cyfronet.datanet.web.server.util.SpringSecurityHelper;
 @Service("modelService")
 @Secured("ROLE_USER")
 public class RpcModelService implements ModelService {
-	private static final Logger log = LoggerFactory
-			.getLogger(RpcModelService.class);
+	private static final Logger log = LoggerFactory.getLogger(RpcModelService.class);
 
-	@Autowired
-	private HibernateModelDao modelDao;
-	@Autowired
-	private HibernateVersionDao versionDao;
-	@Autowired
-	private HibernateUserDao userDao;
-	@Autowired
-	private ModelBuilder modelBuilder;
-	@Autowired
-	private JaxbEntityListBuilder jaxbEntityListBuilder;
+	@Autowired private HibernateModelDao modelDao;
+	@Autowired private HibernateVersionDao versionDao;
+	@Autowired private HibernateUserDao userDao;
+	@Autowired private ModelBuilder modelBuilder;
+	@Autowired private JaxbEntityListBuilder jaxbEntityListBuilder;
 
 	
 	@Override
@@ -136,13 +128,6 @@ public class RpcModelService implements ModelService {
 			throw new ModelException(Code.ModelRetrievalError);
 		}
 	}
-
-	private UserDbEntity getUser() {
-		String login = (String) RequestContextHolder.getRequestAttributes()
-				.getAttribute("userLogin", RequestAttributes.SCOPE_SESSION);
-		UserDbEntity user = userDao.getUser(login);
-		return user;
-	}
 	
 	private Version getVersion(VersionDbEntity versionDbEnt) throws JAXBException  {
 		List<Entity> entitiesList = jaxbEntityListBuilder
@@ -153,6 +138,7 @@ public class RpcModelService implements ModelService {
 		version.setTimestamp(versionDbEnt.getTimestamp());
 		version.setEntities(entitiesList);
 		version.setModelId(versionDbEnt.getModel().getId());
+		
 		return version;
 	}
 	
@@ -168,7 +154,7 @@ public class RpcModelService implements ModelService {
 		} catch (Exception e) {
 			String message = "Could not retrieve versions for model " + modelId;
 			log.error(message, e);
-			throw new ModelException(Code.VersionRetreivalError);
+			throw new ModelException(Code.VersionRetrievalError);
 		}
 	}
 	
@@ -176,13 +162,15 @@ public class RpcModelService implements ModelService {
 	public Version getVersion(long versionId) throws ModelException {
 		VersionDbEntity versionDbEntity = versionDao.getVersion(versionId);
 		Version version;
+		
 		try {
 			version = getVersion(versionDbEntity);
+			
 			return version;
 		} catch (Exception e) {
 			String message = "Could not retrieve version" + versionId;
 			log.error(message, e);
-			throw new ModelException(Code.VersionRetreivalError);
+			throw new ModelException(Code.VersionRetrievalError);
 		}
 	}
 
@@ -196,6 +184,7 @@ public class RpcModelService implements ModelService {
 			versionDbEntity.setTimestamp(version.getTimestamp());
 			versionDao.saveVersion(modelId, versionDbEntity);
 			version.setId(versionDbEntity.getId());
+			
 			return version;
 		} catch (Exception e) {
 			String message = "Could not add version for model " + modelId;
@@ -203,5 +192,4 @@ public class RpcModelService implements ModelService {
 			throw new ModelException(Code.ModelSaveError);
 		}
 	}
-
 }

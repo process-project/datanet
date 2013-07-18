@@ -13,7 +13,6 @@ import pl.cyfronet.datanet.web.server.db.beans.VersionDbEntity;
 
 @Repository
 public class HibernateVersionDao {
-	
 	@Autowired private SessionFactory sessionFactory;
 
 	@Transactional
@@ -27,7 +26,7 @@ public class HibernateVersionDao {
 	
 	@Transactional
 	public VersionDbEntity getVersion(long versionId) {
-		return (VersionDbEntity)sessionFactory.getCurrentSession().get(VersionDbEntity.class, versionId);
+		return (VersionDbEntity) sessionFactory.getCurrentSession().get(VersionDbEntity.class, versionId);
 	}
 
 	@Transactional
@@ -41,5 +40,4 @@ public class HibernateVersionDao {
 	private ModelDbEntity getModel(long id) {
 		return (ModelDbEntity) sessionFactory.getCurrentSession().load(ModelDbEntity.class, id);
 	}
-	
 }

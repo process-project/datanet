@@ -1,6 +1,6 @@
 package pl.cyfronet.datanet.web.client.widgets.login;
 
-import pl.cyfronet.datanet.web.client.ClientController;
+import pl.cyfronet.datanet.web.client.controller.ClientController;
 import pl.cyfronet.datanet.web.client.errors.LoginException;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 

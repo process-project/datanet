@@ -1,4 +1,4 @@
-package pl.cyfronet.datanet.web.client.model;
+package pl.cyfronet.datanet.web.client.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +13,8 @@ import pl.cyfronet.datanet.web.client.event.model.VersionReleasedEvent;
 import pl.cyfronet.datanet.web.client.event.notification.ModelNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
+import pl.cyfronet.datanet.web.client.model.ModelController;
+import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.mvp.place.VersionPlace;
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
