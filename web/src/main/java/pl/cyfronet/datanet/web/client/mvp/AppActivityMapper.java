@@ -3,7 +3,9 @@ package pl.cyfronet.datanet.web.client.mvp;
 import pl.cyfronet.datanet.web.client.di.factory.ModelActivityFactory;
 import pl.cyfronet.datanet.web.client.di.factory.RepositoryActivityFactory;
 import pl.cyfronet.datanet.web.client.di.factory.VersionActivityFactory;
+import pl.cyfronet.datanet.web.client.mvp.activity.WelcomeActivity;
 import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
+import pl.cyfronet.datanet.web.client.mvp.place.RepositoryPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.VersionPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 
@@ -32,9 +34,7 @@ public class AppActivityMapper implements ActivityMapper {
 		Activity activity = null;
 		
 		if (place instanceof WelcomePlace) {
-			//TODO(DH): replace with welcome activity when repository panel tests are finished
-			activity = repositoryActivityFactory.create();
-//			activity = new WelcomeActivity();
+			activity = new WelcomeActivity();
 		} else if (place instanceof ModelPlace) {
 			if (place.equals(currentPlace)) {
 				activity = currentActivity;
@@ -48,6 +48,12 @@ public class AppActivityMapper implements ActivityMapper {
 			} else {
 				VersionPlace versionPlace = (VersionPlace) place;
 				activity = versionActivityFactory.create(versionPlace.getVersionId());
+			}
+		} else if (place instanceof RepositoryPlace) {
+			if (place.equals(currentPlace)) {
+				activity = currentActivity;
+			} else {
+				activity = repositoryActivityFactory.create();
 			}
 		}
 

@@ -3,7 +3,6 @@ package pl.cyfronet.datanet.model.beans;
 import java.io.Serializable;
 
 public class Version extends Model implements Serializable {
-
 	private static final long serialVersionUID = 6566696681377524989L;
 	
 	private long modelId;
@@ -26,6 +25,5 @@ public class Version extends Model implements Serializable {
 	
 	public void setModelId(long modelId) {
 		this.modelId = modelId;
-	}
-	
+	}	
 }
