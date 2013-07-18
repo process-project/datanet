@@ -1,21 +1,18 @@
 package pl.cyfronet.datanet.web.client.controller;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Repository;
-import pl.cyfronet.datanet.model.beans.Version;
-import pl.cyfronet.datanet.web.client.controller.VersionController.VersionCallback;
+import pl.cyfronet.datanet.web.client.callback.NextCallback;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
 import pl.cyfronet.datanet.web.client.services.RepositoryServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter.DataCallback;
 
-import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -36,19 +33,17 @@ public class RepositoryController {
 	private RepositoryServiceAsync repositoryService;
 	private EventBus eventBus;
 	private HashMap<Long, List<Repository>> repositories;
-	private VersionController versionController;
 	
 	
 	@Inject
-	public RepositoryController(RepositoryServiceAsync repositoryService, EventBus eventBus,
-			VersionController versionController) {
+	public RepositoryController(RepositoryServiceAsync repositoryService, EventBus eventBus) {
 		this.repositoryService = repositoryService;
 		this.eventBus = eventBus;
-		this.versionController = versionController;
 		repositories = new HashMap<Long, List<Repository>>();
 	}
 
 	public void getRepository(long repositoryId, final RepositoryCallback repositoryCallback) {
+		//TODO(DH): use cache
 		repositoryService.getRepository(repositoryId, new AsyncCallback<Repository>() {
 			@Override
 			public void onSuccess(Repository repository) {
@@ -65,6 +60,7 @@ public class RepositoryController {
 	}
 	
 	public void getEntity(long repositoryId, final String entityName, final EntityCallback entityCallback) {
+		//TODO(DH): use cache
 		repositoryService.getRepository(repositoryId, new AsyncCallback<Repository>() {
 			@Override
 			public void onSuccess(Repository repository) {
@@ -107,29 +103,35 @@ public class RepositoryController {
 			}});
 	}
 	
-	public void getRepositories(long versionId, final RepositoriesCallback callback, boolean forceRefresh) {
+	public void getRepositories(final long versionId, final RepositoriesCallback callback, boolean forceRefresh) {
 		if (repositories.get(versionId) == null || forceRefresh)
-			loadRepositories(versionId, callback);
+			loadRepositories(versionId, new NextCallback() {
+				@Override
+				public void next() {
+					if (callback != null) {
+						callback.setRepositories(repositories.get(versionId));
+					}
+				}
+			});
 		else
 			callback.setRepositories(repositories.get(versionId));
 	}
 	
-	private void loadRepositories(long versionId, RepositoriesCallback callback) {
-		fakeRepositories(versionId, callback);
-	}
-	
-	void fakeRepositories(final Long versionId, final RepositoriesCallback callback) {
-		versionController.getVersion(versionId, new VersionCallback() {
+	private void loadRepositories(final long versionId, final NextCallback nextCallback) {
+		repositoryService.getRepositories(versionId, new AsyncCallback<List<Repository>>() {
 			@Override
-			public void setVersion(Version version) {
-				final Repository repository = new Repository();
-				repository.setName("repo1");
-				repository.setId(Random.nextInt(100000));
-				repository.setSourceModelVersion(version);
-				LinkedList<Repository> linkedList = new LinkedList<Repository>();
-				linkedList.add(repository);
-				callback.setRepositories(linkedList);
+			public void onFailure(Throwable caught) {
+				eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryLoadError,
+						NotificationType.ERROR, caught.getMessage()));
 			}
-		});
+
+			@Override
+			public void onSuccess(List<Repository> result) {
+				repositories.put(versionId, result);
+				
+				if(nextCallback != null) {
+					nextCallback.next();
+				}
+			}});
 	}
 }

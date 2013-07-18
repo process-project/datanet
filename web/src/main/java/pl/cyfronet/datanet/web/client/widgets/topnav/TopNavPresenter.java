@@ -64,8 +64,7 @@ public class TopNavPresenter implements Presenter {
 	@EventHandler
 	void onNotification(NotificationEvent event) {
 		String message = getMessage(event.getMessageCode(), event.getMessageParams());
-		view.displayMessage(
-				message, getType(event));
+		view.displayMessage(message, getType(event));
 	}
 	
 	private MessageType getType(NotificationEvent event) {

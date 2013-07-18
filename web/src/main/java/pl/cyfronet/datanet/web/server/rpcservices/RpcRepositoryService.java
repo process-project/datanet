@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.JAXBException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,23 +117,11 @@ public class RpcRepositoryService implements RepositoryService {
 			log.debug("Retrieving repository DB bean for id {}", repositoryId);
 			
 			RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
-			Repository repository = new Repository();
-			repository.setId(repositoryDbEntity.getId());
-			repository.setName(repositoryDbEntity.getName());
-			
-			VersionDbEntity versionDbEntity = repositoryDbEntity.getSourceModelVersion();
-			List<Entity> entitiesList = jaxbEntityListBuilder.deserialize(versionDbEntity.getModelXml());
-			Version version = new Version();
-			version.setId(versionDbEntity.getId());
-			version.setName(versionDbEntity.getName());
-			version.setTimestamp(versionDbEntity.getTimestamp());
-			version.setEntities(entitiesList);
-			version.setModelId(versionDbEntity.getModel().getId());
-			repository.setSourceModelVersion(version);
+			Repository repository = createRepository(repositoryDbEntity);
 			
 			return repository;
 		} catch (Exception e) {
-			String message = "Could not fetch repository bean from DB";
+			String message = "Could not fetch repository bean from DB for repository id " + repositoryId;
 			log.error(message, e);
 			throw new RepositoryException(Code.RepositoryRetrievalError);
 		}
@@ -150,5 +140,39 @@ public class RpcRepositoryService implements RepositoryService {
 		}
 		
 		return result;
+	}
+
+
+	@Override
+	public List<Repository> getRepositories(long versionId) throws RepositoryException {
+		List<Repository> result = new ArrayList<>();
+		
+		try {
+			result = versionDao.getVersionRepositories(versionId);
+		} catch (Exception e) {
+			String message = "Could not fetch repository beans from DB for version id " + versionId;
+			log.error(message, e);
+			throw new RepositoryException(Code.RepositoryRetrievalError);
+		}
+		
+		return result;
+	}
+	
+	private Repository createRepository(RepositoryDbEntity repositoryDbEntity) throws JAXBException {
+		Repository repository = new Repository();
+		repository.setId(repositoryDbEntity.getId());
+		repository.setName(repositoryDbEntity.getName());
+		
+		VersionDbEntity versionDbEntity = repositoryDbEntity.getSourceModelVersion();
+		List<Entity> entitiesList = jaxbEntityListBuilder.deserialize(versionDbEntity.getModelXml());
+		Version version = new Version();
+		version.setId(versionDbEntity.getId());
+		version.setName(versionDbEntity.getName());
+		version.setTimestamp(versionDbEntity.getTimestamp());
+		version.setEntities(entitiesList);
+		version.setModelId(versionDbEntity.getModel().getId());
+		repository.setSourceModelVersion(version);
+		
+		return repository;
 	}
 }
