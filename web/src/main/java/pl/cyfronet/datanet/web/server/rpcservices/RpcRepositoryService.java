@@ -142,7 +142,6 @@ public class RpcRepositoryService implements RepositoryService {
 		return result;
 	}
 
-
 	@Override
 	public List<Repository> getRepositories(long versionId) throws RepositoryException {
 		List<Repository> result = new ArrayList<>();

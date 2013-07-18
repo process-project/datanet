@@ -85,7 +85,7 @@ public class TopNavPresenter implements Presenter {
 				String placeholder = "{" + i + "}";
 				
 				if(message.contains(placeholder)) {
-					message = message.replace(placeholder, messageParams[i]);
+					message = message.replace(placeholder, String.valueOf(messageParams[i]));
 				}
 			}
 		}
