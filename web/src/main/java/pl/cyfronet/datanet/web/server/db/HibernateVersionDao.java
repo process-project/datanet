@@ -33,8 +33,17 @@ public class HibernateVersionDao {
 	}
 	
 	@Transactional
-	public VersionDbEntity getVersion(long versionId) {
-		return (VersionDbEntity) sessionFactory.getCurrentSession().get(VersionDbEntity.class, versionId);
+	public Version getVersion(long versionId) throws JAXBException {
+		VersionDbEntity versionDbEntity = (VersionDbEntity) sessionFactory.getCurrentSession().get(VersionDbEntity.class, versionId);
+		List<Entity> entitiesList = jaxbEntityListBuilder.deserialize(versionDbEntity.getModelXml());
+		Version version = new Version();
+		version.setId(versionDbEntity.getId());
+		version.setName(versionDbEntity.getName());
+		version.setTimestamp(versionDbEntity.getTimestamp());
+		version.setEntities(entitiesList);
+		version.setModelId(versionDbEntity.getModel().getId());
+		
+		return version;
 	}
 
 	@Transactional
@@ -49,7 +58,7 @@ public class HibernateVersionDao {
 	@Transactional
 	public List<Repository> getVersionRepositories(long versionId) throws JAXBException {
 		List<Repository> result = new ArrayList<>();
-		VersionDbEntity versionDbEntity = getVersion(versionId);
+		VersionDbEntity versionDbEntity = (VersionDbEntity) sessionFactory.getCurrentSession().get(VersionDbEntity.class, versionId);
 		
 		for (RepositoryDbEntity repositoryDbEntity : versionDbEntity.getRepositories()) {
 			Repository repository = new Repository();
@@ -68,6 +77,11 @@ public class HibernateVersionDao {
 		}
 		
 		return result;
+	}
+	
+	@Transactional
+	public VersionDbEntity getVersionDbEntity(long versionId) {
+		return (VersionDbEntity) sessionFactory.getCurrentSession().get(VersionDbEntity.class, versionId);
 	}
 	
 	private ModelDbEntity getModel(long id) {

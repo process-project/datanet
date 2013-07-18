@@ -46,6 +46,7 @@ public class RpcModelService implements ModelService {
 		try {
 			// TODO: Create optimized DAO method for this case
 			List<ModelDbEntity> availableModels = modelDao.getModels();
+			
 			for (ModelDbEntity dbModel : availableModels) {
 				if (model.getName().equals(dbModel.getName())
 						&& model.getId() != dbModel.getId()) {
@@ -60,9 +61,11 @@ public class RpcModelService implements ModelService {
 			modelDbEntity.setTimestamp(model.getTimestamp());
 			modelDbEntity.setModelXml(jaxbEntityListBuilder
 					.serialize(model.getEntities()));
+			
 			if (modelDbEntity.getOwners() == null) {
 				modelDbEntity.setOwners(new ArrayList<UserDbEntity>());
 			}
+			
 			modelDbEntity.getOwners().add(user);
 			modelDao.saveModel(modelDbEntity);
 
@@ -160,13 +163,8 @@ public class RpcModelService implements ModelService {
 	
 	@Override
 	public Version getVersion(long versionId) throws ModelException {
-		VersionDbEntity versionDbEntity = versionDao.getVersion(versionId);
-		Version version;
-		
 		try {
-			version = getVersion(versionDbEntity);
-			
-			return version;
+			return versionDao.getVersion(versionId);
 		} catch (Exception e) {
 			String message = "Could not retrieve version" + versionId;
 			log.error(message, e);

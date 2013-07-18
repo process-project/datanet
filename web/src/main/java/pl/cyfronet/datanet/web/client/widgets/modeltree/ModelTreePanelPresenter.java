@@ -16,8 +16,9 @@ import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
-import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoriesCallback;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
+import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.controller.VersionController.VersionCallback;
 import pl.cyfronet.datanet.web.client.controller.VersionController.VersionsCallback;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
@@ -161,6 +162,7 @@ public class ModelTreePanelPresenter implements Presenter {
 	@Override
 	public void onReleaseVersion() {
 		final TreeItem model = view.getSelectedObject();
+		
 		if (isModel(model))
 			versionController.releaseNewVersion(model.getId(), new VersionCallback() {
 				@Override
@@ -224,6 +226,24 @@ public class ModelTreePanelPresenter implements Presenter {
 		} else if (isVersion(item)) {
 			loadRepositoriesForVersion(item.getId(), null);
 		}
+	}
+	
+	@Override
+	public void onDeploy() {
+		final TreeItem version = view.getSelectedObject();
+		
+		if (isVersion(version))
+			repositoryController.deployRepository(version.getId(), new RepositoryCallback() {
+				@Override
+				public void setRepository(final Repository repository) {
+					loadRepositoriesForVersion(version.getId(), new NextCallback() {
+						@Override
+						public void next() {
+							placeController.goTo(new RepositoryPlace(repository.getId()));
+						}
+					});
+				}
+			});
 	}
 
 	@EventHandler

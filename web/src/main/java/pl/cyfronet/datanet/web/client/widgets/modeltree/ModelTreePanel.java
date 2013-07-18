@@ -21,33 +21,18 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 public class ModelTreePanel extends Composite implements View {
-	private static ModelTreePanelUiBinder uiBinder = GWT
-			.create(ModelTreePanelUiBinder.class);
+	private static ModelTreePanelUiBinder uiBinder = GWT.create(ModelTreePanelUiBinder.class);
+	interface ModelTreePanelUiBinder extends UiBinder<Widget, ModelTreePanel> {}
 
-	interface ModelTreePanelUiBinder extends UiBinder<Widget, ModelTreePanel> {
-	}
-
-	@UiField(provided = true)
-	CellTree modelsTree;
-
-	@UiField
-	Button remove;
-
-	@UiField
-	Button save;
-
-	@UiField
-	Button deploy;
-	
-	@UiField
-	Button releaseVersion;
+	@UiField(provided = true) CellTree modelsTree;
+	@UiField Button remove;
+	@UiField Button save;
+	@UiField Button deploy;
+	@UiField Button releaseVersion;
 
 	private ModelTreeViewModel model;
-
 	private ModelTreePanelMessageses messages;
-
 	private Presenter presenter;
-
 	private SingleSelectionModel<TreeItem> selection;
 
 	public ModelTreePanel() {
@@ -87,6 +72,11 @@ public class ModelTreePanel extends Composite implements View {
 	@UiHandler("releaseVersion")
 	void onReleaseVersion(ClickEvent event) {
 		presenter.onReleaseVersion();
+	}
+	
+	@UiHandler("deploy")
+	void onDeploy(ClickEvent event) {
+		presenter.onDeploy();
 	}
 	
 	@Override
@@ -170,6 +160,4 @@ public class ModelTreePanel extends Composite implements View {
 		reposotoriesProvider.updateRowCount(repoTreeItems.size(), true);
 		reposotoriesProvider.updateRowData(0, repoTreeItems);
 	}
-
-
 }

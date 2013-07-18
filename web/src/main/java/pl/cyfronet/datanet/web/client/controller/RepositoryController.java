@@ -117,6 +117,26 @@ public class RepositoryController {
 			callback.setRepositories(repositories.get(versionId));
 	}
 	
+	public void deployRepository(long versionId, final RepositoryCallback repositoryCallback) {
+		repositoryService.deployModelVersion(versionId, new AsyncCallback<Repository>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				eventBus.fireEvent(new NotificationEvent(
+						RepositoryNotificationMessage.repositoryDeployError, NotificationType.ERROR, caught.getMessage()));
+			}
+
+			@Override
+			public void onSuccess(Repository repository) {
+				eventBus.fireEvent(new NotificationEvent(
+						RepositoryNotificationMessage.repositoryDeployed, NotificationType.SUCCESS));
+				
+				if (repositoryCallback != null) {
+					repositoryCallback.setRepository(repository);
+				}
+			}
+		});
+	}
+	
 	private void loadRepositories(final long versionId, final NextCallback nextCallback) {
 		repositoryService.getRepositories(versionId, new AsyncCallback<List<Repository>>() {
 			@Override

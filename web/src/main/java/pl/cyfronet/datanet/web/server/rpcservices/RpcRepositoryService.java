@@ -48,36 +48,6 @@ public class RpcRepositoryService implements RepositoryService {
 	@Autowired private JaxbEntityListBuilder jaxbEntityListBuilder;
 
 	@Override
-	public void deployModelVersion(Version modelVersion, String repositoryName) throws RepositoryException {
-		try {
-			Map<String, String> models = modelSchemaGenerator.generateSchema(modelVersion);
-			deployer.deployRepository(Deployer.RepositoryType.Mongo, repositoryName, models);
-			
-			UserDbEntity user = userDao.getUser(SpringSecurityHelper.getUserLogin());
-			VersionDbEntity versionDbEntity = versionDao.getVersion(modelVersion.getId());
-			
-			RepositoryDbEntity repository = new RepositoryDbEntity();
-			repository.setName(repositoryName);
-
-			if (repository.getOwners() == null) {
-				repository.setOwners(new LinkedList<UserDbEntity>());
-			}
-			
-			repository.getOwners().add(user);
-			repository.setSourceModelVersion(versionDbEntity);
-			repositoryDao.saveRepository(repository);
-		} catch (MarshallerException e) {
-			String message = "Could not marshall model";
-			log.error(message, e);
-			throw new RepositoryException(Code.ModelDeployError);
-		} catch (DeployerException de) {
-			log.error("Deployer authorization failure", de);
-			throw new RepositoryException(Code.ModelDeployError);
-		}
-	}
-
-	
-	@Override
 	public List<Repository> getRepositories() throws RepositoryException {
 		try {
 			List<Repository> repositories = new LinkedList<>();
@@ -155,6 +125,40 @@ public class RpcRepositoryService implements RepositoryService {
 		}
 		
 		return result;
+	}
+	
+	@Override
+	public Repository deployModelVersion(long versionId) throws RepositoryException {
+		try {
+			Version version = versionDao.getVersion(versionId);
+			Map<String, String> models = modelSchemaGenerator.generateSchema(version);
+			deployer.deployRepository(Deployer.RepositoryType.Mongo, version.getName(), models);
+			
+			UserDbEntity user = userDao.getUser(SpringSecurityHelper.getUserLogin());
+			
+			RepositoryDbEntity repository = new RepositoryDbEntity();
+			repository.setName(version.getName());
+
+			if (repository.getOwners() == null) {
+				repository.setOwners(new LinkedList<UserDbEntity>());
+			}
+			
+			repository.getOwners().add(user);
+			repository.setSourceModelVersion(versionDao.getVersionDbEntity(versionId));
+			repositoryDao.saveRepository(repository);
+			
+			return createRepository(repository);
+		} catch (MarshallerException e) {
+			String message = "Could not marshall model";
+			log.error(message, e);
+			throw new RepositoryException(Code.ModelDeployError, e.getMessage());
+		} catch (DeployerException e) {
+			log.error("Deployer authorization failure", e);
+			throw new RepositoryException(Code.ModelDeployError, e.getMessage());
+		} catch (Exception e) {
+			log.error("Repository deployment failure", e);
+			throw new RepositoryException(Code.ModelDeployError, e.getMessage());
+		}
 	}
 	
 	private Repository createRepository(RepositoryDbEntity repositoryDbEntity) throws JAXBException {

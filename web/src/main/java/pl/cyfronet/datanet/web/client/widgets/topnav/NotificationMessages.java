@@ -22,6 +22,7 @@ public interface NotificationMessages extends ConstantsWithLookup {
 	String repositoryNotPresent();
 	String repositoryLoadError();
 	String repositoryEntityDataLoadError();
+	String repositoryDeployError();
 	
 	String rpcError();
 }
