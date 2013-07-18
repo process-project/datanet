@@ -6,9 +6,11 @@ import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelPresenter;
 
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 public class FieldPanelPresenter implements Presenter {
-	interface View extends IsWidget {
+	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
 		HasText getName();
 		void selectType(Type type);
@@ -20,7 +22,8 @@ public class FieldPanelPresenter implements Presenter {
 	private Field field;
 	private EntityPanelPresenter entityPanelPresenter;
 	
-	public FieldPanelPresenter(EntityPanelPresenter entityPanelPresenter, View view) {
+	@Inject
+	public FieldPanelPresenter(@Assisted EntityPanelPresenter entityPanelPresenter, View view) {
 		this.view = view;
 		view.setPresenter(this);
 		this.entityPanelPresenter = entityPanelPresenter;

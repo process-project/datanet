@@ -5,12 +5,14 @@ import java.util.List;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
+import pl.cyfronet.datanet.web.client.di.factory.FieldPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.widgets.fieldpanel.FieldPanelPresenter;
-import pl.cyfronet.datanet.web.client.widgets.fieldpanel.FieldPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 public class EntityPanelPresenter implements Presenter {
 	public interface View extends IsWidget {
@@ -21,13 +23,17 @@ public class EntityPanelPresenter implements Presenter {
 
 	private View view;
 	private ModelPanelPresenter modelPanelPresenter;
+	private FieldPanelPresenterFactory fieldFactory;
 	private List<FieldPanelPresenter> fieldPanelPresenters;
-	private Entity entity;
+	private Entity entity;	
 
-	public EntityPanelPresenter(ModelPanelPresenter modelPanelPresenter, View view) {
+	@Inject
+	public EntityPanelPresenter(@Assisted ModelPanelPresenter modelPanelPresenter, View view, FieldPanelPresenterFactory fieldFactory) {
 		this.view = view;
 		view.setPresenter(this);
 		this.modelPanelPresenter = modelPanelPresenter;
+		this.fieldFactory = fieldFactory;
+		
 		fieldPanelPresenters = new ArrayList<FieldPanelPresenter>();
 		entity = new Entity();
 		setEntity(entity);
@@ -48,7 +54,7 @@ public class EntityPanelPresenter implements Presenter {
 		fieldPanelPresenters.clear();
 		
 		for(Field field : entity.getFields()) {
-			FieldPanelPresenter fieldPanelPresenter = new FieldPanelPresenter(this, new FieldPanelWidget());
+			FieldPanelPresenter fieldPanelPresenter = fieldFactory.create(this);
 			fieldPanelPresenter.setField(field);
 			fieldPanelPresenters.add(fieldPanelPresenter);
 			view.getFieldContainer().add(fieldPanelPresenter.getWidget().asWidget());
@@ -62,7 +68,7 @@ public class EntityPanelPresenter implements Presenter {
 
 	@Override
 	public void onNewField() {
-		FieldPanelPresenter fieldPanelPresenter = new FieldPanelPresenter(this, new FieldPanelWidget());
+		FieldPanelPresenter fieldPanelPresenter = fieldFactory.create(this);
 		fieldPanelPresenters.add(fieldPanelPresenter);
 		view.getFieldContainer().add(fieldPanelPresenter.getWidget().asWidget());
 		entity.getFields().add(fieldPanelPresenter.getField());
@@ -71,7 +77,7 @@ public class EntityPanelPresenter implements Presenter {
 
 	public void removeField(FieldPanelPresenter fieldPanelPresenter) {
 		view.getFieldContainer().remove(fieldPanelPresenter.getWidget().asWidget());
-		fieldPanelPresenters.remove(fieldPanelPresenter);
+		fieldPanelPresenters.remove(fieldPanelPresenter);		
 		entityChanged();
 	}
 	
@@ -81,7 +87,7 @@ public class EntityPanelPresenter implements Presenter {
 		entityChanged();
 	}
 	
-	public void entityChanged() {
+	public void entityChanged() {		
 		modelPanelPresenter.modelChanged();
 	}
 }

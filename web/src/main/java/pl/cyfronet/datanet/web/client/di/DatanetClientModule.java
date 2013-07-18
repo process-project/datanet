@@ -2,7 +2,10 @@ package pl.cyfronet.datanet.web.client.di;
 
 import pl.cyfronet.datanet.web.client.ClientController;
 import pl.cyfronet.datanet.web.client.di.factory.EntityDataPanelPresenterFactory;
+import pl.cyfronet.datanet.web.client.di.factory.EntityPanelPresenterFactory;
+import pl.cyfronet.datanet.web.client.di.factory.FieldPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.di.factory.ModelActivityFactory;
+import pl.cyfronet.datanet.web.client.di.factory.ModelPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.di.factory.RepositoryActivityFactory;
 import pl.cyfronet.datanet.web.client.di.factory.VersionActivityFactory;
 import pl.cyfronet.datanet.web.client.di.provider.PlaceControllerProvider;
@@ -15,6 +18,12 @@ import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPre
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityRowDataProvider;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityRowDataProviderFactory;
+import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelWidget;
+import pl.cyfronet.datanet.web.client.widgets.fieldpanel.FieldPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.fieldpanel.FieldPanelWidget;
+import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanel;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPresenter;
@@ -53,6 +62,10 @@ public class DatanetClientModule extends AbstractGinModule {
 		bind(ModelTreePanelPresenter.View.class).to(ModelTreePanel.class);
 		bind(RepositoryPanelPresenter.View.class).to(RepositoryPanelWidget.class);
 		bind(EntityDataPanelPresenter.View.class).to(EntityDataPanelWidget.class);
+		
+		bind(ModelPanelPresenter.View.class).to(ModelPanelWidget.class);
+		bind(EntityPanelPresenter.View.class).to(EntityPanelWidget.class);
+		bind(FieldPanelPresenter.View.class).to(FieldPanelWidget.class);
 	}
 
 	private void configureActivities() {
@@ -66,9 +79,20 @@ public class DatanetClientModule extends AbstractGinModule {
 	
 	private void configurePresenterFactories() {
 		install(new GinFactoryModuleBuilder().implement(EntityDataPanelPresenter.class,
-				EntityDataPanelPresenter.class).build(EntityDataPanelPresenterFactory.class));		
+				EntityDataPanelPresenter.class).build(EntityDataPanelPresenterFactory.class));	
+		
+		configureModelPresenterFactories();		
 	}
 	
+	private void configureModelPresenterFactories() {
+		install(new GinFactoryModuleBuilder().implement(ModelPanelPresenter.class,
+				ModelPanelPresenter.class).build(ModelPanelPresenterFactory.class));
+		install(new GinFactoryModuleBuilder().implement(EntityPanelPresenter.class,
+				EntityPanelPresenter.class).build(EntityPanelPresenterFactory.class));
+		install(new GinFactoryModuleBuilder().implement(FieldPanelPresenter.class,
+				FieldPanelPresenter.class).build(FieldPanelPresenterFactory.class));		
+	}
+
 	private void configureDataProviderFactories() {
 		install(new GinFactoryModuleBuilder().implement(EntityRowDataProvider.class,
 				EntityRowDataProvider.class).build(EntityRowDataProviderFactory.class));

@@ -3,11 +3,11 @@ package pl.cyfronet.datanet.web.client.mvp.activity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pl.cyfronet.datanet.web.client.di.factory.ModelPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter;
-import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelWidget;
 
 import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.event.shared.EventBus;
@@ -24,10 +24,13 @@ public class ModelActivity extends AbstractActivity {
 
 	private Long modelId;
 
+	private ModelPanelPresenterFactory modelPanelFactory;
+
 	@Inject
-	public ModelActivity(ModelController modelController, @Assisted Long modelId) {
+	public ModelActivity(ModelController modelController, @Assisted Long modelId, ModelPanelPresenterFactory modelPanelFactory) {
 		this.modelController = modelController;
 		this.modelId = modelId;
+		this.modelPanelFactory = modelPanelFactory;
 	}
 
 	@Override
@@ -36,8 +39,7 @@ public class ModelActivity extends AbstractActivity {
 		modelController.getModel(modelId, new ModelCallback() {
 			@Override
 			public void setModel(ModelProxy model) {
-				ModelPanelPresenter presenter = new ModelPanelPresenter(
-						new ModelPanelWidget(), eventBus);
+				ModelPanelPresenter presenter = modelPanelFactory.create();
 				presenter.setModel(model);
 				panel.setWidget(presenter.getWidget());
 			}
