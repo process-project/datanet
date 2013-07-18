@@ -30,7 +30,6 @@ public class ModelPanelPresenter implements Presenter {
 		void setPresenter(Presenter presenter);
 		HasWidgets getEntityContainer();
 		void setModelName(String name);
-		void setModelVersion(String version);
 	}
 
 	public ModelPanelPresenter(View view, EventBus eventBus) {
@@ -47,7 +46,6 @@ public class ModelPanelPresenter implements Presenter {
 	public void setModel(ModelProxy model) {
 		this.model = model;
 		view.setModelName(model.getName());
-		view.setModelVersion(model.getVersion());
 		view.getEntityContainer().clear();
 		entityPanelPresenters.clear();
 
@@ -93,12 +91,6 @@ public class ModelPanelPresenter implements Presenter {
 	@Override
 	public void onModelNameChanged(String modelName) {
 		model.setName(modelName);
-		modelChanged();
-	}
-
-	@Override
-	public void onModelVersionChanged(String versionName) {
-		model.setVersion(versionName);
 		modelChanged();
 	}
 

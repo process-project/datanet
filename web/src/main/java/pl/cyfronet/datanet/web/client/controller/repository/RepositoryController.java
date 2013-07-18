@@ -58,9 +58,9 @@ public class RepositoryController {
 				if(entityCallback != null) {
 					Entity result = null;
 					
-					if(repository != null && repository.getSourceModel() != null &&
-							repository.getSourceModel().getEntities() != null) {
-						for(Entity entity : repository.getSourceModel().getEntities()) {
+					if(repository != null && repository.getSourceModelVersion() != null &&
+							repository.getSourceModelVersion().getEntities() != null) {
+						for(Entity entity : repository.getSourceModelVersion().getEntities()) {
 							if(entity != null && entity.getName().equals(entityName)) {
 								result = entity;
 								break;

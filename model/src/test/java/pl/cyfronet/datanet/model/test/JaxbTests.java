@@ -30,12 +30,10 @@ public class JaxbTests {
 		String modelVersion = "1.0";
 		Model model = new Model();
 		model.setName(modelName);
-		model.setVersion(modelVersion);
 		
 		String document = modelBuilder.serialize(model);
 		Model result = modelBuilder.deserialize(document);
 		Assert.assertEquals(modelName, result.getName());
-		Assert.assertEquals(modelVersion, result.getVersion());
 	}
 	
 	@Test

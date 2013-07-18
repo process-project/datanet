@@ -55,15 +55,15 @@ public class RepositoryPanelPresenter implements Presenter {
 	private void showRepository(Repository repository) {
 		view.setRepositoryLink(REPO_TEMPLATE.replace("{repo}", repository.getName()));
 		
-		if(repository.getSourceModel() != null && repository.getSourceModel().getEntities() != null) {
-			for(Entity entity : repository.getSourceModel().getEntities()) {
+		if(repository.getSourceModelVersion() != null && repository.getSourceModelVersion().getEntities() != null) {
+			for(Entity entity : repository.getSourceModelVersion().getEntities()) {
 				entityDataPanelPresenters.put(entity.getName(),
 						entityDataPanelPresenterFactory.create(repositoryId, entity.getName()));
 				view.addEntity(entity.getName(), entityDataPanelPresenters.get(entity.getName()).getWidget());
 				entityDataPanelPresenters.get(entity.getName()).show();
 			}
 			
-			if(repository.getSourceModel().getEntities().size() > 0) {
+			if(repository.getSourceModelVersion().getEntities().size() > 0) {
 				view.showEntity(0);
 			}
 		}

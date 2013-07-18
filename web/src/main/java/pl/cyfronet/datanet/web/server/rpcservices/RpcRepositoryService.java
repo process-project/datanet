@@ -21,15 +21,17 @@ import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Field.Type;
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.beans.Repository;
+import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
 import pl.cyfronet.datanet.web.client.errors.ModelException.Code;
 import pl.cyfronet.datanet.web.client.services.RepositoryService;
 import pl.cyfronet.datanet.web.server.db.HibernateModelDao;
 import pl.cyfronet.datanet.web.server.db.HibernateRepositoryDao;
 import pl.cyfronet.datanet.web.server.db.HibernateUserDao;
-import pl.cyfronet.datanet.web.server.db.beans.ModelDbEntity;
+import pl.cyfronet.datanet.web.server.db.HibernateVersionDao;
 import pl.cyfronet.datanet.web.server.db.beans.RepositoryDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
+import pl.cyfronet.datanet.web.server.db.beans.VersionDbEntity;
 import pl.cyfronet.datanet.web.server.util.SpringSecurityHelper;
 
 @Service("repositoryService")
@@ -41,26 +43,27 @@ public class RpcRepositoryService implements RepositoryService {
 	@Autowired private ModelSchemaGenerator modelSchemaGenerator;
 	@Autowired private HibernateUserDao userDao;
 	@Autowired private HibernateModelDao modelDao;
+	@Autowired private HibernateVersionDao versionDao;
 	@Autowired private HibernateRepositoryDao repositoryDao;
-	
+
 	@Override
-	public void deployModel(Model model) throws ModelException {
+	public void deployModelVersion(Version modelVersion, String repositoryName) throws ModelException {
 		try {
-			Map<String, String> models = modelSchemaGenerator.generateSchema(model);
-			deployer.deployRepository(Deployer.RepositoryType.Mongo, model.getName(), models);
+			Map<String, String> models = modelSchemaGenerator.generateSchema(modelVersion);
+			deployer.deployRepository(Deployer.RepositoryType.Mongo, repositoryName, models);
 			
 			UserDbEntity user = userDao.getUser(SpringSecurityHelper.getUserLogin());
-			ModelDbEntity modelDbEntity = modelDao.getModel(model.getId());
+			VersionDbEntity versionDbEntity = versionDao.getVersion(modelVersion.getId());
 			
 			RepositoryDbEntity repository = new RepositoryDbEntity();
-			repository.setName(model.getName());
-			
+			repository.setName(repositoryName);
+
 			if(repository.getOwners() == null) {
 				repository.setOwners(new LinkedList<UserDbEntity>());
 			}
 			
 			repository.getOwners().add(user);
-			repository.setSourceModel(modelDbEntity);
+			repository.setSourceModelVersion(versionDbEntity);
 			
 			repositoryDao.saveRepository(repository);
 		} catch (MarshallerException e) {
@@ -73,6 +76,7 @@ public class RpcRepositoryService implements RepositoryService {
 		}
 	}
 
+	
 	@Override
 	public List<Repository> getRepositories() throws ModelException {
 		try {
@@ -82,7 +86,7 @@ public class RpcRepositoryService implements RepositoryService {
 				Repository repository = new Repository();
 				repository.setId(repositoryDbEntity.getId());
 				repository.setName(repositoryDbEntity.getName());
-				repository.setSourceModel(repository.getSourceModel());
+				repository.setSourceModelVersion(repository.getSourceModelVersion());
 				repositories.add(repository);
 			}
 			
@@ -113,9 +117,9 @@ public class RpcRepositoryService implements RepositoryService {
 		repository.setName("helloworld");
 		repository.setId(1);
 		
-		Model model = new Model();
-		model.setName("BasicModel");
-		model.setEntities(new ArrayList<Entity>());
+		Version version = new Version();
+		version.setName("BasicModel");
+		version.setEntities(new ArrayList<Entity>());
 		
 		Field field = new Field();
 		field.setName("field1");
@@ -126,7 +130,7 @@ public class RpcRepositoryService implements RepositoryService {
 		e1.setName("Entity1");
 		e1.setFields(new ArrayList<Field>());
 		e1.getFields().add(field);
-		model.getEntities().add(e1);
+		version.getEntities().add(e1);
 		
 		field = new Field();
 		field.setName("field2");
@@ -137,7 +141,7 @@ public class RpcRepositoryService implements RepositoryService {
 		e2.setName("Entity2");
 		e2.setFields(new ArrayList<Field>());
 		e2.getFields().add(field);
-		model.getEntities().add(e2);
+		version.getEntities().add(e2);
 		
 		field = new Field();
 		field.setName("field3");
@@ -148,9 +152,9 @@ public class RpcRepositoryService implements RepositoryService {
 		e3.setName("Entity3");
 		e3.setFields(new ArrayList<Field>());
 		e3.getFields().add(field);
-		model.getEntities().add(e3);
+		version.getEntities().add(e3);
 		
-		repository.setSourceModel(model);
+		repository.setSourceModelVersion(version);
 		
 		return repository;
 	}

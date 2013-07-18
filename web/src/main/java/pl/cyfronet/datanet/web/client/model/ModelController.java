@@ -1,6 +1,7 @@
 package pl.cyfronet.datanet.web.client.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -78,7 +79,6 @@ public class ModelController {
 			@Override
 			public void setModels(List<ModelProxy> models) {
 				ModelProxy model = getCachedModel(modelId);
-
 				if (model == null) {
 					loadModel(modelId, callback);
 				} else {
@@ -165,6 +165,7 @@ public class ModelController {
 
 	private void saveModel(final ModelProxy modelProxy,
 			final ModelCallback callback) {
+		modelProxy.setTimestamp(new Date());
 		modelService.saveModel(modelProxy.getModel(),
 				new AsyncCallback<Model>() {
 					@Override

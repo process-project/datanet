@@ -26,7 +26,7 @@ public class HibernateModelDao {
 	public ModelDbEntity getModel(long id) {
 		return (ModelDbEntity) sessionFactory.getCurrentSession().get(ModelDbEntity.class, id);
 	}
-	
+
 	@Transactional
 	@SuppressWarnings("unchecked")
 	public List<ModelDbEntity> getModels() {
@@ -65,4 +65,5 @@ public class HibernateModelDao {
 		ModelDbEntity model = getModel(login, modelId);
 		sessionFactory.getCurrentSession().delete(model);
 	}
+
 }

@@ -3,7 +3,6 @@ package pl.cyfronet.datanet.web.server.db.beans;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -17,7 +16,7 @@ public class RepositoryDbEntity {
 	private long id;
 	private String name;
 	@OneToOne
-	private ModelDbEntity sourceModel;
+	private VersionDbEntity sourceModelVersion;
 	@ManyToMany(cascade = { CascadeType.PERSIST })
 	private List<UserDbEntity> owners;
 
@@ -37,12 +36,12 @@ public class RepositoryDbEntity {
 		this.name = name;
 	}
 
-	public ModelDbEntity getSourceModel() {
-		return sourceModel;
+	public VersionDbEntity getSourceModelVersion() {
+		return sourceModelVersion;
 	}
 
-	public void setSourceModel(ModelDbEntity sourceModel) {
-		this.sourceModel = sourceModel;
+	public void setSourceModelVersion(VersionDbEntity sourceModelVersion) {
+		this.sourceModelVersion = sourceModelVersion;
 	}
 
 	public List<UserDbEntity> getOwners() {
@@ -56,6 +55,7 @@ public class RepositoryDbEntity {
 	@Override
 	public String toString() {
 		return "RepositoryDbEntity [id=" + id + ", name=" + name
-				+ ", sourceModel=" + sourceModel + ", owners=" + owners + "]";
+				+ ", sourceModelVersion=" + sourceModelVersion + ", owners="
+				+ owners + "]";
 	}
 }

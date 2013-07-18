@@ -11,9 +11,12 @@ public interface Presenter {
 
 	void onSave();
 	
+	void onReleaseVersion();
+	
 	void onRemove();
 	
 	void onSelected();
 
 	void loadChildren(TreeItem parent);	
+	
 }
