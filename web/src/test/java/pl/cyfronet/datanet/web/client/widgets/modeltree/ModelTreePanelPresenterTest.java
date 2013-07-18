@@ -259,7 +259,7 @@ public class ModelTreePanelPresenterTest {
 	public void shouldSelectCleanModel() throws Exception {
 		ModelProxy model = givenModel(false, false);
 		whenUserClicksOnModel(model.getId());
-		thenModelSelected(model.getId(), true, false);
+		thenModelSelected(model.getId(), false, false);
 	}
 
 	private ModelProxy givenModel(boolean newModel, boolean dirty) {
@@ -286,14 +286,14 @@ public class ModelTreePanelPresenterTest {
 		verify(view, times(1)).setRemoveEnabled(true);
 		verify(view, times(1)).setDeployEnabled(deployEnabled);
 		verify(view, times(1)).setSaveEnabled(saveEnabled);
-		verify(view, times(1)).setSelected(eq(TreeItem.newModel(modelId)));
+		verify(view, times(1)).setOpenedAndSelected(eq(TreeItem.newModel(modelId)));
 	}
 
 	@Test
 	public void shouldSelectDirtyModel() throws Exception {
 		ModelProxy model = givenModel(false, true);
 		whenUserClicksOnModel(model.getId());
-		thenModelSelected(model.getId(), true, true);
+		thenModelSelected(model.getId(), false, true);
 	}
 
 	@Test
@@ -317,7 +317,7 @@ public class ModelTreePanelPresenterTest {
 		verify(view, times(1)).setRemoveEnabled(false);
 		verify(view, times(1)).setDeployEnabled(false);
 		verify(view, times(1)).setSaveEnabled(false);
-		verify(view, times(1)).setSelected(null);
+		verify(view, times(1)).setOpenedAndSelected(null);
 	}
 
 	@Test
@@ -343,7 +343,7 @@ public class ModelTreePanelPresenterTest {
 		verify(view, times(1)).setModels(
 				argThat(new TreeItemMatcher(TreeItem.newModel(m1.getId()),
 						TreeItem.newModel(m2.getId()))));
-		verify(view, times(1)).setSelected(TreeItem.newModel(m1.getId()));
+		verify(view, times(1)).setOpenedAndSelected(TreeItem.newModel(m1.getId()));
 	}
 
 	@Test
