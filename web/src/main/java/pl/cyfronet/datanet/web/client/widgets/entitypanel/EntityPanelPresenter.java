@@ -78,6 +78,7 @@ public class EntityPanelPresenter implements Presenter {
 	public void removeField(FieldPanelPresenter fieldPanelPresenter) {
 		view.getFieldContainer().remove(fieldPanelPresenter.getWidget().asWidget());
 		fieldPanelPresenters.remove(fieldPanelPresenter);		
+		entity.getFields().remove(fieldPanelPresenter.getField());
 		entityChanged();
 	}
 	
