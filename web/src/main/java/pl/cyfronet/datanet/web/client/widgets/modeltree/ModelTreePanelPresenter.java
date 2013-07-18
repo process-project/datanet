@@ -38,48 +38,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ModelTreePanelPresenter implements Presenter {
-	interface ModelTreePanelEventBinder extends
-			EventBinder<ModelTreePanelPresenter> {
-	}
-
-	private final ModelTreePanelEventBinder eventBinder = GWT
-			.create(ModelTreePanelEventBinder.class);
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(ModelTreePanelPresenter.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(ModelTreePanelPresenter.class.getName());
+	
+	interface ModelTreePanelEventBinder extends EventBinder<ModelTreePanelPresenter> {}
+	private final ModelTreePanelEventBinder eventBinder = GWT.create(ModelTreePanelEventBinder.class);
 
 	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
-
 		void reload();
-
 		void setSelected(TreeItem item);
-		
 		void setOpenedAndSelected(TreeItem item);
-
 		TreeItem getSelectedObject();
-
 		void setSaveEnabled(boolean enabled);
-
 		void setRemoveEnabled(boolean enabled);
-
 		void setReleaseVersionEnabled(boolean enabled);
-		
 		void setDeployEnabled(boolean enabled);
-
 		void setModels(List<TreeItem> modelTreeItems);
-		
 		void setVersions(long modelId, List<TreeItem> versionTreeItems);
-		
 		void setRepositories(long versionId, List<TreeItem> repoTreeItems);
-		
 	}
 
 	private View view;
 	private ModelController modelController;
 	private VersionController versionController;
 	private PlaceController placeController;
-
 	private RepositoryController repositoryController;
 
 	@Inject
@@ -93,64 +75,6 @@ public class ModelTreePanelPresenter implements Presenter {
 
 		eventBinder.bindEventHandlers(this, eventBus);
 		view.setPresenter(this);
-	}
-
-	private void refreshModelList(final NextCallback callback) {
-		modelController.getModels(new ModelsCallback() {
-			@Override
-			public void setModels(List<ModelProxy> models) {
-				List<TreeItem> modelTreeItems = new ArrayList<TreeItem>();
-				for (ModelProxy model : models) {
-					TreeItem item = TreeItem.newModel(model.getId(),
-							model.getName());
-					item.setDirty(model.isDirty());
-					modelTreeItems.add(item);
-				}
-				view.setModels(modelTreeItems);
-				if (callback != null) {
-					callback.next();
-				}
-			}
-		}, false);
-	}
-	
-	private void loadVersionsForModel(final long modelId, final NextCallback callback) {
-		versionController.getVersions(modelId, new VersionsCallback() {
-			@Override
-			public void setVersions(List<Version> versions) {
-				List<TreeItem> versionTreeItems = new ArrayList<TreeItem>();
-				if (versions != null) 
-					for (Version version : versions) {
-						TreeItem item = TreeItem.newVersion(version.getId(),
-								version.getName());
-						versionTreeItems.add(item);
-					}
-				view.setVersions(modelId, versionTreeItems);
-				if (callback != null) {
-					callback.next();
-				}
-			}
-		}, false);
-	}
-	
-	private void loadRepositoriesForVersion(final long versionId, final NextCallback callback) {
-		repositoryController.getRepositories(versionId, new RepositoriesCallback() {
-			
-			@Override
-			public void setRepositories(List<Repository> list) {
-				List<TreeItem> repoTreeItems = new ArrayList<TreeItem>();
-				if (list != null) 
-					for (Repository version : list) {
-						TreeItem item = TreeItem.newRepository(version.getId(),
-								version.getName());
-						repoTreeItems.add(item);
-					}
-				view.setRepositories(versionId, repoTreeItems);
-				if (callback != null) {
-					callback.next();
-				}
-			}
-		}, false);
 	}
 
 	@Override
@@ -325,5 +249,62 @@ public class ModelTreePanelPresenter implements Presenter {
 			}
 		});
 	}
-
+	
+	private void refreshModelList(final NextCallback callback) {
+		modelController.getModels(new ModelsCallback() {
+			@Override
+			public void setModels(List<ModelProxy> models) {
+				List<TreeItem> modelTreeItems = new ArrayList<TreeItem>();
+				for (ModelProxy model : models) {
+					TreeItem item = TreeItem.newModel(model.getId(),
+							model.getName());
+					item.setDirty(model.isDirty());
+					modelTreeItems.add(item);
+				}
+				view.setModels(modelTreeItems);
+				if (callback != null) {
+					callback.next();
+				}
+			}
+		}, false);
+	}
+	
+	private void loadVersionsForModel(final long modelId, final NextCallback callback) {
+		versionController.getVersions(modelId, new VersionsCallback() {
+			@Override
+			public void setVersions(List<Version> versions) {
+				List<TreeItem> versionTreeItems = new ArrayList<TreeItem>();
+				if (versions != null) 
+					for (Version version : versions) {
+						TreeItem item = TreeItem.newVersion(version.getId(),
+								version.getName());
+						versionTreeItems.add(item);
+					}
+				view.setVersions(modelId, versionTreeItems);
+				if (callback != null) {
+					callback.next();
+				}
+			}
+		}, false);
+	}
+	
+	private void loadRepositoriesForVersion(final long versionId, final NextCallback callback) {
+		repositoryController.getRepositories(versionId, new RepositoriesCallback() {
+			
+			@Override
+			public void setRepositories(List<Repository> list) {
+				List<TreeItem> repoTreeItems = new ArrayList<TreeItem>();
+				if (list != null) 
+					for (Repository version : list) {
+						TreeItem item = TreeItem.newRepository(version.getId(),
+								version.getName());
+						repoTreeItems.add(item);
+					}
+				view.setRepositories(versionId, repoTreeItems);
+				if (callback != null) {
+					callback.next();
+				}
+			}
+		}, false);
+	}
 }
