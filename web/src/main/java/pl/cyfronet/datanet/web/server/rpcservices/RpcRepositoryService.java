@@ -19,6 +19,7 @@ import pl.cyfronet.datanet.deployer.DeployerException;
 import pl.cyfronet.datanet.deployer.marshaller.MarshallerException;
 import pl.cyfronet.datanet.deployer.marshaller.ModelSchemaGenerator;
 import pl.cyfronet.datanet.model.beans.Entity;
+import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
@@ -29,6 +30,7 @@ import pl.cyfronet.datanet.web.server.db.HibernateModelDao;
 import pl.cyfronet.datanet.web.server.db.HibernateRepositoryDao;
 import pl.cyfronet.datanet.web.server.db.HibernateUserDao;
 import pl.cyfronet.datanet.web.server.db.HibernateVersionDao;
+import pl.cyfronet.datanet.web.server.db.beans.ModelDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.RepositoryDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.VersionDbEntity;
@@ -131,21 +133,24 @@ public class RpcRepositoryService implements RepositoryService {
 	public Repository deployModelVersion(long versionId) throws RepositoryException {
 		try {
 			Version version = versionDao.getVersion(versionId);
+			ModelDbEntity modelDbEntity = modelDao.getModel(version.getModelId());
 			Map<String, String> models = modelSchemaGenerator.generateSchema(version);
-			deployer.deployRepository(Deployer.RepositoryType.Mongo, version.getName(), models);
+			deployer.deployRepository(Deployer.RepositoryType.Mongo, modelDbEntity.getName(), models);
 			
 			UserDbEntity user = userDao.getUser(SpringSecurityHelper.getUserLogin());
 			
 			RepositoryDbEntity repository = new RepositoryDbEntity();
-			repository.setName(version.getName());
+			repository.setName(modelDbEntity.getName());
 
 			if (repository.getOwners() == null) {
 				repository.setOwners(new LinkedList<UserDbEntity>());
 			}
 			
+			VersionDbEntity versionDbEntity = versionDao.getVersionDbEntity(versionId);
 			repository.getOwners().add(user);
-			repository.setSourceModelVersion(versionDao.getVersionDbEntity(versionId));
+			repository.setSourceModelVersion(versionDbEntity);
 			repositoryDao.saveRepository(repository);
+			versionDao.addVersionRepository(versionDbEntity, repository);
 			
 			return createRepository(repository);
 		} catch (MarshallerException e) {

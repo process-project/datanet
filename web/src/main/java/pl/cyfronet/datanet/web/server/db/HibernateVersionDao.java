@@ -84,6 +84,14 @@ public class HibernateVersionDao {
 		return (VersionDbEntity) sessionFactory.getCurrentSession().get(VersionDbEntity.class, versionId);
 	}
 	
+	@Transactional
+	public void addVersionRepository(VersionDbEntity versionDbEntity, RepositoryDbEntity repository) {
+		//the first update makes the object attached to the session
+		sessionFactory.getCurrentSession().update(versionDbEntity);
+		versionDbEntity.getRepositories().add(repository);
+		sessionFactory.getCurrentSession().update(versionDbEntity);
+	}
+	
 	private ModelDbEntity getModel(long id) {
 		return (ModelDbEntity) sessionFactory.getCurrentSession().load(ModelDbEntity.class, id);
 	}

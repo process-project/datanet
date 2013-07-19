@@ -40,8 +40,7 @@ public class AppActivityMapper implements ActivityMapper {
 			if (place.equals(currentPlace)) {
 				activity = currentActivity;
 			} else {
-				activity = modelActivityFactory.create(((ModelPlace) place)
-						.getModelId());
+				activity = modelActivityFactory.create(((ModelPlace) place).getModelId());
 			}
 		} else if (place instanceof VersionPlace) {
 			if (place.equals(currentPlace)) {
@@ -54,7 +53,8 @@ public class AppActivityMapper implements ActivityMapper {
 			if (place.equals(currentPlace)) {
 				activity = currentActivity;
 			} else {
-				activity = repositoryActivityFactory.create();
+				RepositoryPlace repositoryPlace = (RepositoryPlace) place;
+				activity = repositoryActivityFactory.create(repositoryPlace.getRepositoryId());
 			}
 		}
 

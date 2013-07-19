@@ -1,14 +1,13 @@
 package pl.cyfronet.datanet.web.client.mvp.place;
 
-
 public class RepositoryPlace extends TokenizablePlace {
 	private Long repositoryId;
 
-	public RepositoryPlace(Long repositoryId) {
+	public RepositoryPlace(long repositoryId) {
 		this.repositoryId = repositoryId;
 	}
 	
-	public Long getVersionId() {
+	public long getRepositoryId() {
 		return repositoryId;
 	}
 	
@@ -49,5 +48,4 @@ public class RepositoryPlace extends TokenizablePlace {
 			return false;
 		return true;
 	}
-
 }

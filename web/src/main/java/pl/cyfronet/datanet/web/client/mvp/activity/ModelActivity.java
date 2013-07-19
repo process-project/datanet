@@ -16,18 +16,15 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 public class ModelActivity extends AbstractActivity {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(ModelActivity.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(ModelActivity.class.getName());
 
 	private ModelController modelController;
-
 	private Long modelId;
-
 	private ModelPanelPresenterFactory modelPanelFactory;
 
 	@Inject
-	public ModelActivity(ModelController modelController, @Assisted Long modelId, ModelPanelPresenterFactory modelPanelFactory) {
+	public ModelActivity(ModelController modelController, @Assisted Long modelId,
+			ModelPanelPresenterFactory modelPanelFactory) {
 		this.modelController = modelController;
 		this.modelId = modelId;
 		this.modelPanelFactory = modelPanelFactory;
