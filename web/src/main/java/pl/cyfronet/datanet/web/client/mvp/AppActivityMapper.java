@@ -27,6 +27,7 @@ public class AppActivityMapper implements ActivityMapper {
 			VersionActivityFactory versionActivityFactory) {
 		this.modelActivityFactory = modelActivityFactory;
 		this.repositoryActivityFactory = repositoryActivityFactory;
+		this.versionActivityFactory = versionActivityFactory;
 	}
 
 	@Override
