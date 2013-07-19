@@ -17,7 +17,7 @@ public class ModelValidator {
 		EMPTY_MODEL_NAME,
 		INVALID_CHARS_MODEL_NAME,
 		EMPTY_MODEL_VERSION,
-		NULL_ENTITY_LIST,
+		EMPTY_ENTITIES_LIST,
 		EMPTY_ENTITY_NAME,
 		NULL_FIELD_LIST,
 		EMPTY_FIELD_NAME,
@@ -47,7 +47,7 @@ public class ModelValidator {
 	}
 
 	private void validateEntities(List<Entity> entities, List<ModelError> result) {
-		if(entities != null) {
+		if(entities != null && entities.size() > 0) {
 			for(Entity entity : entities) {
 				if(entity.getName() == null || entity.getName().trim().isEmpty()) {
 					result.add(ModelError.EMPTY_ENTITY_NAME);
@@ -60,7 +60,7 @@ public class ModelValidator {
 				validateFields(entity.getFields(), result);
 			}
 		} else {
-			result.add(ModelError.NULL_ENTITY_LIST);
+			result.add(ModelError.EMPTY_ENTITIES_LIST);
 		}
 	}
 
