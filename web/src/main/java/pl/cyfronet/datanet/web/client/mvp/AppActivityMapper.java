@@ -33,7 +33,7 @@ public class AppActivityMapper implements ActivityMapper {
 	@Override
 	public Activity getActivity(Place place) {
 		Activity activity = null;
-		
+	
 		if (place instanceof WelcomePlace) {
 			activity = new WelcomeActivity();
 		} else if (place instanceof ModelPlace) {
