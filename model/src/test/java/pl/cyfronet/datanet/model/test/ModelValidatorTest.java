@@ -1,6 +1,7 @@
 package pl.cyfronet.datanet.model.test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -61,19 +62,31 @@ public class ModelValidatorTest {
 			Assert.assertTrue(errors.contains(ModelError.INVALID_CHARS_MODEL_NAME));
 		}
 	}
-	
+
 	@Test
 	public void shouldNotAllowEmptyEntitiesList() throws Exception {
 		Model model = new Model();
 		model.setName("name");
-		
+
 		//null entities list
 		List<ModelError> errors = validator.validateModel(model);
 		Assert.assertTrue(errors.contains(ModelError.EMPTY_ENTITIES_LIST));
-		
+
 		// empty list
 		model.setEntities(new ArrayList<Entity>());
 		errors = validator.validateModel(model);
 		Assert.assertTrue(errors.contains(ModelError.EMPTY_ENTITIES_LIST));
+	}
+
+	@Test
+	public void shouldNotAllowEntityWithEmptyFieldsList() throws Exception {
+		Model model = new Model();
+		Entity entity = new Entity();
+
+		model.setName("name");
+		model.setEntities(Arrays.asList(entity));
+
+		List<ModelError> errors = validator.validateModel(model);
+		Assert.assertTrue(errors.contains(ModelError.EMPTY_FIELDS_LIST));
 	}
 }

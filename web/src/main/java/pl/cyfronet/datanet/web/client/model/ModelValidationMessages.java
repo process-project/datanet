@@ -11,7 +11,7 @@ public interface ModelValidationMessages extends ConstantsWithLookup {
 	String emptyModelVersion();
 	String emptyEntitiesList();
 	String emptyEntityName();
-	String nullFieldList();
+	String emptyFieldsList();
 	String emptyFieldName();
 	String nullFieldType();
 }

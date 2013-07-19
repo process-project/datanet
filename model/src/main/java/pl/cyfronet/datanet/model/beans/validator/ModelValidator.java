@@ -19,11 +19,11 @@ public class ModelValidator {
 		EMPTY_MODEL_VERSION,
 		EMPTY_ENTITIES_LIST,
 		EMPTY_ENTITY_NAME,
-		NULL_FIELD_LIST,
+		EMPTY_FIELDS_LIST,
 		EMPTY_FIELD_NAME,
 		NULL_FIELD_TYPE,
 		INVALID_CHARS_ENTITY_NAME,
-		INVALID_CHARS_FIELD_NAME
+		INVALID_CHARS_FIELD_NAME, 
 	}
 	
 	public List<ModelError> validateModel(Model model) {
@@ -65,7 +65,7 @@ public class ModelValidator {
 	}
 
 	private void validateFields(List<Field> fields, List<ModelError> result) {
-		if(fields != null) {
+		if(fields != null && fields.size() > 0) {
 			for(Field field : fields) {
 				if(field.getName() == null || field.getName().trim().isEmpty()) {
 					result.add(ModelError.EMPTY_FIELD_NAME);
@@ -80,7 +80,7 @@ public class ModelValidator {
 				}
 			}
 		} else {
-			result.add(ModelError.NULL_FIELD_LIST);
+			result.add(ModelError.EMPTY_FIELDS_LIST);
 		}
 	}
 }
