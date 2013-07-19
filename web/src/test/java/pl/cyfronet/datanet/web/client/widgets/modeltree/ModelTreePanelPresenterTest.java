@@ -184,6 +184,7 @@ public class ModelTreePanelPresenterTest {
 	private void thenModelRemovedFromCacheAndServer() {
 		verify(modelController, times(1)).deleteModel(eq(m1.getId()),
 				any(NextCallback.class));
+		verify(view, times(1)).setSelected(null);
 		verify(view, times(1)).setModels(
 				argThat(new TreeItemMatcher(TreeItem.newModel(m2.getId()))));
 		verify(placeController, times(1)).goTo(any(WelcomePlace.class));

@@ -128,6 +128,7 @@ public class ModelTreePanelPresenter implements Presenter {
 		modelController.deleteModel(item.getId(), new NextCallback() {
 			@Override
 			public void next() {
+				view.setSelected(null);
 				refreshModelList(new NextCallback() {
 					@Override
 					public void next() {

@@ -113,10 +113,7 @@ public class ModelProxy extends Model {
 		if (getClass() != obj.getClass())
 			return false;
 		ModelProxy other = (ModelProxy) obj;
-		if (newModelId == null) {
-			if (other.newModelId != null)
-				return false;
-		} else if (!newModelId.equals(other.newModelId))
+		if (getId() != other.getId())
 			return false;
 		return true;
 	}
