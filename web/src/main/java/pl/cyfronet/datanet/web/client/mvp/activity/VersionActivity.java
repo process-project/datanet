@@ -8,10 +8,10 @@ import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.controller.VersionController.VersionsCallback;
 
+import com.github.gwtbootstrap.client.ui.Label;
 import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -43,7 +43,7 @@ public class VersionActivity extends AbstractActivity {
 			public void setVersions(List<Version> versions) {
 				for (Version version : versions) {
 					if (version.getId() == versionId) {
-						panel.setWidget(new Widget());
+						panel.setWidget(new Label("TODO"));
 						break; 
 					}
 				}
