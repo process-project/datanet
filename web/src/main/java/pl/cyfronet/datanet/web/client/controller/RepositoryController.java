@@ -2,11 +2,11 @@ package pl.cyfronet.datanet.web.client.controller;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
+import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
@@ -89,14 +89,14 @@ public class RepositoryController {
 	}
 
 	public void getEntityRows(long repositoryId, final String entityName, int start, int length, final DataCallback dataCallback) {
-		repositoryService.getData(repositoryId, entityName, start, length, new AsyncCallback<List<Map<String, String>>>() {
+		repositoryService.getData(repositoryId, entityName, start, length, new AsyncCallback<EntityData>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				eventBus.fireEvent(new NotificationEvent(
 						RepositoryNotificationMessage.repositoryEntityDataLoadError, NotificationType.ERROR, entityName));
 			}
 			@Override
-			public void onSuccess(List<Map<String, String>> result) {
+			public void onSuccess(EntityData result) {
 				if (dataCallback != null) {
 					dataCallback.onData(result);
 				}

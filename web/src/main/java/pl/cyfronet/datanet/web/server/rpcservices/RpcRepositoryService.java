@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.server.rpcservices;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -13,16 +14,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 
 import pl.cyfronet.datanet.deployer.Deployer;
 import pl.cyfronet.datanet.deployer.DeployerException;
 import pl.cyfronet.datanet.deployer.marshaller.MarshallerException;
 import pl.cyfronet.datanet.deployer.marshaller.ModelSchemaGenerator;
 import pl.cyfronet.datanet.model.beans.Entity;
-import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
+import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 import pl.cyfronet.datanet.web.client.errors.RepositoryException;
 import pl.cyfronet.datanet.web.client.errors.RepositoryException.Code;
 import pl.cyfronet.datanet.web.client.services.RepositoryService;
@@ -34,6 +36,7 @@ import pl.cyfronet.datanet.web.server.db.beans.ModelDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.RepositoryDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.VersionDbEntity;
+import pl.cyfronet.datanet.web.server.services.repositoryclient.RepositoryClient;
 import pl.cyfronet.datanet.web.server.util.SpringSecurityHelper;
 
 @Service("repositoryService")
@@ -48,6 +51,7 @@ public class RpcRepositoryService implements RepositoryService {
 	@Autowired private HibernateVersionDao versionDao;
 	@Autowired private HibernateRepositoryDao repositoryDao;
 	@Autowired private JaxbEntityListBuilder jaxbEntityListBuilder;
+	@Autowired private RepositoryClient repositoryClient;
 
 	@Override
 	public List<Repository> getRepositories() throws RepositoryException {
@@ -59,6 +63,7 @@ public class RpcRepositoryService implements RepositoryService {
 				repository.setId(repositoryDbEntity.getId());
 				repository.setName(repositoryDbEntity.getName());
 				repository.setSourceModelVersion(repository.getSourceModelVersion());
+				repository.setUrl(repositoryDbEntity.getUrl());
 				repositories.add(repository);
 			}
 			
@@ -101,17 +106,18 @@ public class RpcRepositoryService implements RepositoryService {
 	}
 
 	@Override
-	public List<Map<String, String>> getData(long repositoryId, String entityName, int start, int length) {
-		//TODO(DH): make a repository call
-		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
-		
-		for(int i = start; i < start + length; i++) {
-			Map<String, String> row = new HashMap<String, String>();
-			row.put("field1", "value " + i);
-			result.add(row);
+	public EntityData getData(long repositoryId, String entityName, int start, int length) throws RepositoryException {
+		try {
+			RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
+			log.debug("Retrieving repository data for url {} entity {} start index {} and length {}",
+					new Object[] {repositoryDbEntity.getUrl(), entityName, start, length});
+			
+			return repositoryClient.retrieveRepositoryData(repositoryDbEntity.getUrl(), entityName, start, length);
+		} catch (Exception e) {
+			String message = "Repository data retrieval error occurred";
+			log.error(message, e);
+			throw new RepositoryException(Code.RepositoryDataRetrievalError, message, e);
 		}
-		
-		return result;
 	}
 
 	@Override
@@ -135,7 +141,7 @@ public class RpcRepositoryService implements RepositoryService {
 			Version version = versionDao.getVersion(versionId);
 			ModelDbEntity modelDbEntity = modelDao.getModel(version.getModelId());
 			Map<String, String> models = modelSchemaGenerator.generateSchema(version);
-			deployer.deployRepository(Deployer.RepositoryType.Mongo, modelDbEntity.getName(), models);
+			String repositoryUrl = deployer.deployRepository(Deployer.RepositoryType.Mongo, modelDbEntity.getName(), models);
 			
 			UserDbEntity user = userDao.getUser(SpringSecurityHelper.getUserLogin());
 			
@@ -149,6 +155,7 @@ public class RpcRepositoryService implements RepositoryService {
 			VersionDbEntity versionDbEntity = versionDao.getVersionDbEntity(versionId);
 			repository.getOwners().add(user);
 			repository.setSourceModelVersion(versionDbEntity);
+			repository.setUrl(repositoryUrl);
 			repositoryDao.saveRepository(repository);
 			versionDao.addVersionRepository(versionDbEntity, repository);
 			
@@ -170,6 +177,7 @@ public class RpcRepositoryService implements RepositoryService {
 		Repository repository = new Repository();
 		repository.setId(repositoryDbEntity.getId());
 		repository.setName(repositoryDbEntity.getName());
+		repository.setUrl(repositoryDbEntity.getUrl());
 		
 		VersionDbEntity versionDbEntity = repositoryDbEntity.getSourceModelVersion();
 		List<Entity> entitiesList = jaxbEntityListBuilder.deserialize(versionDbEntity.getModelXml());

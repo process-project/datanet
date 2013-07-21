@@ -10,6 +10,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +26,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
@@ -182,5 +187,17 @@ public class SpringConfiguration {
 	@Bean
 	public ModelSchemaGenerator modelMarshaller() {
 		return new ModelSchemaGenerator();
+	}
+	
+	@Bean
+	public RestTemplate restTemplate() {
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		BasicCredentialsProvider credentialsProvider =  new BasicCredentialsProvider();
+		credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("", ""));
+		httpClient.setCredentialsProvider(credentialsProvider);
+		HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory =
+				new HttpComponentsClientHttpRequestFactory(httpClient);
+		
+		return new RestTemplate(httpComponentsClientHttpRequestFactory);
 	}
 }

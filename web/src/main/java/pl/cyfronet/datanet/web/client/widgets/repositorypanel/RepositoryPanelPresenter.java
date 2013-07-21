@@ -14,8 +14,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 
 public class RepositoryPanelPresenter implements Presenter {
-	private static final String REPO_TEMPLATE = "http://{repo}.datanet.cyfronet.pl";
-
 	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
 		void setRepositoryLink(String link);
@@ -54,7 +52,7 @@ public class RepositoryPanelPresenter implements Presenter {
 	}
 	
 	private void showRepository(Repository repository) {
-		view.setRepositoryLink(REPO_TEMPLATE.replace("{repo}", repository.getName()));
+		view.setRepositoryLink(repository.getUrl());
 		
 		if(repository.getSourceModelVersion() != null && repository.getSourceModelVersion().getEntities() != null) {
 			for(Entity entity : repository.getSourceModelVersion().getEntities()) {

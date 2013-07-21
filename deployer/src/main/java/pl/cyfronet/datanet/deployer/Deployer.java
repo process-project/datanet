@@ -14,10 +14,10 @@ import org.cloudfoundry.client.lib.CloudFoundryClient;
 import org.cloudfoundry.client.lib.CloudFoundryException;
 import org.cloudfoundry.client.lib.CloudService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Deployer {
-	
-	private static final Logger logger = org.slf4j.LoggerFactory.getLogger(Deployer.class);
+	private static final Logger log = LoggerFactory.getLogger(Deployer.class);
 	
 	public enum RepositoryType {
 		Mongo("mongodb");
@@ -26,6 +26,7 @@ public class Deployer {
 		public String getServiceTypeName() {
 			return serviceTypeName;
 		}
+		
 		RepositoryType(String serviceTypeName) {
 			this.serviceTypeName = serviceTypeName;
 		}
@@ -50,18 +51,21 @@ public class Deployer {
 	/**
 	 * 
 	 * @param repositoryType
-	 * @param models key: entity name, value: entity JSON Schema
-	 * @throws DeployerException 
-	 * @throws IOException 
-	 * @throws ZipException 
+	 * @param repositoryName
+	 * @param models
+	 * @return repository URL
+	 * @throws DeployerException
 	 */
-	public void deployRepository(RepositoryType repositoryType, String repositoryName, Map<String, String> models) throws DeployerException {
+	public String deployRepository(RepositoryType repositoryType, String repositoryName, Map<String, String> models) throws DeployerException {
 		MapperBuilder builder = builders.get(repositoryType);
+		String url = null;
+		
 		if (builder == null) {
-			logger.warn(String.format("Mapper builder for service type '%s' not found", repositoryType.getServiceTypeName()));
-			return; 
+			log.warn("Mapper builder for service type '{}' not found", repositoryType.getServiceTypeName());
+			throw new DeployerException("Mapper builder for service type '" + repositoryType.getServiceTypeName() + "' not found");
 		}
-		logger.debug(String.format("Deploying repository '%s'", repositoryName));
+		
+		log.debug("Deploying repository '{}'", repositoryName);
 		
 		CloudFoundryClient client = prepareNewClient();
 		DeployService deployService = null;
@@ -72,28 +76,31 @@ public class Deployer {
 			File mapperDirectory = builder.buildMapper(models);
 			deployService = new DeployService(client, repositoryName, repositoryType.getServiceTypeName());
 			
-			String uri = createUriForNewRepository(repositoryName);
+			url = createUriForNewRepository(repositoryName);
 			CloudService service = deployService.execute();
-			deployApplication = new DeployApplication(client, appConfig, repositoryName, service.getName(), mapperDirectory, uri);
+			deployApplication = new DeployApplication(client, appConfig, repositoryName, service.getName(), mapperDirectory, url);
 			deployApplication.execute();
 			
-			logger.debug(String.format("Repository '%s' successfully deployed. URL: http://%s", repositoryName, uri));
+			log.debug("Repository '{}' successfully deployed. URL: http://{}", repositoryName, url);
 		} catch (IOException e) {
-			logger.warn(String.format("Repository '%s' deployment failed", repositoryName), e);
-		}
-		catch (DeployerException e) {
-			logger.warn(String.format("Repository '%s' deployment failed", repositoryName), e);
+			log.warn("Repository '{}' deployment failed", repositoryName, e);
+		} catch (DeployerException e) {
+			log.warn("Repository '{}' deployment failed", repositoryName, e);
+			
 			if (deployService != null) 
 				deployService.rollback();
 			if (deployApplication != null) 
 				deployApplication.rollback();
 		}
+		
 		builder.deleteMapper();
 		client.logout();
+		
+		return "http://" + url;
 	}
 	
 	public List<String> listRepostories() throws DeployerException {
-		logger.debug("Listing repositories");
+		log.debug("Listing repositories");
 		CloudFoundryClient client = prepareNewClient();
 		List<CloudApplication> cloudApplications = client.getApplications();
 		ArrayList<String> repositories = new ArrayList<>(cloudApplications.size());
@@ -104,19 +111,20 @@ public class Deployer {
 	}
 	
 	public void undeployRepository(String repositoryName) throws DeployerException {
-		logger.debug(String.format("Undeploying repository '%s'", repositoryName));
+		log.debug("Undeploying repository '{}'", repositoryName);
 		String appNameForRepo = DeployApplication.getAppNameForRepo(repositoryName);
 		CloudFoundryClient client = prepareNewClient();
+		
 		try {
 			CloudApplication application = client.getApplication(appNameForRepo);
 			List<String> services = application.getServices();
 			client.deleteApplication(appNameForRepo);
 			for (String serviceName: services) 
 				client.deleteService(serviceName);
-			logger.debug(String.format("Repository '%s' successfully undeployed", repositoryName));
+			log.debug("Repository '{}' successfully undeployed", repositoryName);
 		}
 		catch (Exception e) {
-			logger.warn(String.format("Repository '%s' undeployment failed", repositoryName), e);
+			log.warn("Repository '{}' undeployment failed", repositoryName, e);
 		}
 		client.logout();
 	}
@@ -127,11 +135,13 @@ public class Deployer {
 	
 	private CloudFoundryClient prepareNewClient() throws DeployerException {
 		CloudFoundryClient client = new CloudFoundryClient(email, password, null, cloudControllerUrl);
+		
 		try {
 			client.login();
 		} catch (CloudFoundryException cfe) {
 			throw new DeployerException("Authorization failure.");
 		}
+		
 		return client;
 	}
 	
@@ -140,20 +150,21 @@ public class Deployer {
 		CloudService service = null;
 		String appNameForRepo = DeployApplication.getAppNameForRepo(repositoryName);
 		String serviceNameForRepo = DeployService.getServiceNameForRepo(repositoryName);
+		
 		try {
 			application = client.getApplication(appNameForRepo);
 			service = client.getService(serviceNameForRepo);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			// do nothing  
 		}
+		
 		if (application != null && service != null) 
 			throw new DeployerException(String.format("Repository '%s' is already registerred", repositoryName));
+		
 		if (application != null) 
 			throw new DeployerException(String.format("Repository application '%s' is already registerred", appNameForRepo));
+		
 		if (service != null) 
 			throw new DeployerException(String.format("Repository service '%s' is already registerred", serviceNameForRepo));
 	}
-
-
 }

@@ -64,6 +64,7 @@ public class HibernateVersionDao {
 			Repository repository = new Repository();
 			repository.setId(repositoryDbEntity.getId());
 			repository.setName(repositoryDbEntity.getName());
+			repository.setUrl(repositoryDbEntity.getUrl());
 
 			List<Entity> entitiesList = jaxbEntityListBuilder.deserialize(versionDbEntity.getModelXml());
 			Version version = new Version();

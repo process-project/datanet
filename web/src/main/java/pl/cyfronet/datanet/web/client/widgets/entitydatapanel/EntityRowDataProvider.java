@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
+import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter.DataCallback;
 
 import com.google.gwt.view.client.AsyncDataProvider;
@@ -31,17 +32,20 @@ public class EntityRowDataProvider extends AsyncDataProvider<EntityRow> {
 	@Override
 	protected void onRangeChanged(HasData<EntityRow> display) {
 		final Range range = display.getVisibleRange();
-		repositoryController.getEntityRows(repositoryId, entityName, range.getStart(), range.getLength(), new DataCallback() {
+		int startNumber = range.getStart() + 1;
+		repositoryController.getEntityRows(repositoryId, entityName, startNumber, range.getLength(), new DataCallback() {
 			@Override
-			public void onData(List<Map<String, String>> data) {
+			public void onData(EntityData data) {
 				List<EntityRow> values = new ArrayList<EntityRow>();
 				
-				for(Map<String, String> map : data) {
+				for(Map<String, String> map : data.getEntityRows()) {
 					values.add(new EntityRow(map));
 				}
 				
-				updateRowCount(100, true);
-				updateRowData(range.getStart(), values);
+				updateRowCount(data.getTotalNumberOfEntities(), true);
+				
+				int startNumber = data.getStartEntityNumber() - 1;
+				updateRowData(startNumber, values);
 			}
 		});
 	}

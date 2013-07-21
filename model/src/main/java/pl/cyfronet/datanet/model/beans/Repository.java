@@ -8,7 +8,9 @@ public class Repository implements Serializable {
 	
 	private long id;
 	private String name;
-	private Version sourceModelVersion; 
+	private Version sourceModelVersion;
+	private String url;
+	
 	public long getId() {
 		return id;
 	}
@@ -67,7 +69,11 @@ public class Repository implements Serializable {
 			return false;
 		return true;
 	}
-
 	
-	
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}	
 }

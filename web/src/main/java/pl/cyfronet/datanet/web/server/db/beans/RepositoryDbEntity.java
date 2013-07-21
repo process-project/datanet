@@ -19,6 +19,7 @@ public class RepositoryDbEntity {
 	private VersionDbEntity sourceModelVersion;
 	@ManyToMany(cascade = { CascadeType.PERSIST })
 	private List<UserDbEntity> owners;
+	private String url;
 
 	public long getId() {
 		return id;
@@ -57,5 +58,12 @@ public class RepositoryDbEntity {
 		return "RepositoryDbEntity [id=" + id + ", name=" + name
 				+ ", sourceModelVersion=" + sourceModelVersion + ", owners="
 				+ owners + "]";
+	}
+
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
 	}
 }
