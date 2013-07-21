@@ -76,6 +76,11 @@ public class EntityDataPanelWidget extends Composite implements View {
 		}
 	}
 	
+	@Override
+	public void resetPager(HasData<EntityRow> dataTable) {
+		pager.setDisplay(dataTable);
+	}
+	
 	public void ui() {
 //		form = new Form();
 //		Fieldset fieldset = new Fieldset();

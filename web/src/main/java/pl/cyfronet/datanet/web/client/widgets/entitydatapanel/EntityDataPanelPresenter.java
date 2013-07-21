@@ -24,6 +24,7 @@ public class EntityDataPanelPresenter implements Presenter {
 		HasText addSearchField(String name, Type type);
 		HasData<EntityRow> getDataTable();
 		void initDataTable(List<String> fieldNames);
+		void resetPager(HasData<EntityRow> dataTable);
 	}
 	
 	public interface DataCallback {
@@ -92,5 +93,6 @@ public class EntityDataPanelPresenter implements Presenter {
 		view.initDataTable(fieldNames);
 		dataProvider = entityRowDataProviderFactory.create(repositoryId, entityName, this);
 		dataProvider.addDataDisplay(view.getDataTable());
+		view.resetPager(view.getDataTable());
 	}
 }

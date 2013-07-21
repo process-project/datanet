@@ -22,12 +22,12 @@ public class RepositoryClientTest {
 	@Autowired private RepositoryClient repositoryClient;
 	
 	//TODO(DH): create a test repository beforehand
-	@Test
+//	@Test
 	public void retrieveData() throws RestClientException, URISyntaxException {
 		repositoryClient.retrieveRepositoryData("http://testmodel.datanet.cyfronet.pl", "testentity", 1, -1);
 	}
 	
-//	@Test
+	@Test
 	public void insertData() throws RestClientException, URISyntaxException {
 		Map<String, String> data = new HashMap<>();
 		data.put("testfield", "It is " + System.currentTimeMillis() + " millis from the epoch");
