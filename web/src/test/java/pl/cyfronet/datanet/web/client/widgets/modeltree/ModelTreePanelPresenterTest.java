@@ -287,7 +287,7 @@ public class ModelTreePanelPresenterTest {
 		verify(view, times(1)).setRemoveEnabled(true);
 		verify(view, times(1)).setDeployEnabled(deployEnabled);
 		verify(view, times(1)).setSaveEnabled(saveEnabled);
-		verify(view, times(1)).setOpenedAndSelected(eq(TreeItem.newModel(modelId)));
+		verify(view, times(1)).setSelected(eq(TreeItem.newModel(modelId)));
 	}
 
 	@Test
@@ -318,7 +318,7 @@ public class ModelTreePanelPresenterTest {
 		verify(view, times(1)).setRemoveEnabled(false);
 		verify(view, times(1)).setDeployEnabled(false);
 		verify(view, times(1)).setSaveEnabled(false);
-		verify(view, times(1)).setOpenedAndSelected(null);
+		verify(view, times(1)).setSelected(null);
 	}
 
 	@Test
@@ -344,7 +344,7 @@ public class ModelTreePanelPresenterTest {
 		verify(view, times(1)).setModels(
 				argThat(new TreeItemMatcher(TreeItem.newModel(m1.getId()),
 						TreeItem.newModel(m2.getId()))));
-		verify(view, times(1)).setOpenedAndSelected(TreeItem.newModel(m1.getId()));
+		verify(view, times(1)).setSelected(TreeItem.newModel(m1.getId()));
 	}
 
 	@Test

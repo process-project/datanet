@@ -52,7 +52,6 @@ public class ModelTreePanelPresenter implements Presenter {
 		void setPresenter(Presenter presenter);
 		void reload();
 		void setSelected(TreeItem item);
-		void setOpenedAndSelected(TreeItem item);
 		TreeItem getSelectedObject();
 		void setSaveEnabled(boolean enabled);
 		void setRemoveEnabled(boolean enabled);
@@ -184,11 +183,11 @@ public class ModelTreePanelPresenter implements Presenter {
 				modelController.getModel(item.getId(), new ModelCallback() {
 					@Override
 					public void setModel(ModelProxy model) {
-						view.setOpenedAndSelected(item);
+						view.setSelected(item);
 						view.setRemoveEnabled(item != null);
 						view.setDeployEnabled(false);
 						view.setSaveEnabled(model.isDirty());
-						if (item.isDirty())
+						if (model.isNew() || model.isDirty())
 							view.setReleaseVersionEnabled(false);
 						else 
 							view.setReleaseVersionEnabled(true);
@@ -198,7 +197,7 @@ public class ModelTreePanelPresenter implements Presenter {
 				versionController.getVersion(item.getId(), new VersionCallback() {
 					@Override
 					public void setVersion(Version version) {
-						view.setOpenedAndSelected(item);
+						view.setSelected(item);
 						view.setRemoveEnabled(false);
 						view.setDeployEnabled(true); 
 						view.setSaveEnabled(false);
@@ -208,7 +207,7 @@ public class ModelTreePanelPresenter implements Presenter {
 			}
 			// XXX other tree elements
 		} else {
-			view.setOpenedAndSelected(null);
+			view.setSelected(null);
 			view.setRemoveEnabled(false);
 			view.setDeployEnabled(false);
 			view.setSaveEnabled(false);
@@ -299,13 +298,12 @@ public class ModelTreePanelPresenter implements Presenter {
 		versionController.getVersions(modelId, new VersionsCallback() {
 			@Override
 			public void setVersions(List<Version> versions) {
-				List<TreeItem> versionTreeItems = new ArrayList<TreeItem>();
-				if (versions != null) 
-					for (Version version : versions) {
-						TreeItem item = TreeItem.newVersion(version.getId(),
-								version.getName());
-						versionTreeItems.add(item);
-					}
+				List<TreeItem> versionTreeItems = new ArrayList<TreeItem>();	
+				for (Version version : versions) {
+					TreeItem item = TreeItem.newVersion(version.getId(),
+							version.getName());
+					versionTreeItems.add(item);
+				}
 				view.setVersions(modelId, versionTreeItems);
 				if (callback != null) {
 					callback.next();
@@ -334,4 +332,26 @@ public class ModelTreePanelPresenter implements Presenter {
 			}
 		}, false);
 	}
+
+	@Override
+	public void getParent(TreeItem item, final TreeItemCallback callback) {
+		if (isRoot(item) || isModel(item))
+			callback.onTreeItemProvided(null); // root
+		else if (isVersion(item)) 
+			versionController.getVersion(item.getId(), new VersionCallback() {
+			@Override
+				public void setVersion(Version version) {
+					callback.onTreeItemProvided(TreeItem.newModel(version.getModelId()));
+				}
+			});
+		else if (isRepository(item)) {
+			repositoryController.getRepository(item.getId(), new RepositoryCallback() {
+				@Override
+				public void setRepository(Repository repository) {
+					callback.onTreeItemProvided(TreeItem.newVersion(repository.getSourceModelVersion().getId()));
+				}
+			});
+		}
+	}
+	
 }

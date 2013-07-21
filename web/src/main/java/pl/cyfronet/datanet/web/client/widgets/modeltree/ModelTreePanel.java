@@ -6,6 +6,7 @@ import java.util.List;
 
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter.View;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreeViewModel.TreeItemsAsyncDataProvider;
+import pl.cyfronet.datanet.web.client.widgets.modeltree.Presenter.TreeItemCallback;
 
 import com.github.gwtbootstrap.client.ui.Button;
 import com.google.gwt.core.client.GWT;
@@ -92,14 +93,15 @@ public class ModelTreePanel extends Composite implements View {
 
 	@Override
 	public void setSelected(final TreeItem item) {
-		selection.setSelected(item, true);		
-	}
-	
-	@Override
-	public void setOpenedAndSelected(final TreeItem item) {
 		if (!isRoot(item))
-			expandTree(modelsTree.getRootTreeNode(), item);
-		selection.setSelected(item, true);
+			presenter.getParent(item, new TreeItemCallback() {
+				@Override
+				public void onTreeItemProvided(TreeItem parent) {
+					if (!isRoot(parent))
+						expandTree(modelsTree.getRootTreeNode(), parent);
+					selection.setSelected(item, true);
+				}
+			});
 	}
 
 	private void expandTree(TreeNode node, TreeItem item) {

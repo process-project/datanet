@@ -77,29 +77,41 @@ public class VersionController {
 		});
 	}
 
+	/*
+	 * Returns versions or empty list (should be safe even on failure)
+	 */
 	private void loadVersions(final Long modelId,  final VersionsCallback callback) {
 		log.info("Loading user models");
-		modelService.getVersions(modelId, new AsyncCallback<List<Version>>() {
+		modelController.getModel(modelId, new ModelCallback() {	
 			@Override
-			public void onSuccess(List<Version> result) {
-				log.info("Versions for model {} loaded", modelId);
-				
-				if (result != null && result.size() > 0)
-					versions.put(modelId, result);
-				else 
-					versions.put(modelId, result);
-				
-				callback.setVersions(versions.get(modelId));
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				log.info("Unable to load versions for model {}, sending notification. Error message: {}", modelId, caught.getMessage());
-				eventBus.fireEvent(new NotificationEvent(
-						ModelNotificationMessage.versionListLoadError,
-						NotificationType.ERROR));
+			public void setModel(ModelProxy model) {
+				if (!model.isNew() && !model.isDirty())
+					modelService.getVersions(modelId, new AsyncCallback<List<Version>>() {
+						@Override
+						public void onSuccess(List<Version> result) {
+							log.info("Versions for model {} loaded", modelId);
+							
+							if (result != null && result.size() > 0)
+								versions.put(modelId, result);
+							else 
+								versions.put(modelId, result);
+							
+							callback.setVersions(versions.get(modelId));
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							log.info("Unable to load versions for model {}, sending notification. Error message: {}", modelId, caught.getMessage());
+							eventBus.fireEvent(new NotificationEvent(
+									ModelNotificationMessage.versionListLoadError,
+									NotificationType.ERROR));
+							callback.setVersions(new ArrayList<Version>(0));
+						}
+					});
+				else callback.setVersions(new ArrayList<Version>(0));
 			}
 		});
+		
 	}
 
 	public void releaseNewVersion(final Long modelId, final VersionCallback callback) {
