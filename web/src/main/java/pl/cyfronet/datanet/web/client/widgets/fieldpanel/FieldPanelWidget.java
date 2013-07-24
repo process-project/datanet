@@ -3,6 +3,10 @@ package pl.cyfronet.datanet.web.client.widgets.fieldpanel;
 import pl.cyfronet.datanet.model.beans.Field.Type;
 import pl.cyfronet.datanet.web.client.widgets.fieldpanel.FieldPanelPresenter.View;
 
+import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.CheckBox;
+import com.github.gwtbootstrap.client.ui.ListBox;
+import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -10,12 +14,8 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FieldPanelWidget extends Composite implements View {
@@ -26,7 +26,7 @@ public class FieldPanelWidget extends Composite implements View {
 
 	@UiField(provided = true) ListBox type;
 	@UiField TextBox name;
-	@UiField Image remove;
+	@UiField Button remove;
 	@UiField CheckBox required;
 
 	public FieldPanelWidget() {

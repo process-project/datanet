@@ -5,4 +5,5 @@ import com.google.gwt.i18n.client.Messages;
 public interface FieldPanelMessages extends Messages {
 	String removeField();
 	String required();
+	String fieldName();
 }
