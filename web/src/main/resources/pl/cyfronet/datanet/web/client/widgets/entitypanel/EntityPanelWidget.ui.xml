@@ -27,11 +27,11 @@
 	</ui:style>
 	<g:FlowPanel styleName="{style.entityPanel}">
 		<g:FlowPanel styleName="well form-inline">			
-			<b:Tooltip text="{messages.entityNameLabel}">
+			<b:Tooltip text="{messages.entityNameLabel}" placement="RIGHT">
 				<b:TextBox ui:field="entityName" styleName="input-xlarge" placeholder="{messages.entityNameLabel}" />
 			</b:Tooltip>				
 			<g:FlowPanel styleName="pull-right">
-			    <b:Tooltip text="{messages.removeEntityLabel}">
+			    <b:Tooltip text="{messages.removeEntityLabel}" placement="LEFT">
 			   		<b:Button ui:field="removeEntity" icon="REMOVE" type="DANGER" size="MINI" />
 			   </b:Tooltip>
 			</g:FlowPanel>

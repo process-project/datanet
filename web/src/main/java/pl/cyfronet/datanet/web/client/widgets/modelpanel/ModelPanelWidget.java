@@ -2,6 +2,7 @@ package pl.cyfronet.datanet.web.client.widgets.modelpanel;
 
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter.View;
 
+import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -12,7 +13,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ModelPanelWidget extends Composite implements View {
