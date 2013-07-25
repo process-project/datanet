@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-		xmlns:g="urn:import:com.google.gwt.user.client.ui">
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelMessages" field="messages"/>
 	<ui:style>
 		.entityPanel {
@@ -25,14 +26,19 @@
 		}
 	</ui:style>
 	<g:FlowPanel styleName="{style.entityPanel}">
-		<g:FlowPanel styleName="{style.section}">
-			<g:Label text="{messages.entityNameLabel}" styleName="{style.element}"/>
-			<g:TextBox ui:field="entityName" styleName="gwt-TextBox {style.element}"/>
-			<g:Image ui:field="removeEntity" url="img/delete-entity.png" title="{messages.removeEntityLabel}" styleName="gwt-Image {style.action}"/>
+		<g:FlowPanel styleName="well form-inline">			
+			<b:Tooltip text="{messages.entityNameLabel}" placement="RIGHT">
+				<b:TextBox ui:field="entityName" styleName="input-xlarge" placeholder="{messages.entityNameLabel}" />
+			</b:Tooltip>				
+			<g:FlowPanel styleName="pull-right">
+			    <b:Tooltip text="{messages.removeEntityLabel}" placement="LEFT">
+			   		<b:Button ui:field="removeEntity" icon="REMOVE" type="DANGER" size="MINI" />
+			   </b:Tooltip>
+			</g:FlowPanel>
 		</g:FlowPanel>
 		<g:FlowPanel ui:field="fieldContainer"/>
 		<g:FlowPanel styleName="{style.section}">
-			<g:Image ui:field="newField" url="img/new-field.png" title="{messages.newFieldActionLabel}" styleName="gwt-Image {style.action}"/>
+			<b:Button ui:field="newField" icon="PLUS" type="SUCCESS"><ui:text from="{messages.newFieldActionLabel}"/></b:Button>
 		</g:FlowPanel>
 	</g:FlowPanel>
 </ui:UiBinder>

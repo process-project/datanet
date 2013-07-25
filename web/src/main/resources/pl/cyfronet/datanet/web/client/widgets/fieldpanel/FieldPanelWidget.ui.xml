@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-		xmlns:g="urn:import:com.google.gwt.user.client.ui">
+		xmlns:g="urn:import:com.google.gwt.user.client.ui"
+		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.datanet.web.client.widgets.fieldpanel.FieldPanelMessages" field="messages"/>
 	<ui:style>
 		.action {
@@ -8,11 +9,22 @@
 			margin-top: 5px;
 			cursor: pointer;
 		}
+		.field-line {
+			padding-bottom: 5px;
+			margin-left: 5px;								
+			margin-right: 5px;			
+		}
+
+		.field {
+			margin-right: 5px;
+		}
 	</ui:style>
-	<g:FlowPanel>
-		<g:TextBox ui:field="name"/>
-		<g:ListBox ui:field="type"/>
-		<g:CheckBox ui:field="required" text="{messages.required}"/>
-		<g:Image ui:field="remove" url="img/delete-field.png" title="{messages.removeField}" styleName="gwt-Image {style.action}"/>
+	<g:FlowPanel styleName="form-inline {style.field-line}">
+		<b:TextBox ui:field="name" placeholder="{messages.fieldName}" styleName="{style.field}" />
+		<b:ListBox ui:field="type" styleName="{style.field}"/>
+		<b:CheckBox ui:field="required" text="{messages.required}" styleName="{style.field}"/>		
+		<b:Tooltip text="{messages.removeField}">
+			<b:Button ui:field="remove" icon="REMOVE" type="DANGER" size="MINI" ></b:Button>
+		</b:Tooltip>		
 	</g:FlowPanel>
 </ui:UiBinder>

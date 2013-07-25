@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelMessages" field="messages" />
 	<ui:style type="pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelWidget.ModelPanelWidgetStyles">
 		.modelPanelSection {
@@ -10,36 +11,46 @@
 			float: left;
 			margin-right: 5px;
 		}
-		.modelPropertyInput {
-			float: left;
+		.modelPropertyInput {			
 			margin-right: 20px;
-		}
-		.action {
-			margin-left: 5px;
-			margin-top: 5px;
-			cursor: pointer;
 		}
 		/* https://groups.google.com/forum/#!topic/gwt-platform/EPnHwOTQ44Y */
  		.dockLayoutPanel {
         	position: static !important;
     	}
+	
+		.main {
+			margin: 15px;
+			padding: 15px;
+			border-radius: 10px;
+			box-shadow: 0px 0px 5px #888888;
+		}
+
+		.header {
+			background-color: #F5F5F5;
+			padding: 15px;			
+		}
+
+		.elements {
+			margin: 5px;
+			padding: 5px;
+		}
 	</ui:style>
-	<g:DockLayoutPanel addStyleNames="{style.dockLayoutPanel}">
-		<g:north size="40">
-			<g:FlowPanel styleName="{style.modelPanelSection}">
-				<g:Label text="{messages.modelName}" styleName="gwt-Label {style.modelPropertyLabel}"/>
-				<g:TextBox ui:field="modelName" styleName="gwt-TextBox {style.modelPropertyInput}"/>
-				<!--
-				<g:Label text="{messages.modelVersion}" styleName="gt-Label {style.modelPropertyLabel}"/>
-				<g:TextBox ui:field="modelVersion" styleName="gwt-TextBox {style.modelPropertyInput}"/>
-				 -->
-			</g:FlowPanel>
-		</g:north>
-		<g:north size="40">
-			<g:Image ui:field="newEntity" url="img/new-entity.png" title="{messages.newEntity}" styleName="gwt-Image {style.action}"/>
-		</g:north>
-		<g:center>
-			<g:FlowPanel ui:field="entityContainer"/>
-		</g:center>
-	</g:DockLayoutPanel>
+	<g:FlowPanel addStyleNames="{style.main}">
+		<g:DockLayoutPanel addStyleNames="{style.dockLayoutPanel}">
+			<g:north size="60">
+				<g:FlowPanel styleName="form-inline {style.header}">
+				    <b:Tooltip text="{messages.modelName}"  placement="RIGHT">
+						<b:TextBox ui:field="modelName" styleName="input-xlarge {style.modelPropertyInput}"/>
+					</b:Tooltip>
+					<g:FlowPanel styleName="pull-right">
+						<b:Button ui:field="newEntity" icon="PLUS" type="SUCCESS"><ui:text from="{messages.newEntity}"/></b:Button>
+					</g:FlowPanel>
+				</g:FlowPanel>
+			</g:north>
+			<g:center>
+				<g:FlowPanel ui:field="entityContainer" styleName="{style.elements}"/>
+			</g:center>
+		</g:DockLayoutPanel>
+	</g:FlowPanel>
 </ui:UiBinder>
