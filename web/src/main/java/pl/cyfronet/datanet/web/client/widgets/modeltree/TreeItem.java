@@ -1,7 +1,6 @@
 package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
 public class TreeItem {
-	 
 	private String name;
 	private Long id;
 	private ItemType type;
@@ -91,6 +90,10 @@ public class TreeItem {
 		return newVersion(id, null);
 	}
 	
+	public static TreeItem newRepository(Long id) {
+		return newRepository(id, null);
+	}
+	
 	public static TreeItem newRepository(Long id, String name) {
 		return new TreeItem(id, name, ItemType.REPOSITORY);
 	}
@@ -98,5 +101,4 @@ public class TreeItem {
 	public static TreeItem newLoading(String message) {
 		return new TreeItem(null, message, ItemType.LOADING);
 	}
-	
 }

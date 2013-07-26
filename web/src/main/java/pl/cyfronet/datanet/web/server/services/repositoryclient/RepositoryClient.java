@@ -68,7 +68,7 @@ public class RepositoryClient {
 			String response = restTemplate.postForObject(buildEntityUrl(repositoryUrl, entityName), request, String.class);
 			log.debug("New entity successfully saved with id {}", response);
 		} else {
-			throw new IllegalArgumentException("Updating entities not supported yet!");
+			throw new IllegalArgumentException("Updating entities is not supported yet!");
 		}
 	}
 	

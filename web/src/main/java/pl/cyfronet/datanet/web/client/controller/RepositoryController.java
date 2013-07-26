@@ -2,10 +2,12 @@ package pl.cyfronet.datanet.web.client.controller;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController.DataSavedCallback;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
@@ -30,10 +32,13 @@ public class RepositoryController {
 		void setRepositories(List<Repository> list);
 	}
 	
+	public interface DataSavedCallback {
+		void onDataSaved(boolean success);
+	}
+	
 	private RepositoryServiceAsync repositoryService;
 	private EventBus eventBus;
 	private HashMap<Long, List<Repository>> repositories;
-	
 	
 	@Inject
 	public RepositoryController(RepositoryServiceAsync repositoryService, EventBus eventBus) {
@@ -94,6 +99,10 @@ public class RepositoryController {
 			public void onFailure(Throwable caught) {
 				eventBus.fireEvent(new NotificationEvent(
 						RepositoryNotificationMessage.repositoryEntityDataLoadError, NotificationType.ERROR, entityName));
+				
+				if(dataCallback != null) {
+					dataCallback.error();
+				}
 			}
 			@Override
 			public void onSuccess(EntityData result) {
@@ -135,6 +144,23 @@ public class RepositoryController {
 				}
 			}
 		});
+	}
+	
+	public void addEntityRow(long repositoryId, String entityName, Map<String, String> data, final DataSavedCallback dataSavedCallback) {
+		repositoryService.saveData(repositoryId, entityName, data, new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				if (dataSavedCallback != null) {
+					dataSavedCallback.onDataSaved(false);
+				}
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				if (dataSavedCallback != null) {
+					dataSavedCallback.onDataSaved(true);
+				}
+			}});
 	}
 	
 	private void loadRepositories(final long versionId, final NextCallback nextCallback) {

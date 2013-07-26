@@ -47,6 +47,11 @@ public class EntityRowDataProvider extends AsyncDataProvider<EntityRow> {
 				int startNumber = data.getStartEntityNumber() - 1;
 				updateRowData(startNumber, values);
 			}
+
+			@Override
+			public void error() {
+				presenter.onDataRetrievalError();
+			}
 		});
 	}
 }

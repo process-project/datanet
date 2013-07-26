@@ -35,6 +35,7 @@ import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -116,8 +117,7 @@ public class ModelTreePanelPresenter implements Presenter {
 				placeController.goTo(new VersionPlace(item.getId())); 
 			} else if (isRepository(item)) {
 				placeController.goTo(new RepositoryPlace(item.getId())); 
-			} 
-			// XXX other elements
+			}
 		}
 	}
 
@@ -204,8 +204,18 @@ public class ModelTreePanelPresenter implements Presenter {
 						view.setReleaseVersionEnabled(false);
 					}
 				});
+			} else if (isRepository(item)) {
+				repositoryController.getRepository(item.getId(), new RepositoryCallback() {
+					@Override
+					public void setRepository(Repository repository) {
+						view.setSelected(item);
+						view.setRemoveEnabled(false);
+						view.setDeployEnabled(false); 
+						view.setSaveEnabled(false);
+						view.setReleaseVersionEnabled(false);
+					}
+				});
 			}
-			// XXX other tree elements
 		} else {
 			view.setSelected(null);
 			view.setRemoveEnabled(false);
@@ -319,9 +329,8 @@ public class ModelTreePanelPresenter implements Presenter {
 				List<TreeItem> repoTreeItems = new ArrayList<TreeItem>();
 				
 				if (list != null) 
-					for (Repository version : list) {
-						TreeItem item = TreeItem.newRepository(version.getId(),
-								version.getName());
+					for (Repository repository : list) {
+						TreeItem item = TreeItem.newRepository(repository.getId(), repository.getName());
 						repoTreeItems.add(item);
 					}
 				view.setRepositories(versionId, repoTreeItems);
@@ -348,10 +357,9 @@ public class ModelTreePanelPresenter implements Presenter {
 			repositoryController.getRepository(item.getId(), new RepositoryCallback() {
 				@Override
 				public void setRepository(Repository repository) {
-					callback.onTreeItemProvided(TreeItem.newVersion(repository.getSourceModelVersion().getId()));
+					callback.onTreeItemProvided(TreeItem.newRepository(repository.getId()));
 				}
 			});
 		}
 	}
-	
 }

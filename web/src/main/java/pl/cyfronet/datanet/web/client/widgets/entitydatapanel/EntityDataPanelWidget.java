@@ -6,10 +6,12 @@ import pl.cyfronet.datanet.model.beans.Field.Type;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.CellTable;
+import com.github.gwtbootstrap.client.ui.ControlLabel;
 import com.github.gwtbootstrap.client.ui.Fieldset;
 import com.github.gwtbootstrap.client.ui.FormLabel;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
+import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.SimplePager;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
@@ -19,8 +21,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.HasData;
 
@@ -32,6 +36,8 @@ public class EntityDataPanelWidget extends Composite implements View {
 	@UiField SimplePager pager;
 	@UiField CellTable<EntityRow> dataTable;
 	@UiField EntityDataPanelMessages messages;
+	@UiField Modal addRowPopup;
+	@UiField HasWidgets addEntityRowContainer;
 	
 	private Presenter presenter;
 	
@@ -42,6 +48,16 @@ public class EntityDataPanelWidget extends Composite implements View {
 	@UiHandler("searchButton")
 	public void onSearch(ClickEvent event) {
 		presenter.onSearch();
+	}
+	
+	@UiHandler("addEntityButton")
+	public void onAddEntity(ClickEvent event) {
+		presenter.onAddNewEntityRow();
+	}
+	
+	@UiHandler("saveEntityRow")
+	public void onSaveNewEntityRow(ClickEvent event) {
+		presenter.onSaveNewEntityRow();
 	}
 	
 	@Override
@@ -80,50 +96,30 @@ public class EntityDataPanelWidget extends Composite implements View {
 	public void resetPager(HasData<EntityRow> dataTable) {
 		pager.setDisplay(dataTable);
 	}
-	
-	public void ui() {
-//		form = new Form();
-//		Fieldset fieldset = new Fieldset();
-//		form.add(fieldset);
-//		tab.add(form);
-//		
-//		Legend legend = new Legend(messages.repositorySearchLabel());
-//		fieldset.add(legend);
-//		
-//		for(String fieldName : fieldNames) {
-//			FormLabel label = new FormLabel(fieldName);
-//			fieldset.add(label);
-//			
-//			TextBox field = new TextBox();
-//			fieldset.add(field);
-//		}
-//		
-//		Button searchButton = new Button(messages.repositorySearchLabel());
-//		searchButton.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				
-//			}
-//		});
-//		form.add(searchButton);
-//		
-//		CellTable<EntityRow> table = new CellTable<EntityRow>();
-//		table.setEmptyTableWidget(new Label(messages.noEntityValues()));
-//		table.setStriped(true);
-//		table.setCondensed(true);
-//		table.setPageSize(10);
-//		
-//		for(String fieldName : fieldNames) {
-//			table.addColumn(new EntityTextColumn(fieldName), fieldName);
-//		}
-//		
-//		EntityRowDataProvider entityRowDataProvider = new EntityRowDataProvider(entityName, presenter);
-//		entityRowDataProvider.addDataDisplay(table);
-//		
-//		SimplePager simplePager = new SimplePager(TextLocation.RIGHT);
-//		simplePager.setDisplay(table);
-//		
-//		tab.add(simplePager);
-//		tab.add(table);
+
+	@Override
+	public void showNewEntityRowPopup() {
+		addRowPopup.show();
+	}
+
+	@Override
+	public HasText addNewEntityRowField(String name, Type type) {
+		addEntityRowContainer.add(new ControlLabel(name));
+		
+		TextBox field = new TextBox();
+		addEntityRowContainer.add(field);
+		
+		return field;
+	}
+
+	@Override
+	public void refreshDataTable() {
+		dataTable.setVisibleRangeAndClearData(dataTable.getVisibleRange(), true);
+		pager.setDisplay(dataTable);
+	}
+
+	@Override
+	public void hideNewEntityRowPopup() {
+		addRowPopup.hide();
 	}
 }

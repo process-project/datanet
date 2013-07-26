@@ -1,6 +1,5 @@
 package pl.cyfronet.datanet.web.client.errors;
 
-import pl.cyfronet.datanet.web.client.errors.RepositoryException.Code;
 
 public class RepositoryException extends Exception {
 	private static final long serialVersionUID = 7569975052885032757L;
@@ -10,7 +9,8 @@ public class RepositoryException extends Exception {
 		RepositoryRetrievalError,
 		RepositoryUndeployError,
 		ModelDeployError,
-		RepositoryDataRetrievalError
+		RepositoryDataRetrievalError,
+		RepositoryDataSavingError
 	}
 	
 	private Code errorCode;

@@ -24,6 +24,7 @@ import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
+import pl.cyfronet.datanet.web.client.controller.ClientController;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 import pl.cyfronet.datanet.web.client.errors.RepositoryException;
 import pl.cyfronet.datanet.web.client.errors.RepositoryException.Code;
@@ -170,6 +171,17 @@ public class RpcRepositoryService implements RepositoryService {
 		} catch (Exception e) {
 			log.error("Repository deployment failure", e);
 			throw new RepositoryException(Code.ModelDeployError, e.getMessage());
+		}
+	}
+	
+	@Override
+	public void saveData(long repositoryId, String entityName, Map<String, String> data) throws RepositoryException {
+		try {
+			RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
+			repositoryClient.updateEntityRow(repositoryDbEntity.getUrl(), entityName, null, data);
+		} catch (Exception e) {
+			log.error("Repository entity row data could not be saved", e);
+			throw new RepositoryException(Code.RepositoryDataSavingError, e.getMessage());
 		}
 	}
 	

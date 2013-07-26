@@ -4,16 +4,30 @@
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:with type="pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelMessages" field="messages"/>
 	<ui:style>
-		
+		.right {
+			float: right;
+		}
+		.right-margin {
+			margin-right: 20px;
+		}
 	</ui:style>
 	<g:FlowPanel>
 		<b:Form>
 			<b:Fieldset ui:field="searchFieldSet">
 				<b:Legend><ui:text from="{messages.repositorySearchLabel}"/></b:Legend>
 			</b:Fieldset>
-			<b:Button type="SUCCESS" ui:field="searchButton"><ui:text from="{messages.repositorySearchLabel}"/></b:Button>
+			<b:Button type="PRIMARY" icon="SEARCH" ui:field="searchButton"><ui:text from="{messages.repositorySearchLabel}"/></b:Button>
 		</b:Form>
-		<b:SimplePager ui:field="pager" location="RIGHT"/>
+		<g:FlowPanel>
+			<b:SimplePager ui:field="pager" location="RIGHT" addStyleNames="{style.right}"/>
+			<b:Button type="SUCCESS" icon="PLUS" ui:field="addEntityButton" addStyleNames="{style.right} {style.right-margin}"><ui:text from="{messages.repositoryAddEntity}"/></b:Button>
+		</g:FlowPanel>
 		<b:CellTable ui:field="dataTable" striped="true" condensed="true" pageSize="10"/>
+		<b:Modal ui:field="addRowPopup" title="{messages.repositoryAddEntity}" animation="true">
+			<b:Form ui:field="addEntityRowContainer"></b:Form>
+			<b:ModalFooter>
+				<b:Button ui:field="saveEntityRow" icon="SAVE" type="PRIMARY"><ui:text from="{messages.saveNewEntityRow}"/></b:Button>
+			</b:ModalFooter>
+		</b:Modal>
 	</g:FlowPanel>
 </ui:UiBinder>

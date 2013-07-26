@@ -106,6 +106,7 @@ public class ModelTreePanel extends Composite implements View {
 
 	private void expandTree(TreeNode node, TreeItem item) {
 		Integer childIndex = getChildIndex(node, item);
+		
 		if (childIndex != null) 
 			node.setChildOpen(childIndex, true);
 	}
