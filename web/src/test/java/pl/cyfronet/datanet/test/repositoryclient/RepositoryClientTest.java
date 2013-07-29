@@ -4,7 +4,6 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,7 +23,7 @@ public class RepositoryClientTest {
 	//TODO(DH): create a test repository beforehand
 //	@Test
 	public void retrieveData() throws RestClientException, URISyntaxException {
-		repositoryClient.retrieveRepositoryData("http://testmodel.datanet.cyfronet.pl", "testentity", 1, -1);
+		repositoryClient.retrieveRepositoryData("http://testmodel.datanet.cyfronet.pl", "testentity", 1, -1, null);
 	}
 	
 //	@Test
