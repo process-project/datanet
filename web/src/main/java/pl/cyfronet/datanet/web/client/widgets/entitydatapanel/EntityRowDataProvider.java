@@ -33,19 +33,10 @@ public class EntityRowDataProvider extends AsyncDataProvider<EntityRow> {
 	protected void onRangeChanged(HasData<EntityRow> display) {
 		final Range range = display.getVisibleRange();
 		int startNumber = range.getStart() + 1;
-		repositoryController.getEntityRows(repositoryId, entityName, startNumber, range.getLength(), new DataCallback() {
+		repositoryController.getEntityRows(repositoryId, entityName, startNumber, range.getLength(), null, new DataCallback() {
 			@Override
 			public void onData(EntityData data) {
-				List<EntityRow> values = new ArrayList<EntityRow>();
-				
-				for(Map<String, String> map : data.getEntityRows()) {
-					values.add(new EntityRow(map));
-				}
-				
-				updateRowCount(data.getTotalNumberOfEntities(), true);
-				
-				int startNumber = data.getStartEntityNumber() - 1;
-				updateRowData(startNumber, values);
+				renderData(data);
 			}
 
 			@Override
@@ -53,5 +44,18 @@ public class EntityRowDataProvider extends AsyncDataProvider<EntityRow> {
 				presenter.onDataRetrievalError();
 			}
 		});
+	}
+	
+	public void renderData(EntityData data) {
+		List<EntityRow> values = new ArrayList<EntityRow>();
+		
+		for(Map<String, String> map : data.getEntityRows()) {
+			values.add(new EntityRow(map));
+		}
+		
+		updateRowCount(data.getTotalNumberOfEntities(), true);
+		
+		int startNumber = data.getStartEntityNumber() - 1;
+		updateRowData(startNumber, values);
 	}
 }

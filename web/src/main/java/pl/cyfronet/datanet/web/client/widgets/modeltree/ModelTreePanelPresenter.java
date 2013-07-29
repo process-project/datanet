@@ -35,7 +35,6 @@ import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -44,7 +43,7 @@ import com.google.web.bindery.event.shared.binder.EventBinder;
 import com.google.web.bindery.event.shared.binder.EventHandler;
 
 public class ModelTreePanelPresenter implements Presenter {
-	private static final Logger logger = LoggerFactory.getLogger(ModelTreePanelPresenter.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(ModelTreePanelPresenter.class);
 	
 	interface ModelTreePanelEventBinder extends EventBinder<ModelTreePanelPresenter> {}
 	private final ModelTreePanelEventBinder eventBinder = GWT.create(ModelTreePanelEventBinder.class);

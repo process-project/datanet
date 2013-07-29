@@ -240,7 +240,6 @@
 			<classifier>sources</classifier>
 			<scope>compile</scope>
 		</dependency>
-        
 		<dependency>
 		    <groupId>de.benediktmeurer.gwt-slf4j</groupId>
 		    <artifactId>gwt-slf4j</artifactId>

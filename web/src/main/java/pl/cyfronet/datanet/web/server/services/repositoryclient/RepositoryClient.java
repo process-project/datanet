@@ -23,12 +23,12 @@ public class RepositoryClient {
 	
 	@Autowired private RestTemplate restTemplate;
 	
-	public EntityData retrieveRepositoryData(String repositoryUrl, String entityName, int start, int length) throws RestClientException, URISyntaxException {
+	public EntityData retrieveRepositoryData(String repositoryUrl, String entityName, int start, int length, Map<String, String> query) throws RestClientException, URISyntaxException {
 		if(start < 1) {
 			throw new IllegalArgumentException("start number value has to be at least 1");
 		}
 		
-		String entityUrl = buildEntityUrl(repositoryUrl, entityName);
+		String entityUrl = buildEntityUrl(repositoryUrl, entityName, query);
 		@SuppressWarnings("unchecked")
 		List<String> ids = restTemplate.getForObject(entityUrl, List.class);
 		EntityData entityData = new EntityData();
@@ -53,7 +53,6 @@ public class RepositoryClient {
 			entityData.setCurrentNumberOfEntities(0);
 		}
 		
-		
 		return entityData;
 	}
 
@@ -65,7 +64,7 @@ public class RepositoryClient {
 				request.put(key, Arrays.asList(entityRow.get(key)));
 			}
 			
-			String response = restTemplate.postForObject(buildEntityUrl(repositoryUrl, entityName), request, String.class);
+			String response = restTemplate.postForObject(buildEntityUrl(repositoryUrl, entityName, null), request, String.class);
 			log.debug("New entity successfully saved with id {}", response);
 		} else {
 			throw new IllegalArgumentException("Updating entities is not supported yet!");
@@ -73,14 +72,28 @@ public class RepositoryClient {
 	}
 	
 	private String buildEntityInstanceUrl(String repositoryUrl, String entityName, String entityId) throws URISyntaxException {
-		return buildEntityUrl(repositoryUrl, entityName) + "/" + entityId;
+		String url = buildEntityUrl(repositoryUrl, entityName, null) + "/" + entityId;
+		
+		return url;
 	}
 
-	private String buildEntityUrl(String repositoryUrl, String entityName) throws URISyntaxException {
+	private String buildEntityUrl(String repositoryUrl, String entityName, Map<String, String> query) throws URISyntaxException {
 		if (repositoryUrl != null && !repositoryUrl.endsWith("/")) {
 			repositoryUrl = repositoryUrl + "/";
 		}
 		
-		return repositoryUrl + entityName;
+		String url = repositoryUrl + entityName;
+		
+		if(query != null && query.size() > 0) {
+			url += "?";
+			
+			for(String fieldName : query.keySet()) {
+				url += fieldName + "=" + query.get(fieldName) + "&";
+			}
+			
+			url = url.substring(0, url.length() - 1);
+		}
+		
+		return url;
 	}
 }

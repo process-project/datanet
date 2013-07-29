@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Field.Type;
@@ -25,6 +28,8 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class EntityDataPanelPresenter implements Presenter {
+	private static final Logger log = LoggerFactory.getLogger(EntityDataPanelPresenter.class);
+	
 	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
 		HasText addSearchField(String name, Type type);
@@ -90,7 +95,27 @@ public class EntityDataPanelPresenter implements Presenter {
 
 	@Override
 	public void onSearch() {
-		//TODO(DH)
+		Map<String, String> query = new HashMap<String, String>();
+		
+		for (String fieldName : searchFields.keySet()) {
+			if (!searchFields.get(fieldName).getText().trim().isEmpty()) {
+				query.put(fieldName, searchFields.get(fieldName).getText().trim());
+			}
+		}
+		
+		log.info("Search for map {} initiated", query);
+		
+		repositoryController.getEntityRows(repositoryId, entityName, 1, view.getDataTable().getVisibleRange().getLength(), query, new DataCallback() {
+			@Override
+			public void onData(EntityData data) {
+				dataProvider.renderData(data);
+			}
+			
+			@Override
+			public void error() {
+				onDataRetrievalError();
+			}
+		});
 	}
 	
 	@Override

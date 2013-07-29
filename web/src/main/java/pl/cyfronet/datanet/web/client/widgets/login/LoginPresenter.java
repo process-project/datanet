@@ -12,19 +12,12 @@ import com.google.web.bindery.event.shared.EventBus;
 public class LoginPresenter implements Presenter {
 	public interface View {
 		void setPresenter(Presenter presenter);
-
 		HasText getLogin();
-
 		HasText getPassword();
-
 		void errorLoginOrPasswordEmpty();
-
 		void errorUnknownDuringLogin();
-
 		void clearErrors();
-
 		void errorWrongLoginOrPassword();
-
 		void setBusyState(boolean busy);
 	}
 
