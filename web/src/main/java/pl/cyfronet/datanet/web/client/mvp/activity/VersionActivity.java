@@ -1,12 +1,11 @@
 package pl.cyfronet.datanet.web.client.mvp.activity;
 
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.web.client.controller.VersionController;
-import pl.cyfronet.datanet.web.client.controller.VersionController.VersionsCallback;
+import pl.cyfronet.datanet.web.client.controller.VersionController.VersionCallback;
 import pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelWidget;
 
@@ -18,38 +17,31 @@ import com.google.inject.assistedinject.Assisted;
 
 public class VersionActivity extends AbstractActivity {
 
-	private static final Logger logger = Logger.getLogger(VersionActivity.class
-			.getName());
+	private static final Logger logger = LoggerFactory
+			.getLogger(VersionActivity.class.getName());
 
 	private VersionController versionController;
 
 	private Long versionId;
-	private Long modelId;
 
 	@Inject
 	public VersionActivity(VersionController versionController,
-			@Assisted Long modelId, @Assisted Long versionId) {
+			@Assisted Long versionId) {
 		this.versionController = versionController;
-		this.modelId = modelId;
 		this.versionId = versionId;
 	}
 
-	// TODO this method must be fixed 
 	@Override
 	public void start(final AcceptsOneWidget panel, final EventBus eventBus) {
-		logger.log(Level.INFO, "Loading model with id: " + modelId);
-		versionController.getVersions(modelId, new VersionsCallback() {
+		logger.info("Loading version {}", versionId);
+		versionController.getVersion(versionId, new VersionCallback() {
 			@Override
-			public void setVersions(List<Version> versions) {
-				for (Version version : versions) {
-					if (version.getId() == versionId) {
-						VersionPanelPresenter presenter = new VersionPanelPresenter(new VersionPanelWidget());
-						presenter.setVersion(version);
-						panel.setWidget(presenter.getWidget());
-						break; 
-					}
-				}
+			public void setVersion(Version version) {
+				VersionPanelPresenter presenter = new VersionPanelPresenter(
+						new VersionPanelWidget());
+				presenter.setVersion(version);
+				panel.setWidget(presenter.getWidget());
 			}
-		}, false);
+		});
 	}
 }
