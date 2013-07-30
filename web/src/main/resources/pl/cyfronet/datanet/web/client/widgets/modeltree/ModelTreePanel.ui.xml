@@ -6,11 +6,25 @@
 		type="pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelMessageses"
 		field="messages" />
 	<ui:style>
+		.main {
+			margin: 15px;			
+			border-radius: 10px;
+			box-shadow: 0px 0px 5px #888888;
+		}
+
 		.buttons {
 			text-align: center;
+			background-color: #F5F5F5;
+			padding: 15px;			
+			border-radius: 10px 10px 0 0;
+			height: 30px;
+		}
+
+		.tree {
+			margin: 5px;
 		}
 	</ui:style>
-	<g:FlowPanel>
+	<g:FlowPanel addStyleNames="{style.main}">
 		<g:FlowPanel styleName="{style.buttons}">
 			<b:ButtonGroup>
 				<b:Button ui:field="add" icon="PLUS" type="SUCCESS" size="MINI"></b:Button>
@@ -21,6 +35,6 @@
 			</b:ButtonGroup>
 		</g:FlowPanel>
 
-		<c:CellTree ui:field="modelsTree" />		
+		<c:CellTree ui:field="modelsTree" addStyleNames="{style.tree}"/>		
 	</g:FlowPanel>
 </ui:UiBinder>
