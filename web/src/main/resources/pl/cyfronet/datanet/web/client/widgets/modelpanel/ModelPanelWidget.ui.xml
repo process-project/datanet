@@ -29,6 +29,7 @@
 		.header {
 			background-color: #F5F5F5;
 			padding: 15px;			
+			border-radius: 10px 10px 0 0;
 		}
 
 		.elements {
