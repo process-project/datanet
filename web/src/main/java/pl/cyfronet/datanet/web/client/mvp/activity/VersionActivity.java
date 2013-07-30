@@ -7,8 +7,9 @@ import java.util.logging.Logger;
 import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.controller.VersionController.VersionsCallback;
+import pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelWidget;
 
-import com.github.gwtbootstrap.client.ui.Label;
 import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
@@ -37,18 +38,18 @@ public class VersionActivity extends AbstractActivity {
 	@Override
 	public void start(final AcceptsOneWidget panel, final EventBus eventBus) {
 		logger.log(Level.INFO, "Loading model with id: " + modelId);
-		//  TODO implement on server side 
 		versionController.getVersions(modelId, new VersionsCallback() {
 			@Override
 			public void setVersions(List<Version> versions) {
 				for (Version version : versions) {
 					if (version.getId() == versionId) {
-						panel.setWidget(new Label("TODO"));
+						VersionPanelPresenter presenter = new VersionPanelPresenter(new VersionPanelWidget());
+						presenter.setVersion(version);
+						panel.setWidget(presenter.getWidget());
 						break; 
 					}
 				}
 			}
-			
 		}, false);
 	}
 }
