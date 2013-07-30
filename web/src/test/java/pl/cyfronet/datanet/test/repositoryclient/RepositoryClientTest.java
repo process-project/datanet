@@ -4,6 +4,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -31,5 +32,10 @@ public class RepositoryClientTest {
 		Map<String, String> data = new HashMap<>();
 		data.put("testfield", "It is " + System.currentTimeMillis() + " millis from the epoch");
 		repositoryClient.updateEntityRow("http://testmodel.datanet.cyfronet.pl", "testentity", null, data);
+	}
+	
+	@Test
+	public void dumyTest() {
+		
 	}
 }
