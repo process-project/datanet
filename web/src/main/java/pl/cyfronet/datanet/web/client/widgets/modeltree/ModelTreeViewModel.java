@@ -49,11 +49,12 @@ public class ModelTreeViewModel implements TreeViewModel {
 	public <T> NodeInfo<?> getNodeInfo(T value) {
 		
 		TreeItem treeItem = (TreeItem) value;
-		TreeItemsAsyncDataProvider dataProvider = new TreeItemsAsyncDataProvider(treeItem);
+		TreeItemsAsyncDataProvider dataProvider = null;
 		
 		Cell<TreeItem> cell = null;
 		if (isRoot(treeItem)) {
-			rootDataProvider = dataProvider;
+			dataProvider = new TreeItemsAsyncDataProvider(null);
+			rootDataProvider = dataProvider; 
 			cell = new AbstractCell<TreeItem>() {
 				@Override
 				public void render(Context context, TreeItem value,
@@ -68,7 +69,7 @@ public class ModelTreeViewModel implements TreeViewModel {
 			};
 		} else if (isModel(treeItem)) {
 			long modelId = treeItem.getId();
-			versionDataProviders.put(modelId, dataProvider);
+			dataProvider = versionDataProviders.get(modelId);
 			cell = new AbstractCell<TreeItem>() {
 				@Override
 				public void render(Context context, TreeItem value,
@@ -80,7 +81,7 @@ public class ModelTreeViewModel implements TreeViewModel {
 			};
 		} else if (isVersion(treeItem)) {
 			long modelId = treeItem.getId();
-			repositoryDataProviders.put(modelId, dataProvider);
+			dataProvider = repositoryDataProviders.get(modelId);
 			cell = new AbstractCell<TreeItem>() {
 				@Override
 				public void render(Context context, TreeItem value,
@@ -133,11 +134,11 @@ public class ModelTreeViewModel implements TreeViewModel {
 
 	public class TreeItemsAsyncDataProvider extends AsyncDataProvider<TreeItem> {
 
-		private TreeItem parent;
+		private TreeItem current;
 		private List<TreeItem> children;
-
-		public TreeItemsAsyncDataProvider(TreeItem parent) {
-			this.parent = parent;
+		
+		public TreeItemsAsyncDataProvider(TreeItem current) {
+			this.current = current;
 		}
 
 		@Override
@@ -146,10 +147,10 @@ public class ModelTreeViewModel implements TreeViewModel {
 		}
 
 		public void reload() {
-			logger.debug("Reloading childs for {}", parent);
+			logger.debug("Reloading childs for {}", current);
 			loading();
 			if (presenter != null) {
-				presenter.loadChildren(parent);
+				presenter.loadChildren(current);
 			} else {
 				logger.debug("Presenter is null");
 			}
@@ -158,7 +159,23 @@ public class ModelTreeViewModel implements TreeViewModel {
 		@Override
 		public void updateRowData(int start, List<TreeItem> values) {
 			children = values;
+			createChildrenDataProviders();
 			super.updateRowData(start, values);
+		}
+
+		private void createChildrenDataProviders() {
+			Map<Long, TreeItemsAsyncDataProvider> childrenProviders = null;
+			if(isRoot(current)) {
+				childrenProviders = versionDataProviders;
+			} else if (isModel(current)) {
+				childrenProviders = repositoryDataProviders;
+			}
+			
+			if(childrenProviders != null && children != null) {
+				for (TreeItem child : children) {
+					childrenProviders.put(child.getId(), new TreeItemsAsyncDataProvider(child));
+				}
+			}
 		}
 
 		public List<TreeItem> getChildren() {
