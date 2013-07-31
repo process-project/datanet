@@ -3,12 +3,21 @@
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
 	<ui:style>
+		.main {
+			margin: 15px;
+			padding: 15px;
+			border-radius: 10px;
+			box-shadow: 0px 0px 5px #888888;
+		}
+
 		.welcome {
 			margin: 200px auto 0px;
 			width: 655px;
-		}
+		}		
 	</ui:style>
-	<g:FlowPanel addStyleNames="{style.welcome}">
-		<g:Image url="img/datanet-welcome.png"/>
+	<g:FlowPanel addStyleNames="{style.main}">
+		<g:FlowPanel addStyleNames="{style.welcome}">
+			<g:Image url="img/datanet-welcome.png"/>
+		</g:FlowPanel>
 	</g:FlowPanel>
 </ui:UiBinder>
