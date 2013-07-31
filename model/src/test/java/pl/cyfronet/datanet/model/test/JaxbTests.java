@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import pl.cyfronet.datanet.model.beans.Entity;
+import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
 import pl.cyfronet.datanet.model.util.ModelBuilder;
@@ -27,7 +28,6 @@ public class JaxbTests {
 	@Test
 	public void testSerializationOfModel() throws JAXBException {
 		String modelName = "Test name";
-		String modelVersion = "1.0";
 		Model model = new Model();
 		model.setName(modelName);
 		
@@ -41,10 +41,16 @@ public class JaxbTests {
 		List<Entity> list = new LinkedList<Entity>();
 		
 		Entity e1 = new Entity();
-		e1.getFields().get(0).setName("wafle");
-		list.add(e1);
+		Field f1 = new Field();
+		f1.setName("wafle1");
+		e1.getFields().add(f1);
+		
 		Entity e2 = new Entity();
-		e2.getFields().get(0).setName("wafle2");
+		Field f2 = new Field();
+		f2.setName("wafle2");
+		e2.getFields().add(f2);
+		
+		list.add(e1);
 		list.add(e2);
 		
 		
