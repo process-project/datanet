@@ -1,5 +1,9 @@
 package pl.cyfronet.datanet.web.client.widgets.fieldpanel;
 
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
 import pl.cyfronet.datanet.model.beans.Field.Type;
 import pl.cyfronet.datanet.web.client.widgets.fieldpanel.FieldPanelPresenter.View;
 
@@ -24,7 +28,7 @@ public class FieldPanelWidget extends Composite implements View {
 
 	private Presenter presenter;
 
-	@UiField(provided = true) ListBox type;
+	@UiField ListBox type;
 	@UiField TextBox name;
 	@UiField Button remove;
 	@UiField CheckBox required;
@@ -48,7 +52,7 @@ public class FieldPanelWidget extends Composite implements View {
 	void fieldTypeChanged(ChangeEvent event) {
 		ListBox source = (ListBox) event.getSource();
 		int selectedIndex = source.getSelectedIndex();
-		presenter.onFieldTypeChanged(Type.valueOf(source.getValue(selectedIndex)));
+		presenter.onFieldTypeChanged(source.getValue(selectedIndex));
 	}
 	
 	@UiHandler("required")
@@ -90,5 +94,12 @@ public class FieldPanelWidget extends Composite implements View {
 	@Override
 	public void setRequired(boolean requiredValue) {
 		required.setValue(requiredValue);
+	}
+
+	@Override
+	public void setTypes(@NotNull List<String> types) {
+		for (String typeName : types) {
+			type.addItem(typeName);
+		}
 	}
 }

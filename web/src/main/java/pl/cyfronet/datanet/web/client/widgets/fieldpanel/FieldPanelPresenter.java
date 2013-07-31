@@ -1,5 +1,8 @@
 package pl.cyfronet.datanet.web.client.widgets.fieldpanel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Field.Type;
 import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelPresenter;
@@ -16,6 +19,7 @@ public class FieldPanelPresenter implements Presenter {
 		void selectType(Type type);
 		void setEditable(boolean editable);
 		void setRequired(boolean required);
+		void setTypes(List<String> types);
 	}
 	
 	private View view;
@@ -30,7 +34,8 @@ public class FieldPanelPresenter implements Presenter {
 		field = new Field();
 		view.selectType(field.getType());
 		view.setRequired(field.isRequired());
-	}
+		view.setTypes(getTypes());
+	}	
 
 	public void setField(Field field) {
 		this.field = field;
@@ -60,8 +65,8 @@ public class FieldPanelPresenter implements Presenter {
 	}
 
 	@Override
-	public void onFieldTypeChanged(Type value) {
-		field.setType(value);
+	public void onFieldTypeChanged(String typeName) {
+		field.setType(Type.typeValueOf(typeName));
 		fieldModified();
 	}
 
@@ -73,5 +78,13 @@ public class FieldPanelPresenter implements Presenter {
 	
 	private void fieldModified() {
 		entityPanelPresenter.entityChanged();
+	}
+	
+	private List<String> getTypes() {
+		List<String> types = new ArrayList<String>();
+		for (Type type : Type.values()) {
+			types.add(type.typeName());
+		}
+		return types;
 	}
 }

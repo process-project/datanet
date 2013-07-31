@@ -18,7 +18,39 @@ public class Field implements Serializable {
 
 		Boolean, BooleanArray,
 
-		File
+		File;
+
+		private static final String ARRAY = "Array";
+		private static final String TAB = "[]";
+
+		public String typeName() {
+			String name = super.name();
+			if (name.endsWith(ARRAY)) {
+				// String.format cannot be used because of GWT
+				return substring(name, ARRAY) + TAB;
+			}
+
+			return name;
+		}
+
+		public static Type typeValueOf(String typeString) {
+			if (typeString.endsWith(TAB)) {
+				try {
+					return valueOf(substring(typeString, TAB) + ARRAY);
+				} catch (IllegalArgumentException e) {
+					return ObjectIdArray;
+				}
+			}
+			try {
+				return valueOf(typeString);
+			} catch (IllegalArgumentException e) {
+				return ObjectId;
+			}
+		}
+
+		private static String substring(String str, String toRemove) {
+			return str.substring(0, str.length() - toRemove.length());
+		}
 	}
 
 	private String name;
@@ -28,7 +60,7 @@ public class Field implements Serializable {
 	/**
 	 * Relation target. This field is taken into account only when type is
 	 * ObjectId or ObjectIdArray.
-	 */	
+	 */
 	private Entity target;
 
 	public Field() {

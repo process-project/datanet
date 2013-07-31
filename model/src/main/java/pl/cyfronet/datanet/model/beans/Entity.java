@@ -3,7 +3,6 @@ package pl.cyfronet.datanet.model.beans;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
@@ -17,7 +16,7 @@ public class Entity implements Serializable {
 	
 	public Entity() {
 		fields = new ArrayList<Field>();
-		id = UUID.randomUUID().toString();
+		id = UUID.uuid();
 		
 	}
 	
