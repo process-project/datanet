@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.cyfronet.datanet.model.beans.Field.Type;
-
 public class Entity implements Serializable {
 	private static final long serialVersionUID = 992005257282112449L;
 	
