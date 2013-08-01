@@ -17,7 +17,9 @@ import com.google.inject.assistedinject.Assisted;
 public class EntityPanelPresenter implements Presenter {
 	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
+
 		HasWidgets getFieldContainer();
+
 		void setEntityName(String name);
 	}
 
@@ -25,15 +27,17 @@ public class EntityPanelPresenter implements Presenter {
 	private ModelPanelPresenter modelPanelPresenter;
 	private FieldPanelPresenterFactory fieldFactory;
 	private List<FieldPanelPresenter> fieldPanelPresenters;
-	private Entity entity;	
+	private Entity entity;
 
 	@Inject
-	public EntityPanelPresenter(@Assisted ModelPanelPresenter modelPanelPresenter, View view, FieldPanelPresenterFactory fieldFactory) {
+	public EntityPanelPresenter(
+			@Assisted ModelPanelPresenter modelPanelPresenter, View view,
+			FieldPanelPresenterFactory fieldFactory) {
 		this.view = view;
 		view.setPresenter(this);
 		this.modelPanelPresenter = modelPanelPresenter;
 		this.fieldFactory = fieldFactory;
-		
+
 		fieldPanelPresenters = new ArrayList<FieldPanelPresenter>();
 		entity = new Entity();
 		setEntity(entity);
@@ -46,49 +50,61 @@ public class EntityPanelPresenter implements Presenter {
 	public Entity getEntity() {
 		return entity;
 	}
-	
+
 	public void setEntity(Entity entity) {
 		this.entity = entity;
 		view.setEntityName(entity.getName());
 		view.getFieldContainer().clear();
 		fieldPanelPresenters.clear();
-		
-		for(Field field : entity.getFields()) {
+
+		for (Field field : entity.getFields()) {
 			FieldPanelPresenter fieldPanelPresenter = fieldFactory.create(this);
 			fieldPanelPresenter.setField(field);
 			fieldPanelPresenters.add(fieldPanelPresenter);
-			view.getFieldContainer().add(fieldPanelPresenter.getWidget().asWidget());
+			view.getFieldContainer().add(
+					fieldPanelPresenter.getWidget().asWidget());
 		}
 	}
 
 	@Override
 	public void onRemoveEntity() {
-		modelPanelPresenter.removeEntity(this);		
+		modelPanelPresenter.removeEntity(this);
 	}
 
 	@Override
 	public void onNewField() {
 		FieldPanelPresenter fieldPanelPresenter = fieldFactory.create(this);
 		fieldPanelPresenters.add(fieldPanelPresenter);
-		view.getFieldContainer().add(fieldPanelPresenter.getWidget().asWidget());
+		view.getFieldContainer()
+				.add(fieldPanelPresenter.getWidget().asWidget());
 		entity.getFields().add(fieldPanelPresenter.getField());
 		entityChanged();
 	}
 
 	public void removeField(FieldPanelPresenter fieldPanelPresenter) {
-		view.getFieldContainer().remove(fieldPanelPresenter.getWidget().asWidget());
-		fieldPanelPresenters.remove(fieldPanelPresenter);		
+		view.getFieldContainer().remove(
+				fieldPanelPresenter.getWidget().asWidget());
+		fieldPanelPresenters.remove(fieldPanelPresenter);
 		entity.getFields().remove(fieldPanelPresenter.getField());
 		entityChanged();
 	}
-	
+
 	@Override
 	public void onEntityNameChanged(String entityName) {
 		entity.setName(entityName);
 		entityChanged();
 	}
-	
-	public void entityChanged() {		
+
+	public void entityChanged() {
 		modelPanelPresenter.modelChanged();
+	}
+
+	public List<String> getEntitiesNames() {
+		return modelPanelPresenter.getEntitiesNames();
+	}
+
+	@Override
+	public Entity getEntity(String entityName) {
+		return modelPanelPresenter.getEntity(entityName);
 	}
 }
