@@ -107,4 +107,24 @@ public class ModelPanelPresenter implements Presenter {
 	public IsWidget getWidget() {
 		return view;
 	}
+
+	@Override
+	public List<String> getEntitiesNames() {
+		List<String> names = new ArrayList<String>();
+		for (Entity entity : model.getEntities()) {
+			names.add(entity.getName());
+		}
+
+		return names;
+	}
+
+	@Override
+	public Entity getEntity(String entityName) {
+		for (Entity entity : model.getEntities()) {
+			if(entity.getName().equals(entityName)) {
+				return entity;
+			}
+		}
+		return null;
+	}
 }
