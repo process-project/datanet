@@ -23,19 +23,22 @@ public class ModelPanelPresenter implements Presenter {
 			.getLogger(ModelPanelPresenter.class.getName());
 
 	private List<EntityPanelPresenter> entityPanelPresenters;
-	private ModelProxy model;	
+	private ModelProxy model;
 	private View view;
 	private EventBus eventBus;
 	private EntityPanelPresenterFactory entityPanelFactory;
 
 	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
+
 		HasWidgets getEntityContainer();
+
 		void setModelName(String name);
 	}
 
 	@Inject
-	public ModelPanelPresenter(View view, EventBus eventBus, EntityPanelPresenterFactory entityPanelFactory) {
+	public ModelPanelPresenter(View view, EventBus eventBus,
+			EntityPanelPresenterFactory entityPanelFactory) {
 		this.view = view;
 		this.eventBus = eventBus;
 		this.entityPanelFactory = entityPanelFactory;
@@ -53,7 +56,7 @@ public class ModelPanelPresenter implements Presenter {
 		view.getEntityContainer().clear();
 		entityPanelPresenters.clear();
 
-		if(model.getEntities() != null) {
+		if (model.getEntities() != null) {
 			for (Entity entity : model.getEntities()) {
 				displayEntity(entity);
 			}
@@ -62,7 +65,8 @@ public class ModelPanelPresenter implements Presenter {
 
 	private void displayEntity(Entity entity) {
 		logger.debug("Adding entity to model: " + entity);
-		EntityPanelPresenter entityPanelPresenter = entityPanelFactory.create(this);
+		EntityPanelPresenter entityPanelPresenter = entityPanelFactory
+				.create(this);
 		entityPanelPresenter.setEntity(entity);
 		entityPanelPresenters.add(entityPanelPresenter);
 		view.getEntityContainer().add(
@@ -72,7 +76,8 @@ public class ModelPanelPresenter implements Presenter {
 	@Override
 	public void onNewEntity() {
 		logger.debug("Adding new entity to model");
-		EntityPanelPresenter entityPanelPresenter = entityPanelFactory.create(this);
+		EntityPanelPresenter entityPanelPresenter = entityPanelFactory
+				.create(this);
 		entityPanelPresenters.add(entityPanelPresenter);
 		view.getEntityContainer().add(
 				entityPanelPresenter.getWidget().asWidget());
@@ -112,16 +117,22 @@ public class ModelPanelPresenter implements Presenter {
 	public List<String> getEntitiesNames() {
 		List<String> names = new ArrayList<String>();
 		for (Entity entity : model.getEntities()) {
-			names.add(entity.getName());
+			if (!empty(entity.getName())) {
+				names.add(entity.getName());
+			}
 		}
 
 		return names;
 	}
 
+	private boolean empty(String str) {
+		return str == null || str.equals("");
+	}
+
 	@Override
 	public Entity getEntity(String entityName) {
 		for (Entity entity : model.getEntities()) {
-			if(entity.getName().equals(entityName)) {
+			if (entity.getName().equals(entityName)) {
 				return entity;
 			}
 		}
