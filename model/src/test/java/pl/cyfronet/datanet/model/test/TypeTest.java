@@ -1,4 +1,4 @@
-package pl.cyfronet.datanet.model.util;
+package pl.cyfronet.datanet.model.test;
 
 import static org.junit.Assert.assertEquals;
 
