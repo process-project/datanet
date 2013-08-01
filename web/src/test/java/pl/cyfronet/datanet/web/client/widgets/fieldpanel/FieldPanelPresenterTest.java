@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.test.mock.matcher.ContainsInArrayMatcher;
@@ -43,6 +44,8 @@ public class FieldPanelPresenterTest {
 	private Field field;
 
 	private String newFiledName = "newFieldName";
+
+	private Entity entity;
 
 	@Before
 	public void prepare() {
@@ -102,17 +105,57 @@ public class FieldPanelPresenterTest {
 		thenTypeChanged();
 	}
 
+	private void whenFieldTypeChanged() {
+		presenter.onFieldTypeChanged("Integer[]");
+	}
+	
 	private void thenTypeChanged() {
 		assertEquals(Type.IntegerArray, presenter.getField().getType());
 		thenEntityChanged();
 	}
 
-	private void whenFieldTypeChanged() {
-		presenter.onFieldTypeChanged("Integer[]");
+	@Test
+	public void shouldUpdateFieldTypeWithReference() throws Exception {
+		givenModelWithEntity();
+		whenTypeChangedIntoRelation();
+		thenRelationIsSetForField();
+	}
+
+	private void givenModelWithEntity() {
+		entity = new Entity();
+		entity.setName("EntityName");
+
+		when(entityPanelPresenter.getEntity(entity.getName())).thenReturn(
+				entity);
+	}
+
+	private void whenTypeChangedIntoRelation() {
+		presenter.onFieldTypeChanged(entity.getName());
+	}
+
+	private void thenRelationIsSetForField() {
+		assertEquals(Type.ObjectId, presenter.getField().getType());
+		assertEquals(entity, presenter.getField().getTarget());
 	}
 
 	@Test
-	public void should() throws Exception {
+	public void shouldUpdateFieldTypeWithReferenceArray() throws Exception {
+		givenModelWithEntity();
+		whenTypeChangedIntoRelationArray();
+		thenRelationArrayIsSetForField();
+	}
+	
+	private void whenTypeChangedIntoRelationArray() {
+		presenter.onFieldTypeChanged(entity.getName() + "[]");
+	}
+
+	private void thenRelationArrayIsSetForField() {
+		assertEquals(Type.ObjectIdArray, presenter.getField().getType());
+		assertEquals(entity, presenter.getField().getTarget());
+	}
+
+	@Test
+	public void shouldUpdateRequired() throws Exception {
 		whenFieldRequiredChanged();
 		thenRequiredChanged();
 	}
