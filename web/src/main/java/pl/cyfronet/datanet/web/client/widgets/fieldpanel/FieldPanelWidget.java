@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.web.client.widgets.fieldpanel.FieldPanelPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -19,22 +18,28 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FieldPanelWidget extends Composite implements View {
-	private static FieldPanelWidgetUiBinder uiBinder = GWT	.create(FieldPanelWidgetUiBinder.class);
-	interface FieldPanelWidgetUiBinder extends UiBinder<Widget, FieldPanelWidget> {}
+	private static FieldPanelWidgetUiBinder uiBinder = GWT
+			.create(FieldPanelWidgetUiBinder.class);
+
+	interface FieldPanelWidgetUiBinder extends
+			UiBinder<Widget, FieldPanelWidget> {
+	}
 
 	private Presenter presenter;
 
-	@UiField ListBox type;
-	@UiField TextBox name;
-	@UiField Button remove;
-	@UiField CheckBox required;
+	@UiField
+	ListBox type;
+	@UiField
+	TextBox name;
+	@UiField
+	Button remove;
+	@UiField
+	CheckBox required;
 
 	public FieldPanelWidget() {
-		createTypeListBox();
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
@@ -42,19 +47,19 @@ public class FieldPanelWidget extends Composite implements View {
 	void removeFieldClicked(ClickEvent event) {
 		presenter.onRemoveField();
 	}
-	
+
 	@UiHandler("name")
 	void fieldNameChanged(ValueChangeEvent<String> event) {
 		presenter.onFieldNameChanged(event.getValue());
 	}
-	
+
 	@UiHandler("type")
 	void fieldTypeChanged(ChangeEvent event) {
 		ListBox source = (ListBox) event.getSource();
 		int selectedIndex = source.getSelectedIndex();
 		presenter.onFieldTypeChanged(source.getValue(selectedIndex));
 	}
-	
+
 	@UiHandler("required")
 	void requiredFieldValueChanged(ValueChangeEvent<Boolean> event) {
 		presenter.onFieldRequiredChanged(event.getValue());
@@ -64,31 +69,10 @@ public class FieldPanelWidget extends Composite implements View {
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
 	}
-	
-	@Override
-	public HasText getName() {
-		return name;
-	}
 
 	@Override
-	public void selectType(Type fieldType) {
-		type.setSelectedIndex(fieldType.ordinal());
-	}
-
-	@Override
-	public void setEditable(boolean editable) {
-		type.setEnabled(editable);
-		name.setEnabled(editable);
-		required.setEnabled(false);
-		remove.setVisible(editable);
-	}
-
-	private void createTypeListBox() {
-		type = new ListBox();
-		
-		for(Type fieldType : Type.values()) {
-			type.addItem(fieldType.name());
-		}
+	public void selectType(String typeName) {
+		type.setSelectedValue(typeName);
 	}
 
 	@Override
@@ -101,5 +85,10 @@ public class FieldPanelWidget extends Composite implements View {
 		for (String typeName : types) {
 			type.addItem(typeName);
 		}
+	}
+
+	@Override
+	public void setName(String fieldName) {
+		name.setText(fieldName);
 	}
 }

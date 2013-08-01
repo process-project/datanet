@@ -7,7 +7,6 @@ import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelPresenter;
 
-import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -15,9 +14,8 @@ import com.google.inject.assistedinject.Assisted;
 public class FieldPanelPresenter implements Presenter {
 	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
-		HasText getName();
-		void selectType(Type type);
-		void setEditable(boolean editable);
+		void setName(String fieldName);
+		void selectType(String typeName);
 		void setRequired(boolean required);
 		void setTypes(List<String> types);
 	}
@@ -32,15 +30,15 @@ public class FieldPanelPresenter implements Presenter {
 		view.setPresenter(this);
 		this.entityPanelPresenter = entityPanelPresenter;
 		field = new Field();
-		view.selectType(field.getType());
+		view.selectType(field.getType().typeName());
 		view.setRequired(field.isRequired());
 		view.setTypes(getTypes());
 	}	
 
 	public void setField(Field field) {
 		this.field = field;
-		view.getName().setText(field.getName());
-		view.selectType(field.getType());
+		view.setName(field.getName());
+		view.selectType(field.getType().typeName());
 		view.setRequired(field.isRequired());
 	}
 	
