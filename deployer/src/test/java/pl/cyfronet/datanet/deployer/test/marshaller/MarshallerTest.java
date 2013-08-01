@@ -13,6 +13,7 @@ import pl.cyfronet.datanet.deployer.marshaller.MarshallerException;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Model;
+import pl.cyfronet.datanet.model.beans.Type;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -34,21 +35,21 @@ public class MarshallerTest {
 		List<Field> fields = new ArrayList<Field>();
 
 		Field field1 = new Field();
-		field1.setType(Field.Type.String);
+		field1.setType(Type.String);
 		field1.setName("nazwa");
 		Field field2 = new Field();
-		field2.setType(Field.Type.Integer);
+		field2.setType(Type.Integer);
 		field2.setName("ilosc");
 		Field field3 = new Field();
-		field3.setType(Field.Type.StringArray);
+		field3.setType(Type.StringArray);
 		field3.setName("tagi");
 		field3.setRequired(false);
 		Field field4 = new Field();
-		field4.setType(Field.Type.File);
+		field4.setType(Type.File);
 		field4.setName("plik");
 		field4.setRequired(true);
 		Field field5 = new Field();
-		field5.setType(Field.Type.File);
+		field5.setType(Type.File);
 		field5.setName("pliksss");
 		field5.setRequired(true);
 
@@ -69,7 +70,7 @@ public class MarshallerTest {
 
 		field1 = new Field();
 		field1.setName("wafle");
-		field1.setType(Field.Type.String);
+		field1.setType(Type.String);
 
 		fields.add(field1);
 

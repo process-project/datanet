@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.cyfronet.datanet.model.beans.Field;
-import pl.cyfronet.datanet.model.beans.Field.Type;
+import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelPresenter;
 
 import com.google.gwt.user.client.ui.HasText;

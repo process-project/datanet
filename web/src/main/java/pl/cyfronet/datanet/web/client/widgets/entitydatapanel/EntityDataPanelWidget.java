@@ -2,7 +2,7 @@ package pl.cyfronet.datanet.web.client.widgets.entitydatapanel;
 
 import java.util.List;
 
-import pl.cyfronet.datanet.model.beans.Field.Type;
+import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.CellTable;
@@ -21,7 +21,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasWidgets;

@@ -25,8 +25,8 @@ import org.mockito.MockitoAnnotations;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
-import pl.cyfronet.datanet.model.beans.Field.Type;
 import pl.cyfronet.datanet.model.beans.Model;
+import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.test.mock.matcher.NotificationEvenMatcher;
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;

@@ -10,15 +10,15 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
-import pl.cyfronet.datanet.model.beans.Field.Type;
+import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.DataSavedCallback;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.EntityCallback;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 import pl.cyfronet.datanet.web.client.di.factory.EntityRowDataProviderFactory;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
-import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
+import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
 
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;

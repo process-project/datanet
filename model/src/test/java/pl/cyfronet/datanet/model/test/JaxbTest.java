@@ -14,8 +14,8 @@ import org.junit.Test;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
-import pl.cyfronet.datanet.model.beans.Field.Type;
 import pl.cyfronet.datanet.model.beans.Model;
+import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
 import pl.cyfronet.datanet.model.util.ModelBuilder;
 

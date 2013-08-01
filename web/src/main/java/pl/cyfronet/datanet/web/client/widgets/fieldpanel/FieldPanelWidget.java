@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import pl.cyfronet.datanet.model.beans.Field.Type;
+import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.web.client.widgets.fieldpanel.FieldPanelPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.Button;

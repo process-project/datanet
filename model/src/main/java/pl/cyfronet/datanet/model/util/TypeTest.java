@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import pl.cyfronet.datanet.model.beans.Field.Type;
+import pl.cyfronet.datanet.model.beans.Type;
 
 public class TypeTest {
 

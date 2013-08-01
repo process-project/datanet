@@ -6,6 +6,7 @@ import java.util.Map;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
+import pl.cyfronet.datanet.model.beans.Type;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,27 +19,27 @@ public class EntityMarshaller {
 	private ObjectMapper objectMapper;
 	private ObjectWriter objectWritter;
 
-	private static final Map<Field.Type, String> typeMap;
-	private static final Map<Field.Type, String> arrayTypeMap;
+	private static final Map<Type, String> typeMap;
+	private static final Map<Type, String> arrayTypeMap;
 
 	static {
-		Map<Field.Type, String> map = new HashMap<Field.Type, String>();
+		Map<Type, String> map = new HashMap<Type, String>();
 		
-		map.put(Field.Type.ObjectId, JsonFormatTypes.STRING.name().toLowerCase());
-		map.put(Field.Type.String, JsonFormatTypes.STRING.name().toLowerCase());
-		map.put(Field.Type.Integer, JsonFormatTypes.INTEGER.name().toLowerCase());
-		map.put(Field.Type.Float, JsonFormatTypes.NUMBER.name().toLowerCase());
-		map.put(Field.Type.Boolean, JsonFormatTypes.BOOLEAN.name().toLowerCase());
+		map.put(Type.ObjectId, JsonFormatTypes.STRING.name().toLowerCase());
+		map.put(Type.String, JsonFormatTypes.STRING.name().toLowerCase());
+		map.put(Type.Integer, JsonFormatTypes.INTEGER.name().toLowerCase());
+		map.put(Type.Float, JsonFormatTypes.NUMBER.name().toLowerCase());
+		map.put(Type.Boolean, JsonFormatTypes.BOOLEAN.name().toLowerCase());
 		
 		typeMap = Collections.unmodifiableMap(map);
 		
-		Map<Field.Type, String> arrayMap = new HashMap<Field.Type, String>();
+		Map<Type, String> arrayMap = new HashMap<Type, String>();
 		
-		arrayMap.put(Field.Type.ObjectIdArray, JsonFormatTypes.STRING.name().toLowerCase());
-		arrayMap.put(Field.Type.StringArray, JsonFormatTypes.STRING.name().toLowerCase());
-		arrayMap.put(Field.Type.IntegerArray, JsonFormatTypes.INTEGER.name().toLowerCase());
-		arrayMap.put(Field.Type.FloatArray, JsonFormatTypes.NUMBER.name().toLowerCase());
-		arrayMap.put(Field.Type.BooleanArray, JsonFormatTypes.BOOLEAN.name().toLowerCase());
+		arrayMap.put(Type.ObjectIdArray, JsonFormatTypes.STRING.name().toLowerCase());
+		arrayMap.put(Type.StringArray, JsonFormatTypes.STRING.name().toLowerCase());
+		arrayMap.put(Type.IntegerArray, JsonFormatTypes.INTEGER.name().toLowerCase());
+		arrayMap.put(Type.FloatArray, JsonFormatTypes.NUMBER.name().toLowerCase());
+		arrayMap.put(Type.BooleanArray, JsonFormatTypes.BOOLEAN.name().toLowerCase());
 		
 		arrayTypeMap = Collections.unmodifiableMap(arrayMap);
 	}
@@ -87,7 +88,7 @@ public class EntityMarshaller {
 
 	private void buildField(Field field, ObjectNode rootNode, ArrayNode linksArray)
 			throws MarshallerException {
-		Field.Type type = field.getType();
+		Type type = field.getType();
 		
 		if (typeMap.keySet().contains(type)) {
 			// primitive type
@@ -101,7 +102,7 @@ public class EntityMarshaller {
 			ObjectNode arrayInfo = fieldObject.putObject("items");
 			arrayInfo.put("type", arrayTypeMap.get(type));
 			fieldObject.put("required", field.isRequired());
-		} else if (Field.Type.File.equals(type)) {
+		} else if (Type.File.equals(type)) {
 			// file type
 			ObjectNode fieldObject = rootNode.putObject(field.getName() + "_id");
 			fieldObject.put("type", JsonFormatTypes.STRING.name().toLowerCase());
