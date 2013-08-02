@@ -82,6 +82,7 @@ public class FieldPanelWidget extends Composite implements View {
 
 	@Override
 	public void setTypes(@NotNull List<String> types) {
+		type.clear();
 		for (String typeName : types) {
 			type.addItem(typeName);
 		}
