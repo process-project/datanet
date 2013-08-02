@@ -174,7 +174,11 @@ public class RpcRepositoryService implements RepositoryService {
 		}
 	}
 	
+	/**
+	 * @deprecated instead use the following action: pl.cyfronet.datanet.web.server.controllers.FormController.handleForm(EntityUpload)
+	 */
 	@Override
+	@Deprecated
 	public void saveData(long repositoryId, String entityName, Map<String, String> data) throws RepositoryException {
 		try {
 			RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);

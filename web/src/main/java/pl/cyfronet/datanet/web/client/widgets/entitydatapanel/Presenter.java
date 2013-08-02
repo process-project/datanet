@@ -6,4 +6,6 @@ public interface Presenter {
 	void onDataRetrievalError();
 	void onAddNewEntityRow();
 	void onSaveNewEntityRow();
+	void beforeEntitySubmitted();
+	void afterEntitySubmitted(String results);
 }

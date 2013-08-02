@@ -12,7 +12,6 @@ import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
-import pl.cyfronet.datanet.web.client.controller.RepositoryController.DataSavedCallback;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.EntityCallback;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 import pl.cyfronet.datanet.web.client.di.factory.EntityRowDataProviderFactory;
@@ -20,6 +19,7 @@ import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
 
+import com.github.gwtbootstrap.client.ui.Form;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.view.client.HasData;
@@ -37,9 +37,12 @@ public class EntityDataPanelPresenter implements Presenter {
 		void initDataTable(List<String> fieldNames);
 		void resetPager(HasData<EntityRow> dataTable);
 		void showNewEntityRowPopup();
-		HasText addNewEntityRowField(String name, Type type);
+		HasText addNewEntityRowField(String name, Type type, int indexOfGivenType);
 		void refreshDataTable();
 		void hideNewEntityRowPopup();
+		Form getEntityUploadForm();
+		void setBusyState(boolean b);
+		void initEntityUploadForm(long repositoryId, String entityName);
 	}
 	
 	public interface DataCallback {
@@ -131,29 +134,30 @@ public class EntityDataPanelPresenter implements Presenter {
 	
 	@Override
 	public void onSaveNewEntityRow() {
-		Map<String, String> data = new HashMap<String, String>();
-		
-		for(String fieldName : newEntityRowFields.keySet()) {
-			data.put(fieldName, newEntityRowFields.get(fieldName).getText());
-		}
-		
-		repositoryController.addEntityRow(repositoryId, entityName, data, new DataSavedCallback() {
-			@Override
-			public void onDataSaved(boolean success) {
-				view.hideNewEntityRowPopup();
-				
-				for(String fieldName : newEntityRowFields.keySet()) {
-					newEntityRowFields.get(fieldName).setText("");
-				}
-				
-				if (success) {
-					view.refreshDataTable();
-				} else {
-					eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositorySaveEntityRowError, NotificationType.ERROR));
-				}
-			}});
+		view.getEntityUploadForm().submit();
 	}
 	
+	@Override
+	public void beforeEntitySubmitted() {
+		view.setBusyState(true);
+	}
+	
+	@Override
+	public void afterEntitySubmitted(String results) {
+		view.setBusyState(false);
+		view.hideNewEntityRowPopup();
+		
+		for(String fieldName : newEntityRowFields.keySet()) {
+			newEntityRowFields.get(fieldName).setText("");
+		}
+		
+		if (results.contains("SUCCESS")) {
+			view.refreshDataTable();
+		} else {
+			eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositorySaveEntityRowError, NotificationType.ERROR));
+		}
+	}
+
 	private void showSearchFields(List<Field> fields) {
 		for(Field field : fields) {
 			searchFields.put(field.getName(), view.addSearchField(field.getName(), field.getType()));
@@ -174,8 +178,16 @@ public class EntityDataPanelPresenter implements Presenter {
 	}
 	
 	private void addNewRowFields(List<Field> fields) {
+		Map<Type, Integer> indexes = new HashMap<Type, Integer>();
+		view.initEntityUploadForm(repositoryId, entityName);
+		
 		for(Field field : fields) {
-			newEntityRowFields.put(field.getName(), view.addNewEntityRowField(field.getName(), field.getType()));
+			if (indexes.get(field.getType()) == null) {
+				indexes.put(field.getType(), 0);
+			}
+			
+			newEntityRowFields.put(field.getName(), view.addNewEntityRowField(field.getName(), field.getType(), indexes.get(field.getType())));
+			indexes.put(field.getType(), indexes.get(field.getType()) + 1);
 		}
 	}
 }
