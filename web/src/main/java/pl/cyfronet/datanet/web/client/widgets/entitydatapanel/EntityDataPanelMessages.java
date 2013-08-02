@@ -7,4 +7,9 @@ public interface EntityDataPanelMessages extends Messages {
 	String noEntityValues();
 	String repositoryAddEntity();
 	String saveNewEntityRow();
+	String passwordPlaceholder();
+	String loginPlaceholder();
+	String password();
+	String login();
+	String credentialsInfo();
 }

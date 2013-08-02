@@ -17,6 +17,7 @@ import com.github.gwtbootstrap.client.ui.FormLabel;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.SimplePager;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
@@ -28,6 +29,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Widget;
@@ -129,7 +132,7 @@ public class EntityDataPanelWidget extends Composite implements View {
 		switch (type) {
 			case File:
 				FileUpload fileUpload = new FileUpload();
-				fileUpload.setName("files['" + indexOfGivenType + "']");
+				fileUpload.setName("files['" + name + "']");
 				widget = fileUpload;
 			break;
 			default:
@@ -181,5 +184,25 @@ public class EntityDataPanelWidget extends Composite implements View {
 		entityNameInput.setName("entityName");
 		entityNameInput.setValue(entityName);
 		addEntityRowFormContainer.add(entityNameInput);
+	}
+
+	@Override
+	public void addNewEntityRowCredentials() {
+		FlowPanel credsPanel = new FlowPanel();
+		credsPanel.getElement().setClassName("alert");
+		credsPanel.add(new HTML(messages.credentialsInfo()));
+		
+		TextBox loginInput = new TextBox();
+		loginInput.setName("login");
+		loginInput.setPlaceholder(messages.loginPlaceholder());
+		credsPanel.add(new ControlLabel(messages.login()));
+		credsPanel.add(loginInput);
+		
+		PasswordTextBox passwordInput = new PasswordTextBox();
+		passwordInput.setName("password");
+		passwordInput.setPlaceholder(messages.passwordPlaceholder());
+		credsPanel.add(new ControlLabel(messages.password()));
+		credsPanel.add(passwordInput);
+		addEntityRowFormContainer.add(credsPanel);
 	}
 }

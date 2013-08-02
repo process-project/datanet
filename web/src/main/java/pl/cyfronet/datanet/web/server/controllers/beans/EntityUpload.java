@@ -1,21 +1,19 @@
 package pl.cyfronet.datanet.web.server.controllers.beans;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
 public class EntityUpload {
 	private Map<String, String> fields;
-	private List<MultipartFile> files;
+	private Map<String, MultipartFile> files;
 	private long repositoryId;
 	private String entityName;
 	
 	public EntityUpload() {
 		fields = new HashMap<>();
-		files = new ArrayList<>();
+		files = new HashMap<>();
 	}
 	
 	public Map<String, String> getFields() {
@@ -24,16 +22,10 @@ public class EntityUpload {
 	public void setFields(Map<String, String> fields) {
 		this.fields = fields;
 	}
-	public List<MultipartFile> getFiles() {
-		return files;
-	}
-	public void setFiles(List<MultipartFile> files) {
-		this.files = files;
-	}
 	
 	@Override
 	public String toString() {
-		return "EntityUpload [fields=" + fields + ", files=" + files + "]";
+		return "EntityUpload [fields=" + fields + ", files=" + getFiles() + "]";
 	}
 
 	public String getEntityName() {
@@ -50,5 +42,13 @@ public class EntityUpload {
 
 	public void setRepositoryId(long repositoryId) {
 		this.repositoryId = repositoryId;
+	}
+
+	public Map<String, MultipartFile> getFiles() {
+		return files;
+	}
+
+	public void setFiles(Map<String, MultipartFile> files) {
+		this.files = files;
 	}
 }

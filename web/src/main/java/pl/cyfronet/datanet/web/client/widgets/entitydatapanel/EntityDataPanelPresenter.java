@@ -43,6 +43,7 @@ public class EntityDataPanelPresenter implements Presenter {
 		Form getEntityUploadForm();
 		void setBusyState(boolean b);
 		void initEntityUploadForm(long repositoryId, String entityName);
+		void addNewEntityRowCredentials();
 	}
 	
 	public interface DataCallback {
@@ -188,6 +189,10 @@ public class EntityDataPanelPresenter implements Presenter {
 			
 			newEntityRowFields.put(field.getName(), view.addNewEntityRowField(field.getName(), field.getType(), indexes.get(field.getType())));
 			indexes.put(field.getType(), indexes.get(field.getType()) + 1);
+		}
+		
+		if (indexes.get(Type.File) != null) {
+			view.addNewEntityRowCredentials();
 		}
 	}
 }
