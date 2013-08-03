@@ -20,6 +20,7 @@ public class MainController {
 	public String main(Model model, HttpServletRequest request) throws IOException {	
 		Locale locale = RequestContextUtils.getLocale(request);
 		model.addAttribute("locale", locale.getLanguage());
+		log.debug("Setting locale to {}", locale.getLanguage());
 		
 		return "main";
 	}

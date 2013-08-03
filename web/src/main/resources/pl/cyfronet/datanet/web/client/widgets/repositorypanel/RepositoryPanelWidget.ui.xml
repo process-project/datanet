@@ -35,7 +35,7 @@
 		</g:north>
 		<g:center>
 		    <g:FlowPanel addStyleNames="{style.tabs}">
-				<b:TabPanel tabPosition="left" ui:field="tabPanel" />
+				<b:TabPanel tabPosition="top" ui:field="tabPanel" />
 			</g:FlowPanel>
 		</g:center>
 	</g:DockLayoutPanel>

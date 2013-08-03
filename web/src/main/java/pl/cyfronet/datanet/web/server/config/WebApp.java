@@ -1,6 +1,7 @@
 package pl.cyfronet.datanet.web.server.config;
 
 import javax.servlet.FilterRegistration;
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
@@ -44,9 +45,14 @@ public class WebApp implements WebApplicationInitializer {
 		ServletRegistration.Dynamic gwtServlet = servletContext.addServlet("gwtServices", new SpringGwtRemoteServiceServlet(root));
 		gwtServlet.addMapping("/rpcservices/*");
 
+		
 		ServletRegistration.Dynamic springServlet = servletContext.addServlet("spring", new DispatcherServlet(root));
 		springServlet.setLoadOnStartup(1);
 		springServlet.addMapping("/");
+		
+		MultipartConfigElement multipart = new MultipartConfigElement("/tmp");
+		springServlet.setMultipartConfig(multipart);
+		
 		log.info("Datanet web application successfully initialized");
 	}
 }

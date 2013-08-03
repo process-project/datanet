@@ -12,11 +12,11 @@
 		}
 	</ui:style>
 	<g:FlowPanel>
-		<b:Form>
+		<b:Form type="INLINE">
 			<b:Fieldset ui:field="searchFieldSet">
 				<b:Legend><ui:text from="{messages.repositorySearchLabel}"/></b:Legend>
+				<b:Button type="PRIMARY" icon="SEARCH" ui:field="searchButton"><ui:text from="{messages.repositorySearchLabel}"/></b:Button>
 			</b:Fieldset>
-			<b:Button type="PRIMARY" icon="SEARCH" ui:field="searchButton"><ui:text from="{messages.repositorySearchLabel}"/></b:Button>
 		</b:Form>
 		<g:FlowPanel>
 			<b:SimplePager ui:field="pager" location="RIGHT" addStyleNames="{style.right}"/>
@@ -24,9 +24,9 @@
 		</g:FlowPanel>
 		<b:CellTable ui:field="dataTable" striped="true" condensed="true" pageSize="10"/>
 		<b:Modal ui:field="addRowPopup" title="{messages.repositoryAddEntity}" animation="true">
-			<b:Form ui:field="addEntityRowContainer"></b:Form>
+			<b:Form ui:field="addEntityRowFormContainer" action="upload" encoding="multipart/form-data" method="post"></b:Form>
 			<b:ModalFooter>
-				<b:Button ui:field="saveEntityRow" icon="SAVE" type="PRIMARY"><ui:text from="{messages.saveNewEntityRow}"/></b:Button>
+				<b:Button ui:field="saveEntityRow" icon="SAVE" type="PRIMARY" loadingText="&lt;i class='icon-spinner'&gt;&lt;/i&gt; {messages.saveNewEntityRow}"><ui:text from="{messages.saveNewEntityRow}"/></b:Button>
 			</b:ModalFooter>
 		</b:Modal>
 	</g:FlowPanel>

@@ -5,25 +5,34 @@ import java.util.List;
 import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter.View;
 
+import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.CellTable;
 import com.github.gwtbootstrap.client.ui.ControlLabel;
 import com.github.gwtbootstrap.client.ui.Fieldset;
+import com.github.gwtbootstrap.client.ui.FileUpload;
+import com.github.gwtbootstrap.client.ui.Form;
+import com.github.gwtbootstrap.client.ui.Form.SubmitCompleteEvent;
+import com.github.gwtbootstrap.client.ui.Form.SubmitEvent;
 import com.github.gwtbootstrap.client.ui.FormLabel;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.SimplePager;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.HasData;
 
@@ -36,7 +45,8 @@ public class EntityDataPanelWidget extends Composite implements View {
 	@UiField CellTable<EntityRow> dataTable;
 	@UiField EntityDataPanelMessages messages;
 	@UiField Modal addRowPopup;
-	@UiField HasWidgets addEntityRowContainer;
+	@UiField Form addEntityRowFormContainer;
+	@UiField Button saveEntityRow;
 	
 	private Presenter presenter;
 	
@@ -45,18 +55,28 @@ public class EntityDataPanelWidget extends Composite implements View {
 	}
 	
 	@UiHandler("searchButton")
-	public void onSearch(ClickEvent event) {
+	void onSearch(ClickEvent event) {
 		presenter.onSearch();
 	}
 	
 	@UiHandler("addEntityButton")
-	public void onAddEntity(ClickEvent event) {
+	void onAddEntity(ClickEvent event) {
 		presenter.onAddNewEntityRow();
 	}
 	
 	@UiHandler("saveEntityRow")
-	public void onSaveNewEntityRow(ClickEvent event) {
+	void onSaveNewEntityRow(ClickEvent event) {
 		presenter.onSaveNewEntityRow();
+	}
+	
+	@UiHandler("addEntityRowFormContainer")
+	void onBeforeEntitySubmit(SubmitEvent event) {
+		presenter.beforeEntitySubmitted();
+	}
+	
+	@UiHandler("addEntityRowFormContainer")
+	void onAfterEntitySubmitted(SubmitCompleteEvent event) {
+		presenter.afterEntitySubmitted(event.getResults());
 	}
 	
 	@Override
@@ -67,10 +87,12 @@ public class EntityDataPanelWidget extends Composite implements View {
 	@Override
 	public HasText addSearchField(String name, Type type) {
 		FormLabel label = new FormLabel(name);
-		searchFieldSet.add(label);
+		label.getElement().getStyle().setMarginRight(10, Unit.PX);
+		searchFieldSet.insert(label, searchFieldSet.getWidgetCount() - 1);
 		
 		TextBox field = new TextBox();
-		searchFieldSet.add(field);
+		field.getElement().getStyle().setMarginRight(10, Unit.PX);
+		searchFieldSet.insert(field, searchFieldSet.getWidgetCount() - 1);
 		
 		return field;
 	}
@@ -102,13 +124,28 @@ public class EntityDataPanelWidget extends Composite implements View {
 	}
 
 	@Override
-	public HasText addNewEntityRowField(String name, Type type) {
-		addEntityRowContainer.add(new ControlLabel(name));
+	public HasText addNewEntityRowField(String name, Type type, int indexOfGivenType) {
+		addEntityRowFormContainer.add(new ControlLabel(name));
 		
-		TextBox field = new TextBox();
-		addEntityRowContainer.add(field);
+		Widget widget = null;
 		
-		return field;
+		switch (type) {
+			case File:
+				FileUpload fileUpload = new FileUpload();
+				fileUpload.setName("files['" + name + "']");
+				widget = fileUpload;
+			break;
+			default:
+				TextBox textBox = new TextBox();
+				textBox.setName("fields['" + name + "']");
+				widget = textBox;
+				
+			break;
+		}
+		
+		addEntityRowFormContainer.add(widget);
+		
+		return (HasText) widget;
 	}
 
 	@Override
@@ -120,5 +157,52 @@ public class EntityDataPanelWidget extends Composite implements View {
 	@Override
 	public void hideNewEntityRowPopup() {
 		addRowPopup.hide();
+	}
+
+	@Override
+	public Form getEntityUploadForm() {
+		return addEntityRowFormContainer;
+	}
+
+	@Override
+	public void setBusyState(boolean state) {
+		if (state) {
+			saveEntityRow.state().loading();
+		} else {
+			saveEntityRow.state().reset();
+		}
+	}
+
+	@Override
+	public void initEntityUploadForm(long repositoryId, String entityName) {
+		Hidden repositoryIdInput = new Hidden();
+		repositoryIdInput.setName("repositoryId");
+		repositoryIdInput.setValue(String.valueOf(repositoryId));
+		addEntityRowFormContainer.add(repositoryIdInput);
+		
+		Hidden entityNameInput = new Hidden();
+		entityNameInput.setName("entityName");
+		entityNameInput.setValue(entityName);
+		addEntityRowFormContainer.add(entityNameInput);
+	}
+
+	@Override
+	public void addNewEntityRowCredentials() {
+		FlowPanel credsPanel = new FlowPanel();
+		credsPanel.getElement().setClassName("alert");
+		credsPanel.add(new HTML(messages.credentialsInfo()));
+		
+		TextBox loginInput = new TextBox();
+		loginInput.setName("login");
+		loginInput.setPlaceholder(messages.loginPlaceholder());
+		credsPanel.add(new ControlLabel(messages.login()));
+		credsPanel.add(loginInput);
+		
+		PasswordTextBox passwordInput = new PasswordTextBox();
+		passwordInput.setName("password");
+		passwordInput.setPlaceholder(messages.passwordPlaceholder());
+		credsPanel.add(new ControlLabel(messages.password()));
+		credsPanel.add(passwordInput);
+		addEntityRowFormContainer.add(credsPanel);
 	}
 }
