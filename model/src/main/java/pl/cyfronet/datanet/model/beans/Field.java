@@ -28,6 +28,12 @@ public class Field implements Serializable {
 		required = field.isRequired();
 		target = field.getTarget();
 	}
+	
+	public Field(String name, Type type, boolean required) {
+		this.name = name;
+		this.type = type;
+		this.required = required;
+	}
 
 	public String getName() {
 		return name;
