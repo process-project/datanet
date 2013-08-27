@@ -10,12 +10,16 @@
 		.right-margin {
 			margin-right: 20px;
 		}
+		.left-margin {
+			margin-left: 20px;
+		}
 	</ui:style>
 	<g:FlowPanel>
 		<b:Form type="INLINE">
 			<b:Fieldset ui:field="searchFieldSet">
 				<b:Legend><ui:text from="{messages.repositorySearchLabel}"/></b:Legend>
 				<b:Button type="PRIMARY" icon="SEARCH" ui:field="searchButton"><ui:text from="{messages.repositorySearchLabel}"/></b:Button>
+				<b:Label type="WARNING" addStyleNames="{style.left-margin}"><ui:text from="{messages.searchLimitationMessage}"/></b:Label>
 			</b:Fieldset>
 		</b:Form>
 		<g:FlowPanel>

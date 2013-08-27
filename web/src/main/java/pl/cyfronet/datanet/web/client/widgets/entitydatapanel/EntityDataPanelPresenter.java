@@ -1,6 +1,5 @@
 package pl.cyfronet.datanet.web.client.widgets.entitydatapanel;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +33,7 @@ public class EntityDataPanelPresenter implements Presenter {
 		void setPresenter(Presenter presenter);
 		HasText addSearchField(String name, Type type);
 		HasData<EntityRow> getDataTable();
-		void initDataTable(List<String> fieldNames);
+		void initDataTable(Map<String, Type> fields);
 		void resetPager(HasData<EntityRow> dataTable);
 		void showNewEntityRowPopup();
 		HasText addNewEntityRowField(String name, Type type, int indexOfGivenType);
@@ -161,15 +160,17 @@ public class EntityDataPanelPresenter implements Presenter {
 
 	private void showSearchFields(List<Field> fields) {
 		for(Field field : fields) {
-			searchFields.put(field.getName(), view.addSearchField(field.getName(), field.getType()));
+			if (field.getType() == Type.String) {
+				searchFields.put(field.getName(), view.addSearchField(field.getName(), field.getType()));
+			}
 		}
 	}
 	
 	private void showData(List<Field> fields) {
-		List<String> fieldNames = new ArrayList<String>();
+		Map<String, Type> fieldNames = new HashMap<String, Type>();
 		
 		for(Field field : fields) {
-			fieldNames.add(field.getName());
+			fieldNames.put(field.getName(), field.getType());
 		}
 		
 		view.initDataTable(fieldNames);

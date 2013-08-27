@@ -22,7 +22,7 @@
 	<inherits name="de.benediktmeurer.gwt.slf4j.jul.JUL"/>
   	
 	<source path="client"/>
-	<entry-point class="pl.cyfronet.datanet.web.client.ClientEntryPoint"/>	
+	<entry-point class="pl.cyfronet.datanet.web.client.ClientEntryPoint"/>
 	
 	<!-- locale setup -->
 	<extend-property name="locale" values="en,pl"/>

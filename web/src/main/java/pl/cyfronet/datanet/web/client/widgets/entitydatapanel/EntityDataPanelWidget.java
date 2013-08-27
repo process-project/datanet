@@ -1,6 +1,7 @@
 package pl.cyfronet.datanet.web.client.widgets.entitydatapanel;
 
 import java.util.List;
+import java.util.Map;
 
 import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter.View;
@@ -88,11 +89,11 @@ public class EntityDataPanelWidget extends Composite implements View {
 	public HasText addSearchField(String name, Type type) {
 		FormLabel label = new FormLabel(name);
 		label.getElement().getStyle().setMarginRight(10, Unit.PX);
-		searchFieldSet.insert(label, searchFieldSet.getWidgetCount() - 1);
+		searchFieldSet.insert(label, searchFieldSet.getWidgetCount() - 2);
 		
 		TextBox field = new TextBox();
 		field.getElement().getStyle().setMarginRight(10, Unit.PX);
-		searchFieldSet.insert(field, searchFieldSet.getWidgetCount() - 1);
+		searchFieldSet.insert(field, searchFieldSet.getWidgetCount() - 2);
 		
 		return field;
 	}
@@ -103,13 +104,17 @@ public class EntityDataPanelWidget extends Composite implements View {
 	}
 	
 	@Override
-	public void initDataTable(List<String> fieldNames) {
+	public void initDataTable(Map<String, Type> fields) {
 		dataTable.setEmptyTableWidget(new Label(LabelType.DEFAULT, messages.noEntityValues()));
 		//TODO(DH): set icon spin when API is updated
 		dataTable.setLoadingIndicator(new Icon(IconType.SPINNER));
 		
-		for (String fieldName : fieldNames) {
-			dataTable.addColumn(new EntityTextColumn(fieldName), fieldName);
+		for (String fieldName : fields.keySet()) {
+			if (fields.get(fieldName) == Type.File) {
+				dataTable.addColumn(new EntityFileColumn(new FileCell(), fieldName), fieldName);
+			} else {
+				dataTable.addColumn(new EntityTextColumn(fieldName), fieldName);
+			}
 		}
 	}
 	

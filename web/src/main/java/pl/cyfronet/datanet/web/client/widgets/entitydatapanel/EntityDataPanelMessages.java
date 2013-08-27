@@ -12,4 +12,5 @@ public interface EntityDataPanelMessages extends Messages {
 	String password();
 	String login();
 	String credentialsInfo();
+	String searchLimitationMessage();
 }

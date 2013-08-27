@@ -70,7 +70,8 @@ public class RepositoryClient {
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	public void updateEntityRow(String repositoryUrl, String entityName, String entityRowId, Map<String, String> entityRow, Map<String, MultipartFile> files) throws RestClientException, URISyntaxException, IOException {
+	public void updateEntityRow(String repositoryUrl, String entityName, String entityRowId,
+			Map<String, String> entityRow, Map<String, MultipartFile> files) throws RestClientException, URISyntaxException, IOException {
 		if (entityRowId == null) {
 			MultiValueMap<String, Object> values = new LinkedMultiValueMap<>();
 			
@@ -82,6 +83,7 @@ public class RepositoryClient {
 				for(String fieldName : files.keySet()) {
 					HttpHeaders headers = new HttpHeaders();
 					headers.setContentDispositionFormData(fieldName, files.get(fieldName).getOriginalFilename());
+					headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 					HttpEntity fileEntity = new HttpEntity(files.get(fieldName).getBytes(), headers);
 					values.put(fieldName, (List) Arrays.asList(fileEntity));
 				}

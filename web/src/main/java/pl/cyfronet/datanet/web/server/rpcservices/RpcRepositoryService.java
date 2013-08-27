@@ -1,31 +1,32 @@
 package pl.cyfronet.datanet.web.server.rpcservices;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
+import org.hibernate.EntityNameResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 
 import pl.cyfronet.datanet.deployer.Deployer;
 import pl.cyfronet.datanet.deployer.DeployerException;
 import pl.cyfronet.datanet.deployer.marshaller.MarshallerException;
 import pl.cyfronet.datanet.deployer.marshaller.ModelSchemaGenerator;
 import pl.cyfronet.datanet.model.beans.Entity;
+import pl.cyfronet.datanet.model.beans.Field;
+import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.beans.Repository;
+import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
-import pl.cyfronet.datanet.web.client.controller.ClientController;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
+import pl.cyfronet.datanet.web.client.errors.ModelException;
 import pl.cyfronet.datanet.web.client.errors.RepositoryException;
 import pl.cyfronet.datanet.web.client.errors.RepositoryException.Code;
 import pl.cyfronet.datanet.web.client.services.RepositoryService;
@@ -113,7 +114,24 @@ public class RpcRepositoryService implements RepositoryService {
 			log.debug("Retrieving repository data for url {} entity {} start index {}, length {} and query {}",
 					new Object[] {repositoryDbEntity.getUrl(), entityName, start, length, query});
 			
-			return repositoryClient.retrieveRepositoryData(repositoryDbEntity.getUrl(), entityName, start, length, query);
+			EntityData data = repositoryClient.retrieveRepositoryData(repositoryDbEntity.getUrl(), entityName, start, length, query);
+			
+			ModelDbEntity modelDbEntity = repositoryDao.getModelForRepository(repositoryDbEntity.getId());
+			Model model = getModel(modelDbEntity);
+			Entity entity = null;
+			
+			for (Entity e : model.getEntities()) {
+				if (e.getName().equals(entityName)) {
+					entity = e;
+					break;
+				}
+			}
+			
+			if (entity != null) {
+				processFileData(data, entity, repositoryDbEntity.getUrl());
+			}
+			
+			return data;
 		} catch (Exception e) {
 			String message = "Repository data retrieval error occurred";
 			log.error(message, e);
@@ -206,5 +224,33 @@ public class RpcRepositoryService implements RepositoryService {
 		repository.setSourceModelVersion(version);
 		
 		return repository;
+	}
+	
+	private void processFileData(EntityData data, Entity entity, String repositoryUrl) {
+		for (Field field : entity.getFields()) {
+			if (field.getType() == Type.File) {
+				for (Map<String, String> row : data.getEntityRows()) {
+					String id = row.remove(field.getName() + "_id");
+					row.put(field.getName(), "file;" + repositoryUrl + "/file/" + id);
+				}
+			}
+		}
+	}
+	
+	private Model getModel(ModelDbEntity modelDbEntity) throws ModelException {
+		try {
+			Model model = new Model();
+			List<Entity> entitiesList = jaxbEntityListBuilder
+					.deserialize(modelDbEntity.getModelXml());
+			model.setId(modelDbEntity.getId());
+			model.setName(modelDbEntity.getName());
+			model.setEntities(entitiesList);
+			model.setTimestamp(modelDbEntity.getTimestamp());
+			return model;
+		} catch (Exception e) {
+			String message = "Could not retrieve models";
+			log.error(message, e);
+			throw new ModelException(pl.cyfronet.datanet.web.client.errors.ModelException.Code.ModelRetrievalError);
+		}
 	}
 }

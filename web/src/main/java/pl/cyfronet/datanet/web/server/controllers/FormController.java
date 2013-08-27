@@ -1,10 +1,8 @@
 package pl.cyfronet.datanet.web.server.controllers;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -62,6 +60,7 @@ public class FormController {
 			} else {
 				repositoryClient.updateEntityRow(repositoryDbEntity.getUrl(), entityUpload.getEntityName(), null, fieldValues, null);
 			}
+			
 			response.setStatus(HttpServletResponse.SC_OK);
 			
 			try {
@@ -70,6 +69,7 @@ public class FormController {
 				log.error("Could not write to response after entity upload", e);
 			}
 		} catch (RestClientException | URISyntaxException | IOException e) {
+			log.error("Could not upload an entity", e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
