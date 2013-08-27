@@ -163,4 +163,9 @@ public class ModelTreePanel extends Composite implements View {
 		reposotoriesProvider.updateRowCount(repoTreeItems.size(), true);
 		reposotoriesProvider.updateRowData(0, repoTreeItems);
 	}
+
+	@Override
+	public void removeItem(long repositoyId) {
+		//TODO(DH): remove repository item with the given id
+	}
 }

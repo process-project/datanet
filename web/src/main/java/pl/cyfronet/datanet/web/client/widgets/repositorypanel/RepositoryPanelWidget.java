@@ -8,9 +8,12 @@ import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TabPanel;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
@@ -28,6 +31,11 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 	
 	public RepositoryPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
+	}
+	
+	@UiHandler("removeRepository")
+	void removeRepository(ClickEvent event) {
+		presenter.onRemoveRepository();
 	}
 
 	@Override
@@ -58,5 +66,10 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 	public Map<String, String> getSearchFieldValues() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean confirmRepositoryRemoval() {
+		return Window.confirm(messages.repositoryRemovalConfirmation());
 	}
 }

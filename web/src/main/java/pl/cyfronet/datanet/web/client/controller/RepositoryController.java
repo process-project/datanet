@@ -15,6 +15,7 @@ import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationM
 import pl.cyfronet.datanet.web.client.services.RepositoryServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter.DataCallback;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -161,6 +162,10 @@ public class RepositoryController {
 					dataSavedCallback.onDataSaved(true);
 				}
 			}});
+	}
+	
+	public void removeRepository(long repositoryId, Command after) {
+		after.execute();
 	}
 	
 	private void loadRepositories(final long versionId, final NextCallback nextCallback) {

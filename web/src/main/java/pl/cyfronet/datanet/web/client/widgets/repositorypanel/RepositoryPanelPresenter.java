@@ -8,10 +8,16 @@ import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
 import pl.cyfronet.datanet.web.client.di.factory.EntityDataPanelPresenterFactory;
+import pl.cyfronet.datanet.web.client.event.repository.RepositoryRemovedEvent;
+import pl.cyfronet.datanet.web.client.mvp.place.VersionPlace;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter;
 
+import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 
 public class RepositoryPanelPresenter implements Presenter {
 	public interface View extends IsWidget {
@@ -20,6 +26,7 @@ public class RepositoryPanelPresenter implements Presenter {
 		void addEntity(String entityName, IsWidget isWidget);
 		void showEntity(int entityIndex);
 		Map<String, String> getSearchFieldValues();
+		boolean confirmRepositoryRemoval();
 	}
 
 	private View view;
@@ -27,15 +34,39 @@ public class RepositoryPanelPresenter implements Presenter {
 	private RepositoryController repositoryController;
 	private EntityDataPanelPresenterFactory entityDataPanelPresenterFactory;
 	private Map<String, EntityDataPanelPresenter> entityDataPanelPresenters;
+	private PlaceController placeController;
+	private EventBus eventBus;
 	
 	@Inject
 	public RepositoryPanelPresenter(View view, RepositoryController repositoryController,
-			EntityDataPanelPresenterFactory entityDataPanelPresenterFactory) {
+			EntityDataPanelPresenterFactory entityDataPanelPresenterFactory,
+			PlaceController placeController, EventBus eventBus) {
 		this.view = view;
 		this.repositoryController = repositoryController;
 		this.entityDataPanelPresenterFactory = entityDataPanelPresenterFactory;
+		this.placeController = placeController;
+		this.eventBus = eventBus;
 		view.setPresenter(this);
 		entityDataPanelPresenters = new HashMap<String, EntityDataPanelPresenter>();
+	}
+	
+	@Override
+	public void onRemoveRepository() {
+		if (view.confirmRepositoryRemoval()) {
+			repositoryController.getRepository(repositoryId, new RepositoryCallback() {
+				@Override
+				public void setRepository(Repository repository) {
+					final long versionId = repository.getSourceModelVersion().getId();
+					repositoryController.removeRepository(repositoryId, new Command() {
+						@Override
+						public void execute() {
+							eventBus.fireEvent(new RepositoryRemovedEvent(repositoryId));
+							placeController.goTo(new VersionPlace(versionId));
+						}
+					});
+				}
+			});
+		}
 	}
 	
 	public void setRepository(long repositoryId) {

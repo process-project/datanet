@@ -24,6 +24,7 @@ import pl.cyfronet.datanet.web.client.controller.VersionController.VersionsCallb
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
 import pl.cyfronet.datanet.web.client.event.model.VersionReleasedEvent;
+import pl.cyfronet.datanet.web.client.event.repository.RepositoryRemovedEvent;
 import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelsCallback;
@@ -60,6 +61,7 @@ public class ModelTreePanelPresenter implements Presenter {
 		void setModels(List<TreeItem> modelTreeItems);
 		void setVersions(long modelId, List<TreeItem> versionTreeItems);
 		void setRepositories(long versionId, List<TreeItem> repoTreeItems);
+		void removeItem(long repositoyId);
 	}
 
 	private View view;
@@ -273,6 +275,11 @@ public class ModelTreePanelPresenter implements Presenter {
 				setSelected(TreeItem.newVersion(event.getVersionId()));
 			}
 		});
+	}
+	
+	@EventHandler
+	void onRepositoryRemoved(RepositoryRemovedEvent event) {
+		view.removeItem(event.getRepositoyId());
 	}
 
 	private void refreshAndSelectModel(final long modelId) {
