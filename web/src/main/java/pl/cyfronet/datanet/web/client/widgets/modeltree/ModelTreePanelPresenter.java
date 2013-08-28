@@ -61,7 +61,6 @@ public class ModelTreePanelPresenter implements Presenter {
 		void setModels(List<TreeItem> modelTreeItems);
 		void setVersions(long modelId, List<TreeItem> versionTreeItems);
 		void setRepositories(long versionId, List<TreeItem> repoTreeItems);
-		void removeItem(long repositoyId);
 	}
 
 	private View view;
@@ -279,7 +278,7 @@ public class ModelTreePanelPresenter implements Presenter {
 	
 	@EventHandler
 	void onRepositoryRemoved(RepositoryRemovedEvent event) {
-		view.removeItem(event.getRepositoyId());
+		refreshModelList(null);
 	}
 
 	private void refreshAndSelectModel(final long modelId) {

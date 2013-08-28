@@ -10,7 +10,8 @@ public class RepositoryException extends Exception {
 		RepositoryUndeployError,
 		ModelDeployError,
 		RepositoryDataRetrievalError,
-		RepositoryDataSavingError
+		RepositoryDataSavingError,
+		RepositoryRemovalError
 	}
 	
 	private Code errorCode;

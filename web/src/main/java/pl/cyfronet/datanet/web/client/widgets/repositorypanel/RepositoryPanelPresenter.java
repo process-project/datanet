@@ -8,13 +8,15 @@ import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
 import pl.cyfronet.datanet.web.client.di.factory.EntityDataPanelPresenterFactory;
+import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
+import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
+import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.event.repository.RepositoryRemovedEvent;
 import pl.cyfronet.datanet.web.client.mvp.place.VersionPlace;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter;
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -57,13 +59,19 @@ public class RepositoryPanelPresenter implements Presenter {
 				@Override
 				public void setRepository(Repository repository) {
 					final long versionId = repository.getSourceModelVersion().getId();
-					repositoryController.removeRepository(repositoryId, new Command() {
-						@Override
-						public void execute() {
-							eventBus.fireEvent(new RepositoryRemovedEvent(repositoryId));
-							placeController.goTo(new VersionPlace(versionId));
-						}
-					});
+					repositoryController.removeRepository(repositoryId,
+						new Command() {
+							@Override
+							public void execute() {
+								eventBus.fireEvent(new RepositoryRemovedEvent(repositoryId));
+								placeController.goTo(new VersionPlace(versionId));
+							}
+					}, new Command() {
+							@Override
+							public void execute() {
+								eventBus.fireEvent(new NotificationEvent(
+										RepositoryNotificationMessage.repositoryRemovalError, NotificationType.ERROR));
+							}});
 				}
 			});
 		}

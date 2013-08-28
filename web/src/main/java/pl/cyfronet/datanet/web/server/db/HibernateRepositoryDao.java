@@ -57,5 +57,5 @@ public class HibernateRepositoryDao {
 	@Transactional(readOnly = true)
 	public ModelDbEntity getModelForRepository(long repositoryId) {
 		return getRepository(repositoryId).getSourceModelVersion().getModel();
-	}	
+	}
 }

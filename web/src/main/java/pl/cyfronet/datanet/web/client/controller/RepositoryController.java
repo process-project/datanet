@@ -164,8 +164,22 @@ public class RepositoryController {
 			}});
 	}
 	
-	public void removeRepository(long repositoryId, Command after) {
-		after.execute();
+	public void removeRepository(long repositoryId, final Command afterSuccess, final Command afterFailure) {
+		repositoryService.removeRepository(repositoryId, new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				if (afterFailure != null) {
+					afterFailure.execute();
+				}
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				if (afterSuccess != null) {
+					afterSuccess.execute();
+				}
+			}
+		});
 	}
 	
 	private void loadRepositories(final long versionId, final NextCallback nextCallback) {

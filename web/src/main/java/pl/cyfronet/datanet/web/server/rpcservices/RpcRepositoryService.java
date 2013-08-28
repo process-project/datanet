@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
-import org.hibernate.EntityNameResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -204,6 +203,20 @@ public class RpcRepositoryService implements RepositoryService {
 		} catch (Exception e) {
 			log.error("Repository entity row data could not be saved", e);
 			throw new RepositoryException(Code.RepositoryDataSavingError, e.getMessage());
+		}
+	}
+	
+	@Override
+	public void removeRepository(long repositoryId) throws RepositoryException {
+		try {
+			RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
+			log.info("Removing repository with id {} and name {}", repositoryId, repositoryDbEntity.getName());
+			deployer.undeployRepository(repositoryDbEntity.getName());
+			repositoryDao.deleteRepository(repositoryDbEntity);
+		} catch (Exception e) {
+			log.error("Repository with id {} could not be removed", repositoryId);
+			log.error("Repository removal error", e);
+			throw new RepositoryException(Code.RepositoryRemovalError, e.getMessage());
 		}
 	}
 	

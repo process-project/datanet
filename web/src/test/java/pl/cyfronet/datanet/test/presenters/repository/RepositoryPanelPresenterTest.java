@@ -51,7 +51,7 @@ public class RepositoryPanelPresenterTest {
 		repositoryPanelPresenter.onRemoveRepository();
 		
 		verify(repositoryController, never()).
-				removeRepository(anyLong(), any(Command.class));
+				removeRepository(anyLong(), any(Command.class), any(Command.class));
 	}
 	
 	@Test
@@ -78,7 +78,7 @@ public class RepositoryPanelPresenterTest {
 				
 				return null;
 			}
-		}).when(repositoryController).removeRepository(anyLong(), any(Command.class));
+		}).when(repositoryController).removeRepository(anyLong(), any(Command.class), any(Command.class));
 		
 		repositoryPanelPresenter.onRemoveRepository();
 		
