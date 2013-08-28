@@ -4,6 +4,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -20,13 +21,13 @@ import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
 import pl.cyfronet.datanet.web.client.di.factory.EntityDataPanelPresenterFactory;
-import pl.cyfronet.datanet.web.client.event.repository.RepositoryRemovedEvent;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPresenter.View;
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Command;
 import com.google.web.bindery.event.shared.EventBus;
+import com.google.web.bindery.event.shared.binder.GenericEvent;
 
 public class RepositoryPanelPresenterTest {
 	@Mock private View view;
@@ -81,7 +82,7 @@ public class RepositoryPanelPresenterTest {
 		}).when(repositoryController).removeRepository(anyLong(), anyLong(), any(Command.class), any(Command.class));
 		
 		repositoryPanelPresenter.onRemoveRepository();
-		
-		verify(eventBus).fireEvent(any(RepositoryRemovedEvent.class));
+
+		verify(eventBus, times(2)).fireEvent(any(GenericEvent.class));
 	}
 }
