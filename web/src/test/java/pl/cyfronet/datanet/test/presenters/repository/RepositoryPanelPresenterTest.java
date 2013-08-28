@@ -73,7 +73,7 @@ public class RepositoryPanelPresenterTest {
 		doAnswer(new Answer<Void>() {
 			@Override
 			public Void answer(InvocationOnMock invocation) throws Throwable {
-				Command command = (Command) invocation.getArguments()[1];
+				Command command = (Command) invocation.getArguments()[2];
 				command.execute();
 				
 				return null;
