@@ -1,6 +1,6 @@
 package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
-import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.isRoot;
+import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.*;
 
 import java.util.List;
 
@@ -93,28 +93,47 @@ public class ModelTreePanel extends Composite implements View {
 
 	@Override
 	public void setSelected(final TreeItem item) {
-		if (!isRoot(item))
+		if (!isRoot(item)) {
 			presenter.getParent(item, new TreeItemCallback() {
 				@Override
-				public void onTreeItemProvided(TreeItem parent) {
-					if (!isRoot(parent))
+				public void onTreeItemProvided(final TreeItem parent) {
+					if (isModel(parent)) {
 						expandTree(modelsTree.getRootTreeNode(), parent);
+					} else if (isVersion(parent)) {
+						openVersion(parent);						
+					}
 					selection.setSelected(item, true);
-				}
+				}				
 			});
+		}
 	}
 
-	private void expandTree(TreeNode node, TreeItem item) {
+	private void openVersion(final TreeItem parent) {
+		presenter.getParent(parent, new TreeItemCallback() {
+			@Override
+			public void onTreeItemProvided(TreeItem model) {
+				TreeNode modelTreeNode = expandTree(modelsTree.getRootTreeNode(), model);
+				if(modelTreeNode != null) {
+					expandTree(modelTreeNode, parent);
+				}
+			}
+		});					
+	}
+	
+	private TreeNode expandTree(TreeNode node, TreeItem item) {
 		Integer childIndex = getChildIndex(node, item);
 		
-		if (childIndex != null) 
-			node.setChildOpen(childIndex, true);
+		if (childIndex != null) {
+			return node.setChildOpen(childIndex, true);			
+		}
+		return null;
 	}
 	
 	private Integer getChildIndex(TreeNode treeNode, TreeItem item) {
 		for (int i = 0; i < treeNode.getChildCount(); i++) {
-			if (item.equals(treeNode.getChildValue(i)))
+			if (item.equals(treeNode.getChildValue(i))) {
 				return i;
+			}
 		}
 		return null;
 	}
