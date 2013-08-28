@@ -1,5 +1,7 @@
 package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
@@ -21,11 +23,15 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import pl.cyfronet.datanet.model.beans.Model;
+import pl.cyfronet.datanet.model.beans.Repository;
+import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.test.mock.matcher.ModelPlaceMatcher;
 import pl.cyfronet.datanet.test.mock.matcher.TreeItemMatcher;
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
 import pl.cyfronet.datanet.web.client.controller.VersionController;
+import pl.cyfronet.datanet.web.client.controller.VersionController.VersionCallback;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
 import pl.cyfronet.datanet.web.client.model.ModelController;
@@ -34,6 +40,7 @@ import pl.cyfronet.datanet.web.client.model.ModelController.ModelsCallback;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter.View;
+import pl.cyfronet.datanet.web.client.widgets.modeltree.Presenter.TreeItemCallback;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
@@ -373,5 +380,68 @@ public class ModelTreePanelPresenterTest {
 		verify(view, times(1)).setModels(
 				argThat(new TreeItemMatcher(TreeItem.newModel(m1.getId()),
 						TreeItem.newModel(m2.getId()))));		
+	}
+	
+	@Test
+	public void shouldGetNullForModelParent() throws Exception {
+		 presenter.getParent(TreeItem.newModel(1l), new TreeItemCallback() {
+			@Override
+			public void onTreeItemProvided(TreeItem item) {
+				assertNull(item);
+			}
+		});
+	}
+	
+	@Test
+	public void shouldGetModelForVersionParent() throws Exception {
+		doAnswer(new Answer<Void>() {
+
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				VersionCallback callback = (VersionCallback)invocation.getArguments()[1];
+				Version version = new Version();
+				version.setId(1l);
+				callback.setVersion(version);
+				
+				return null;
+			}
+			
+		}).when(versionController).getVersion(eq(1l), any(VersionCallback.class));
+		
+		presenter.getParent(TreeItem.newVersion(1l), new TreeItemCallback() {
+			@Override
+			public void onTreeItemProvided(TreeItem item) {
+				assertEquals(item.getType(), ItemType.MODEL);
+			}
+		});
+	}
+	
+	@Test
+	public void shouldGetVersionForRepositoryParent() throws Exception {
+		doAnswer(new Answer<Void>() {
+
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				RepositoryCallback callback = (RepositoryCallback)invocation.getArguments()[1];
+				Repository repository = new Repository();				
+				repository.setId(1l);				
+
+				Version version = new Version();
+				version.setId(1l);
+				repository.setSourceModelVersion(version);
+				
+				callback.setRepository(repository);
+				
+				return null;
+			}
+			
+		}).when(repositoryController).getRepository(eq(1l), any(RepositoryCallback.class));
+		
+		presenter.getParent(TreeItem.newRepository(1l), new TreeItemCallback() {
+			@Override
+			public void onTreeItemProvided(TreeItem item) {
+				assertEquals(item.getType(), ItemType.VERSION);
+			}
+		});
 	}
 }
