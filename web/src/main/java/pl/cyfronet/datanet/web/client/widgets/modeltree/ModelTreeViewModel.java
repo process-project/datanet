@@ -172,6 +172,8 @@ public class ModelTreeViewModel implements TreeViewModel {
 			}
 			
 			if(childrenProviders != null && children != null) {
+				childrenProviders.clear();
+				
 				for (TreeItem child : children) {
 					childrenProviders.put(child.getId(), new TreeItemsAsyncDataProvider(child));
 				}

@@ -1,13 +1,13 @@
 package pl.cyfronet.datanet.web.client.controller;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
-import pl.cyfronet.datanet.web.client.controller.RepositoryController.DataSavedCallback;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
@@ -16,6 +16,7 @@ import pl.cyfronet.datanet.web.client.services.RepositoryServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter.DataCallback;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -114,7 +115,7 @@ public class RepositoryController {
 	}
 	
 	public void getRepositories(final long versionId, final RepositoriesCallback callback, boolean forceRefresh) {
-		if (repositories.get(versionId) == null || forceRefresh)
+		if (repositories.get(versionId) == null || forceRefresh) {
 			loadRepositories(versionId, new NextCallback() {
 				@Override
 				public void next() {
@@ -123,11 +124,12 @@ public class RepositoryController {
 					}
 				}
 			});
-		else
+		} else {
 			callback.setRepositories(repositories.get(versionId));
+		}
 	}
 	
-	public void deployRepository(long versionId, final RepositoryCallback repositoryCallback) {
+	public void deployRepository(final long versionId, final RepositoryCallback repositoryCallback) {
 		repositoryService.deployModelVersion(versionId, new AsyncCallback<Repository>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -137,6 +139,7 @@ public class RepositoryController {
 
 			@Override
 			public void onSuccess(Repository repository) {
+				repositories.get(versionId).add(repository);
 				eventBus.fireEvent(new NotificationEvent(
 						RepositoryNotificationMessage.repositoryDeployed, NotificationType.SUCCESS));
 				
@@ -164,22 +167,36 @@ public class RepositoryController {
 			}});
 	}
 	
-	public void removeRepository(long repositoryId, final Command afterSuccess, final Command afterFailure) {
-		repositoryService.removeRepository(repositoryId, new AsyncCallback<Void>() {
+	public void removeRepository(final long versionId, final long repositoryId, final Command afterSuccess, final Command afterFailure) {
+		getRepositories(versionId, new RepositoriesCallback() {
 			@Override
-			public void onFailure(Throwable caught) {
-				if (afterFailure != null) {
-					afterFailure.execute();
-				}
-			}
+			public void setRepositories(final List<Repository> list) {
+				repositoryService.removeRepository(repositoryId, new AsyncCallback<Void>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						if (afterFailure != null) {
+							afterFailure.execute();
+						}
+					}
 
-			@Override
-			public void onSuccess(Void result) {
-				if (afterSuccess != null) {
-					afterSuccess.execute();
-				}
+					@Override
+					public void onSuccess(Void result) {
+						for (Iterator<Repository> i = list.iterator(); i.hasNext();) {
+							Repository repository = i.next();
+							
+							if (repository.getId() == repositoryId) {
+								i.remove();
+								break;
+							}
+						}
+						
+						if (afterSuccess != null) {
+							afterSuccess.execute();
+						}
+					}
+				});
 			}
-		});
+		}, false);
 	}
 	
 	private void loadRepositories(final long versionId, final NextCallback nextCallback) {

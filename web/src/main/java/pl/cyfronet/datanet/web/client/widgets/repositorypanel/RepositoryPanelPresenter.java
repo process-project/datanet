@@ -17,6 +17,7 @@ import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPre
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -59,12 +60,14 @@ public class RepositoryPanelPresenter implements Presenter {
 				@Override
 				public void setRepository(Repository repository) {
 					final long versionId = repository.getSourceModelVersion().getId();
-					repositoryController.removeRepository(repositoryId,
+					repositoryController.removeRepository(versionId, repositoryId,
 						new Command() {
 							@Override
 							public void execute() {
-								eventBus.fireEvent(new RepositoryRemovedEvent(repositoryId));
+								eventBus.fireEvent(new RepositoryRemovedEvent(versionId, repositoryId));
 								placeController.goTo(new VersionPlace(versionId));
+								eventBus.fireEvent(new NotificationEvent(
+										RepositoryNotificationMessage.repositoryRemoved, NotificationType.SUCCESS));
 							}
 					}, new Command() {
 							@Override

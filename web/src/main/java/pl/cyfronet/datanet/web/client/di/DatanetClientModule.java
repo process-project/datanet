@@ -1,6 +1,8 @@
 package pl.cyfronet.datanet.web.client.di;
 
 import pl.cyfronet.datanet.web.client.controller.ClientController;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController;
+import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.di.factory.EntityDataPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.di.factory.EntityPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.di.factory.EntityRowDataProviderFactory;
@@ -45,6 +47,8 @@ public class DatanetClientModule extends AbstractGinModule {
 	protected void configure() {
 		bind(ClientController.class).in(Singleton.class);
 		bind(ModelController.class).in(Singleton.class);
+		bind(VersionController.class).in(Singleton.class);
+		bind(RepositoryController.class).in(Singleton.class);
 		bind(EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
 		bind(PlaceController.class).toProvider(PlaceControllerProvider.class)
 				.in(Singleton.class);

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.cyfronet.datanet.web.server.db.beans.ModelDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.RepositoryDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
+import pl.cyfronet.datanet.web.server.db.beans.VersionDbEntity;
 
 @Repository
 public class HibernateRepositoryDao {
@@ -51,7 +52,11 @@ public class HibernateRepositoryDao {
 
 	@Transactional
 	public void deleteRepository(RepositoryDbEntity repository) {
-		sessionFactory.getCurrentSession().delete(repository);
+		RepositoryDbEntity reattachedRepository = (RepositoryDbEntity) sessionFactory.getCurrentSession().merge(repository);
+		VersionDbEntity versionDbEntity = reattachedRepository.getSourceModelVersion();
+		versionDbEntity.getRepositories().remove(reattachedRepository);
+		sessionFactory.getCurrentSession().update(versionDbEntity);
+		sessionFactory.getCurrentSession().delete(reattachedRepository);
 	}
 
 	@Transactional(readOnly = true)

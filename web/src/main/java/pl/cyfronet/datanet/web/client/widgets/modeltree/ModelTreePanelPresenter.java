@@ -36,6 +36,7 @@ import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -278,7 +279,7 @@ public class ModelTreePanelPresenter implements Presenter {
 	
 	@EventHandler
 	void onRepositoryRemoved(RepositoryRemovedEvent event) {
-		refreshModelList(null);
+		loadRepositoriesForVersion(event.getVersionId(), null);
 	}
 
 	private void refreshAndSelectModel(final long modelId) {

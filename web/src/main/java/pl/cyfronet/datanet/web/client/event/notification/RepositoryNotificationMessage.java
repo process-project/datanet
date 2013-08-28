@@ -8,6 +8,7 @@ public enum RepositoryNotificationMessage implements NotificationMessage {
 	repositoryDeployError,
 	repositorySaveEntityRowError,
 	repositoryRemovalError,
+	repositoryRemoved,
 	;
 
 	@Override
