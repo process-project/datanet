@@ -349,20 +349,20 @@ public class ModelTreePanelPresenter implements Presenter {
 
 	@Override
 	public void getParent(TreeItem item, final TreeItemCallback callback) {
-		if (isRoot(item) || isModel(item))
+		if (isRoot(item) || isModel(item)) {
 			callback.onTreeItemProvided(null); // root
-		else if (isVersion(item)) 
+		} else if (isVersion(item)) { 
 			versionController.getVersion(item.getId(), new VersionCallback() {
 			@Override
 				public void setVersion(Version version) {
 					callback.onTreeItemProvided(TreeItem.newModel(version.getModelId()));
 				}
 			});
-		else if (isRepository(item)) {
+		} else if (isRepository(item)) {
 			repositoryController.getRepository(item.getId(), new RepositoryCallback() {
 				@Override
 				public void setRepository(Repository repository) {
-					callback.onTreeItemProvided(TreeItem.newRepository(repository.getId()));
+					callback.onTreeItemProvided(TreeItem.newVersion(repository.getSourceModelVersion().getId()));
 				}
 			});
 		}
