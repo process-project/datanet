@@ -6,6 +6,7 @@ import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.TextBox;
+import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -104,10 +105,12 @@ public class LoginWidget extends Composite implements View {
 
 	@Override
 	public void setBusyState(boolean busy) {
-		if(busy) {
-			loginButton.state().loading();
+		if (busy) {
+			loginButton.setIcon(IconType.SPINNER);
+			loginButton.setEnabled(false);
 		} else {
-			loginButton.state().complete();
+			loginButton.setIcon(IconType.SIGNIN);
+			loginButton.setEnabled(true);
 		}
 	}
 }

@@ -33,7 +33,7 @@
 		<b:Alert ui:field="messageLabel" close="false" visible="false" addStyleNames="{style.messageLabel}"/>
 		<b:ButtonGroup addStyleNames="{style.header-buttons}">
 		    <b:Button ui:field="help" icon="QUESTION_SIGN" type="INFO"><ui:text from="{messages.help}"/></b:Button>
-			<b:Button ui:field="logout" icon="OFF" type="DANGER"><ui:text from="{messages.logout}"/></b:Button>
+			<b:Button ui:field="logout" icon="SIGNOUT" type="DANGER"><ui:text from="{messages.logout}"/></b:Button>
 		</b:ButtonGroup>
 		<g:FlowPanel addStyleNames="{style.header-buttons}">
 			<g:Anchor ui:field="switchToPl" href="#">PL</g:Anchor>
