@@ -2,11 +2,11 @@ package pl.cyfronet.datanet.web.client.widgets.modelpanel;
 
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter.View;
 
+import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -16,27 +16,15 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ModelPanelWidget extends Composite implements View {
-
-	private static ModelPanelWidgetUiBinder uiBinder = GWT
-			.create(ModelPanelWidgetUiBinder.class);
-
-	interface ModelPanelWidgetUiBinder extends
-			UiBinder<Widget, ModelPanelWidget> {
-	}
-
-	interface ModelPanelWidgetStyles extends CssResource {
-	}
+	private static ModelPanelWidgetUiBinder uiBinder = GWT.create(ModelPanelWidgetUiBinder.class);
+	interface ModelPanelWidgetUiBinder extends UiBinder<Widget, ModelPanelWidget> {}
 
 	private Presenter presenter;
 
-	@UiField
-	TextBox modelName;
-	/*
-	@UiField
-	TextBox modelVersion;
-	*/
-	@UiField
-	Panel entityContainer;
+	@UiField TextBox modelName;
+	@UiField Panel entityContainer;
+	@UiField Modal newVersionModal;
+	@UiField TextBox newVersionName;
 	
 	public ModelPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -51,6 +39,11 @@ public class ModelPanelWidget extends Composite implements View {
 	void modelNameChanged(ValueChangeEvent<String> event) {
 		presenter.onModelNameChanged(event.getValue());
 	}
+	
+	@UiHandler("newVersion")
+	void onNewVersion(ClickEvent event) {
+		presenter.onNewVersion();
+	}
 
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
@@ -64,4 +57,8 @@ public class ModelPanelWidget extends Composite implements View {
 		modelName.setText(name);
 	}
 
+	@Override
+	public void showNewVersionModal() {
+		newVersionModal.show();
+	}
 }
