@@ -5,4 +5,5 @@ import com.google.gwt.i18n.client.Messages;
 public interface ModelTreePanelMessageses extends Messages {
 
 	String loading();
+	String newModel();
 }

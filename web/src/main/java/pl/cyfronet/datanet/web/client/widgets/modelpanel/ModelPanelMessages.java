@@ -11,7 +11,8 @@ public interface ModelPanelMessages extends Messages {
 	String newVersionConfirmButtonLabel();
 	String newVersionTextBoxLabel();
 	String newVersionNameHelp();
-	String newVersionModalCloseButtonLabel();
-	String remove();
+	String newVersionModalCloseButtonLabel();	
 	String confirmModelRemoval();
+	String save();
+	String delete();
 }

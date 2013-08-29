@@ -26,10 +26,7 @@
 	</ui:style>
 	<g:FlowPanel addStyleNames="{style.main}">
 		<g:FlowPanel styleName="{style.buttons}">
-			<b:ButtonGroup>
-				<b:Button ui:field="add" icon="PLUS" type="SUCCESS" size="MINI"></b:Button>
-				<b:Button ui:field="save" icon="SAVE" size="MINI" enabled="false"/>
-			</b:ButtonGroup>
+			<b:Button ui:field="add" icon="PLUS" type="SUCCESS"><ui:text from="{messages.newModel}"/></b:Button>
 		</g:FlowPanel>
 
 		<c:CellTree ui:field="modelsTree" addStyleNames="{style.tree}"/>		

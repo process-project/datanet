@@ -54,7 +54,6 @@ public class ModelTreePanelPresenter implements Presenter {
 		void reload();
 		void setSelected(TreeItem item);
 		TreeItem getSelectedObject();
-		void setSaveEnabled(boolean enabled);
 		void setModels(List<TreeItem> modelTreeItems);
 		void setVersions(long modelId, List<TreeItem> versionTreeItems);
 		void setRepositories(long versionId, List<TreeItem> repoTreeItems);
@@ -118,27 +117,6 @@ public class ModelTreePanelPresenter implements Presenter {
 		}
 	}
 
-	@Override
-	public void onSave() {
-		final TreeItem item = view.getSelectedObject();
-		if (isModel(item)) {
-			modelController.saveModel(item.getId(), new ModelCallback() {
-				@Override
-				public void setModel(final ModelProxy model) {
-					refreshModelList(new NextCallback() {
-						@Override
-						public void next() {
-							if (item.getId() != model.getId()) {
-								placeController.goTo(new ModelPlace(model
-										.getId()));
-							}
-						}
-					});
-				}
-			});
-		}
-	}
-
 	public void setSelected(final TreeItem item) {
 		if (item != null) {
 			if (isModel(item)) {
@@ -146,7 +124,6 @@ public class ModelTreePanelPresenter implements Presenter {
 					@Override
 					public void setModel(ModelProxy model) {
 						view.setSelected(item);
-						view.setSaveEnabled(model.isDirty());
 					}
 				});
 			} else if (isVersion(item)) {
@@ -154,7 +131,6 @@ public class ModelTreePanelPresenter implements Presenter {
 					@Override
 					public void setVersion(Version version) {
 						view.setSelected(item);
-						view.setSaveEnabled(false);
 					}
 				});
 			} else if (isRepository(item)) {
@@ -162,7 +138,6 @@ public class ModelTreePanelPresenter implements Presenter {
 					@Override
 					public void setRepository(Repository repository) {
 						view.setSelected(item);
-						view.setSaveEnabled(false);
 					}
 
 					@Override
@@ -172,7 +147,6 @@ public class ModelTreePanelPresenter implements Presenter {
 			}
 		} else {
 			view.setSelected(null);
-			view.setSaveEnabled(false);
 		}
 	}
 

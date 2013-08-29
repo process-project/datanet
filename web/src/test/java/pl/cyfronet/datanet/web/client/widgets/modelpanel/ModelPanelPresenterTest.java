@@ -30,6 +30,7 @@ import pl.cyfronet.datanet.web.client.controller.VersionController.VersionCallba
 import pl.cyfronet.datanet.web.client.controller.VersionController.VersionsCallback;
 import pl.cyfronet.datanet.web.client.di.factory.EntityPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.model.ModelController;
+import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.mvp.place.VersionPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
@@ -302,7 +303,7 @@ public class ModelPanelPresenterTest {
 	}
 
 	private void whenRemoveModel() {
-		presenter.onRemove();
+		presenter.onDelete();
 	}
 
 	private void thenModelRemoved() {
@@ -347,4 +348,32 @@ public class ModelPanelPresenterTest {
 			}
 		}).when(modelController).deleteModel(eq(1l), any(Command.class), any(Command.class));		
 	}	
+	
+	@Test
+	public void shouldSaveModel() throws Exception {
+		 givenModelToSave();
+		 whenSaveModel();
+		 thenModelSaved();
+	}
+
+	private void givenModelToSave() {
+		doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				ModelCallback successCallback = (ModelCallback)invocation.getArguments()[1];
+				successCallback.setModel(new ModelProxy(new Model()));
+				return null;
+			}
+		}).when(modelController).saveModel(eq(1l), any(ModelCallback.class));
+	}
+
+	private void whenSaveModel() {
+		presenter.onSave();
+	}
+
+	private void thenModelSaved() {
+//		verify(view).setSaving();
+//		verify(view).resetSaveButton();
+		verify(view, times(2)).setSaveEnabled(false);
+	}
 }

@@ -14,5 +14,6 @@ public interface Presenter {
 	Entity getEntity(String entityName);
 	void onNewVersionModal();
 	void onCreateNewVersion();
-	void onRemove();
+	void onDelete();
+	void onSave();
 }

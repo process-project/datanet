@@ -15,6 +15,7 @@ import pl.cyfronet.datanet.web.client.controller.VersionController.VersionsCallb
 import pl.cyfronet.datanet.web.client.di.factory.EntityPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.model.ModelController;
+import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.mvp.place.VersionPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
@@ -51,6 +52,9 @@ public class ModelPanelPresenter implements Presenter {
 		void hideNewVersionModal();
 		boolean confirmModelRemoval();
 		void resetRemoveButton();
+		void setSaving();
+		void resetSaveButton();
+		void setSaveEnabled(boolean enabled);
 	}
 
 	@Inject
@@ -74,6 +78,7 @@ public class ModelPanelPresenter implements Presenter {
 
 	public void setModel(ModelProxy model) {
 		this.model = model;
+		view.setSaveEnabled(model.isDirty());
 		view.setModelName(model.getName());
 		view.getEntityContainer().clear();
 		entityPanelPresenters.clear();
@@ -127,6 +132,7 @@ public class ModelPanelPresenter implements Presenter {
 
 	public void modelChanged() {
 		model.setDirty(true);
+		view.setSaveEnabled(model.isDirty());
 		eventBus.fireEvent(new ModelChangedEvent(model.getId()));
 	}
 
@@ -203,7 +209,7 @@ public class ModelPanelPresenter implements Presenter {
 	}
 	
 	@Override
-	public void onRemove() {
+	public void onDelete() {
 		if(view.confirmModelRemoval()) {
 			modelController.deleteModel(model.getId(), new Command() {
 				@Override
@@ -219,5 +225,18 @@ public class ModelPanelPresenter implements Presenter {
 		} else {
 			view.resetRemoveButton();
 		}
+	}
+
+	@Override
+	public void onSave() {
+		//view.setSaving();
+		modelController.saveModel(model.getId(), new ModelCallback() {
+			@Override
+			public void setModel(final ModelProxy model) {
+				//XXX After reseting button I'm not able to set enabled to false - bug in bootstrap GWT?
+				//view.resetSaveButton();
+				view.setSaveEnabled(false);
+			}
+		});
 	}
 }

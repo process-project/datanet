@@ -41,11 +41,14 @@
 				    <b:Tooltip text="{messages.modelName}"  placement="RIGHT">
 						<b:TextBox ui:field="modelName" styleName="input-xlarge {style.modelPropertyInput}"/>
 					</b:Tooltip>
-					<b:Button ui:field="newEntity" icon="PLUS" type="SUCCESS"><ui:text from="{messages.newEntity}"/></b:Button>
+					<b:ButtonGroup>
+						<b:Button ui:field="newEntity" icon="PLUS" type="SUCCESS"><ui:text from="{messages.newEntity}"/></b:Button>
+						<b:Button ui:field="newVersion" icon="BRIEFCASE" type="SUCCESS"><ui:text from="{messages.newVersionButtonLabel}"/>...</b:Button>
+					</b:ButtonGroup>
 					<g:FlowPanel styleName="pull-right">
-						<b:ButtonGroup>							
-							<b:Button ui:field="newVersion" icon="BRIEFCASE" type="SUCCESS"><ui:text from="{messages.newVersionButtonLabel}"/>...</b:Button>
-							<b:Button ui:field="remove" icon="REMOVE" type="DANGER" loadingText="&lt;i class='icon-spinner'&gt;&lt;/i&gt; {messages.remove}"><ui:text from="{messages.remove}"/></b:Button>
+						<b:ButtonGroup>														
+							<b:Button ui:field="save" icon="SAVE" loadingText="&lt;i class='icon-spinner'&gt;&lt;/i&gt; {messages.save}"><ui:text from="{messages.save}"/></b:Button>
+							<b:Button ui:field="delete" icon="REMOVE" type="DANGER" loadingText="&lt;i class='icon-spinner'&gt;&lt;/i&gt; {messages.delete}"><ui:text from="{messages.delete}"/></b:Button>
 						</b:ButtonGroup>
 					</g:FlowPanel>
 				</g:FlowPanel>

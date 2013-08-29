@@ -10,7 +10,6 @@ public interface Presenter {
 	IsWidget getWidget();
 	boolean isLeaf(TreeItem value);
 	void onAddNewModel();
-	void onSave();
 	void onSelected();
 	void loadChildren(TreeItem parent);
 	void getParent(TreeItem item, TreeItemCallback treeItemCallback);

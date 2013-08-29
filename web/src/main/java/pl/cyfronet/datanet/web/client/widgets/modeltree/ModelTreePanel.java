@@ -10,7 +10,6 @@ import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter.
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreeViewModel.TreeItemsAsyncDataProvider;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.Presenter.TreeItemCallback;
 
-import com.github.gwtbootstrap.client.ui.Button;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -28,7 +27,6 @@ public class ModelTreePanel extends Composite implements View {
 	interface ModelTreePanelUiBinder extends UiBinder<Widget, ModelTreePanel> {}
 
 	@UiField(provided = true) CellTree modelsTree;
-	@UiField Button save;
 
 	private ModelTreeViewModel model;
 	private ModelTreePanelMessageses messages;
@@ -59,11 +57,6 @@ public class ModelTreePanel extends Composite implements View {
 		presenter.onAddNewModel();
 	}
 
-	@UiHandler("save")
-	void onSaveModel(ClickEvent event) {
-		presenter.onSave();
-	}
-	
 	@Override
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
@@ -120,11 +113,6 @@ public class ModelTreePanel extends Composite implements View {
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public void setSaveEnabled(boolean enabled) {
-		save.setEnabled(enabled);
 	}
 
 	@Override

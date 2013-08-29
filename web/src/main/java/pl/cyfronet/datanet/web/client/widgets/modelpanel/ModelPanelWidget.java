@@ -36,7 +36,8 @@ public class ModelPanelWidget extends Composite implements View {
 	@UiField ControlGroup newVersionControls;
 	@UiField Button newVersionConfirm;
 	@UiField Button newVersionModalClose;	
-	@UiField Button remove;
+	@UiField Button delete;
+	@UiField Button save;
 	
 	@Inject
 	public ModelPanelWidget(ModelPanelMessages messages) {
@@ -69,15 +70,20 @@ public class ModelPanelWidget extends Composite implements View {
 		newVersionModal.hide();
 	}
 	
-	@UiHandler("remove")
-	void onRemove(ClickEvent event) {
-		remove.state().loading();
-		presenter.onRemove();
+	@UiHandler("delete")
+	void onDelete(ClickEvent event) {
+		delete.state().loading();
+		presenter.onDelete();
 	}	
+	
+	@UiHandler("save")
+	void onSave(ClickEvent event) {
+		presenter.onSave();
+	}
 	
 	@Override
 	public void resetRemoveButton() {
-		remove.state().reset();
+		delete.state().reset();
 	}
 	
 	public void setPresenter(Presenter presenter) {
@@ -132,5 +138,20 @@ public class ModelPanelWidget extends Composite implements View {
 	@Override
 	public boolean confirmModelRemoval() {
 		return Window.confirm(messages.confirmModelRemoval());
+	}
+
+	@Override
+	public void setSaving() {
+		save.state().loading();
+	}
+
+	@Override
+	public void resetSaveButton() {
+		save.state().reset();
+	}
+
+	@Override
+	public void setSaveEnabled(boolean enabled) {
+		save.setEnabled(enabled);
 	}	
 }

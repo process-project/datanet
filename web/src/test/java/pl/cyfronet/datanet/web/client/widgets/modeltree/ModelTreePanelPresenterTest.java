@@ -39,7 +39,6 @@ import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter.View;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.Presenter.TreeItemCallback;
 
-import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.web.bindery.event.shared.EventBus;
@@ -163,76 +162,6 @@ public class ModelTreePanelPresenterTest {
 				.getModels(any(ModelsCallback.class), eq(false));
 	}
 
-	private void givenSelectedModel(Long modelId) {
-		when(view.getSelectedObject()).thenReturn(TreeItem.newModel(modelId));
-	}
-
-	@Test
-	public void shouldSaveModel() throws Exception {
-		givenModelToSave();
-		whenModelSaved();
-		thenModelListRefreshed();
-	}
-
-	private void givenModelToSave() {
-		givenSelectedModel(m1.getId());
-		doAnswer(new Answer<Void>() {
-			@Override
-			public Void answer(InvocationOnMock invocation) throws Throwable {
-				ModelCallback callback = (ModelCallback) invocation
-						.getArguments()[1];
-				callback.setModel(new ModelProxy(m1));
-				return null;
-			}
-		}).when(modelController).saveModel(eq(m1.getId()),
-				any(ModelCallback.class));
-		givenRefresh(new ModelProxy(m1), new ModelProxy(m2));
-	}
-
-	private void whenModelSaved() {
-		presenter.onSave();
-	}
-
-	private void thenModelListRefreshed() {
-		verify(modelController, times(1)).saveModel(eq(m1.getId()),
-				any(ModelCallback.class));
-		verify(view, times(1)).setModels(
-				argThat(new TreeItemMatcher(TreeItem.newModel(m1.getId()),
-						TreeItem.newModel(m2.getId()))));
-		verify(placeController, times(0)).goTo(any(Place.class));
-	}
-
-	@Test
-	public void shouldSaveNewModel() throws Exception {
-		givenNewModel();
-		whenModelSaved();
-		thenModelSavedAndOpened();
-	}
-
-	private void givenNewModel() {
-		givenSelectedModel(m1.getId());
-		doAnswer(new Answer<Void>() {
-			@Override
-			public Void answer(InvocationOnMock invocation) throws Throwable {
-				ModelCallback callback = (ModelCallback) invocation
-						.getArguments()[1];
-				callback.setModel(new ModelProxy(m3));
-				return null;
-			}
-		}).when(modelController).saveModel(eq(m1.getId()),
-				any(ModelCallback.class));
-		givenRefresh(new ModelProxy(m3), new ModelProxy(m2));
-	}
-
-	private void thenModelSavedAndOpened() {
-		verify(modelController, times(1)).saveModel(eq(m1.getId()),
-				any(ModelCallback.class));
-		verify(view, times(1)).setModels(
-				argThat(new TreeItemMatcher(TreeItem.newModel(m3.getId()),
-						TreeItem.newModel(m2.getId()))));
-		verify(placeController, times(1)).goTo(any(Place.class));
-	}
-
 	@Test
 	public void shouldSelectCleanModel() throws Exception {
 		ModelProxy model = givenModel(false, false);
@@ -261,7 +190,6 @@ public class ModelTreePanelPresenterTest {
 
 	private void thenModelSelected(Long modelId,
 			boolean saveEnabled) {
-		verify(view, times(1)).setSaveEnabled(saveEnabled);
 		verify(view, times(1)).setSelected(eq(TreeItem.newModel(modelId)));
 	}
 
@@ -290,7 +218,6 @@ public class ModelTreePanelPresenterTest {
 	}
 
 	private void thenNoItemSelected() {
-		verify(view, times(1)).setSaveEnabled(false);
 		verify(view, times(1)).setSelected(null);
 	}
 
