@@ -81,6 +81,11 @@ public class VersionPanelPresenter implements Presenter {
 					public void setRepository(final Repository repository) {
 						view.hideDeployModal();
 					}
+
+					@Override
+					public void setError(String errorMsg) {
+						view.setDeployError(errorMsg);
+					}
 				});
 	}
 

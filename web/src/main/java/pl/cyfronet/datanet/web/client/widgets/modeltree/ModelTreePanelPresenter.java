@@ -185,6 +185,10 @@ public class ModelTreePanelPresenter implements Presenter {
 						view.setRemoveEnabled(false);
 						view.setSaveEnabled(false);
 					}
+
+					@Override
+					public void setError(String message) {
+					}
 				});
 			}
 		} else {
@@ -314,6 +318,10 @@ public class ModelTreePanelPresenter implements Presenter {
 				@Override
 				public void setRepository(Repository repository) {
 					callback.onTreeItemProvided(TreeItem.newVersion(repository.getSourceModelVersion().getId()));
+				}
+
+				@Override
+				public void setError(String message) {
 				}
 			});
 		}

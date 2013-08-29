@@ -23,6 +23,7 @@ import com.google.web.bindery.event.shared.EventBus;
 public class RepositoryController {
 	public interface RepositoryCallback {
 		void setRepository(Repository repository);
+		void setError(String message);
 	}
 	
 	public interface EntityCallback {
@@ -132,6 +133,9 @@ public class RepositoryController {
 		repositoryService.deployModelVersion(versionId, name, new AsyncCallback<Repository>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				if (repositoryCallback != null) {
+					repositoryCallback.setError(caught.getMessage());
+				}
 				eventBus.fireEvent(new NotificationEvent(
 						RepositoryNotificationMessage.repositoryDeployError, NotificationType.ERROR, caught.getMessage()));
 			}

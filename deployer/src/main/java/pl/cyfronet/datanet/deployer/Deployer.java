@@ -7,7 +7,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipException;
 
 import org.cloudfoundry.client.lib.CloudApplication;
 import org.cloudfoundry.client.lib.CloudFoundryClient;
@@ -91,10 +90,11 @@ public class Deployer {
 				deployService.rollback();
 			if (deployApplication != null) 
 				deployApplication.rollback();
-		}
-		
-		builder.deleteMapper();
-		client.logout();
+			throw e;
+		} finally {
+			builder.deleteMapper();
+			client.logout();
+		}		
 		
 		return "http://" + url;
 	}
