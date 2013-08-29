@@ -2,11 +2,11 @@ package pl.cyfronet.datanet.web.client.event.repository;
 
 import com.google.web.bindery.event.shared.binder.GenericEvent;
 
-public class RepositoryRemovedEvent extends GenericEvent {
+public class VersionRepositoryChangedEvent extends GenericEvent {
 	private long repositoryId;
 	private long versionId;
 
-	public RepositoryRemovedEvent(long versionId, long repositoryId) {
+	public VersionRepositoryChangedEvent(long versionId, long repositoryId) {
 		this.versionId = versionId;
 		this.repositoryId = repositoryId;
 	}

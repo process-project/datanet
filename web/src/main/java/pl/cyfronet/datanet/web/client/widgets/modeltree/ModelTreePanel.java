@@ -1,6 +1,8 @@
 package pl.cyfronet.datanet.web.client.widgets.modeltree;
 
-import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.*;
+import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.isModel;
+import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.isRoot;
+import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.isVersion;
 
 import java.util.List;
 
@@ -28,7 +30,6 @@ public class ModelTreePanel extends Composite implements View {
 	@UiField(provided = true) CellTree modelsTree;
 	@UiField Button remove;
 	@UiField Button save;
-	@UiField Button releaseVersion;
 
 	private ModelTreeViewModel model;
 	private ModelTreePanelMessageses messages;
@@ -67,11 +68,6 @@ public class ModelTreePanel extends Composite implements View {
 	@UiHandler("save")
 	void onSaveModel(ClickEvent event) {
 		presenter.onSave();
-	}
-
-	@UiHandler("releaseVersion")
-	void onReleaseVersion(ClickEvent event) {
-		presenter.onReleaseVersion();
 	}
 	
 	@Override
@@ -140,11 +136,6 @@ public class ModelTreePanel extends Composite implements View {
 	@Override
 	public void setRemoveEnabled(boolean enabled) {
 		remove.setEnabled(enabled);
-	}
-	
-	@Override
-	public void setReleaseVersionEnabled(boolean enabled) {
-		releaseVersion.setEnabled(enabled);
 	}
 
 	@Override

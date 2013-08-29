@@ -12,5 +12,6 @@ public interface Presenter {
 	IsWidget getWidget();
 	List<String> getEntitiesNames();
 	Entity getEntity(String entityName);
-	void onNewVersion();
+	void onNewVersionModal();
+	void onCreateNewVersion();
 }
