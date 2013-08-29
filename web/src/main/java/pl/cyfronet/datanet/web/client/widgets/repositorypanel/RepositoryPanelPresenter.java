@@ -9,15 +9,14 @@ import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
 import pl.cyfronet.datanet.web.client.di.factory.EntityDataPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
-import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
+import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.repository.VersionRepositoryChangedEvent;
 import pl.cyfronet.datanet.web.client.mvp.place.VersionPlace;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter;
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -76,6 +75,10 @@ public class RepositoryPanelPresenter implements Presenter {
 										RepositoryNotificationMessage.repositoryRemovalError, NotificationType.ERROR));
 							}});
 				}
+
+				@Override
+				public void setError(String message) {
+				}
 			});
 		}
 	}
@@ -86,6 +89,10 @@ public class RepositoryPanelPresenter implements Presenter {
 			@Override
 			public void setRepository(Repository repository) {
 				showRepository(repository);
+			}
+
+			@Override
+			public void setError(String message) {
 			}});
 	}
 

@@ -56,7 +56,6 @@ public class ModelTreePanelPresenter implements Presenter {
 		TreeItem getSelectedObject();
 		void setSaveEnabled(boolean enabled);
 		void setRemoveEnabled(boolean enabled);
-		void setDeployEnabled(boolean enabled);
 		void setModels(List<TreeItem> modelTreeItems);
 		void setVersions(long modelId, List<TreeItem> versionTreeItems);
 		void setRepositories(long versionId, List<TreeItem> repoTreeItems);
@@ -166,7 +165,6 @@ public class ModelTreePanelPresenter implements Presenter {
 					public void setModel(ModelProxy model) {
 						view.setSelected(item);
 						view.setRemoveEnabled(item != null);
-						view.setDeployEnabled(false);
 						view.setSaveEnabled(model.isDirty());
 					}
 				});
@@ -176,7 +174,6 @@ public class ModelTreePanelPresenter implements Presenter {
 					public void setVersion(Version version) {
 						view.setSelected(item);
 						view.setRemoveEnabled(false);
-						view.setDeployEnabled(true); 
 						view.setSaveEnabled(false);
 					}
 				});
@@ -186,15 +183,17 @@ public class ModelTreePanelPresenter implements Presenter {
 					public void setRepository(Repository repository) {
 						view.setSelected(item);
 						view.setRemoveEnabled(false);
-						view.setDeployEnabled(false); 
 						view.setSaveEnabled(false);
+					}
+
+					@Override
+					public void setError(String message) {
 					}
 				});
 			}
 		} else {
 			view.setSelected(null);
 			view.setRemoveEnabled(false);
-			view.setDeployEnabled(false);
 			view.setSaveEnabled(false);
 		}
 	}
@@ -210,24 +209,6 @@ public class ModelTreePanelPresenter implements Presenter {
 		} else if (isVersion(item)) {
 			loadRepositoriesForVersion(item.getId(), null);
 		}
-	}
-	
-	@Override
-	public void onDeploy() {
-		final TreeItem version = view.getSelectedObject();
-		
-		if (isVersion(version))
-			repositoryController.deployRepository(version.getId(), new RepositoryCallback() {
-				@Override
-				public void setRepository(final Repository repository) {
-					loadRepositoriesForVersion(version.getId(), new NextCallback() {
-						@Override
-						public void next() {
-							placeController.goTo(new RepositoryPlace(repository.getId()));
-						}
-					});
-				}
-			});
 	}
 
 	@EventHandler
@@ -245,7 +226,9 @@ public class ModelTreePanelPresenter implements Presenter {
 		loadVersionsForModel(event.getModelId(), new NextCallback() {
 			@Override
 			public void next() {
-				setSelected(TreeItem.newVersion(event.getVersionId()));
+				if (event.getVersionId() > 0) {
+					setSelected(TreeItem.newVersion(event.getVersionId()));
+				}
 			}
 		});
 	}
@@ -337,6 +320,10 @@ public class ModelTreePanelPresenter implements Presenter {
 				@Override
 				public void setRepository(Repository repository) {
 					callback.onTreeItemProvided(TreeItem.newVersion(repository.getSourceModelVersion().getId()));
+				}
+
+				@Override
+				public void setError(String message) {
 				}
 			});
 		}

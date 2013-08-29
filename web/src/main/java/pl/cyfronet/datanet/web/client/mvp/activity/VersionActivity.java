@@ -7,7 +7,6 @@ import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.controller.VersionController.VersionCallback;
 import pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelPresenter;
-import pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelWidget;
 
 import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.event.shared.EventBus;
@@ -24,10 +23,13 @@ public class VersionActivity extends AbstractActivity {
 
 	private Long versionId;
 
+	private VersionPanelPresenter versionPresenter;
+
 	@Inject
-	public VersionActivity(VersionController versionController,
+	public VersionActivity(VersionController versionController, VersionPanelPresenter versionPresenter,
 			@Assisted Long versionId) {
 		this.versionController = versionController;
+		this.versionPresenter = versionPresenter;
 		this.versionId = versionId;
 	}
 
@@ -37,10 +39,8 @@ public class VersionActivity extends AbstractActivity {
 		versionController.getVersion(versionId, new VersionCallback() {
 			@Override
 			public void setVersion(Version version) {
-				VersionPanelPresenter presenter = new VersionPanelPresenter(
-						new VersionPanelWidget());
-				presenter.setVersion(version);
-				panel.setWidget(presenter.getWidget());
+				versionPresenter.setVersion(version);
+				panel.setWidget(versionPresenter.getWidget());
 			}
 		});
 	}

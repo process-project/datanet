@@ -3,6 +3,7 @@ package pl.cyfronet.datanet.web.server.db.beans;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,11 +15,16 @@ public class RepositoryDbEntity {
 	@Id
 	@GeneratedValue
 	private long id;
+	
+	@Column(name="name", unique=true)
 	private String name;
+	
 	@OneToOne
 	private VersionDbEntity sourceModelVersion;
+	
 	@ManyToMany(cascade = { CascadeType.PERSIST })
 	private List<UserDbEntity> owners;
+	
 	private String url;
 
 	public long getId() {

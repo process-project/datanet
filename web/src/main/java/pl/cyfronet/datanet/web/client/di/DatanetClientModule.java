@@ -34,6 +34,7 @@ import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPanel;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPresenter;
 import pl.cyfronet.datanet.web.client.widgets.versionpanel.Presenter;
 import pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelPresenter;
+import pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelWidget;
 
 import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -58,7 +59,6 @@ public class DatanetClientModule extends AbstractGinModule {
 				Singleton.class);
 
 		configureViews();
-		configurePresenters();
 		configureActivities();
 		configurePresenterFactories();
 		configureDataProviderFactories();
@@ -72,10 +72,8 @@ public class DatanetClientModule extends AbstractGinModule {
 		bind(ModelPanelPresenter.View.class).to(ModelPanelWidget.class);
 		bind(EntityPanelPresenter.View.class).to(EntityPanelWidget.class);
 		bind(FieldPanelPresenter.View.class).to(FieldPanelWidget.class);
-	}
-	
-	private void configurePresenters() {
-		bind(Presenter.class).to(VersionPanelPresenter.class).in(Singleton.class);
+		
+		bind(VersionPanelPresenter.View.class).to(VersionPanelWidget.class);
 	}
 
 	private void configureActivities() {

@@ -15,21 +15,16 @@ import org.hibernate.annotations.Type;
 
 @Entity
 public class VersionDbEntity {
-
-	@Id  @GeneratedValue
+	@Id
+	@GeneratedValue
 	protected long id;
-	
 	protected String name; 
-	
 	@Type(type="date")
 	protected Date timestamp;
-	
 	@Column(length = 17000000)
 	protected String modelXml;
-	
 	@ManyToOne
 	private ModelDbEntity model;
-
 	@OneToMany
 	private List<RepositoryDbEntity> repositories;
 

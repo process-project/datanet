@@ -166,7 +166,7 @@ public class RpcModelService implements ModelService {
 		try {
 			return versionDao.getVersion(versionId);
 		} catch (Exception e) {
-			String message = "Could not retrieve version" + versionId;
+			String message = "Could not retrieve version " + versionId;
 			log.error(message, e);
 			throw new ModelException(Code.VersionRetrievalError);
 		}
@@ -189,5 +189,10 @@ public class RpcModelService implements ModelService {
 			log.error(message, e);
 			throw new ModelException(Code.ModelSaveError);
 		}
+	}
+
+	@Override
+	public void removeVersion(long versionId) throws ModelException {
+		versionDao.removeVersion(versionId);
 	}
 }

@@ -13,10 +13,6 @@ public interface NotificationMessages extends ConstantsWithLookup {
 	String modelLoadErrorNoCause();
 	String modelWrongIdFormat();
 	String modelNotPresent();
-	String versionLoadError();
-	String versionListLoadError();
-	String versionReleased();
-	String versionReleaseError();
 	
 	String repositoryDeployed();
 	String repositoryNotPresent();
@@ -26,6 +22,14 @@ public interface NotificationMessages extends ConstantsWithLookup {
 	String repositorySaveEntityRowError();
 	String repositoryRemovalError();
 	String repositoryRemoved();
+	
+	String versionLoadError();
+	String versionListLoadError();
+	String versionReleased();
+	String versionReleaseError();
+	String versionCannotRemoveRepositoriesExist();
+	String versionRemoveError();
+	String versionRemoved();
 	
 	String rpcError();
 }

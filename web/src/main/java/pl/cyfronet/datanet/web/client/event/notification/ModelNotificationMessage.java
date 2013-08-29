@@ -12,10 +12,6 @@ public enum ModelNotificationMessage implements NotificationMessage {
 	modelWrongIdFormat,
 	modelNotPresent,
 	modelNotSaved,
-	versionLoadError,
-	versionListLoadError,
-	versionReleased, 
-	versionReleaseError
 	;
 
 	@Override

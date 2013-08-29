@@ -16,7 +16,6 @@ import pl.cyfronet.datanet.web.client.services.RepositoryServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter.DataCallback;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -24,6 +23,7 @@ import com.google.web.bindery.event.shared.EventBus;
 public class RepositoryController {
 	public interface RepositoryCallback {
 		void setRepository(Repository repository);
+		void setError(String message);
 	}
 	
 	public interface EntityCallback {
@@ -129,23 +129,31 @@ public class RepositoryController {
 		}
 	}
 	
-	public void deployRepository(final long versionId, final RepositoryCallback repositoryCallback) {
-		repositoryService.deployModelVersion(versionId, new AsyncCallback<Repository>() {
+	public void deployRepository(final long versionId, String name, final RepositoryCallback repositoryCallback) {
+		repositoryService.deployModelVersion(versionId, name, new AsyncCallback<Repository>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				if (repositoryCallback != null) {
+					repositoryCallback.setError(caught.getMessage());
+				}
 				eventBus.fireEvent(new NotificationEvent(
 						RepositoryNotificationMessage.repositoryDeployError, NotificationType.ERROR, caught.getMessage()));
 			}
 
 			@Override
-			public void onSuccess(Repository repository) {
-				repositories.get(versionId).add(repository);
-				eventBus.fireEvent(new NotificationEvent(
-						RepositoryNotificationMessage.repositoryDeployed, NotificationType.SUCCESS));
-				
-				if (repositoryCallback != null) {
-					repositoryCallback.setRepository(repository);
-				}
+			public void onSuccess(final Repository repository) {
+				getRepositories(versionId, new RepositoriesCallback() {
+					@Override
+					public void setRepositories(List<Repository> list) {
+						repositories.get(versionId).add(repository);
+						eventBus.fireEvent(new NotificationEvent(
+								RepositoryNotificationMessage.repositoryDeployed, NotificationType.SUCCESS));
+						
+						if (repositoryCallback != null) {
+							repositoryCallback.setRepository(repository);
+						}
+					}
+				}, false);				
 			}
 		});
 	}

@@ -2,7 +2,8 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
-	<ui:with type="pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelMessages" field="messages" />
+	<ui:with type="pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelMessages" field="messages"/>
+	<ui:with type="pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelWidgetMessages" field="versionMessages"/>
 	<ui:style>
 		/* https://groups.google.com/forum/#!topic/gwt-platform/EPnHwOTQ44Y */
  		.dockLayoutPanel {
@@ -30,15 +31,36 @@
 				<g:FlowPanel styleName="{style.header}">
 				    <b:Tooltip text="{messages.modelName}"  placement="RIGHT">
 						<b:Label ui:field="modelName" styleName="input-xlarge"/>
-					</b:Tooltip>
+					</b:Tooltip>					
 					<g:FlowPanel styleName="pull-right">
-						<b:Button ui:field="removeVersion" type="DANGER" icon="REMOVE"><ui:text from="{messages.removeVersionButtonLabel}"/></b:Button>
-					</g:FlowPanel>
+						<b:ButtonGroup>
+							<b:Button ui:field="startDeploy" icon="CLOUD_UPLOAD" type="SUCCESS"><ui:text from="{versionMessages.startDeploy}"/></b:Button>
+							<b:Button ui:field="removeVersion" type="DANGER" icon="REMOVE"><ui:text from="{versionMessages.removeVersionButtonLabel}"/></b:Button>
+						</b:ButtonGroup>
+					</g:FlowPanel>				
 				</g:FlowPanel>
 			</g:north>
 			<g:center>
 				<g:FlowPanel ui:field="entityContainer" styleName="{style.elements}"/>
 			</g:center>
 		</g:DockLayoutPanel>
+		<b:Modal ui:field="deployRepositoryForm" title="{versionMessages.deployRepositoryModalTitle}" backdrop="STATIC" keyboard="false" animation="true" closeVisible="false">
+	    	<b:Form type="HORIZONTAL">
+	    	    <b:Alert type="ERROR" close="false" ui:field="newRepositoryErrorAlert"></b:Alert>
+				<b:Fieldset>
+					<b:ControlGroup ui:field="newRepositoryNameControlGroup">
+						<b:ControlLabel for="newRepositoryName"><ui:text from="{versionMessages.newRepositoryTextBoxLabel}"/></b:ControlLabel>
+						<b:Controls>
+							<b:TextBox ui:field="newRepositoryName" b:id="newRepositoryName"></b:TextBox>
+							<b:HelpBlock><ui:text from="{versionMessages.newRepositoryNameHelp}"/></b:HelpBlock>
+						</b:Controls>
+					</b:ControlGroup>
+				</b:Fieldset>
+			</b:Form>
+		    <b:ModalFooter>
+		    	<b:Button ui:field="performDeploy" icon="FILE" type="PRIMARY" loadingText="&lt;i class='icon-spinner'&gt;&lt;/i&gt; {versionMessages.deploy}"><ui:text from="{versionMessages.deploy}"/></b:Button>
+		    	<b:Button ui:field="cancelDeploy"><ui:text from="{versionMessages.cancel}"/></b:Button>
+		    </b:ModalFooter>
+	    </b:Modal>
 	</g:FlowPanel>
 </ui:UiBinder>

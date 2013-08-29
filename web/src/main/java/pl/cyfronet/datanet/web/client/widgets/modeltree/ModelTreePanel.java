@@ -30,7 +30,6 @@ public class ModelTreePanel extends Composite implements View {
 	@UiField(provided = true) CellTree modelsTree;
 	@UiField Button remove;
 	@UiField Button save;
-	@UiField Button deploy;
 
 	private ModelTreeViewModel model;
 	private ModelTreePanelMessageses messages;
@@ -69,11 +68,6 @@ public class ModelTreePanel extends Composite implements View {
 	@UiHandler("save")
 	void onSaveModel(ClickEvent event) {
 		presenter.onSave();
-	}
-	
-	@UiHandler("deploy")
-	void onDeploy(ClickEvent event) {
-		presenter.onDeploy();
 	}
 	
 	@Override
@@ -142,11 +136,6 @@ public class ModelTreePanel extends Composite implements View {
 	@Override
 	public void setRemoveEnabled(boolean enabled) {
 		remove.setEnabled(enabled);
-	}
-
-	@Override
-	public void setDeployEnabled(boolean enabled) {
-		deploy.setEnabled(enabled);
 	}
 
 	@Override

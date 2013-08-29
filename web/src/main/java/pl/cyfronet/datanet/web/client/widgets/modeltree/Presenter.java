@@ -14,6 +14,5 @@ public interface Presenter {
 	void onRemove();
 	void onSelected();
 	void loadChildren(TreeItem parent);
-	void onDeploy();
 	void getParent(TreeItem item, TreeItemCallback treeItemCallback);
 }

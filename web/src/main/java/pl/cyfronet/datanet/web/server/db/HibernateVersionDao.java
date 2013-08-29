@@ -93,6 +93,15 @@ public class HibernateVersionDao {
 		sessionFactory.getCurrentSession().update(versionDbEntity);
 	}
 	
+	@Transactional
+	public void removeVersion(long versionId) {
+		VersionDbEntity versionDbEntity = (VersionDbEntity) sessionFactory.getCurrentSession().get(VersionDbEntity.class, versionId);
+		ModelDbEntity modelDbEntity = versionDbEntity.getModel();
+		modelDbEntity.getVersions().remove(versionDbEntity);
+		sessionFactory.getCurrentSession().update(modelDbEntity);
+		sessionFactory.getCurrentSession().delete(versionDbEntity);
+	}
+	
 	private ModelDbEntity getModel(long id) {
 		return (ModelDbEntity) sessionFactory.getCurrentSession().load(ModelDbEntity.class, id);
 	}

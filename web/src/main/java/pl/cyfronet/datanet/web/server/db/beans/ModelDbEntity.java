@@ -15,7 +15,6 @@ import org.hibernate.annotations.Type;
 
 @Entity
 public class ModelDbEntity {
-	
 	private String name;
 	
 	@Id @GeneratedValue
@@ -26,10 +25,6 @@ public class ModelDbEntity {
 	
 	@Column(length = 17000000) 
 	protected String modelXml;
-		
-	public ModelDbEntity() {
-		super();
-	}
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
 	private List<VersionDbEntity> versions;
