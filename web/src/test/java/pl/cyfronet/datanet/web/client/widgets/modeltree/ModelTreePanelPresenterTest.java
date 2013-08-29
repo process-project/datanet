@@ -10,7 +10,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static pl.cyfronet.datanet.test.mock.answer.CallbackAnswer.modelCallbackAnswer;
-import static pl.cyfronet.datanet.test.mock.answer.CallbackAnswer.nextCallbackAnswer;
 
 import java.util.Arrays;
 
@@ -27,7 +26,6 @@ import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.test.mock.matcher.ModelPlaceMatcher;
 import pl.cyfronet.datanet.test.mock.matcher.TreeItemMatcher;
-import pl.cyfronet.datanet.web.client.callback.NextCallback;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
 import pl.cyfronet.datanet.web.client.controller.VersionController;
@@ -38,7 +36,6 @@ import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelsCallback;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
-import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter.View;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.Presenter.TreeItemCallback;
 
@@ -153,20 +150,6 @@ public class ModelTreePanelPresenterTest {
 				argThat(new ModelPlaceMatcher(selectedModelId)));
 	}
 
-	@Test
-	public void shouldRemoveModel() throws Exception {
-		givenModelToRemove();
-		whenRemoveModel();
-		thenModelRemovedFromCacheAndServer();
-	}
-
-	private void givenModelToRemove() {
-		givenSelectedModel(m1.getId());
-		doAnswer(nextCallbackAnswer(1)).when(modelController).deleteModel(
-				eq(m1.getId()), any(NextCallback.class));
-		givenRefresh(new ModelProxy(m2));
-	}
-
 	private void givenRefresh(final ModelProxy... models) {
 		doAnswer(new Answer<Void>() {
 			@Override
@@ -182,19 +165,6 @@ public class ModelTreePanelPresenterTest {
 
 	private void givenSelectedModel(Long modelId) {
 		when(view.getSelectedObject()).thenReturn(TreeItem.newModel(modelId));
-	}
-
-	private void whenRemoveModel() {
-		presenter.onRemove();
-	}
-
-	private void thenModelRemovedFromCacheAndServer() {
-		verify(modelController, times(1)).deleteModel(eq(m1.getId()),
-				any(NextCallback.class));
-		verify(view, times(1)).setSelected(null);
-		verify(view, times(1)).setModels(
-				argThat(new TreeItemMatcher(TreeItem.newModel(m2.getId()))));
-		verify(placeController, times(1)).goTo(any(WelcomePlace.class));
 	}
 
 	@Test
@@ -291,7 +261,6 @@ public class ModelTreePanelPresenterTest {
 
 	private void thenModelSelected(Long modelId,
 			boolean saveEnabled) {
-		verify(view, times(1)).setRemoveEnabled(true);
 		verify(view, times(1)).setSaveEnabled(saveEnabled);
 		verify(view, times(1)).setSelected(eq(TreeItem.newModel(modelId)));
 	}
@@ -321,7 +290,6 @@ public class ModelTreePanelPresenterTest {
 	}
 
 	private void thenNoItemSelected() {
-		verify(view, times(1)).setRemoveEnabled(false);
 		verify(view, times(1)).setSaveEnabled(false);
 		verify(view, times(1)).setSelected(null);
 	}

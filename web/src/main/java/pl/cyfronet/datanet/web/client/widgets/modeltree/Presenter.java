@@ -11,7 +11,6 @@ public interface Presenter {
 	boolean isLeaf(TreeItem value);
 	void onAddNewModel();
 	void onSave();
-	void onRemove();
 	void onSelected();
 	void loadChildren(TreeItem parent);
 	void getParent(TreeItem item, TreeItemCallback treeItemCallback);

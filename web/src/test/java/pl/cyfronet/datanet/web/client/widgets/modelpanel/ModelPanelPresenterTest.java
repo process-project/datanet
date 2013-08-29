@@ -2,8 +2,11 @@ package pl.cyfronet.datanet.web.client.widgets.modelpanel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,12 +29,15 @@ import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.controller.VersionController.VersionCallback;
 import pl.cyfronet.datanet.web.client.controller.VersionController.VersionsCallback;
 import pl.cyfronet.datanet.web.client.di.factory.EntityPanelPresenterFactory;
+import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.mvp.place.VersionPlace;
+import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.modelpanel.ModelPanelPresenter.View;
 
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -41,9 +47,10 @@ public class ModelPanelPresenterTest {
 	@Mock private View view;
 	@Mock private EventBus eventBus;
 	@Mock private EntityPanelPresenterFactory entityPanelFactory;
+	@Mock private ModelController modelController;
 	@Mock private VersionController versionController;
 	@Mock private PlaceController placeController;
-
+	
 	private ModelPanelPresenter presenter;
 	private List<String> names;
 	private Entity e2;
@@ -54,8 +61,13 @@ public class ModelPanelPresenterTest {
 		MockitoAnnotations.initMocks(this);
 		when(view.getEntityContainer()).thenReturn(mock(HasWidgets.class));
 
-		presenter = new ModelPanelPresenter(view, eventBus, entityPanelFactory, versionController, placeController);
+		presenter = new ModelPanelPresenter(view, eventBus, entityPanelFactory,
+				modelController, versionController, placeController);
 
+		Model model = new Model();
+		model.setId(1l);
+		presenter.setModel(new ModelProxy(model));
+		
 		EntityPanelPresenter epPresenter = mock(EntityPanelPresenter.class);
 		when(epPresenter.getWidget()).thenReturn(mock(IsWidget.class));
 		when(entityPanelFactory.create(presenter)).thenReturn(epPresenter);
@@ -269,4 +281,70 @@ public class ModelPanelPresenterTest {
 		verify(view).hideNewVersionModal();
 		verify(placeController).goTo(Mockito.any(VersionPlace.class));
 	}
+	
+	@Test
+	public void shouldRemoveModel() throws Exception {
+		 givenModelToRemove();
+		 whenRemoveModel();
+		 thenModelRemoved();
+	}
+
+	private void givenModelToRemove() {
+		when(view.confirmModelRemoval()).thenReturn(true);
+		doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				Command successCallback = (Command)invocation.getArguments()[1];
+				successCallback.execute();
+				return null;
+			}
+		}).when(modelController).deleteModel(eq(1l), any(Command.class), any(Command.class));
+	}
+
+	private void whenRemoveModel() {
+		presenter.onRemove();
+	}
+
+	private void thenModelRemoved() {
+		verify(placeController).goTo(any(WelcomePlace.class));
+	}
+	
+	@Test
+	public void shouldNotRemoveModelWhenUserClicksCancel() throws Exception {
+		 givenUserClicksCancel();
+		 whenRemoveModel();
+		 thenModelNotRemoved();
+	}	
+
+	private void givenUserClicksCancel() {
+		when(view.confirmModelRemoval()).thenReturn(false);
+	}
+	
+	private void thenModelNotRemoved() {
+		verify(modelController, times(0)).deleteModel(eq(1l), any(Command.class), any(Command.class));
+		thenRemoveButtonReseted();
+	}
+	
+	private void thenRemoveButtonReseted() {
+		verify(view).resetRemoveButton();		
+	}
+	
+	@Test
+	public void shouldResetRemoveButtonWhenRemoveError() throws Exception {
+		 givenRemoveError();
+		 whenRemoveModel();
+		 thenRemoveButtonReseted();
+	}
+
+	private void givenRemoveError() {
+		when(view.confirmModelRemoval()).thenReturn(true);
+		doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				Command errorCallback = (Command)invocation.getArguments()[2];
+				errorCallback.execute();
+				return null;
+			}
+		}).when(modelController).deleteModel(eq(1l), any(Command.class), any(Command.class));		
+	}	
 }

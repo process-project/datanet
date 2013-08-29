@@ -8,9 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.datanet.model.beans.Model;
-import pl.cyfronet.datanet.web.client.callback.NextCallback;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
+import pl.cyfronet.datanet.web.client.event.model.ModelDeletedEvent;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
 import pl.cyfronet.datanet.web.client.event.notification.GenericNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.ModelNotificationMessage;
@@ -19,6 +19,7 @@ import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.Notif
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -198,23 +199,24 @@ public class ModelController {
 				});
 	}
 
-	public void deleteModel(final Long modelId, final NextCallback nextCallback) {
+	public void deleteModel(final Long modelId, final Command nextCallback, final Command errorCallback) {
 		getModel(modelId, new ModelCallback() {
 			@Override
 			public void setModel(ModelProxy model) {
 				models.remove(model);
 				if (model.isNew()) {
-					nextCallback.next();
+					modelDeleted();
 				} else {
 					modelService.deleteModel(modelId,
 							new AsyncCallback<Void>() {
 								@Override
 								public void onSuccess(Void result) {
-									nextCallback.next();
+									modelDeleted();
 								}
 
 								@Override
 								public void onFailure(Throwable t) {
+									errorCallback.execute();
 									eventBus.fireEvent(new NotificationEvent(
 											GenericNotificationMessage.rpcError,
 											NotificationType.ERROR, t
@@ -222,6 +224,11 @@ public class ModelController {
 								}
 							});
 				}
+			}
+			
+			private void modelDeleted() {
+				eventBus.fireEvent(new ModelDeletedEvent(modelId));
+				nextCallback.execute();
 			}
 		});
 	}
