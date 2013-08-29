@@ -10,4 +10,5 @@ public interface VersionPanelWidgetMessages extends Messages {
 	String cancel();
 	String newRepositoryTextBoxLabel();
 	String newRepositoryNameHelp();
+	String emptyNameError();
 }

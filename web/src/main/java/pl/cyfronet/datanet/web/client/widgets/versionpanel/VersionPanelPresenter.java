@@ -19,10 +19,12 @@ public class VersionPanelPresenter implements Presenter {
 	}
 
 	private View view;
+	private VersionPanelWidgetMessages messages;
 
 	@Inject
-	public VersionPanelPresenter(View view) {
+	public VersionPanelPresenter(View view, VersionPanelWidgetMessages messages) {
 		this.view = view;
+		this.messages = messages;
 		view.setPresenter(this);
 	}
 
@@ -52,7 +54,7 @@ public class VersionPanelPresenter implements Presenter {
 	@Override
 	public void deploy(String repositoryName) {
 		if(empty(repositoryName)) {
-			view.setDeployError("Name cannot be empty");
+			view.setDeployError(messages.emptyNameError());
 		} else {
 			view.hideDeployModal();
 		}

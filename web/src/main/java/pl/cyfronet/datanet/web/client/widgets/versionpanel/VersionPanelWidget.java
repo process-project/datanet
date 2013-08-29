@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 
 public class VersionPanelWidget extends Composite implements View {
 
@@ -39,11 +40,8 @@ public class VersionPanelWidget extends Composite implements View {
 	@UiField ControlGroup newRepositoryNameControlGroup;
 	@UiField Alert newRepositoryErrorAlert;	
 	
+	@Inject
 	public VersionPanelWidget() {
-		initWidget(uiBinder.createAndBindUi(this));
-	}
-
-	public VersionPanelWidget(String firstName) {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
