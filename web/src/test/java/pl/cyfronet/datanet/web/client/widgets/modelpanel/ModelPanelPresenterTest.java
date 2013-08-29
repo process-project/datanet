@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Model;
+import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.di.factory.EntityPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelPresenter;
@@ -26,22 +27,14 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class ModelPanelPresenterTest {
-
-	@Mock
-	private View view;
-
-	@Mock
-	private EventBus eventBus;
-
-	@Mock
-	private EntityPanelPresenterFactory entityPanelFactory;
+	@Mock private View view;
+	@Mock private EventBus eventBus;
+	@Mock private EntityPanelPresenterFactory entityPanelFactory;
+	@Mock private VersionController versionController;
 
 	private ModelPanelPresenter presenter;
-
 	private List<String> names;
-
 	private Entity e2;
-
 	private Entity entity;
 
 	@Before
@@ -49,12 +42,11 @@ public class ModelPanelPresenterTest {
 		MockitoAnnotations.initMocks(this);
 		when(view.getEntityContainer()).thenReturn(mock(HasWidgets.class));
 
-		presenter = new ModelPanelPresenter(view, eventBus, entityPanelFactory);
+		presenter = new ModelPanelPresenter(view, eventBus, entityPanelFactory, versionController);
 
 		EntityPanelPresenter epPresenter = mock(EntityPanelPresenter.class);
 		when(epPresenter.getWidget()).thenReturn(mock(IsWidget.class));
 		when(entityPanelFactory.create(presenter)).thenReturn(epPresenter);
-
 	}
 
 	@Test
