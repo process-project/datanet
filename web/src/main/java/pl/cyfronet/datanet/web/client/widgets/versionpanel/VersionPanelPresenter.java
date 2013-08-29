@@ -14,6 +14,9 @@ public class VersionPanelPresenter implements Presenter {
 	public interface View extends IsWidget {
 		void setModelName(String name);
 		HasWidgets getEntityContainer();
+		void setDeployError(String errorMsg);
+		void hideDeployModal();
+		void setPresenter(Presenter presenter);
 	}
 
 	private View view;
@@ -21,6 +24,7 @@ public class VersionPanelPresenter implements Presenter {
 	@Inject
 	public VersionPanelPresenter(View view) {
 		this.view = view;
+		view.setPresenter(this);
 	}
 
 	@Override
@@ -44,5 +48,18 @@ public class VersionPanelPresenter implements Presenter {
 		entityPanelPresenter.setEntity(entity);
 		view.getEntityContainer().add(
 				entityPanelPresenter.getWidget().asWidget());
+	}
+
+	@Override
+	public void deploy(String repositoryName) {
+		if(empty(repositoryName)) {
+			view.setDeployError("Name cannot be empty");
+		} else {
+			view.hideDeployModal();
+		}
+	}
+
+	private boolean empty(String repositoryName) {
+		return repositoryName == null || repositoryName.equals("");
 	}
 }

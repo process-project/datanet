@@ -4,4 +4,5 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 public interface Presenter {
 	IsWidget getWidget();
+	void deploy(String repositoryName);
 }
