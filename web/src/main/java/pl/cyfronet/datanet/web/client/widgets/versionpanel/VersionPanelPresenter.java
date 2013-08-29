@@ -26,6 +26,11 @@ public class VersionPanelPresenter implements Presenter {
 	public IsWidget getWidget() {
 		return view;
 	}
+	
+	@Override
+	public void onRemoveVersion() {
+		
+	}
 
 	public void setVersion(Version version) {
 		view.setModelName(version.getName());
