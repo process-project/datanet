@@ -16,7 +16,7 @@ import pl.cyfronet.datanet.web.client.event.version.ModelVersionChangedEvent;
 import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
-import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
+import pl.cyfronet.datanet.web.client.services.VersionServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -26,14 +26,14 @@ import com.google.web.bindery.event.shared.EventBus;
 public class VersionController {
 	private static final Logger log = LoggerFactory.getLogger(ModelTreePanelPresenter.class);
 
-	private ModelServiceAsync modelService;
+	private VersionServiceAsync modelService;
 	private EventBus eventBus;
 	private Map<Long, List<Version>> versions;
 	private ModelController modelController;
 
 	@Inject
-	public VersionController(ModelServiceAsync modelService, ModelController modelController, EventBus eventBus) {
-		this.modelService = modelService;
+	public VersionController(VersionServiceAsync versionService, ModelController modelController, EventBus eventBus) {
+		this.modelService = versionService;
 		this.eventBus = eventBus;
 		this.modelController = modelController;
 		this.versions = new HashMap<Long, List<Version>>();

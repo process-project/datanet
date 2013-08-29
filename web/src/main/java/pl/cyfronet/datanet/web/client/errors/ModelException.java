@@ -7,8 +7,7 @@ public class ModelException extends Exception {
 		Unknown,
 		ModelSaveError,
 		ModelNameNotUnique,
-		ModelRetrievalError,
-		VersionRetrievalError
+		ModelRetrievalError		
 	}
 	
 	private Code errorCode;

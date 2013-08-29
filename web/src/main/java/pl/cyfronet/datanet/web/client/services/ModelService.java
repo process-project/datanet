@@ -3,7 +3,6 @@ package pl.cyfronet.datanet.web.client.services;
 import java.util.List;
 
 import pl.cyfronet.datanet.model.beans.Model;
-import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -18,11 +17,4 @@ public interface ModelService extends RemoteService {
 	Model getModel(long modelId) throws ModelException;
 
 	void deleteModel(long modelId) throws ModelException;
-
-	Version addVersion(long modelId, Version version) throws ModelException;
-
-	List<Version> getVersions(long modelId) throws ModelException;
-
-	Version getVersion(long versionId) throws ModelException;
-
 }
