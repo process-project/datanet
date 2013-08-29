@@ -28,7 +28,6 @@ public class ModelTreePanel extends Composite implements View {
 	@UiField(provided = true) CellTree modelsTree;
 	@UiField Button remove;
 	@UiField Button save;
-	@UiField Button deploy;
 	@UiField Button releaseVersion;
 
 	private ModelTreeViewModel model;
@@ -73,11 +72,6 @@ public class ModelTreePanel extends Composite implements View {
 	@UiHandler("releaseVersion")
 	void onReleaseVersion(ClickEvent event) {
 		presenter.onReleaseVersion();
-	}
-	
-	@UiHandler("deploy")
-	void onDeploy(ClickEvent event) {
-		presenter.onDeploy();
 	}
 	
 	@Override
@@ -151,11 +145,6 @@ public class ModelTreePanel extends Composite implements View {
 	@Override
 	public void setReleaseVersionEnabled(boolean enabled) {
 		releaseVersion.setEnabled(enabled);
-	}
-
-	@Override
-	public void setDeployEnabled(boolean enabled) {
-		deploy.setEnabled(enabled);
 	}
 
 	@Override

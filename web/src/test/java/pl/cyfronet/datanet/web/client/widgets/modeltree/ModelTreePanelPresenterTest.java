@@ -267,7 +267,7 @@ public class ModelTreePanelPresenterTest {
 	public void shouldSelectCleanModel() throws Exception {
 		ModelProxy model = givenModel(false, false);
 		whenUserClicksOnModel(model.getId());
-		thenModelSelected(model.getId(), false, false);
+		thenModelSelected(model.getId(), false);
 	}
 
 	private ModelProxy givenModel(boolean newModel, boolean dirty) {
@@ -289,10 +289,9 @@ public class ModelTreePanelPresenterTest {
 		presenter.setSelected(TreeItem.newModel(modelId));
 	}
 
-	private void thenModelSelected(Long modelId, boolean deployEnabled,
+	private void thenModelSelected(Long modelId,
 			boolean saveEnabled) {
 		verify(view, times(1)).setRemoveEnabled(true);
-		verify(view, times(1)).setDeployEnabled(deployEnabled);
 		verify(view, times(1)).setSaveEnabled(saveEnabled);
 		verify(view, times(1)).setSelected(eq(TreeItem.newModel(modelId)));
 	}
@@ -301,14 +300,14 @@ public class ModelTreePanelPresenterTest {
 	public void shouldSelectDirtyModel() throws Exception {
 		ModelProxy model = givenModel(false, true);
 		whenUserClicksOnModel(model.getId());
-		thenModelSelected(model.getId(), false, true);
+		thenModelSelected(model.getId(), true);
 	}
 
 	@Test
 	public void shouldSelectNewModel() throws Exception {
 		ModelProxy model = givenModel(true, true);
 		whenUserClicksOnModel(model.getId());
-		thenModelSelected(model.getId(), false, true);
+		thenModelSelected(model.getId(), true);
 	}
 
 	@Test
@@ -323,7 +322,6 @@ public class ModelTreePanelPresenterTest {
 
 	private void thenNoItemSelected() {
 		verify(view, times(1)).setRemoveEnabled(false);
-		verify(view, times(1)).setDeployEnabled(false);
 		verify(view, times(1)).setSaveEnabled(false);
 		verify(view, times(1)).setSelected(null);
 	}

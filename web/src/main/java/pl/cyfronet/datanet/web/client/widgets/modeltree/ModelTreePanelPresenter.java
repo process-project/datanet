@@ -36,7 +36,6 @@ import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -58,7 +57,6 @@ public class ModelTreePanelPresenter implements Presenter {
 		void setSaveEnabled(boolean enabled);
 		void setRemoveEnabled(boolean enabled);
 		void setReleaseVersionEnabled(boolean enabled);
-		void setDeployEnabled(boolean enabled);
 		void setModels(List<TreeItem> modelTreeItems);
 		void setVersions(long modelId, List<TreeItem> versionTreeItems);
 		void setRepositories(long versionId, List<TreeItem> repoTreeItems);
@@ -186,7 +184,6 @@ public class ModelTreePanelPresenter implements Presenter {
 					public void setModel(ModelProxy model) {
 						view.setSelected(item);
 						view.setRemoveEnabled(item != null);
-						view.setDeployEnabled(false);
 						view.setSaveEnabled(model.isDirty());
 						if (model.isNew() || model.isDirty())
 							view.setReleaseVersionEnabled(false);
@@ -200,7 +197,6 @@ public class ModelTreePanelPresenter implements Presenter {
 					public void setVersion(Version version) {
 						view.setSelected(item);
 						view.setRemoveEnabled(false);
-						view.setDeployEnabled(true); 
 						view.setSaveEnabled(false);
 						view.setReleaseVersionEnabled(false);
 					}
@@ -211,7 +207,6 @@ public class ModelTreePanelPresenter implements Presenter {
 					public void setRepository(Repository repository) {
 						view.setSelected(item);
 						view.setRemoveEnabled(false);
-						view.setDeployEnabled(false); 
 						view.setSaveEnabled(false);
 						view.setReleaseVersionEnabled(false);
 					}
@@ -220,7 +215,6 @@ public class ModelTreePanelPresenter implements Presenter {
 		} else {
 			view.setSelected(null);
 			view.setRemoveEnabled(false);
-			view.setDeployEnabled(false);
 			view.setSaveEnabled(false);
 			view.setReleaseVersionEnabled(false);
 		}
@@ -237,24 +231,6 @@ public class ModelTreePanelPresenter implements Presenter {
 		} else if (isVersion(item)) {
 			loadRepositoriesForVersion(item.getId(), null);
 		}
-	}
-	
-	@Override
-	public void onDeploy() {
-		final TreeItem version = view.getSelectedObject();
-		
-		if (isVersion(version))
-			repositoryController.deployRepository(version.getId(), new RepositoryCallback() {
-				@Override
-				public void setRepository(final Repository repository) {
-					loadRepositoriesForVersion(version.getId(), new NextCallback() {
-						@Override
-						public void next() {
-							placeController.goTo(new RepositoryPlace(repository.getId()));
-						}
-					});
-				}
-			});
 	}
 
 	@EventHandler

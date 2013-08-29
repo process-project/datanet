@@ -154,17 +154,15 @@ public class RpcRepositoryService implements RepositoryService {
 	}
 	
 	@Override
-	public Repository deployModelVersion(long versionId) throws RepositoryException {
+	public Repository deployModelVersion(long versionId, String repositoryName) throws RepositoryException {
 		try {
 			Version version = versionDao.getVersion(versionId);
-			ModelDbEntity modelDbEntity = modelDao.getModel(version.getModelId());
 			Map<String, String> models = modelSchemaGenerator.generateSchema(version);
-			String repositoryUrl = deployer.deployRepository(Deployer.RepositoryType.Mongo, modelDbEntity.getName(), models);
+			String repositoryUrl = deployer.deployRepository(Deployer.RepositoryType.Mongo, repositoryName, models);
 			
 			UserDbEntity user = userDao.getUser(SpringSecurityHelper.getUserLogin());
 			
 			RepositoryDbEntity repository = new RepositoryDbEntity();
-			repository.setName(modelDbEntity.getName());
 
 			if (repository.getOwners() == null) {
 				repository.setOwners(new LinkedList<UserDbEntity>());
@@ -174,6 +172,7 @@ public class RpcRepositoryService implements RepositoryService {
 			repository.getOwners().add(user);
 			repository.setSourceModelVersion(versionDbEntity);
 			repository.setUrl(repositoryUrl);
+			repository.setName(repositoryName);
 			repositoryDao.saveRepository(repository);
 			versionDao.addVersionRepository(versionDbEntity, repository);
 			

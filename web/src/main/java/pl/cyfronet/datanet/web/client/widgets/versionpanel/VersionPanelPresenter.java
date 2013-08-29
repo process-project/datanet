@@ -1,7 +1,10 @@
 package pl.cyfronet.datanet.web.client.widgets.versionpanel;
 
 import pl.cyfronet.datanet.model.beans.Entity;
+import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.model.beans.Version;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
 import pl.cyfronet.datanet.web.client.widgets.readonly.entitypanel.EntityPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.readonly.entitypanel.EntityPanelWidget;
 
@@ -12,19 +15,28 @@ import com.google.inject.Inject;
 public class VersionPanelPresenter implements Presenter {
 	public interface View extends IsWidget {
 		void setModelName(String name);
+
 		HasWidgets getEntityContainer();
+
 		void setDeployError(String errorMsg);
+
 		void hideDeployModal();
+
 		void setPresenter(Presenter presenter);
 	}
 
 	private View view;
 	private VersionPanelWidgetMessages messages;
+	private RepositoryController repositoryController;
+	private Version version;
 
 	@Inject
-	public VersionPanelPresenter(View view, VersionPanelWidgetMessages messages) {
+	public VersionPanelPresenter(View view,
+			VersionPanelWidgetMessages messages,
+			RepositoryController repositoryController) {
 		this.view = view;
 		this.messages = messages;
+		this.repositoryController = repositoryController;
 		view.setPresenter(this);
 	}
 
@@ -34,10 +46,11 @@ public class VersionPanelPresenter implements Presenter {
 	}
 
 	public void setVersion(Version version) {
+		this.version = version;
 		view.setModelName(version.getName());
 		view.getEntityContainer().clear();
 
-		if(version.getEntities() != null) {
+		if (version.getEntities() != null) {
 			for (Entity entity : version.getEntities()) {
 				displayEntity(entity);
 			}
@@ -45,7 +58,8 @@ public class VersionPanelPresenter implements Presenter {
 	}
 
 	private void displayEntity(Entity entity) {
-		EntityPanelPresenter entityPanelPresenter = new EntityPanelPresenter(new EntityPanelWidget());
+		EntityPanelPresenter entityPanelPresenter = new EntityPanelPresenter(
+				new EntityPanelWidget());
 		entityPanelPresenter.setEntity(entity);
 		view.getEntityContainer().add(
 				entityPanelPresenter.getWidget().asWidget());
@@ -53,15 +67,24 @@ public class VersionPanelPresenter implements Presenter {
 
 	@Override
 	public void deploy(String repositoryName) {
-		if(empty(repositoryName)) {
+		if (empty(repositoryName)) {
 			view.setDeployError(messages.emptyNameError());
 		} else {
-			view.hideDeployModal();
+			deployRepository(repositoryName);
 		}
+	}
+
+	private void deployRepository(String repositoryName) {
+		repositoryController.deployRepository(version.getId(), repositoryName,
+				new RepositoryCallback() {
+					@Override
+					public void setRepository(final Repository repository) {
+						view.hideDeployModal();
+					}
+				});
 	}
 
 	private boolean empty(String repositoryName) {
 		return repositoryName == null || repositoryName.equals("");
 	}
 }
-
