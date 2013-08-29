@@ -4,13 +4,18 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -18,10 +23,15 @@ import org.mockito.stubbing.Answer;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
-import pl.cyfronet.datanet.web.client.controller.VersionController;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoriesCallback;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
+import pl.cyfronet.datanet.web.client.controller.VersionController;
+import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
+import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
+import pl.cyfronet.datanet.web.client.event.notification.VersionNotificationMessage;
 import pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelPresenter.View;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.web.bindery.event.shared.EventBus;
@@ -123,5 +133,72 @@ public class VersionPanelPresenterTest {
 	private void givenWrongFormatForRepositoryName() {
 		repositoryName = "wrong repository name !@#";
 		when(messages.wrongNameFormat()).thenReturn(errorMsg);
+	}
+	
+	@Test
+	public void shouldNotRemoveVersionAfterUserCancels() {
+		when(view.confirmVersionRemoval()).thenReturn(false);
+		Mockito.doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				RepositoriesCallback repositoriesCallback = (RepositoriesCallback) invocation.getArguments()[1];
+				//list is empty so only confirmation is left
+				repositoriesCallback.setRepositories(new ArrayList<Repository>());
+				
+				return null;
+			}
+		}).when(repositoryController).getRepositories(Mockito.anyLong(), Mockito.any(RepositoriesCallback.class), Mockito.anyBoolean());
+		
+		presenter.onRemoveVersion();
+		
+		verify(view, never()).setRemoveVersionBusyState(Mockito.anyBoolean());
+	}
+	
+	@Test
+	public void shouldNotRemoveVersionAsRepositoriesExist() {
+		when(view.confirmVersionRemoval()).thenReturn(true);
+		Mockito.doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				RepositoriesCallback repositoriesCallback = (RepositoriesCallback) invocation.getArguments()[1];
+				repositoriesCallback.setRepositories(Arrays.asList(new Repository()));
+				
+				return null;
+			}
+		}).when(repositoryController).getRepositories(Mockito.anyLong(), Mockito.any(RepositoriesCallback.class), Mockito.anyBoolean());
+		
+		presenter.onRemoveVersion();
+		
+		verify(view, never()).setRemoveVersionBusyState(Mockito.anyBoolean());
+		verify(eventBus).fireEvent(new NotificationEvent(
+				VersionNotificationMessage.versionCannotRemoveRepositoriesExist, NotificationType.ERROR));
+	}
+	
+	@Test
+	public void shouldEnableAndDisableBusyStateWhileSuccessfullyRemovingVersion() {
+		when(view.confirmVersionRemoval()).thenReturn(true);
+		doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				RepositoriesCallback repositoriesCallback = (RepositoriesCallback) invocation.getArguments()[1];
+				repositoriesCallback.setRepositories(new ArrayList<Repository>());
+				
+				return null;
+			}
+		}).when(repositoryController).getRepositories(Mockito.anyLong(), Mockito.any(RepositoriesCallback.class), Mockito.anyBoolean());
+		doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				Command command = (Command) invocation.getArguments()[1];
+				command.execute();
+				
+				return null;
+			}
+		}).when(versionController).removeVersion(Mockito.anyLong(), Mockito.any(Command.class));;
+		
+		presenter.onRemoveVersion();
+		
+		verify(view).setRemoveVersionBusyState(true);
+		verify(view).setRemoveVersionBusyState(false);
 	}
 }
