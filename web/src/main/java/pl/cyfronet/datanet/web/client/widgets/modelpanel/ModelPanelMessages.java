@@ -6,4 +6,9 @@ public interface ModelPanelMessages extends Messages {
 	String modelName();
 	String modelVersion();
 	String newEntity();
+	String newVersionButtonLabel();
+	String newVersionModalHeader();
+	String newVersionConfirmButtonLabel();
+	String newVersionTextBoxLabel();
+	String newVersionNameHelp();
 }

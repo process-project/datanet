@@ -8,6 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Model;
+import pl.cyfronet.datanet.model.beans.Version;
+import pl.cyfronet.datanet.web.client.controller.VersionController;
+import pl.cyfronet.datanet.web.client.controller.VersionController.VersionCallback;
 import pl.cyfronet.datanet.web.client.di.factory.EntityPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
@@ -19,29 +22,29 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class ModelPanelPresenter implements Presenter {
-	private static final Logger logger = LoggerFactory
-			.getLogger(ModelPanelPresenter.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(ModelPanelPresenter.class.getName());
 
 	private List<EntityPanelPresenter> entityPanelPresenters;
 	private ModelProxy model;
 	private View view;
 	private EventBus eventBus;
 	private EntityPanelPresenterFactory entityPanelFactory;
+	private VersionController versionController;
 
 	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
-
 		HasWidgets getEntityContainer();
-
 		void setModelName(String name);
+		void showNewVersionModal();
 	}
 
 	@Inject
 	public ModelPanelPresenter(View view, EventBus eventBus,
-			EntityPanelPresenterFactory entityPanelFactory) {
+			EntityPanelPresenterFactory entityPanelFactory, VersionController versionController) {
 		this.view = view;
 		this.eventBus = eventBus;
 		this.entityPanelFactory = entityPanelFactory;
+		this.versionController = versionController;
 		entityPanelPresenters = new ArrayList<EntityPanelPresenter>();
 		view.setPresenter(this);
 	}
@@ -137,5 +140,10 @@ public class ModelPanelPresenter implements Presenter {
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public void onNewVersion() {
+		view.showNewVersionModal();
 	}
 }

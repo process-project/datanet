@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 
 public class VersionPanelPresenter implements Presenter {
-
 	public interface View extends IsWidget {
 		void setModelName(String name);
 		HasWidgets getEntityContainer();
@@ -63,3 +62,4 @@ public class VersionPanelPresenter implements Presenter {
 		return repositoryName == null || repositoryName.equals("");
 	}
 }
+
