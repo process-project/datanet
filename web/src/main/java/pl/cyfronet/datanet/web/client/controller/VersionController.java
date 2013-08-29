@@ -10,10 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.datanet.model.beans.Version;
-import pl.cyfronet.datanet.web.client.event.model.VersionReleasedEvent;
 import pl.cyfronet.datanet.web.client.event.notification.ModelNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
+import pl.cyfronet.datanet.web.client.event.version.ModelVersionChangedEvent;
 import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
@@ -114,8 +114,7 @@ public class VersionController {
 		
 	}
 
-	public void releaseNewVersion(final Long modelId, final VersionCallback callback) {
-		
+	public void releaseNewVersion(final Long modelId, final String versionName, final VersionCallback callback) {
 		modelController.getModel(modelId, new ModelCallback() {
 			@Override
 			public void setModel(ModelProxy model) {
@@ -124,15 +123,15 @@ public class VersionController {
 							ModelNotificationMessage.versionReleaseError,
 							NotificationType.NOTE, "model is not saved"));
 				else 
-					releaseNewVersion(model, callback);
+					releaseNewVersion(model, versionName, callback);
 			}
 
 		});
 		
 	}
 	
-	private void releaseNewVersion(ModelProxy model, final VersionCallback callback) {
-		Version version = new Version(model, model.getName() + " " + new Date().toString()); // TODO add version name 
+	private void releaseNewVersion(ModelProxy model, String versionName, final VersionCallback callback) {
+		Version version = new Version(model, versionName);
 		modelService.addVersion(model.getId(), version, new AsyncCallback<Version>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -153,7 +152,7 @@ public class VersionController {
 					}
 					
 					versions.get(result.getModelId()).add(result);
-					eventBus.fireEvent(new VersionReleasedEvent(result.getModelId(), result.getId()));
+					eventBus.fireEvent(new ModelVersionChangedEvent(result.getModelId(), result.getId()));
 					eventBus.fireEvent(new NotificationEvent(
 							ModelNotificationMessage.versionReleased,
 							NotificationType.SUCCESS));

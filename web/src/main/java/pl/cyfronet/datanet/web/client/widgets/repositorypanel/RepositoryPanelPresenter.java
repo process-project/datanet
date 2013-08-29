@@ -11,7 +11,7 @@ import pl.cyfronet.datanet.web.client.di.factory.EntityDataPanelPresenterFactory
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
-import pl.cyfronet.datanet.web.client.event.repository.RepositoryRemovedEvent;
+import pl.cyfronet.datanet.web.client.event.repository.VersionRepositoryChangedEvent;
 import pl.cyfronet.datanet.web.client.mvp.place.VersionPlace;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter;
 
@@ -64,7 +64,7 @@ public class RepositoryPanelPresenter implements Presenter {
 						new Command() {
 							@Override
 							public void execute() {
-								eventBus.fireEvent(new RepositoryRemovedEvent(versionId, repositoryId));
+								eventBus.fireEvent(new VersionRepositoryChangedEvent(versionId, repositoryId));
 								placeController.goTo(new VersionPlace(versionId));
 								eventBus.fireEvent(new NotificationEvent(
 										RepositoryNotificationMessage.repositoryRemoved, NotificationType.SUCCESS));

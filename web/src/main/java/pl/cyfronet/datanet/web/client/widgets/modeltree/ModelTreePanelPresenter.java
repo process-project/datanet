@@ -23,8 +23,8 @@ import pl.cyfronet.datanet.web.client.controller.VersionController.VersionCallba
 import pl.cyfronet.datanet.web.client.controller.VersionController.VersionsCallback;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
-import pl.cyfronet.datanet.web.client.event.model.VersionReleasedEvent;
-import pl.cyfronet.datanet.web.client.event.repository.RepositoryRemovedEvent;
+import pl.cyfronet.datanet.web.client.event.repository.VersionRepositoryChangedEvent;
+import pl.cyfronet.datanet.web.client.event.version.ModelVersionChangedEvent;
 import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelsCallback;
@@ -36,7 +36,6 @@ import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -57,7 +56,6 @@ public class ModelTreePanelPresenter implements Presenter {
 		TreeItem getSelectedObject();
 		void setSaveEnabled(boolean enabled);
 		void setRemoveEnabled(boolean enabled);
-		void setReleaseVersionEnabled(boolean enabled);
 		void setDeployEnabled(boolean enabled);
 		void setModels(List<TreeItem> modelTreeItems);
 		void setVersions(long modelId, List<TreeItem> versionTreeItems);
@@ -159,24 +157,6 @@ public class ModelTreePanelPresenter implements Presenter {
 			});
 		}
 	}
-	
-	@Override
-	public void onReleaseVersion() {
-		final TreeItem model = view.getSelectedObject();
-		
-		if (isModel(model))
-			versionController.releaseNewVersion(model.getId(), new VersionCallback() {
-				@Override
-				public void setVersion(final Version version) {
-					loadVersionsForModel(model.getId(), new NextCallback() {
-						@Override
-						public void next() {
-							placeController.goTo(new VersionPlace(version.getId()));
-						}
-					});
-				}
-			});
-	}
 
 	public void setSelected(final TreeItem item) {
 		if (item != null) {
@@ -188,10 +168,6 @@ public class ModelTreePanelPresenter implements Presenter {
 						view.setRemoveEnabled(item != null);
 						view.setDeployEnabled(false);
 						view.setSaveEnabled(model.isDirty());
-						if (model.isNew() || model.isDirty())
-							view.setReleaseVersionEnabled(false);
-						else 
-							view.setReleaseVersionEnabled(true);
 					}
 				});
 			} else if (isVersion(item)) {
@@ -202,7 +178,6 @@ public class ModelTreePanelPresenter implements Presenter {
 						view.setRemoveEnabled(false);
 						view.setDeployEnabled(true); 
 						view.setSaveEnabled(false);
-						view.setReleaseVersionEnabled(false);
 					}
 				});
 			} else if (isRepository(item)) {
@@ -213,7 +188,6 @@ public class ModelTreePanelPresenter implements Presenter {
 						view.setRemoveEnabled(false);
 						view.setDeployEnabled(false); 
 						view.setSaveEnabled(false);
-						view.setReleaseVersionEnabled(false);
 					}
 				});
 			}
@@ -222,7 +196,6 @@ public class ModelTreePanelPresenter implements Presenter {
 			view.setRemoveEnabled(false);
 			view.setDeployEnabled(false);
 			view.setSaveEnabled(false);
-			view.setReleaseVersionEnabled(false);
 		}
 	}
 
@@ -268,7 +241,7 @@ public class ModelTreePanelPresenter implements Presenter {
 	}
 	
 	@EventHandler
-	void onVersionReleased(final VersionReleasedEvent event) {
+	void onVersionReleased(final ModelVersionChangedEvent event) {
 		loadVersionsForModel(event.getModelId(), new NextCallback() {
 			@Override
 			public void next() {
@@ -278,7 +251,7 @@ public class ModelTreePanelPresenter implements Presenter {
 	}
 	
 	@EventHandler
-	void onRepositoryRemoved(RepositoryRemovedEvent event) {
+	void onRepositoryRemoved(VersionRepositoryChangedEvent event) {
 		loadRepositoriesForVersion(event.getVersionId(), null);
 	}
 

@@ -11,11 +11,15 @@ import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.controller.VersionController.VersionCallback;
+import pl.cyfronet.datanet.web.client.controller.VersionController.VersionsCallback;
 import pl.cyfronet.datanet.web.client.di.factory.EntityPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
+import pl.cyfronet.datanet.web.client.mvp.place.VersionPlace;
 import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelPresenter;
 
+import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
@@ -30,21 +34,27 @@ public class ModelPanelPresenter implements Presenter {
 	private EventBus eventBus;
 	private EntityPanelPresenterFactory entityPanelFactory;
 	private VersionController versionController;
+	private PlaceController placeController;
 
 	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
 		HasWidgets getEntityContainer();
 		void setModelName(String name);
 		void showNewVersionModal();
+		HasText getNewVersionText();
+		void setNewVersionErrorState(boolean state);
+		void setNewVersionBusyState(boolean busy);
+		void hideNewVersionModal();
 	}
 
 	@Inject
 	public ModelPanelPresenter(View view, EventBus eventBus,
-			EntityPanelPresenterFactory entityPanelFactory, VersionController versionController) {
+			EntityPanelPresenterFactory entityPanelFactory, VersionController versionController, PlaceController placeController) {
 		this.view = view;
 		this.eventBus = eventBus;
 		this.entityPanelFactory = entityPanelFactory;
 		this.versionController = versionController;
+		this.placeController = placeController;
 		entityPanelPresenters = new ArrayList<EntityPanelPresenter>();
 		view.setPresenter(this);
 	}
@@ -143,7 +153,43 @@ public class ModelPanelPresenter implements Presenter {
 	}
 	
 	@Override
-	public void onNewVersion() {
+	public void onNewVersionModal() {
 		view.showNewVersionModal();
+	}
+
+	@Override
+	public void onCreateNewVersion() {
+		final String newVersion = view.getNewVersionText().getText();
+		
+		if (newVersion.trim().isEmpty() || newVersion.trim().length() > 20) {
+			view.setNewVersionErrorState(true);
+		} else {
+			versionController.getVersions(model.getId(), new VersionsCallback() {
+				@Override
+				public void setVersions(List<Version> versions) {
+					boolean nameValid = true;
+					for (Version version : versions) {
+						if (version.getName().equals(newVersion)) {
+							view.setNewVersionErrorState(true);
+							nameValid = false;
+							break;
+						}
+					}
+					
+					if (nameValid) {
+						view.setNewVersionErrorState(false);
+						view.setNewVersionBusyState(true);
+						versionController.releaseNewVersion(model.getId(), newVersion, new VersionCallback() {
+							@Override
+							public void setVersion(Version version) {
+								view.setNewVersionBusyState(false);
+								view.hideNewVersionModal();
+								placeController.goTo(new VersionPlace(version.getId()));
+							}
+						});
+					}
+				}
+			}, false);
+		}
 	}
 }
