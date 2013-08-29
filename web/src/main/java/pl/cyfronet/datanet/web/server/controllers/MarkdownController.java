@@ -12,6 +12,7 @@ import org.pegdown.PegDownProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -23,14 +24,12 @@ public class MarkdownController {
 	@Autowired private PegDownProcessor processor;
 	
 	@RequestMapping("/docs/{markdownResource}")
-	public void processMarkdown(@PathVariable String markdownResource,
-			HttpServletRequest request, HttpServletResponse response) {
+	public String processMarkdown(@PathVariable String markdownResource,
+			HttpServletRequest request, HttpServletResponse response, Model model) {
 		Locale locale = RequestContextUtils.getLocale(request);
 		ClassPathResource resource = new ClassPathResource(BASE_PATH + "/" + markdownResource + "_" + locale.getLanguage() + ".md");
 		
-		if (!resource.exists()) {
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-		} else {
+		if (resource.exists()) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			
 			try {
@@ -40,12 +39,9 @@ public class MarkdownController {
 			}
 			
 			String html = processor.markdownToHtml(new String(out.toByteArray()));
-			
-			try {
-				response.getWriter().write(html);
-			} catch (IOException e) {
-				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			}
+			model.addAttribute("mdContents", html);
 		}
+		
+		return "mdWrapper";
 	}
 }
