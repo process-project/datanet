@@ -22,6 +22,7 @@ import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.controller.VersionController.VersionCallback;
 import pl.cyfronet.datanet.web.client.controller.VersionController.VersionsCallback;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
+import pl.cyfronet.datanet.web.client.event.model.ModelDeletedEvent;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
 import pl.cyfronet.datanet.web.client.event.repository.VersionRepositoryChangedEvent;
 import pl.cyfronet.datanet.web.client.event.version.ModelVersionChangedEvent;
@@ -32,7 +33,6 @@ import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.RepositoryPlace;
 import pl.cyfronet.datanet.web.client.mvp.place.VersionPlace;
-import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.place.shared.PlaceController;
@@ -55,7 +55,6 @@ public class ModelTreePanelPresenter implements Presenter {
 		void setSelected(TreeItem item);
 		TreeItem getSelectedObject();
 		void setSaveEnabled(boolean enabled);
-		void setRemoveEnabled(boolean enabled);
 		void setModels(List<TreeItem> modelTreeItems);
 		void setVersions(long modelId, List<TreeItem> versionTreeItems);
 		void setRepositories(long versionId, List<TreeItem> repoTreeItems);
@@ -120,23 +119,6 @@ public class ModelTreePanelPresenter implements Presenter {
 	}
 
 	@Override
-	public void onRemove() {
-		final TreeItem item = view.getSelectedObject();
-		modelController.deleteModel(item.getId(), new NextCallback() {
-			@Override
-			public void next() {
-				view.setSelected(null);
-				refreshModelList(new NextCallback() {
-					@Override
-					public void next() {
-						placeController.goTo(new WelcomePlace());
-					}
-				});
-			}
-		});
-	}
-
-	@Override
 	public void onSave() {
 		final TreeItem item = view.getSelectedObject();
 		if (isModel(item)) {
@@ -164,7 +146,6 @@ public class ModelTreePanelPresenter implements Presenter {
 					@Override
 					public void setModel(ModelProxy model) {
 						view.setSelected(item);
-						view.setRemoveEnabled(item != null);
 						view.setSaveEnabled(model.isDirty());
 					}
 				});
@@ -173,7 +154,6 @@ public class ModelTreePanelPresenter implements Presenter {
 					@Override
 					public void setVersion(Version version) {
 						view.setSelected(item);
-						view.setRemoveEnabled(false);
 						view.setSaveEnabled(false);
 					}
 				});
@@ -182,7 +162,6 @@ public class ModelTreePanelPresenter implements Presenter {
 					@Override
 					public void setRepository(Repository repository) {
 						view.setSelected(item);
-						view.setRemoveEnabled(false);
 						view.setSaveEnabled(false);
 					}
 
@@ -193,7 +172,6 @@ public class ModelTreePanelPresenter implements Presenter {
 			}
 		} else {
 			view.setSelected(null);
-			view.setRemoveEnabled(false);
 			view.setSaveEnabled(false);
 		}
 	}
@@ -219,6 +197,11 @@ public class ModelTreePanelPresenter implements Presenter {
 	@EventHandler
 	void onNewModel(NewModelEvent event) {
 		refreshAndSelectModel(event.getModelId());
+	}
+	
+	@EventHandler
+	void onModelDeleted(ModelDeletedEvent event) {
+		refreshModelList(null);
 	}
 	
 	@EventHandler

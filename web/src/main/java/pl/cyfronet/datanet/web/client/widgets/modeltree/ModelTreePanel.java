@@ -28,7 +28,6 @@ public class ModelTreePanel extends Composite implements View {
 	interface ModelTreePanelUiBinder extends UiBinder<Widget, ModelTreePanel> {}
 
 	@UiField(provided = true) CellTree modelsTree;
-	@UiField Button remove;
 	@UiField Button save;
 
 	private ModelTreeViewModel model;
@@ -58,11 +57,6 @@ public class ModelTreePanel extends Composite implements View {
 	@UiHandler("add")
 	void onAddNewModel(ClickEvent event) {
 		presenter.onAddNewModel();
-	}
-
-	@UiHandler("remove")
-	void onRemoveModel(ClickEvent event) {
-		presenter.onRemove();
 	}
 
 	@UiHandler("save")
@@ -131,11 +125,6 @@ public class ModelTreePanel extends Composite implements View {
 	@Override
 	public void setSaveEnabled(boolean enabled) {
 		save.setEnabled(enabled);
-	}
-
-	@Override
-	public void setRemoveEnabled(boolean enabled) {
-		remove.setEnabled(enabled);
 	}
 
 	@Override

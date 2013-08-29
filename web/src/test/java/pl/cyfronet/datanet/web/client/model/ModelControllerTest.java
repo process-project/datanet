@@ -28,7 +28,6 @@ import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.test.mock.matcher.NotificationEvenMatcher;
-import pl.cyfronet.datanet.web.client.callback.NextCallback;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
@@ -37,6 +36,7 @@ import pl.cyfronet.datanet.web.client.services.ModelService;
 import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
 
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -281,10 +281,15 @@ public class ModelControllerTest {
 
 	private void whenDeleteModel(Long id) {
 		modelDeleted = false;
-		modelController.deleteModel(id, new NextCallback() {
+		modelController.deleteModel(id, new Command() {			
 			@Override
-			public void next() {
+			public void execute() {
 				modelDeleted = true;
+			}
+		}, new Command() {
+			@Override
+			public void execute() {
+				modelDeleted = false;
 			}
 		});
 	}

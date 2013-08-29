@@ -14,11 +14,14 @@ import pl.cyfronet.datanet.web.client.controller.VersionController.VersionCallba
 import pl.cyfronet.datanet.web.client.controller.VersionController.VersionsCallback;
 import pl.cyfronet.datanet.web.client.di.factory.EntityPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
+import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.mvp.place.VersionPlace;
+import pl.cyfronet.datanet.web.client.mvp.place.WelcomePlace;
 import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelPresenter;
 
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -34,6 +37,7 @@ public class ModelPanelPresenter implements Presenter {
 	private EventBus eventBus;
 	private EntityPanelPresenterFactory entityPanelFactory;
 	private VersionController versionController;
+	private ModelController modelController;
 	private PlaceController placeController;
 
 	public interface View extends IsWidget {
@@ -45,15 +49,20 @@ public class ModelPanelPresenter implements Presenter {
 		void setNewVersionErrorState(boolean state);
 		void setNewVersionBusyState(boolean busy);
 		void hideNewVersionModal();
+		boolean confirmModelRemoval();
+		void resetRemoveButton();
 	}
 
 	@Inject
 	public ModelPanelPresenter(View view, EventBus eventBus,
-			EntityPanelPresenterFactory entityPanelFactory, VersionController versionController, PlaceController placeController) {
+			EntityPanelPresenterFactory entityPanelFactory, 
+			ModelController modelController, VersionController versionController, 
+			PlaceController placeController) {
 		this.view = view;
 		this.eventBus = eventBus;
 		this.entityPanelFactory = entityPanelFactory;
 		this.versionController = versionController;
+		this.modelController = modelController;
 		this.placeController = placeController;
 		entityPanelPresenters = new ArrayList<EntityPanelPresenter>();
 		view.setPresenter(this);
@@ -190,6 +199,25 @@ public class ModelPanelPresenter implements Presenter {
 					}
 				}
 			}, false);
+		}
+	}
+	
+	@Override
+	public void onRemove() {
+		if(view.confirmModelRemoval()) {
+			modelController.deleteModel(model.getId(), new Command() {
+				@Override
+				public void execute() {
+					placeController.goTo(new WelcomePlace());
+				}
+			}, new Command() {
+				@Override
+				public void execute() {
+					view.resetRemoveButton();
+				}
+			});
+		} else {
+			view.resetRemoveButton();
 		}
 	}
 }
