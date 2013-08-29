@@ -17,12 +17,11 @@ import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.model.ModelController.ModelCallback;
 import pl.cyfronet.datanet.web.client.model.ModelProxy;
 import pl.cyfronet.datanet.web.client.mvp.place.ModelPlace;
-import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
+import pl.cyfronet.datanet.web.client.services.VersionServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter;
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -38,16 +37,15 @@ public class VersionController {
 	
 	private static final Logger log = LoggerFactory.getLogger(ModelTreePanelPresenter.class);
 
-	private ModelServiceAsync modelService;
+	private VersionServiceAsync versionService;
 	private EventBus eventBus;
 	private Map<Long, List<Version>> versions;
 	private ModelController modelController;
 	private PlaceController placeController;
 
 	@Inject
-	public VersionController(ModelServiceAsync modelService, ModelController modelController,
-			EventBus eventBus, PlaceController placeController) {
-		this.modelService = modelService;
+	public VersionController(VersionServiceAsync versionService, ModelController modelController, EventBus eventBus, PlaceController placeController) {
+		this.versionService = versionService;
 		this.eventBus = eventBus;
 		this.modelController = modelController;
 		this.placeController = placeController;
@@ -62,7 +60,7 @@ public class VersionController {
 	}
 	
 	public void getVersion(final Long versionId, final VersionCallback callback) {
-		modelService.getVersion(versionId, new AsyncCallback<Version>() {
+		versionService.getVersion(versionId, new AsyncCallback<Version>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				log.info("Unable to load version {}, sending notification. Error message: {}", versionId, caught.getMessage());
@@ -100,7 +98,7 @@ public class VersionController {
 			@Override
 			public void setModel(ModelProxy model) {
 				if (!model.isNew() && !model.isDirty())
-					modelService.getVersions(modelId, new AsyncCallback<List<Version>>() {
+					versionService.getVersions(modelId, new AsyncCallback<List<Version>>() {
 						@Override
 						public void onSuccess(List<Version> result) {
 							log.info("Versions for model {} loaded", modelId);
@@ -146,7 +144,7 @@ public class VersionController {
 	
 	private void releaseNewVersion(ModelProxy model, String versionName, final VersionCallback callback) {
 		Version version = new Version(model, versionName);
-		modelService.addVersion(model.getId(), version, new AsyncCallback<Version>() {
+		versionService.addVersion(model.getId(), version, new AsyncCallback<Version>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				eventBus.fireEvent(new NotificationEvent(
@@ -183,7 +181,7 @@ public class VersionController {
 		getVersion(versionId, new VersionCallback() {
 			@Override
 			public void setVersion(final Version version) {
-				modelService.removeVersion(version.getId(), new AsyncCallback<Void>() {
+				versionService.removeVersion(version.getId(), new AsyncCallback<Void>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						eventBus.fireEvent(new NotificationEvent(

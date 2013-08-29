@@ -103,9 +103,15 @@ public class VersionPanelPresenter implements Presenter {
 	public void deploy(String repositoryName) {
 		if (empty(repositoryName)) {
 			view.setDeployError(messages.emptyNameError());
-		} else {
-			deployRepository(repositoryName);
+		} else if(unvalidRepositoryNameFormat(repositoryName)) {
+			view.setDeployError(messages.wrongNameFormat());
+		}else {
+			deployRepository(repositoryName.toLowerCase());
 		}
+	}
+
+	private boolean unvalidRepositoryNameFormat(String repositoryName) {		
+		return !repositoryName.matches("[a-zA-z\\d]*");
 	}
 
 	private void deployRepository(String repositoryName) {
