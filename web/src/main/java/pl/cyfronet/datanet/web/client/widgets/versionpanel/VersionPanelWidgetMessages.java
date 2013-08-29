@@ -11,4 +11,5 @@ public interface VersionPanelWidgetMessages extends Messages {
 	String newRepositoryTextBoxLabel();
 	String newRepositoryNameHelp();
 	String emptyNameError();
+	String wrongNameFormat();
 }
