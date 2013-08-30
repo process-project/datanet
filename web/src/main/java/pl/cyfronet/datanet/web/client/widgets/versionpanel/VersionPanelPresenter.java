@@ -12,9 +12,11 @@ import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.VersionNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
+import pl.cyfronet.datanet.web.client.mvp.place.RepositoryPlace;
 import pl.cyfronet.datanet.web.client.widgets.readonly.entitypanel.EntityPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.readonly.entitypanel.EntityPanelWidget;
 
+import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -37,16 +39,18 @@ public class VersionPanelPresenter implements Presenter {
 	private RepositoryController repositoryController;
 	private Version version;
 	private VersionController versionController;
+	private PlaceController placeController;	
 	private EventBus eventBus;
 
 	@Inject
 	public VersionPanelPresenter(View view, VersionPanelWidgetMessages messages,
-			RepositoryController repositoryController, VersionController versionController,
-			EventBus eventBus) {
+			RepositoryController repositoryController, VersionController versionController, 
+			PlaceController placeController, EventBus eventBus) {
 		this.view = view;
 		this.messages = messages;
 		this.repositoryController = repositoryController;
 		this.versionController = versionController;
+		this.placeController = placeController;
 		this.eventBus = eventBus;
 		view.setPresenter(this);
 	}
@@ -120,6 +124,7 @@ public class VersionPanelPresenter implements Presenter {
 					@Override
 					public void setRepository(final Repository repository) {
 						view.hideDeployModal();
+						placeController.goTo(new RepositoryPlace(repository.getId()));
 					}
 
 					@Override

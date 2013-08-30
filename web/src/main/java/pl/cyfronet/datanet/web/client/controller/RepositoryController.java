@@ -12,6 +12,7 @@ import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
+import pl.cyfronet.datanet.web.client.event.repository.VersionRepositoryChangedEvent;
 import pl.cyfronet.datanet.web.client.services.RepositoryServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter.DataCallback;
 
@@ -146,8 +147,9 @@ public class RepositoryController {
 					@Override
 					public void setRepositories(List<Repository> list) {
 						repositories.get(versionId).add(repository);
+						eventBus.fireEvent(new VersionRepositoryChangedEvent(versionId, repository.getId()));
 						eventBus.fireEvent(new NotificationEvent(
-								RepositoryNotificationMessage.repositoryDeployed, NotificationType.SUCCESS));
+								RepositoryNotificationMessage.repositoryDeployed, NotificationType.SUCCESS));						
 						
 						if (repositoryCallback != null) {
 							repositoryCallback.setRepository(repository);
