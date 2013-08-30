@@ -5,6 +5,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -29,8 +30,10 @@ import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.event.notification.VersionNotificationMessage;
+import pl.cyfronet.datanet.web.client.mvp.place.RepositoryPlace;
 import pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelPresenter.View;
 
+import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -42,18 +45,19 @@ public class VersionPanelPresenterTest {
 	@Mock private VersionPanelWidgetMessages messages;
 	@Mock private RepositoryController repositoryController;
 	@Mock private VersionController versionController;
+	@Mock private PlaceController placeController;
 	@Mock private EventBus eventBus;
 
 	private String repositoryName;
 	private VersionPanelPresenter presenter;
-	protected String errorMsg = "error message";
+	protected String errorMsg = "error message";	
 
 	@Before
 	public void prepare() {
 		MockitoAnnotations.initMocks(this);
 		
 		when(view.getEntityContainer()).thenReturn(mock(HasWidgets.class));
-		presenter = new VersionPanelPresenter(view, messages, repositoryController, versionController, eventBus);
+		presenter = new VersionPanelPresenter(view, messages, repositoryController, versionController, placeController, eventBus);
 		
 		Version version = new Version();
 		version.setId(1l);
@@ -86,6 +90,7 @@ public class VersionPanelPresenterTest {
 
 	private void thenRepositoryDeployed() {
 		verify(view).hideDeployModal();
+		verify(placeController).goTo(any(RepositoryPlace.class));
 	}
 	
 	@Test
@@ -108,6 +113,7 @@ public class VersionPanelPresenterTest {
 	}
 
 	private void thenErrorPresented() {
+		verify(placeController, times(0)).goTo(any(RepositoryPlace.class));
 		verify(view).setDeployError(errorMsg);
 	}
 	
