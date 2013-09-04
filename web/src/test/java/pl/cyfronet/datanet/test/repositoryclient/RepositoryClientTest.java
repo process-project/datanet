@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -41,7 +40,7 @@ public class RepositoryClientTest {
 	//TODO(DH): create a test repository beforehand
 //	@Test
 	public void retrieveData() throws RestClientException, URISyntaxException {
-		repositoryClient.retrieveRepositoryData("http://testmodel.datanet.cyfronet.pl", "testentity", 1, -1, null);
+		repositoryClient.retrieveRepositoryData("http://testmodel.datanet.cyfronet.pl", "testentity", null, 1, -1, null);
 	}
 	
 //	@Test
