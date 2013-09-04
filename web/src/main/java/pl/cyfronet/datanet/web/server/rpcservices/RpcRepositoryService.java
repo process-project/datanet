@@ -113,11 +113,10 @@ public class RpcRepositoryService implements RepositoryService {
 			log.debug("Retrieving repository data for url {} entity {} start index {}, length {} and query {}",
 					new Object[] {repositoryDbEntity.getUrl(), entityName, start, length, query});
 			
-			EntityData data = repositoryClient.retrieveRepositoryData(repositoryDbEntity.getUrl(), entityName, start, length, query);
-			
 			ModelDbEntity modelDbEntity = repositoryDao.getModelForRepository(repositoryDbEntity.getId());
 			Model model = getModel(modelDbEntity);
 			Entity entity = null;
+			List<String> fileFields = new ArrayList<>();
 			
 			for (Entity e : model.getEntities()) {
 				if (e.getName().equals(entityName)) {
@@ -127,10 +126,14 @@ public class RpcRepositoryService implements RepositoryService {
 			}
 			
 			if (entity != null) {
-				processFileData(data, entity, repositoryDbEntity.getUrl());
+				for (Field field : entity.getFields()) {
+					if (field.getType() == Type.File) {
+						fileFields.add(field.getName());
+					}
+				}
 			}
 			
-			return data;
+			return repositoryClient.retrieveRepositoryData(repositoryDbEntity.getUrl(), entityName, fileFields, start, length, query);
 		} catch (Exception e) {
 			String message = "Repository data retrieval error occurred";
 			log.error(message, e);
@@ -236,17 +239,6 @@ public class RpcRepositoryService implements RepositoryService {
 		repository.setSourceModelVersion(version);
 		
 		return repository;
-	}
-	
-	private void processFileData(EntityData data, Entity entity, String repositoryUrl) {
-		for (Field field : entity.getFields()) {
-			if (field.getType() == Type.File) {
-				for (Map<String, String> row : data.getEntityRows()) {
-					String id = row.remove(field.getName() + "_id");
-					row.put(field.getName(), "file;" + repositoryUrl + "/file/" + id);
-				}
-			}
-		}
 	}
 	
 	private Model getModel(ModelDbEntity modelDbEntity) throws ModelException {

@@ -36,7 +36,7 @@ public class RepositoryClient {
 		this.restTemplate = restTemplate;
 	}
 
-	public EntityData retrieveRepositoryData(String repositoryUrl, String entityName, int start, int length, Map<String, String> query) throws RestClientException, URISyntaxException {
+	public EntityData retrieveRepositoryData(String repositoryUrl, String entityName, List<String> fileFields, int start, int length, Map<String, String> query) throws RestClientException, URISyntaxException {
 		if(start < 1) {
 			throw new IllegalArgumentException("start number value has to be at least 1");
 		}
@@ -57,6 +57,11 @@ public class RepositoryClient {
 			while((entityData.getEntityRows().size() <= length || length < 0) && currentIndex < ids.size()) {
 				@SuppressWarnings("unchecked")
 				Map<String, String> fields = restTemplate.getForObject(buildEntityInstanceUrl(repositoryUrl, entityName, ids.get(currentIndex++)), Map.class);
+				
+				if (fileFields != null && fileFields.size() > 0) {
+					processFileData(fields, fileFields, repositoryUrl);
+				}
+				
 				entityData.getEntityRows().add(fields);
 			}
 			
@@ -126,4 +131,19 @@ public class RepositoryClient {
 		return url;
 	}
 
+	private void processFileData(Map<String, String> data, List<String> fileFields, String repositoryUrl) throws RestClientException, URISyntaxException {
+		for (String fileFieldName : fileFields) {
+			String suffixedFileFieldName = fileFieldName + "_id";
+			
+			if (data.keySet().contains(suffixedFileFieldName)) {
+				String id = data.remove(suffixedFileFieldName);
+				String fileName = restTemplate.getForObject(buildFileNameUrl(repositoryUrl, id), String.class);
+				data.put(fileFieldName, fileName + ";" + repositoryUrl + "/file/" + id);
+			}
+		}
+	}
+
+	private String buildFileNameUrl(String repositoryUrl, String fileEntityId) throws URISyntaxException {
+		return buildEntityUrl(repositoryUrl, "file", null) + "/" + fileEntityId + "/file_name";
+	}
 }
