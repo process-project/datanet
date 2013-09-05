@@ -133,10 +133,8 @@ public class RepositoryClient {
 
 	private void processFileData(Map<String, String> data, List<String> fileFields, String repositoryUrl) throws RestClientException, URISyntaxException {
 		for (String fileFieldName : fileFields) {
-			String suffixedFileFieldName = fileFieldName + "_id";
-			
-			if (data.keySet().contains(suffixedFileFieldName)) {
-				String id = data.remove(suffixedFileFieldName);
+			if (data.keySet().contains(fileFieldName)) {
+				String id = data.remove(fileFieldName);
 				String fileName = restTemplate.getForObject(buildFileNameUrl(repositoryUrl, id), String.class);
 				data.put(fileFieldName, fileName + ";" + repositoryUrl + "/file/" + id);
 			}

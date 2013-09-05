@@ -141,19 +141,24 @@ public class ModelMarchallerTest {
 	}
 
 	@Test
-	public void shouldCreateSchemasWithSimpleRelation() throws Exception {
+	public void shouldCreateSchemaWithOneToOneRelation() throws Exception {
 		givenModelWithOneToOneRelation();
 		whenCreateJsonSchema();
-		thenRelationIsCreated();
+		thenOneToOneRelationCreated();
 	}
 
 	private void givenModelWithOneToOneRelation() {
 		Entity e1 = new Entity();
 		e1.setName(ENTITY_NAME);
-
+		
 		Entity e2 = new Entity();
 		e2.setName("e2");
 
+		createOneToOneRelation(e1, e2);
+		model.setEntities(Arrays.asList(e1, e2));
+	}
+
+	private void createOneToOneRelation(Entity e1, Entity e2) {
 		Field relation = new Field();
 		relation.setName(ONE_TO_ONE_RELATION);
 		relation.setType(Type.ObjectId);
@@ -162,10 +167,11 @@ public class ModelMarchallerTest {
 		e1.getFields().add(relation);
 
 		e1.getFields().add(relation);
-		model.setEntities(Arrays.asList(e1, e2));
 	}
 
-	private void thenRelationIsCreated() throws Exception {
+	
+	
+	private void thenOneToOneRelationCreated() throws Exception {
 		thenRelationIsCreated(ONE_TO_ONE_RELATION, "e2");
 	}
 
@@ -176,7 +182,7 @@ public class ModelMarchallerTest {
 	}
 
 	private void thenRelationPropertyCreated(String fieldName) throws Exception {
-		Map<String, Object> property = getProperty(fieldName + "_id");
+		Map<String, Object> property = getProperty(fieldName);
 		assertNotNull(property);
 		assertEquals("string", property.get("type"));
 		assertTrue((Boolean) property.get("required"));
@@ -188,7 +194,7 @@ public class ModelMarchallerTest {
 
 		assertNotNull(link);
 		assertEquals(target, link.get("targetSchema"));
-		assertEquals(String.format("/%s/{%s_id}", target, fieldName),
+		assertEquals(String.format("/%s/{%s}", target, fieldName),
 				link.get("href"));
 	}
 
@@ -216,13 +222,17 @@ public class ModelMarchallerTest {
 		Entity e1 = new Entity();
 		e1.setName(ENTITY_NAME);
 
+		createFileField(e1);
+
+		model.getEntities().add(e1);
+	}
+
+	private void createFileField(Entity e) {
 		Field fileField = new Field();
 		fileField.setName("fileField");
 		fileField.setType(Type.File);
 		fileField.setRequired(true);
-
-		e1.getFields().add(fileField);
-		model.getEntities().add(e1);
+		e.getFields().add(fileField);
 	}
 
 	private void thenFileRelationCreated() throws Exception {
@@ -243,19 +253,50 @@ public class ModelMarchallerTest {
 
 		Entity e2 = new Entity();
 		e2.setName("e2");
+		
+		createOneToManyRelation(e1, e2);
 
+		model.setEntities(Arrays.asList(e1, e2));
+	}
+
+	private void createOneToManyRelation(Entity e1, Entity e2) {
 		Field oneToMany = new Field();
 		oneToMany.setName(ONE_TO_MANY_FIELD);
 		oneToMany.setType(Type.ObjectIdArray);
 		oneToMany.setTarget(e2);
 		oneToMany.setRequired(true);
 		e1.getFields().add(oneToMany);
-
-		model.setEntities(Arrays.asList(e1, e2));
 	}
 
 	private void thenOneToManyRelationCreated() throws Exception {
 		thenEntityWithArrayFieldGenerated(ONE_TO_MANY_FIELD, "string", true);
 		thenLinkIsCreated(ONE_TO_MANY_FIELD, "e2");
+	}
+	
+	@Test
+	public void shouldGenerateSchemaWithManyRelations() throws Exception {
+		 givenAllTypesOfRelations();
+		 whenCreateJsonSchema();
+		 thenAllTypesOfRelationsCreated();
+	}
+
+	private void givenAllTypesOfRelations() {
+		Entity e1 = new Entity();
+		e1.setName(ENTITY_NAME);
+
+		Entity e2 = new Entity();
+		e2.setName("e2");
+		
+		createFileField(e1);
+		createOneToOneRelation(e1, e2);
+		createOneToManyRelation(e1, e2);
+		
+		model.setEntities(Arrays.asList(e1, e2));
+	}
+
+	private void thenAllTypesOfRelationsCreated() throws Exception {
+		thenFileRelationCreated();
+		thenOneToOneRelationCreated();
+		thenOneToManyRelationCreated();
 	}
 }
