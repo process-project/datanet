@@ -5,13 +5,16 @@ import java.util.List;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.model.beans.Version;
+import pl.cyfronet.datanet.web.client.controller.AppProperties;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoriesCallback;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCountCallback;
 import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
-import pl.cyfronet.datanet.web.client.event.notification.VersionNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
+import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
+import pl.cyfronet.datanet.web.client.event.notification.VersionNotificationMessage;
 import pl.cyfronet.datanet.web.client.mvp.place.RepositoryPlace;
 import pl.cyfronet.datanet.web.client.widgets.readonly.entitypanel.EntityPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.readonly.entitypanel.EntityPanelWidget;
@@ -32,6 +35,8 @@ public class VersionPanelPresenter implements Presenter {
 		void setPresenter(Presenter presenter);
 		boolean confirmVersionRemoval();
 		void setRemoveVersionBusyState(boolean busy);
+		void showDeployRepositoryModal();
+		void setStartDeployBusyState(boolean state);
 	}
 
 	private View view;
@@ -41,17 +46,19 @@ public class VersionPanelPresenter implements Presenter {
 	private VersionController versionController;
 	private PlaceController placeController;	
 	private EventBus eventBus;
+	private AppProperties properties;
 
 	@Inject
 	public VersionPanelPresenter(View view, VersionPanelWidgetMessages messages,
 			RepositoryController repositoryController, VersionController versionController, 
-			PlaceController placeController, EventBus eventBus) {
+			PlaceController placeController, EventBus eventBus, AppProperties properties) {
 		this.view = view;
 		this.messages = messages;
 		this.repositoryController = repositoryController;
 		this.versionController = versionController;
 		this.placeController = placeController;
 		this.eventBus = eventBus;
+		this.properties = properties;
 		view.setPresenter(this);
 	}
 
@@ -112,6 +119,32 @@ public class VersionPanelPresenter implements Presenter {
 		}else {
 			deployRepository(repositoryName.toLowerCase());
 		}
+	}
+
+	@Override
+	public void onStartDeploy() {
+		view.setStartDeployBusyState(true);
+		repositoryController.getUserRepositoryCount(new RepositoryCountCallback() {
+			@Override
+			public void onRepositorycount(int repositoryCount) {
+				view.setStartDeployBusyState(false);
+				
+				if (repositoryCount >= properties.maxNumberOfRepositoriesPerUser()) {
+					eventBus.fireEvent(new NotificationEvent(
+							RepositoryNotificationMessage.repositoryMaxNumberOfRepositoriesExceeded,
+							NotificationType.ERROR, String.valueOf(properties.maxNumberOfRepositoriesPerUser())));
+				} else {
+					view.showDeployRepositoryModal();
+				}
+			}
+		}, new Command() {
+			@Override
+			public void execute() {
+				view.setStartDeployBusyState(false);
+				eventBus.fireEvent(new NotificationEvent(
+						RepositoryNotificationMessage.repositoryInfoRetrievalError, NotificationType.ERROR));
+			}
+		});
 	}
 
 	private boolean unvalidRepositoryNameFormat(String repositoryName) {		

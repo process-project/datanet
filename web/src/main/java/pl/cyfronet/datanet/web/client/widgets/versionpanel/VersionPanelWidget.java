@@ -35,6 +35,7 @@ public class VersionPanelWidget extends Composite implements View {
 	@UiField ControlGroup newRepositoryNameControlGroup;
 	@UiField Alert newRepositoryErrorAlert;
 	@UiField Button removeVersion;
+	@UiField Button startDeploy;
 
 	private Presenter presenter;
 	private VersionPanelWidgetMessages messages;	
@@ -62,6 +63,11 @@ public class VersionPanelWidget extends Composite implements View {
 	void onRemoveVersion(ClickEvent event) {
 		presenter.onRemoveVersion();
 	}
+	
+	@UiHandler("startDeploy")
+	void onStartDeploy(ClickEvent event) {		
+		presenter.onStartDeploy();
+	}
 
 	@Override
 	public void setModelName(String name) {
@@ -71,12 +77,6 @@ public class VersionPanelWidget extends Composite implements View {
 	@Override
 	public HasWidgets getEntityContainer() {
 		return entityContainer;
-	}
-
-	@UiHandler("startDeploy")
-	void onStartDeploy(ClickEvent event) {		
-		cleanDeployRepositoryForm();
-		deployRepositoryForm.show();
 	}
 	
 	private void cleanDeployRepositoryForm() {
@@ -120,6 +120,23 @@ public class VersionPanelWidget extends Composite implements View {
 		} else {
 			removeVersion.setIcon(IconType.REMOVE);
 			removeVersion.setEnabled(true);
+		}
+	}
+
+	@Override
+	public void showDeployRepositoryModal() {
+		cleanDeployRepositoryForm();
+		deployRepositoryForm.show();
+	}
+
+	@Override
+	public void setStartDeployBusyState(boolean state) {
+		if (state) {
+			startDeploy.setEnabled(false);
+			startDeploy.setIcon(IconType.SPINNER);
+		} else {
+			startDeploy.setEnabled(true);
+			startDeploy.setIcon(IconType.CLOUD_UPLOAD);
 		}
 	}
 }

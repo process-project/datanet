@@ -17,4 +17,5 @@ public interface RepositoryServiceAsync {
 	void deployModelVersion(long versionId, String repositoryName, AsyncCallback<Repository> asyncCallback);
 	void saveData(long repositoryId, String entityName, Map<String, String> data, AsyncCallback<Void> asyncCallback);
 	void removeRepository(long repositoryId, AsyncCallback<Void> asyncCallback);
+	void getRepositoryCount(AsyncCallback<Integer> asyncCallback);
 }

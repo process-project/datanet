@@ -23,11 +23,14 @@ import org.mockito.stubbing.Answer;
 
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.model.beans.Version;
+import pl.cyfronet.datanet.web.client.controller.AppProperties;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoriesCallback;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCountCallback;
 import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
+import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.event.notification.VersionNotificationMessage;
 import pl.cyfronet.datanet.web.client.mvp.place.RepositoryPlace;
@@ -35,6 +38,7 @@ import pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelPresenter
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.web.bindery.event.shared.EventBus;
@@ -47,17 +51,18 @@ public class VersionPanelPresenterTest {
 	@Mock private VersionController versionController;
 	@Mock private PlaceController placeController;
 	@Mock private EventBus eventBus;
+	@Mock private AppProperties appProperties;
 
 	private String repositoryName;
 	private VersionPanelPresenter presenter;
-	protected String errorMsg = "error message";	
+	protected String errorMsg = "error message";
 
 	@Before
 	public void prepare() {
 		MockitoAnnotations.initMocks(this);
 		
 		when(view.getEntityContainer()).thenReturn(mock(HasWidgets.class));
-		presenter = new VersionPanelPresenter(view, messages, repositoryController, versionController, placeController, eventBus);
+		presenter = new VersionPanelPresenter(view, messages, repositoryController, versionController, placeController, eventBus, appProperties);
 		
 		Version version = new Version();
 		version.setId(1l);
@@ -206,5 +211,48 @@ public class VersionPanelPresenterTest {
 		
 		verify(view).setRemoveVersionBusyState(true);
 		verify(view).setRemoveVersionBusyState(false);
+	}
+	
+	@Test
+	public void shouldDisplayRepositoryNumberExceededErrorMessage() {
+		when(appProperties.maxNumberOfRepositoriesPerUser()).thenReturn(5);
+		Mockito.doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				RepositoryCountCallback repositoryCountCallback = (RepositoryCountCallback) invocation.getArguments()[0];
+				//max repository count exceeded
+				repositoryCountCallback.onRepositorycount(5);
+				
+				return null;
+			}
+		}).when(repositoryController).getUserRepositoryCount(Mockito.any(RepositoryCountCallback.class), Mockito.any(Command.class));;
+		
+		presenter.onStartDeploy();
+		
+		verify(view).setStartDeployBusyState(true);
+		verify(view).setStartDeployBusyState(false);
+		verify(eventBus).fireEvent(new NotificationEvent(
+				RepositoryNotificationMessage.repositoryMaxNumberOfRepositoriesExceeded, NotificationType.ERROR));
+	}
+	
+	@Test
+	public void shouldDisplayRepositoryDeployModal() {
+		when(appProperties.maxNumberOfRepositoriesPerUser()).thenReturn(5);
+		Mockito.doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				RepositoryCountCallback repositoryCountCallback = (RepositoryCountCallback) invocation.getArguments()[0];
+				//max repository count limit OK
+				repositoryCountCallback.onRepositorycount(3);
+				
+				return null;
+			}
+		}).when(repositoryController).getUserRepositoryCount(Mockito.any(RepositoryCountCallback.class), Mockito.any(Command.class));;
+		
+		presenter.onStartDeploy();
+		
+		verify(view).setStartDeployBusyState(true);
+		verify(view).setStartDeployBusyState(false);
+		verify(view).showDeployRepositoryModal();
 	}
 }

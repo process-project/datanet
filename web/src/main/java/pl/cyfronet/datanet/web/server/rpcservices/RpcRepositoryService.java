@@ -222,6 +222,22 @@ public class RpcRepositoryService implements RepositoryService {
 		}
 	}
 	
+	@Override
+	public int getRepositoryCount() throws RepositoryException {
+		int result = -1;
+		
+		try {
+			List<RepositoryDbEntity> userRepositories = repositoryDao.getUserRepositories(SpringSecurityHelper.getUserLogin());
+			result = userRepositories.size();
+		} catch (Exception e) {
+			log.error("Could not retrieve user repository count for user {}", SpringSecurityHelper.getUserLogin());
+			log.error("Repository count error", e);
+			throw new RepositoryException(Code.RepositoryDataRetrievalError);
+		}
+		
+		return result;
+	}
+	
 	private Repository createRepository(RepositoryDbEntity repositoryDbEntity) throws JAXBException {
 		Repository repository = new Repository();
 		repository.setId(repositoryDbEntity.getId());

@@ -39,6 +39,10 @@ public class RepositoryController {
 		void onDataSaved(boolean success);
 	}
 	
+	public interface RepositoryCountCallback {
+		void onRepositorycount(int repositoryCount);
+	}
+	
 	private RepositoryServiceAsync repositoryService;
 	private EventBus eventBus;
 	private HashMap<Long, List<Repository>> repositories;
@@ -225,5 +229,23 @@ public class RepositoryController {
 					nextCallback.next();
 				}
 			}});
+	}
+
+	public void getUserRepositoryCount(final RepositoryCountCallback repositoryCountCallback, final Command onFailure) {
+		repositoryService.getRepositoryCount(new AsyncCallback<Integer>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				if (onFailure != null) {
+					onFailure.execute();
+				}
+			}
+
+			@Override
+			public void onSuccess(Integer repositoryCount) {
+				if (repositoryCountCallback != null) {
+					repositoryCountCallback.onRepositorycount(repositoryCount);
+				}
+			}
+		});
 	}
 }

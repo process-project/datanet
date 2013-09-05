@@ -20,4 +20,5 @@ public interface RepositoryService extends RemoteService {
 	Repository deployModelVersion(long versionId, String repositoryName) throws RepositoryException;
 	void saveData(long repositoryId, String entityName, Map<String, String> data) throws RepositoryException;
 	void removeRepository(long repositoryId) throws RepositoryException;
+	int getRepositoryCount() throws RepositoryException;
 }
