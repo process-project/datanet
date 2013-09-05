@@ -178,7 +178,7 @@ public class ModelMarchallerTest {
 	private void thenRelationIsCreated(String fieldName, String target)
 			throws Exception {
 		thenRelationPropertyCreated(fieldName);
-		thenLinkIsCreated(fieldName, target);
+		thenLinkToOneIsCreated(fieldName, target);
 	}
 
 	private void thenRelationPropertyCreated(String fieldName) throws Exception {
@@ -188,7 +188,7 @@ public class ModelMarchallerTest {
 		assertTrue((Boolean) property.get("required"));
 	}
 
-	private void thenLinkIsCreated(String fieldName, String target)
+	private void thenLinkToOneIsCreated(String fieldName, String target)
 			throws Exception {
 		Map<String, String> link = getLink(fieldName);
 
@@ -246,7 +246,7 @@ public class ModelMarchallerTest {
 		whenCreateJsonSchema();
 		thenOneToManyRelationCreated();
 	}
-
+	
 	private void givenModelWithOneToManyRelation() {
 		Entity e1 = new Entity();
 		e1.setName(ENTITY_NAME);
@@ -270,7 +270,17 @@ public class ModelMarchallerTest {
 
 	private void thenOneToManyRelationCreated() throws Exception {
 		thenEntityWithArrayFieldGenerated(ONE_TO_MANY_FIELD, "string", true);
-		thenLinkIsCreated(ONE_TO_MANY_FIELD, "e2");
+		thenLinkToManyIsCreated(ONE_TO_MANY_FIELD, "e2");
+	}
+	
+	private void thenLinkToManyIsCreated(String fieldName, String target)
+			throws Exception {
+		Map<String, String> link = getLink(fieldName);
+
+		assertNotNull(link);
+		assertEquals(target, link.get("targetSchema"));
+		assertEquals(String.format("/%s?ids={%s}", target, fieldName),
+				link.get("href"));
 	}
 	
 	@Test

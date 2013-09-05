@@ -171,10 +171,10 @@ public class ModelMarchaller {
 			ObjectNode rootNode, ArrayNode linksArray) {
 		createProperty(rootNode, String.format("%s", field.getName()),
 				"string", field.isRequired());
-		createLink(linksArray, field.getName(), target);
+		createLinkToOne(linksArray, field.getName(), target);
 	}
 
-	private void createLink(ArrayNode linksArray, String name, String target) {
+	private void createLinkToOne(ArrayNode linksArray, String name, String target) {
 		ObjectNode linksEntry = linksArray.addObject();
 		linksEntry.put("rel", name);
 		linksEntry.put("href", String.format("/%s/{%s}", target, name));
@@ -184,6 +184,13 @@ public class ModelMarchaller {
 	private void createOneToManyRelation(Field field, ObjectNode rootNode,
 			ArrayNode linksArray) {
 		createArrayTypeField(field, rootNode, "string");
-		createLink(linksArray, field.getName(), field.getTarget().getName());
+		createLinkToMany(linksArray, field.getName(), field.getTarget().getName());
+	}
+	
+	private void createLinkToMany(ArrayNode linksArray, String name, String target) {
+		ObjectNode linksEntry = linksArray.addObject();
+		linksEntry.put("rel", name);
+		linksEntry.put("href", String.format("/%s?ids={%s}", target, name));
+		linksEntry.put("targetSchema", target);
 	}
 }
