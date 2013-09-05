@@ -176,7 +176,7 @@ public class ModelMarchallerTest {
 	}
 
 	private void thenRelationPropertyCreated(String fieldName) throws Exception {
-		Map<String, Object> property = getProperty(fieldName + "_id");
+		Map<String, Object> property = getProperty(fieldName);
 		assertNotNull(property);
 		assertEquals("string", property.get("type"));
 		assertTrue((Boolean) property.get("required"));
@@ -188,7 +188,7 @@ public class ModelMarchallerTest {
 
 		assertNotNull(link);
 		assertEquals(target, link.get("targetSchema"));
-		assertEquals(String.format("/%s/{%s_id}", target, fieldName),
+		assertEquals(String.format("/%s/{%s}", target, fieldName),
 				link.get("href"));
 	}
 

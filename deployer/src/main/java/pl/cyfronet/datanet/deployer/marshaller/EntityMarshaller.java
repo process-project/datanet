@@ -104,13 +104,13 @@ public class EntityMarshaller {
 			fieldObject.put("required", field.isRequired());
 		} else if (Type.File.equals(type)) {
 			// file type
-			ObjectNode fieldObject = rootNode.putObject(field.getName() + "_id");
+			ObjectNode fieldObject = rootNode.putObject(field.getName());
 			fieldObject.put("type", JsonFormatTypes.STRING.name().toLowerCase());
 			fieldObject.put("required", field.isRequired());
 			
 			ObjectNode linksEntry = linksArray.addObject();
-			linksEntry.put("rel", field.getName() + "_id");
-			linksEntry.put("href", "/file/{" + field.getName() + "_id}");
+			linksEntry.put("rel", field.getName());
+			linksEntry.put("href", String.format("/file/{%s}", field.getName()));
 			linksEntry.put("targetSchema", "file");
 		} else {
 			// unknown type
