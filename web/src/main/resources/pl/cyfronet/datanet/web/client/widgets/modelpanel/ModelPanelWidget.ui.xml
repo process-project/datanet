@@ -32,6 +32,7 @@
 		.elements {
 			margin: 5px;
 			padding: 5px;
+			overflow: auto;
 		}
 	</ui:style>
 	<g:FlowPanel addStyleNames="{style.main}">

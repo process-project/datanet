@@ -23,6 +23,7 @@
 		.elements {
 			margin: 5px;
 			padding: 5px;
+			overflow: auto;
 		}
 		.model-name {
 			margin-right: 20px;

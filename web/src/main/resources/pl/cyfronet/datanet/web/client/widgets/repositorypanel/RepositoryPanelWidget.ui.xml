@@ -18,6 +18,7 @@
 		.tabs {
 			margin: 5px;
 			padding: 5px;
+			overflow: auto;
 		}
 		.left {
 			float: left;
