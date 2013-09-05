@@ -14,4 +14,5 @@ public interface VersionPanelWidgetMessages extends Messages {
 	String removeVersionButtonLabel();
 	String versionRemovalConfirmation();
 	String wrongNameFormat();
+	String versionNameLabel();
 }

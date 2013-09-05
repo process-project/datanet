@@ -14,6 +14,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
@@ -25,7 +26,7 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 
 	private Presenter presenter;
 
-	@UiField Button repositoryLink;
+	@UiField Anchor repositoryLink;
 	@UiField TabPanel tabPanel;
 	@UiField RepositoryPanelMessages messages;
 	
@@ -46,7 +47,7 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 	@Override
 	public void setRepositoryLink(String link) {
 		repositoryLink.setHref(link);
-		repositoryLink.setText(messages.repositoryLocationPrefix(link));
+		repositoryLink.setText(link);
 	}
 
 	@Override

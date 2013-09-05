@@ -25,17 +25,22 @@
 			padding: 5px;
 			overflow: auto;
 		}
-		.model-name {
-			margin-right: 20px;
+		.version-name {
+			margin-right: 30px;
+			margin-left: 5px;
+			margin-top: 5px;
+		}
+		.version-label {
+			float: left;
+			margin-top: 5px;
 		}
 	</ui:style>
 	<g:FlowPanel addStyleNames="{style.main}">
 		<g:DockLayoutPanel addStyleNames="{style.dockLayoutPanel}">
 			<g:north size="60">
 				<g:FlowPanel styleName="{style.header}">
-				    <b:Tooltip text="{messages.modelName}"  placement="RIGHT">
-						<b:Label ui:field="modelName" styleName="{style.model-name}"/>
-					</b:Tooltip>							
+					<g:Label addStyleNames="{style.version-label}"><ui:text from="{versionMessages.versionNameLabel}"/></g:Label>
+					<b:Label ui:field="versionName"  addStyleNames="pull-left {style.version-name}"/>
 					<b:Button ui:field="startDeploy" icon="CLOUD_UPLOAD" type="SUCCESS"><ui:text from="{versionMessages.startDeploy}"/></b:Button>							
 					<g:FlowPanel styleName="pull-right">
 						<b:Button ui:field="removeVersion" type="DANGER" icon="REMOVE"><ui:text from="{versionMessages.removeVersionButtonLabel}"/></b:Button>
