@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
+import pl.cyfronet.datanet.web.client.errors.ModelException.Code;
 import pl.cyfronet.datanet.web.client.event.model.ModelChangedEvent;
 import pl.cyfronet.datanet.web.client.event.model.ModelDeletedEvent;
 import pl.cyfronet.datanet.web.client.event.model.NewModelEvent;
@@ -164,22 +165,22 @@ public class ModelController {
 		});
 	}
 
-	private void saveModel(final ModelProxy modelProxy,
-			final ModelCallback callback) {
+	private void saveModel(final ModelProxy modelProxy, final ModelCallback callback) {
 		modelProxy.setTimestamp(new Date());
 		modelService.saveModel(modelProxy.getModel(),
 				new AsyncCallback<Model>() {
 					@Override
 					public void onSuccess(Model result) {
 						ModelProxy proxy = modelProxy;
+						
 						if (modelProxy.isNew()) {
 							int index = models.indexOf(modelProxy);
 							models.remove(index);
 							proxy = new ModelProxy(result);
 							models.add(index, proxy);
 						}
+						
 						proxy.setDirty(false);
-
 						eventBus.fireEvent(new ModelChangedEvent(result.getId()));
 						eventBus.fireEvent(new NotificationEvent(
 								ModelNotificationMessage.modelSaved,
@@ -192,9 +193,25 @@ public class ModelController {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						eventBus.fireEvent(new NotificationEvent(
-								ModelNotificationMessage.modelSaveError,
-								NotificationType.ERROR, caught.getMessage()));
+						NotificationEvent notificationEvent = null;
+						
+						if (caught instanceof ModelException) {
+							ModelException modelException = (ModelException) caught;
+							
+							if (modelException.getErrorCode() == Code.ModelNameNotUnique) {
+								notificationEvent = new NotificationEvent(
+										ModelNotificationMessage.modelNameNotUnique,
+										NotificationType.ERROR);
+							}
+						}
+						
+						if (notificationEvent == null) {
+							notificationEvent = new NotificationEvent(
+									ModelNotificationMessage.modelSaveError,
+									NotificationType.ERROR, caught.getMessage());
+						}
+						
+						eventBus.fireEvent(notificationEvent);
 					}
 				});
 	}
