@@ -26,7 +26,7 @@ public class VersionPanelWidget extends Composite implements View {
 	private static VersionPanelWidgetUiBinder uiBinder = GWT.create(VersionPanelWidgetUiBinder.class);
 	interface VersionPanelWidgetUiBinder extends UiBinder<Widget, VersionPanelWidget> {}
 	
-	@UiField Label modelName;
+	@UiField Label versionName;
 	@UiField Panel entityContainer;
 	@UiField Modal deployRepositoryForm;
 	@UiField Button performDeploy;
@@ -71,7 +71,7 @@ public class VersionPanelWidget extends Composite implements View {
 
 	@Override
 	public void setModelName(String name) {
-		modelName.setText(name);
+		versionName.setText(name);
 	}
 
 	@Override

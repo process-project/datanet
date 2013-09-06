@@ -4,7 +4,7 @@ import com.google.gwt.i18n.client.Messages;
 
 public interface RepositoryPanelMessages extends Messages {
 	String repositoryName();
-	String repositoryLocationPrefix(String link);
+	String repositoryLocationLabel();
 	String removeRepository();
 	String repositoryRemovalConfirmation();
 }

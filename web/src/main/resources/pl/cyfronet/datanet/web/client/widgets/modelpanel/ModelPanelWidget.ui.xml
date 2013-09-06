@@ -12,7 +12,7 @@
 			margin-right: 5px;
 		}
 		.modelPropertyInput {			
-			margin-right: 20px;
+			margin-right: 30px;
 		}
 		/* https://groups.google.com/forum/#!topic/gwt-platform/EPnHwOTQ44Y */
  		.dockLayoutPanel {
@@ -34,14 +34,18 @@
 			padding: 5px;
 			overflow: auto;
 		}
+		.model-name-label {
+			float: left;
+			padding-top: 5px;
+			margin-right: 5px;
+		}
 	</ui:style>
 	<g:FlowPanel addStyleNames="{style.main}">
 		<g:DockLayoutPanel addStyleNames="{style.dockLayoutPanel}">
 			<g:north size="60">
 				<g:FlowPanel styleName="form-inline {style.header}">
-				    <b:Tooltip text="{messages.modelName}"  placement="RIGHT">
-						<b:TextBox ui:field="modelName" styleName="input-xlarge {style.modelPropertyInput}"/>
-					</b:Tooltip>
+					<g:Label addStyleNames="{style.model-name-label}"><ui:text from="{messages.modelName}"/></g:Label>
+					<b:TextBox ui:field="modelName" styleName="input-xlarge {style.modelPropertyInput}"/>
 					<b:ButtonGroup>
 						<b:Button ui:field="newEntity" icon="PLUS" type="SUCCESS"><ui:text from="{messages.newEntity}"/></b:Button>
 						<b:Button ui:field="newVersion" icon="BRIEFCASE" type="SUCCESS"><ui:text from="{messages.newVersionButtonLabel}"/>...</b:Button>
