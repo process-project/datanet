@@ -43,20 +43,19 @@ public class RepositoryClient {
 		
 		String entityUrl = buildEntityUrl(repositoryUrl, entityName, query);
 		@SuppressWarnings("unchecked")
-		List<String> ids = restTemplate.getForObject(entityUrl, List.class);
+		List<Map<String, String>> entities = restTemplate.getForObject(entityUrl, List.class);
 		EntityData entityData = new EntityData();
 		entityData.setEntityName(entityName);
-		entityData.setTotalNumberOfEntities(ids.size());
+		entityData.setTotalNumberOfEntities(entities.size());
 		entityData.setEntityRows(new ArrayList<Map<String, String>>());
 		
-		if(start <= ids.size()) {
+		if(start <= entities.size()) {
 			entityData.setStartEntityNumber(start);
 			
 			int currentIndex = start - 1;
 			
-			while((entityData.getEntityRows().size() <= length || length < 0) && currentIndex < ids.size()) {
-				@SuppressWarnings("unchecked")
-				Map<String, String> fields = restTemplate.getForObject(buildEntityInstanceUrl(repositoryUrl, entityName, ids.get(currentIndex++)), Map.class);
+			while((entityData.getEntityRows().size() <= length || length < 0) && currentIndex < entities.size()) {				
+				Map<String, String> fields = entities.get(currentIndex++);
 				
 				if (fileFields != null && fileFields.size() > 0) {
 					processFileData(fields, fileFields, repositoryUrl);
@@ -103,12 +102,6 @@ public class RepositoryClient {
 		} else {
 			throw new IllegalArgumentException("Updating entities is not supported yet!");
 		}
-	}
-	
-	private String buildEntityInstanceUrl(String repositoryUrl, String entityName, String entityId) throws URISyntaxException {
-		String url = buildEntityUrl(repositoryUrl, entityName, null) + "/" + entityId;
-		
-		return url;
 	}
 
 	private String buildEntityUrl(String repositoryUrl, String entityName, Map<String, String> query) throws URISyntaxException {
