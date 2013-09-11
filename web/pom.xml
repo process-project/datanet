@@ -30,7 +30,7 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 				<includes>
-					<include>pl/cyfronet/datanet/web/client/AppProperties.properties</include>
+					<include>pl/cyfronet/datanet/web/client/controller/AppProperties.properties</include>
 					<include>datanet.properties</include>
 				</includes>
 			</resource>
@@ -38,7 +38,7 @@
 				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
 				<excludes>
-					<exclude>pl/cyfronet/datanet/web/client/AppProperties.properties</exclude>
+					<exclude>pl/cyfronet/datanet/web/client/controller/AppProperties.properties</exclude>
 					<exclude>datanet.properties</exclude>
 				</excludes>
 			</resource>
