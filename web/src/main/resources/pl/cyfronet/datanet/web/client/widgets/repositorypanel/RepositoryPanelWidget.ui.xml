@@ -27,12 +27,18 @@
 		.margin-right {
 			margin-right: 5px;
 		}
+		.special-anchor, .special-anchor:hover, .special-anchor:visited {
+			color: #ffffff;
+			text-decoration: none;
+		}
 	</ui:style>
 	<g:DockLayoutPanel addStyleNames="{style.main}">
 		<g:north size="60">
 			<g:FlowPanel styleName="{style.header}">
 				<g:Label addStyleNames="pull-left {style.margin-right}"><ui:text from="{messages.repositoryLocationLabel}"/></g:Label>
-				<g:Anchor  addStyleNames="pull-left" href="" target="_blank" ui:field="repositoryLink"/>
+				<g:FlowPanel addStyleNames="label">
+					<g:Anchor addStyleNames="pull-left {style.special-anchor}" href="" target="_blank" ui:field="repositoryLink"/>
+				</g:FlowPanel>
 				<g:FlowPanel styleName="pull-right">
 					<b:Button type="DANGER" ui:field="removeRepository" icon="REMOVE"><ui:text from="{messages.removeRepository}"/></b:Button>
 				</g:FlowPanel>
