@@ -170,6 +170,7 @@ public class SpringConfiguration {
 		PropertiesFactoryBean pfb = new PropertiesFactoryBean();
 		pfb.setLocations(new Resource[] {new ClassPathResource("hibernate.properties"),
 				new ClassPathResource("hibernate-override.properties")});
+		pfb.setIgnoreResourceNotFound(true);
 		
 		return pfb;
 	}
