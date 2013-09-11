@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.client.widgets.entitydatapanel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +10,13 @@ import org.slf4j.LoggerFactory;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
+import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.model.beans.Type;
+import pl.cyfronet.datanet.web.client.codetemplates.CodeTemplateGenerator;
+import pl.cyfronet.datanet.web.client.codetemplates.CodeTemplateGenerator.Language;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.EntityCallback;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 import pl.cyfronet.datanet.web.client.di.factory.EntityRowDataProviderFactory;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
@@ -43,6 +48,8 @@ public class EntityDataPanelPresenter implements Presenter {
 		void setBusyState(boolean b);
 		void initEntityUploadForm(long repositoryId, String entityName);
 		void addNewEntityRowCredentials();
+		void showTemplatesModal(boolean b);
+		void renderCodeTemplates(Map<String, String> codeTemplates);
 	}
 	
 	public interface DataCallback {
@@ -60,17 +67,20 @@ public class EntityDataPanelPresenter implements Presenter {
 	private EntityRowDataProvider dataProvider;
 	private Map<String, HasText> newEntityRowFields;
 	private EventBus eventBus;
+	private CodeTemplateGenerator codeTemplateGenerator;
 	
 	@Inject
 	public EntityDataPanelPresenter(View view, RepositoryController repositoryController,
 			@Assisted long repositoryId, @Assisted String entityName,
-			EntityRowDataProviderFactory entityRowDataProviderFactory, EventBus eventBus) {
+			EntityRowDataProviderFactory entityRowDataProviderFactory, EventBus eventBus,
+			CodeTemplateGenerator codeTemplateGenerator) {
 		this.view = view;
 		this.repositoryController = repositoryController;
 		this.repositoryId = repositoryId;
 		this.entityName = entityName;
 		this.entityRowDataProviderFactory = entityRowDataProviderFactory;
 		this.eventBus = eventBus;
+		this.codeTemplateGenerator = codeTemplateGenerator;
 		view.setPresenter(this);
 		searchFields = new HashMap<String, HasText>();
 		newEntityRowFields = new HashMap<String, HasText>();
@@ -158,6 +168,48 @@ public class EntityDataPanelPresenter implements Presenter {
 		}
 	}
 
+	@Override
+	public void onShowCodeTemplates() {
+		repositoryController.getEntity(repositoryId, entityName, new EntityCallback() {
+			@Override
+			public void setEntity(final Entity entity) {
+				repositoryController.getRepository(repositoryId, new RepositoryCallback() {
+					@Override
+					public void setRepository(Repository repository) {
+						if (entity.getFields() != null) {
+							List<String> regularFields = new ArrayList<String>();
+							List<String> fileFields = new ArrayList<String>();
+							
+							for (Field field : entity.getFields()) {
+								if (field.getType() == Type.File) {
+									fileFields.add(field.getName());
+								} else {
+									regularFields.add(field.getName());
+								}
+							}
+							
+							Map<String, String> codeTemplates = new HashMap<String, String>();
+							codeTemplates.put("bash", codeTemplateGenerator.getCodeTemplate(
+									Language.Bash, repository.getUrl(), entityName, regularFields, fileFields));
+							codeTemplates.put("ruby", codeTemplateGenerator.getCodeTemplate(
+									Language.Ruby, repository.getUrl(), entityName, regularFields, fileFields));
+							codeTemplates.put("python", codeTemplateGenerator.getCodeTemplate(
+									Language.Python, repository.getUrl(), entityName, regularFields, fileFields));
+							view.renderCodeTemplates(codeTemplates);
+							view.showTemplatesModal(true);
+						}
+					}
+					
+					@Override
+					public void setError(String message) {
+						eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryInfoRetrievalError, NotificationType.ERROR));
+						
+					}
+				});
+			}
+		});
+	}
+	
 	private void showSearchFields(List<Field> fields) {
 		for(Field field : fields) {
 			if (field.getType() == Type.String) {

@@ -17,13 +17,14 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 	private static final int YEAR = 31556926;
 	
 	/**
-	 * Resource configuration
+	 * Web resources configuration
 	 */
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/ria/**").addResourceLocations("/ria/").setCachePeriod(YEAR);
 		registry.addResourceHandler("/css/**").addResourceLocations("/css/").setCachePeriod(YEAR);
 		registry.addResourceHandler("/img/**").addResourceLocations("/img/").setCachePeriod(YEAR);
+		registry.addResourceHandler("/highlight/**").addResourceLocations("/highlight/").setCachePeriod(YEAR);
 	}
 	
 	@Override

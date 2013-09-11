@@ -13,4 +13,8 @@ public interface EntityDataPanelMessages extends Messages {
 	String login();
 	String credentialsInfo();
 	String searchLimitationMessage();
+	String showCodeTemplatesLabel();
+	String codeTemplatesModalHeader();
+	String closeCodeTemplatesModalButtonLabel();
+	String codeTemplatesAbout();
 }

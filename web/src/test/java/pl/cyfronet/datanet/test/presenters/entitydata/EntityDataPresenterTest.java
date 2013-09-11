@@ -17,6 +17,7 @@ import org.mockito.stubbing.Answer;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Type;
+import pl.cyfronet.datanet.web.client.codetemplates.CodeTemplateGenerator;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.EntityCallback;
 import pl.cyfronet.datanet.web.client.di.factory.EntityRowDataProviderFactory;
@@ -32,6 +33,7 @@ public class EntityDataPresenterTest {
 	@Mock private EntityRowDataProviderFactory entityRowDataProviderFactory;
 	@Mock private EventBus eventBus;
 	@Mock private EntityRowDataProvider entityRowDataProvider;
+	@Mock private CodeTemplateGenerator codeTemplateGenerator;
 	
 	private EntityDataPanelPresenter entityDataPanelPresenter;
 	
@@ -39,7 +41,7 @@ public class EntityDataPresenterTest {
 	public void prepare() {
 		MockitoAnnotations.initMocks(this);
 		entityDataPanelPresenter = new EntityDataPanelPresenter(
-				view, repositoryController, 0, "entity", entityRowDataProviderFactory, eventBus);
+				view, repositoryController, 0, "entity", entityRowDataProviderFactory, eventBus, codeTemplateGenerator);
 		when(entityRowDataProviderFactory.create(Mockito.anyLong(), Mockito.anyString(), Mockito.any(EntityDataPanelPresenter.class))).
 				thenReturn(entityRowDataProvider);
 	}

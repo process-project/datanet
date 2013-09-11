@@ -8,4 +8,5 @@ public interface Presenter {
 	void onSaveNewEntityRow();
 	void beforeEntitySubmitted();
 	void afterEntitySubmitted(String results);
+	void onShowCodeTemplates();
 }

@@ -13,9 +13,13 @@
 		.left-margin {
 			margin-left: 20px;
 		}
+		.clearright {
+			clear: right;
+		}
 	</ui:style>
 	<g:FlowPanel>
-		<b:Form type="INLINE">
+		<b:Button ui:field="showCodeTemplates" icon="PENCIL" addStyleNames="{style.right}"><ui:text from="{messages.showCodeTemplatesLabel}"/></b:Button>
+		<b:Form type="INLINE" addStyleNames="{style.clearright}">
 			<b:Fieldset ui:field="searchFieldSet">
 				<b:Legend><ui:text from="{messages.repositorySearchLabel}"/></b:Legend>
 				<b:Button type="PRIMARY" icon="SEARCH" ui:field="searchButton"><ui:text from="{messages.repositorySearchLabel}"/></b:Button>
@@ -31,6 +35,23 @@
 			<b:Form ui:field="addEntityRowFormContainer" action="upload" encoding="multipart/form-data" method="post"></b:Form>
 			<b:ModalFooter>
 				<b:Button ui:field="saveEntityRow" icon="SAVE" type="PRIMARY" loadingText="&lt;i class='icon-spinner'&gt;&lt;/i&gt; {messages.saveNewEntityRow}"><ui:text from="{messages.saveNewEntityRow}"/></b:Button>
+			</b:ModalFooter>
+		</b:Modal>
+		<b:Modal ui:field="codeTemplatesModal" title="{messages.codeTemplatesModalHeader}" animation="true">
+			<b:Paragraph><ui:text from="{messages.codeTemplatesAbout}"/></b:Paragraph>
+			<b:TabPanel tabPosition="top">
+				<b:Tab heading="Bash (cURL)" active="true">
+					<g:FlowPanel ui:field="bashCode"/>
+				</b:Tab>
+				<b:Tab heading="Ruby">
+					<g:FlowPanel ui:field="rubyCode"/>
+				</b:Tab>
+				<b:Tab heading="Python">
+					<g:FlowPanel ui:field="pythonCode"/>
+				</b:Tab>
+			</b:TabPanel>
+			<b:ModalFooter>
+				<b:Button ui:field="closeCodeTemplatesModal"><ui:text from="{messages.closeCodeTemplatesModalButtonLabel}"/></b:Button>
 			</b:ModalFooter>
 		</b:Modal>
 	</g:FlowPanel>

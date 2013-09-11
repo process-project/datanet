@@ -1,6 +1,5 @@
 package pl.cyfronet.datanet.web.client.widgets.entitydatapanel;
 
-import java.util.List;
 import java.util.Map;
 
 import pl.cyfronet.datanet.model.beans.Type;
@@ -48,6 +47,10 @@ public class EntityDataPanelWidget extends Composite implements View {
 	@UiField Modal addRowPopup;
 	@UiField Form addEntityRowFormContainer;
 	@UiField Button saveEntityRow;
+	@UiField Modal codeTemplatesModal;
+	@UiField FlowPanel bashCode;
+	@UiField FlowPanel rubyCode;
+	@UiField FlowPanel pythonCode;
 	
 	private Presenter presenter;
 	
@@ -78,6 +81,16 @@ public class EntityDataPanelWidget extends Composite implements View {
 	@UiHandler("addEntityRowFormContainer")
 	void onAfterEntitySubmitted(SubmitCompleteEvent event) {
 		presenter.afterEntitySubmitted(event.getResults());
+	}
+	
+	@UiHandler("showCodeTemplates")
+	void  onShowCodeTemplates(ClickEvent event) {
+		presenter.onShowCodeTemplates();
+	}
+	
+	@UiHandler("closeCodeTemplatesModal")
+	void onCloseCodeTemplatesModal(ClickEvent event) {
+		codeTemplatesModal.hide();
 	}
 	
 	@Override
@@ -210,4 +223,31 @@ public class EntityDataPanelWidget extends Composite implements View {
 		credsPanel.add(passwordInput);
 		addEntityRowFormContainer.add(credsPanel);
 	}
+
+	@Override
+	public void showTemplatesModal(boolean b) {
+		codeTemplatesModal.show();
+	}
+
+	@Override
+	public void renderCodeTemplates(Map<String, String> codeTemplates) {
+		bashCode.getElement().setInnerHTML("<pre><code class='bash'>" + codeTemplates.get("bash") + "</code></pre>");
+		bashCode.getElement().setId("hljs-bash");
+		rubyCode.getElement().setInnerHTML("<pre><code class='ruby'>" + codeTemplates.get("ruby") + "</code></pre>");
+		rubyCode.getElement().setId("hljs-ruby");
+		pythonCode.getElement().setInnerHTML("<pre><code class='python'>" + codeTemplates.get("python") + "</code></pre>");
+		pythonCode.getElement().setId("hljs-python");
+		doHighlightMarkup();
+	}
+
+	private native void doHighlightMarkup() /*-{
+		var block = $doc.getElementById("hljs-bash");
+		$wnd.hljs.highlightBlock(block);
+		
+		block = $doc.getElementById("hljs-ruby");
+		$wnd.hljs.highlightBlock(block);
+		
+		block = $doc.getElementById("hljs-python");
+		$wnd.hljs.highlightBlock(block);
+	}-*/;
 }

@@ -13,6 +13,13 @@
 		<!--[if IE 7]>
  		<link rel="stylesheet" href="ria/css/font-awesome-ie7.css">
 		<![endif]-->
+		
+		<!-- highlight style (can be replaced with default.css), javascript and initialization -->
+		<link rel="stylesheet" href="highlight/styles/github.css">
+		<script type="text/javascript" src="highlight/highlight.pack.js"></script>
+		<script type="text/javascript">hljs.initHighlightingOnLoad();</script>
+		
+		<!-- GWT module -->
 		<script type="text/javascript" src="/datanet/ria/ria.nocache.js"></script>
 	</head>
 	<body>

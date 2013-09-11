@@ -1,10 +1,7 @@
 package pl.cyfronet.datanet.web.client.widgets.repositorypanel;
 
-import java.util.Map;
-
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPresenter.View;
 
-import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TabPanel;
 import com.google.gwt.core.client.GWT;
@@ -61,12 +58,6 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 	@Override
 	public void showEntity(int entityIndex) {
 		tabPanel.selectTab(entityIndex);
-	}
-
-	@Override
-	public Map<String, String> getSearchFieldValues() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

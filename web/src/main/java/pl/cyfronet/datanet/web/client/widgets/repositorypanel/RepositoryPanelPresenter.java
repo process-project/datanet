@@ -27,7 +27,6 @@ public class RepositoryPanelPresenter implements Presenter {
 		void setRepositoryLink(String link);
 		void addEntity(String entityName, IsWidget isWidget);
 		void showEntity(int entityIndex);
-		Map<String, String> getSearchFieldValues();
 		boolean confirmRepositoryRemoval();
 	}
 
