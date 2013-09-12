@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -24,7 +25,9 @@ import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.login.LoginPresenter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwtmockito.GwtMockitoTestRunner;
 
+@RunWith(GwtMockitoTestRunner.class)
 public class LoginPresenterTest {
 	@Mock private LoginServiceAsync loginService;
 	@Mock private LoginPresenter.View view;
