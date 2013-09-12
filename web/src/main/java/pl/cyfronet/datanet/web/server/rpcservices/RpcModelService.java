@@ -40,10 +40,11 @@ public class RpcModelService implements ModelService {
 		try {
 			// TODO: Create optimized DAO method for this case
 			List<ModelDbEntity> availableModels = modelDao.getModels();
-			
+			ModelDbEntity currentModel = null;
 			for (ModelDbEntity dbModel : availableModels) {
-				if (model.getName().equals(dbModel.getName())
-						&& model.getId() != dbModel.getId()) {
+				if(model.getId() == dbModel.getId()) {
+					currentModel = dbModel;
+				} else if (model.getName().equals(dbModel.getName())) {
 					throw new ModelException(Code.ModelNameNotUnique);
 				}
 			}
@@ -60,7 +61,12 @@ public class RpcModelService implements ModelService {
 				modelDbEntity.setOwners(new ArrayList<UserDbEntity>());
 			}
 			
+			if(currentModel != null) {
+				modelDbEntity.setVersions(currentModel.getVersions());
+			}
+			
 			modelDbEntity.getOwners().add(user);
+			
 			modelDao.saveModel(modelDbEntity);
 
 			// return model id, updated by hibernate with new unique id
