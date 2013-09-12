@@ -125,7 +125,7 @@ public class ClientController {
 
 	private void showLoginPanel() {
 		LoginPresenter loginPresenter = new LoginPresenter(loginService,
-				new LoginWidget(), this, eventBus);
+				new LoginWidget(), this);
 		clearPanels();
 		RootPanel.get().add(loginPresenter.getWidget());
 	}

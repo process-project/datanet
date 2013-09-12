@@ -8,7 +8,6 @@ import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.web.bindery.event.shared.EventBus;
 
 public class LoginPresenter implements Presenter {
 	public interface View {
@@ -27,13 +26,11 @@ public class LoginPresenter implements Presenter {
 	private ClientController clientController;
 	private LoginServiceAsync loginService;
 	private View view;
-	private EventBus eventBus;
 
 	public LoginPresenter(LoginServiceAsync loginService, View view,
-			ClientController clientController, EventBus eventBus) {
+			ClientController clientController) {
 		this.clientController = clientController;
 		this.loginService = loginService;
-		this.eventBus = eventBus;
 		this.view = view;
 		view.setPresenter(this);
 		initLocalesButtons();
