@@ -3,6 +3,7 @@ package pl.cyfronet.datanet.web.client.widgets.topnav;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.Alert;
+import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.constants.AlertType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -26,7 +27,9 @@ public class TopNavPanel extends Composite implements View {
 	private Presenter presenter;
 
 	@UiField Alert messageLabel;
-
+	@UiField Button switchToPl;
+	@UiField Button switchToEn;
+	
 	public TopNavPanel() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
@@ -83,5 +86,15 @@ public class TopNavPanel extends Composite implements View {
 	@Override
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
+	}
+
+	@Override
+	public void selectPlLocales() {
+		switchToPl.setActive(true);
+	}
+
+	@Override
+	public void selectEnLocales() {
+		switchToEn.setActive(true);	
 	}
 }

@@ -34,9 +34,10 @@
 	<g:HTMLPanel styleName="{style.loginPanel}">
 	    <g:HTMLPanel addStyleNames="{style.margin-bottom}">
 	        <b:Label addStyleNames="{style.right}"><ui:text from="{messages.versionLabel}"/>: <ui:text from="{constants.version}"/></b:Label>
-	        <g:Anchor ui:field="switchToPl" addStyleNames="{style.left}" href="#">PL</g:Anchor>
-			<g:Label addStyleNames="{style.left}">|</g:Label>
-			<g:Anchor ui:field="switchToEn" addStyleNames="{style.left}" href="#">EN</g:Anchor>
+	        <b:ButtonGroup toggle="radio" addStyleNames="{style.left}">
+			    <b:Button ui:field="switchToPl" size="MINI">PL</b:Button>
+			    <b:Button ui:field="switchToEn" size="MINI">EN</b:Button>
+			</b:ButtonGroup>	        
 			<div class="{style.clear}"></div>
 	    </g:HTMLPanel>
 	    <g:HTMLPanel>

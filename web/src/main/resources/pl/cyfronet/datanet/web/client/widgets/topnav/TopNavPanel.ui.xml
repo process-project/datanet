@@ -35,10 +35,9 @@
 		    <b:Button ui:field="help" icon="QUESTION_SIGN" type="INFO"><ui:text from="{messages.help}"/></b:Button>
 			<b:Button ui:field="logout" icon="SIGNOUT" type="DANGER"><ui:text from="{messages.logout}"/></b:Button>
 		</b:ButtonGroup>
-		<g:FlowPanel addStyleNames="{style.header-buttons}">
-			<g:Anchor ui:field="switchToPl" href="#">PL</g:Anchor>
-			<g:Label addStyleNames="{style.span}">|</g:Label>
-			<g:Anchor ui:field="switchToEn" href="#">EN</g:Anchor>
-		</g:FlowPanel>
+		<b:ButtonGroup toggle="radio" addStyleNames="{style.header-buttons}">
+		    <b:Button ui:field="switchToPl" size="MINI">PL</b:Button>
+		    <b:Button ui:field="switchToEn" size="MINI">EN</b:Button>
+		</b:ButtonGroup>		
 	</g:FlowPanel>		
 </ui:UiBinder>

@@ -4,6 +4,7 @@ import pl.cyfronet.datanet.web.client.controller.ClientController;
 import pl.cyfronet.datanet.web.client.errors.LoginException;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
@@ -19,6 +20,8 @@ public class LoginPresenter implements Presenter {
 		void clearErrors();
 		void errorWrongLoginOrPassword();
 		void setBusyState(boolean busy);
+		void selectPlLocales();
+		void selectEnLocales();
 	}
 
 	private ClientController clientController;
@@ -33,8 +36,17 @@ public class LoginPresenter implements Presenter {
 		this.eventBus = eventBus;
 		this.view = view;
 		view.setPresenter(this);
+		initLocalesButtons();
 	}
 
+	private void initLocalesButtons() {
+		if("pl".equals(LocaleInfo.getCurrentLocale().getLocaleName())) {
+			view.selectPlLocales();
+		} else {
+			view.selectEnLocales();
+		}
+	}
+	
 	public Widget getWidget() {
 		return (Widget) view;
 	}

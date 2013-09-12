@@ -26,6 +26,8 @@ public class LoginWidget extends Composite implements View {
 	@UiField PasswordTextBox passwordField;
 	@UiField Alert errorLabel;
 	@UiField Button loginButton;
+	@UiField Button switchToPl;
+	@UiField Button switchToEn;
 	
 	private LoginMessages messages;
 	private Presenter presenter;
@@ -112,5 +114,15 @@ public class LoginWidget extends Composite implements View {
 			loginButton.setIcon(IconType.SIGNIN);
 			loginButton.setEnabled(true);
 		}
+	}
+	
+	@Override
+	public void selectPlLocales() {
+		switchToPl.setActive(true);
+	}
+
+	@Override
+	public void selectEnLocales() {
+		switchToEn.setActive(true);	
 	}
 }

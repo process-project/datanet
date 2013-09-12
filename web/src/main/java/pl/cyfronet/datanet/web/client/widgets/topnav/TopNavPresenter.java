@@ -6,6 +6,7 @@ import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.Notif
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPanel.MessageType;
 
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -21,6 +22,8 @@ public class TopNavPresenter implements Presenter {
 	public interface View {
 		void setPresenter(Presenter presenter);
 		void displayMessage(String message, MessageType type);
+		void selectPlLocales();
+		void selectEnLocales();
 	}
 
 	private Provider<ClientController> clientController;
@@ -34,9 +37,18 @@ public class TopNavPresenter implements Presenter {
 		
 		this.view = view;
 		this.clientController = clientController;
-		this.notificationMessages = notificationMessages;
+		this.notificationMessages = notificationMessages;		
 		
 		view.setPresenter(this);		
+		initLocalesButtons();
+	}
+
+	private void initLocalesButtons() {
+		if("pl".equals(LocaleInfo.getCurrentLocale().getLocaleName())) {
+			view.selectPlLocales();
+		} else {
+			view.selectEnLocales();
+		}
 	}
 
 	@Override
