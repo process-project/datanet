@@ -16,6 +16,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTree;
+import com.google.gwt.user.cellview.client.CellTree.Resources;
 import com.google.gwt.user.cellview.client.TreeNode;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
@@ -23,10 +24,14 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 public class ModelTreePanel extends Composite implements View {
-	private static ModelTreePanelUiBinder uiBinder = GWT.create(ModelTreePanelUiBinder.class);
-	interface ModelTreePanelUiBinder extends UiBinder<Widget, ModelTreePanel> {}
+	private static ModelTreePanelUiBinder uiBinder = GWT
+			.create(ModelTreePanelUiBinder.class);
 
-	@UiField(provided = true) CellTree modelsTree;
+	interface ModelTreePanelUiBinder extends UiBinder<Widget, ModelTreePanel> {
+	}
+
+	@UiField(provided = true)
+	CellTree modelsTree;
 
 	private ModelTreeViewModel model;
 	private ModelTreePanelMessageses messages;
@@ -49,7 +54,9 @@ public class ModelTreePanel extends Composite implements View {
 		});
 
 		model = new ModelTreeViewModel(messages, selection);
-		modelsTree = new CellTree(model, null);
+		modelsTree = new CellTree(model, null,
+				GWT.<Resources> create(Resources.class),
+				GWT.<ModelTreeMessages> create(ModelTreeMessages.class));
 	}
 
 	@UiHandler("add")
@@ -77,10 +84,10 @@ public class ModelTreePanel extends Composite implements View {
 					if (isModel(parent)) {
 						expandTree(modelsTree.getRootTreeNode(), parent);
 					} else if (isVersion(parent)) {
-						openVersion(parent);						
+						openVersion(parent);
 					}
 					selection.setSelected(item, true);
-				}				
+				}
 			});
 		}
 	}
@@ -89,23 +96,24 @@ public class ModelTreePanel extends Composite implements View {
 		presenter.getParent(parent, new TreeItemCallback() {
 			@Override
 			public void onTreeItemProvided(TreeItem model) {
-				TreeNode modelTreeNode = expandTree(modelsTree.getRootTreeNode(), model);
-				if(modelTreeNode != null) {
+				TreeNode modelTreeNode = expandTree(
+						modelsTree.getRootTreeNode(), model);
+				if (modelTreeNode != null) {
 					expandTree(modelTreeNode, parent);
 				}
 			}
-		});					
+		});
 	}
-	
+
 	private TreeNode expandTree(TreeNode node, TreeItem item) {
 		Integer childIndex = getChildIndex(node, item);
-		
+
 		if (childIndex != null) {
-			return node.setChildOpen(childIndex, true);			
+			return node.setChildOpen(childIndex, true);
 		}
 		return null;
 	}
-	
+
 	private Integer getChildIndex(TreeNode treeNode, TreeItem item) {
 		for (int i = 0; i < treeNode.getChildCount(); i++) {
 			if (item.equals(treeNode.getChildValue(i))) {
@@ -128,14 +136,16 @@ public class ModelTreePanel extends Composite implements View {
 
 	@Override
 	public void setVersions(long modelId, List<TreeItem> versionTreeItems) {
-		TreeItemsAsyncDataProvider versionProvider = model.getVersionProvider(modelId);
+		TreeItemsAsyncDataProvider versionProvider = model
+				.getVersionProvider(modelId);
 		versionProvider.updateRowCount(versionTreeItems.size(), true);
 		versionProvider.updateRowData(0, versionTreeItems);
 	}
 
 	@Override
 	public void setRepositories(long versionId, List<TreeItem> repoTreeItems) {
-		TreeItemsAsyncDataProvider reposotoriesProvider = model.getRepositoryProvider(versionId);
+		TreeItemsAsyncDataProvider reposotoriesProvider = model
+				.getRepositoryProvider(versionId);
 		reposotoriesProvider.updateRowCount(repoTreeItems.size(), true);
 		reposotoriesProvider.updateRowData(0, repoTreeItems);
 	}
