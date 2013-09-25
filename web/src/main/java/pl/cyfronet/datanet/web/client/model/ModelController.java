@@ -132,10 +132,10 @@ public class ModelController {
 		}
 	}
 
-	public void createNewModel(final ModelCallback callback) {
+	public void createNewModel(String modelName, final ModelCallback callback) {
 		final ModelProxy newModel = new ModelProxy(new Model(),
 				System.currentTimeMillis());
-		newModel.setName("New model"); // TODO externalize string
+		newModel.setName(modelName);
 		newModel.setDirty(true);
 		getModels(new ModelsCallback() {
 			@Override

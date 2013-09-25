@@ -24,17 +24,14 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 public class ModelTreePanel extends Composite implements View {
-	private static ModelTreePanelUiBinder uiBinder = GWT
-			.create(ModelTreePanelUiBinder.class);
-
-	interface ModelTreePanelUiBinder extends UiBinder<Widget, ModelTreePanel> {
-	}
+	private static ModelTreePanelUiBinder uiBinder = GWT.create(ModelTreePanelUiBinder.class);
+	interface ModelTreePanelUiBinder extends UiBinder<Widget, ModelTreePanel> {}
 
 	@UiField(provided = true)
 	CellTree modelsTree;
 
 	private ModelTreeViewModel model;
-	private ModelTreePanelMessageses messages;
+	private ModelTreePanelMessages messages;
 	private Presenter presenter;
 	private SingleSelectionModel<TreeItem> selection;
 
@@ -44,7 +41,7 @@ public class ModelTreePanel extends Composite implements View {
 	}
 
 	private void initTree() {
-		messages = GWT.create(ModelTreePanelMessageses.class);
+		messages = GWT.create(ModelTreePanelMessages.class);
 		selection = new SingleSelectionModel<TreeItem>();
 		selection.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			@Override
@@ -148,5 +145,10 @@ public class ModelTreePanel extends Composite implements View {
 				.getRepositoryProvider(versionId);
 		reposotoriesProvider.updateRowCount(repoTreeItems.size(), true);
 		reposotoriesProvider.updateRowData(0, repoTreeItems);
+	}
+
+	@Override
+	public String getNewModelName() {
+		return messages.newModelInitialName();
 	}
 }

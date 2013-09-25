@@ -114,7 +114,7 @@ public class ModelTreePanelPresenterTest {
 				callback.setModel(newModel);
 				return null;
 			}
-		}).when(modelController).createNewModel(any(ModelCallback.class));
+		}).when(modelController).createNewModel(any(String.class), any(ModelCallback.class));
 	}
 
 	private void whenAddingNewModel() {
@@ -122,7 +122,7 @@ public class ModelTreePanelPresenterTest {
 	}
 
 	private void thenNewModelAddedAndOpened() {
-		verify(modelController, times(1)).createNewModel(
+		verify(modelController, times(1)).createNewModel(any(String.class),
 				any(ModelCallback.class));
 		verify(placeController, times(1)).goTo(
 				argThat(new ModelPlaceMatcher(newModel.getId())));

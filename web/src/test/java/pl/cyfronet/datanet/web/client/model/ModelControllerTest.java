@@ -185,7 +185,7 @@ public class ModelControllerTest {
 	}
 
 	private void whenCreateNewModel() {
-		modelController.createNewModel(new ModelCallback() {
+		modelController.createNewModel("model_name", new ModelCallback() {
 			@Override
 			public void setModel(ModelProxy model) {
 				newModel = model;
