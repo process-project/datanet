@@ -9,12 +9,10 @@ import org.cloudfoundry.client.lib.CloudFoundryClient;
 import org.slf4j.Logger;
 
 public class DeployApplication {
-
 	private static final Logger logger = org.slf4j.LoggerFactory.getLogger(DeployApplication.class);
 
 	private CloudFoundryClient client;
 	private ApplicationConfig config;
-	
 	private String applicationName;
 	private String repoName;
 	private String serviceName;
@@ -45,8 +43,7 @@ public class DeployApplication {
 			client.updateApplicationEnv(applicationName, config.getEnvVars());
 			client.startApplication(applicationName);
 			logger.debug(String.format("Application '%s' created", applicationName));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new DeployerException("Error while deploying CloudFoundry application for repository", e);
 		}
 	}
@@ -78,5 +75,4 @@ public class DeployApplication {
 	public static String getAppNameForRepo(String repoName) {
 		return String.format("dnr-%s", repoName);
 	}
-	
 }

@@ -26,6 +26,8 @@ public class RepositoryDbEntity {
 	private List<UserDbEntity> owners;
 	
 	private String url;
+	
+	private String token;
 
 	public long getId() {
 		return id;
@@ -71,5 +73,13 @@ public class RepositoryDbEntity {
 	}
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 }

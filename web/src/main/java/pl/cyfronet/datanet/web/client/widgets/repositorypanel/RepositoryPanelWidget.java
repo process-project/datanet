@@ -2,10 +2,15 @@ package pl.cyfronet.datanet.web.client.widgets.repositorypanel;
 
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPresenter.View;
 
+import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Modal;
+import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TabPanel;
+import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -26,6 +31,11 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 	@UiField Anchor repositoryLink;
 	@UiField TabPanel tabPanel;
 	@UiField RepositoryPanelMessages messages;
+	@UiField Modal accessConfigModal;
+	@UiField RadioButton privateCheck;
+	@UiField RadioButton publicCheck;
+	@UiField TextBox owners;
+	@UiField Button saveAccessConfig;
 	
 	public RepositoryPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -34,6 +44,31 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 	@UiHandler("removeRepository")
 	void removeRepository(ClickEvent event) {
 		presenter.onRemoveRepository();
+	}
+	
+	@UiHandler("accessConfiguration")
+	void onShowAccessConfigModal(ClickEvent event) {
+		presenter.onShowAccessConfig();
+	}
+	
+	@UiHandler("cancelAccessConfig")
+	void onCancelAccessConfig(ClickEvent event) {
+		accessConfigModal.hide();
+	}
+	
+	@UiHandler("saveAccessConfig")
+	void onSaveAccessConfig(ClickEvent event) {
+		presenter.onSaveAccessConfig();
+	}
+	
+	@UiHandler("privateCheck")
+	void onPrivateTypeSelected(ValueChangeEvent<Boolean> event) {
+		presenter.privateTypeSelected();
+	}
+	
+	@UiHandler("publicCheck")
+	void onPublicTypeSelected(ValueChangeEvent<Boolean> event) {
+		presenter.publicTypeSelected();
 	}
 
 	@Override
@@ -63,5 +98,59 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 	@Override
 	public boolean confirmRepositoryRemoval() {
 		return Window.confirm(messages.repositoryRemovalConfirmation());
+	}
+
+	@Override
+	public String getAccessLevel() {
+		if (privateCheck.getValue()) {
+			return "privateAccess";
+		} else {
+			return "publicAccess";
+		}
+	}
+
+	@Override
+	public String getOwnerList() {
+		return owners.getText().trim();
+	}
+
+	@Override
+	public void setOwners(String owners) {
+		this.owners.setText(owners);
+	}
+
+	@Override
+	public void markPublicType() {
+		privateCheck.setValue(false);
+		publicCheck.setValue(true);
+	}
+
+	@Override
+	public void markPrivateType() {
+		publicCheck.setValue(false);
+		privateCheck.setValue(true);
+	}
+
+	@Override
+	public void showAccessConfigModal(boolean show) {
+		if (show) {
+			accessConfigModal.show();
+		} else {
+			accessConfigModal.hide();
+		}
+	}
+
+	@Override
+	public void enableOwnersInput(boolean enabled) {
+		owners.setEnabled(enabled);
+	}
+
+	@Override
+	public void setAccessConfigSaveBusyState(boolean state) {
+		if (state) {
+			saveAccessConfig.state().loading();
+		} else {
+			saveAccessConfig.state().reset();
+		}
 	}
 }

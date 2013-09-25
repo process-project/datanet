@@ -40,13 +40,41 @@
 					<g:Anchor addStyleNames="pull-left {style.special-anchor}" href="" target="_blank" ui:field="repositoryLink"/>
 				</g:FlowPanel>
 				<g:FlowPanel styleName="pull-right">
-					<b:Button type="DANGER" ui:field="removeRepository" icon="REMOVE"><ui:text from="{messages.removeRepository}"/></b:Button>
+					<b:ButtonGroup>
+						<b:Button ui:field="accessConfiguration" icon="EYE_OPEN"><ui:text from="{messages.accessConfigurationLabel}..."/></b:Button>
+						<b:Button ui:field="removeRepository" type="DANGER" icon="REMOVE"><ui:text from="{messages.removeRepository}"/></b:Button>
+					</b:ButtonGroup>
 				</g:FlowPanel>
 			</g:FlowPanel>
 		</g:north>
 		<g:center>
 		    <g:FlowPanel addStyleNames="{style.tabs}">
 				<b:TabPanel tabPosition="top" ui:field="tabPanel" />
+				<b:Modal ui:field="accessConfigModal" title="{messages.accessConfigurationLabel}" animation="true" closeVisible="false">
+					<b:Form type="HORIZONTAL">
+						<b:Fieldset>
+							<b:ControlGroup>
+								<b:ControlLabel for="repositoryType"><ui:text from="{messages.repositoryTypeLabel}"/></b:ControlLabel>
+								<b:Controls>
+									<b:RadioButton ui:field="publicCheck" name="repositoryType"><ui:text from="{messages.publicLabel}"/></b:RadioButton>
+									<b:RadioButton ui:field="privateCheck" name="repositoryType"><ui:text from="{messages.privateLabel}"/></b:RadioButton>
+									<b:HelpBlock><ui:text from="{messages.aboutRepositoryType}"/></b:HelpBlock>
+								</b:Controls>
+							</b:ControlGroup>
+							<b:ControlGroup>
+								<b:ControlLabel for="repositoryOwners"><ui:text from="{messages.repositoryOwnersLabel}"/></b:ControlLabel>
+								<b:Controls>
+									<b:TextBox ui:field="owners"/>
+									<b:HelpBlock><ui:text from="{messages.aboutRepositoryOwners}"/></b:HelpBlock>
+								</b:Controls>
+							</b:ControlGroup>
+						</b:Fieldset>
+					</b:Form>
+					<b:ModalFooter>
+						<b:Button ui:field="saveAccessConfig" type="PRIMARY" icon="EYE_OPEN" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.saveAccessConfigLabel}"><ui:text from="{messages.saveAccessConfigLabel}"/></b:Button>
+						<b:Button ui:field="cancelAccessConfig"><ui:text from="{messages.cancelAccessConfigModal}"/></b:Button>
+					</b:ModalFooter>
+				</b:Modal>
 			</g:FlowPanel>
 		</g:center>
 	</g:DockLayoutPanel>

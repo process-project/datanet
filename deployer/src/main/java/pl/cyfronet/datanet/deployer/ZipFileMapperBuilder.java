@@ -9,8 +9,8 @@ import java.util.zip.ZipException;
 import org.apache.commons.io.FileUtils;
 
 public class ZipFileMapperBuilder implements MapperBuilder {
-	
 	private static final String MODEL_DIR_NAME_DEFAULT = "model";
+	private static final String TOKEN_FILE_PATH = "config/.secret";
 	
 	private File archiveFile;
 	private File outputDir;
@@ -78,5 +78,9 @@ public class ZipFileMapperBuilder implements MapperBuilder {
 	public void deleteMapper() {
 		FileUtils.deleteQuietly(mapperDir);
 	}
-	
+
+	@Override
+	public void writeToken(String token) throws IOException {
+		FileUtils.writeStringToFile(new File(mapperDir, TOKEN_FILE_PATH), token);
+	}	
 }

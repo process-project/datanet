@@ -7,4 +7,13 @@ public interface RepositoryPanelMessages extends Messages {
 	String repositoryLocationLabel();
 	String removeRepository();
 	String repositoryRemovalConfirmation();
+	String accessConfigurationLabel();
+	String saveAccessConfigLabel();
+	String cancelAccessConfigModal();
+	String repositoryOwnersLabel();
+	String repositoryTypeLabel();
+	String privateLabel();
+	String publicLabel();
+	String aboutRepositoryType();
+	String aboutRepositoryOwners();
 }

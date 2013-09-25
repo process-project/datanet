@@ -4,6 +4,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +20,8 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.multipart.MultipartFile;
 
+import pl.cyfronet.datanet.model.beans.AccessConfig;
+import pl.cyfronet.datanet.model.beans.AccessConfig.Access;
 import pl.cyfronet.datanet.web.server.config.SpringConfiguration;
 import pl.cyfronet.datanet.web.server.services.repositoryclient.RepositoryClient;
 import pl.cyfronet.datanet.web.server.services.repositoryclient.RepositoryClientFactory;
@@ -67,7 +70,6 @@ public class RepositoryClientTest {
 	}
 	
 	@Test
-	public void dumyTest() {
-		
+	public void dummyTest() {
 	}
 }

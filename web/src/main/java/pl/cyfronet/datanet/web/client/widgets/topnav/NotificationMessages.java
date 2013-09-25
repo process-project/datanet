@@ -24,6 +24,9 @@ public interface NotificationMessages extends ConstantsWithLookup {
 	String repositoryRemoved();
 	String repositoryMaxNumberOfRepositoriesExceeded();
 	String repositoryInfoRetrievalError();
+	String repositoryAccessConfigNotAvailable();
+	String repositoryAccessConfigUpdateSuccess();
+	String repositoryAccessConfigUpdateFailure();
 	
 	String versionLoadError();
 	String versionListLoadError();

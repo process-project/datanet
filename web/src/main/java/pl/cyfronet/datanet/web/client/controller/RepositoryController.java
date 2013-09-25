@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import pl.cyfronet.datanet.model.beans.AccessConfig;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
@@ -246,6 +247,29 @@ public class RepositoryController {
 					repositoryCountCallback.onRepositorycount(repositoryCount);
 				}
 			}
+		});
+	}
+
+	public void updateAccessConfig(long repositoryId, AccessConfig accessConfig, final Command after) {
+		repositoryService.updateAccessConfig(repositoryId, accessConfig, new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryAccessConfigUpdateFailure, NotificationType.ERROR));
+				
+				if (after != null) {
+					after.execute();
+				}
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryAccessConfigUpdateSuccess, NotificationType.SUCCESS));
+				
+				if (after != null) {
+					after.execute();
+				}
+			}
+			
 		});
 	}
 }

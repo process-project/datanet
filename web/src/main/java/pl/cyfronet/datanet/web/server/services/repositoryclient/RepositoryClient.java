@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,14 +14,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import pl.cyfronet.datanet.model.beans.AccessConfig;
+import pl.cyfronet.datanet.model.beans.AccessConfig.Access;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 
 @Service
@@ -103,6 +110,66 @@ public class RepositoryClient {
 			throw new IllegalArgumentException("Updating entities is not supported yet!");
 		}
 	}
+	
+	public void waitUntilRepositoryAvailable(String repositoryUrl) {
+		HttpStatus statusCode = null;
+		
+		do {
+			try {
+				ResponseEntity<String> response = restTemplate.getForEntity(repositoryUrl, String.class);
+				statusCode = response.getStatusCode();
+			} catch (HttpClientErrorException e) {
+				statusCode = e.getStatusCode();
+			}
+			
+			if (statusCode == HttpStatus.NOT_FOUND) {
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					log.warn("Repository availability sleep unexpectedly interrupted for repository {}", repositoryUrl);
+				}
+			}
+		} while (statusCode != null && statusCode == HttpStatus.NOT_FOUND);
+	}
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	public AccessConfig getAccessConfig(String repositoryUrl, String token) {
+		Map<String, Object> result = null;
+		
+		try {
+			result = restTemplate.getForObject(buildConfigUrl(repositoryUrl, token), Map.class);
+		} catch (RestClientException e) {
+			log.warn("Could not obtain access configuration for repository with url {}", repositoryUrl);
+			
+			return null;
+		}
+		
+		Access access = null;
+		List<String> owners = new ArrayList<>();
+		
+		if (result.get("repository_type") != null && result.get("repository_type").equals("private")) {
+			access = Access.privateAccess;
+		} else if (result.get("repository_type") != null && result.get("repository_type").equals("public")) {
+			access = Access.publicAccess;
+		}
+		
+		if (result.get("owners") != null) {
+			owners.addAll((List) result.get("owners"));
+		}
+
+		return new AccessConfig(access, owners);
+	}
+	
+	public void updateAccessConfiguration(String repositoryUrl, String token, AccessConfig accessConfig) {
+		Map<String, Object> request = new HashMap<>();
+		request.put("repository_type", accessConfig.getAccess() == Access.publicAccess ? "public" : "private");
+		request.put("owners", accessConfig.getOwners());
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(request, headers);
+		restTemplate.put(buildConfigUrl(repositoryUrl, token), requestEntity);
+	}
 
 	private String buildEntityUrl(String repositoryUrl, String entityName, Map<String, String> query) throws URISyntaxException {
 		if (repositoryUrl != null && !repositoryUrl.endsWith("/")) {
@@ -136,5 +203,9 @@ public class RepositoryClient {
 
 	private String buildFileNameUrl(String repositoryUrl, String fileEntityId) throws URISyntaxException {
 		return buildEntityUrl(repositoryUrl, "file", null) + "/" + fileEntityId + "/file_name";
+	}
+
+	private String buildConfigUrl(String repositoryUrl, String token) {
+		return repositoryUrl + "/_configuration?private_token=" + token;
 	}
 }

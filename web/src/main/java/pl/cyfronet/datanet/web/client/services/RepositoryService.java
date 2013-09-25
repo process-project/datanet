@@ -3,6 +3,7 @@ package pl.cyfronet.datanet.web.client.services;
 import java.util.List;
 import java.util.Map;
 
+import pl.cyfronet.datanet.model.beans.AccessConfig;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 import pl.cyfronet.datanet.web.client.errors.RepositoryException;
@@ -21,4 +22,5 @@ public interface RepositoryService extends RemoteService {
 	void saveData(long repositoryId, String entityName, Map<String, String> data) throws RepositoryException;
 	void removeRepository(long repositoryId) throws RepositoryException;
 	int getRepositoryCount() throws RepositoryException;
+	void updateAccessConfig(long repositoryId, AccessConfig accessConfig) throws RepositoryException;
 }

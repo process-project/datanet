@@ -11,6 +11,9 @@ public enum RepositoryNotificationMessage implements NotificationMessage {
 	repositoryRemoved,
 	repositoryMaxNumberOfRepositoriesExceeded,
 	repositoryInfoRetrievalError,
+	repositoryAccessConfigNotAvailable,
+	repositoryAccessConfigUpdateSuccess,
+	repositoryAccessConfigUpdateFailure,
 	;
 
 	@Override
