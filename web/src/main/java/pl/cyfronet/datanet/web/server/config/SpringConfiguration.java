@@ -93,9 +93,8 @@ public class SpringConfiguration {
 	}
 	
 	@Bean
-	public SessionLocaleResolver localeResolver(){
+	public SessionLocaleResolver localeResolver() {
 	    SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-	    localeResolver.setDefaultLocale(new Locale("en"));
 	    
 	    return localeResolver;
 	}
