@@ -41,9 +41,9 @@
 				<g:FlowPanel styleName="{style.header}">
 					<g:Label addStyleNames="{style.version-label}"><ui:text from="{versionMessages.versionNameLabel}"/></g:Label>
 					<b:Label ui:field="versionName"  addStyleNames="pull-left {style.version-name}"/>
-					<b:Button ui:field="startDeploy" icon="CLOUD_UPLOAD" type="SUCCESS"><ui:text from="{versionMessages.startDeploy}"/></b:Button>							
+					<b:Button ui:field="startDeploy" icon="CLOUD_UPLOAD" type="SUCCESS" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {versionMessages.startDeploy}"><ui:text from="{versionMessages.startDeploy}"/></b:Button>							
 					<g:FlowPanel styleName="pull-right">
-						<b:Button ui:field="removeVersion" type="DANGER" icon="REMOVE"><ui:text from="{versionMessages.removeVersionButtonLabel}"/></b:Button>
+						<b:Button ui:field="removeVersion" type="DANGER" icon="REMOVE" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {versionMessages.removeVersionButtonLabel}"><ui:text from="{versionMessages.removeVersionButtonLabel}"/></b:Button>
 					</g:FlowPanel>				
 				</g:FlowPanel>
 			</g:north>
@@ -65,7 +65,7 @@
 				</b:Fieldset>
 			</b:Form>
 		    <b:ModalFooter>
-		    	<b:Button ui:field="performDeploy" icon="FILE" type="PRIMARY" loadingText="&lt;i class='icon-spinner'&gt;&lt;/i&gt; {versionMessages.deploy}"><ui:text from="{versionMessages.deploy}"/></b:Button>
+		    	<b:Button ui:field="performDeploy" icon="FILE" type="PRIMARY" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {versionMessages.deploy}"><ui:text from="{versionMessages.deploy}"/></b:Button>
 		    	<b:Button ui:field="cancelDeploy"><ui:text from="{versionMessages.cancel}"/></b:Button>
 		    </b:ModalFooter>
 	    </b:Modal>

@@ -108,10 +108,10 @@ public class LoginWidget extends Composite implements View {
 	@Override
 	public void setBusyState(boolean busy) {
 		if (busy) {
-			loginButton.setIcon(IconType.SPINNER);
+			loginButton.state().loading();
 			loginButton.setEnabled(false);
 		} else {
-			loginButton.setIcon(IconType.SIGNIN);
+			loginButton.state().reset();
 			loginButton.setEnabled(true);
 		}
 	}

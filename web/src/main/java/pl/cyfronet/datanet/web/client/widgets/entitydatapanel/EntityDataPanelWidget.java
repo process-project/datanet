@@ -119,8 +119,10 @@ public class EntityDataPanelWidget extends Composite implements View {
 	@Override
 	public void initDataTable(Map<String, Type> fields) {
 		dataTable.setEmptyTableWidget(new Label(LabelType.DEFAULT, messages.noEntityValues()));
-		//TODO(DH): set icon spin when API is updated
-		dataTable.setLoadingIndicator(new Icon(IconType.SPINNER));
+
+		Icon loadingIndicator = new Icon(IconType.SPINNER);
+		loadingIndicator.getElement().addClassName("icon-spin");
+		dataTable.setLoadingIndicator(loadingIndicator);
 		
 		for (String fieldName : fields.keySet()) {
 			if (fields.get(fieldName) == Type.File) {
