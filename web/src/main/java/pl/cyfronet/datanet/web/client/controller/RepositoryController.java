@@ -56,27 +56,34 @@ public class RepositoryController {
 	}
 
 	public void getRepository(long repositoryId, final RepositoryCallback repositoryCallback) {
-		//TODO(DH): use cache
-		repositoryService.getRepository(repositoryId, new AsyncCallback<Repository>() {
-			@Override
-			public void onSuccess(Repository repository) {
-				if(repositoryCallback != null) {
-					repositoryCallback.setRepository(repository);
+		Repository repository = getCachedRepository(repositoryId);
+		
+		if (repository == null) {
+			repositoryService.getRepository(repositoryId, new AsyncCallback<Repository>() {
+				@Override
+				public void onSuccess(Repository repository) {
+					if(repositoryCallback != null) {
+						repositoryCallback.setRepository(repository);
+					}
 				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryLoadError,
+							NotificationType.ERROR, caught.getMessage()));
+				}
+			});
+		} else {
+			if(repositoryCallback != null) {
+				repositoryCallback.setRepository(repository);
 			}
-			@Override
-			public void onFailure(Throwable caught) {
-				eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryLoadError,
-						NotificationType.ERROR, caught.getMessage()));
-			}
-		});
+		}
 	}
-	
+
 	public void getEntity(long repositoryId, final String entityName, final EntityCallback entityCallback) {
-		//TODO(DH): use cache
-		repositoryService.getRepository(repositoryId, new AsyncCallback<Repository>() {
+		getRepository(repositoryId, new RepositoryCallback() {
 			@Override
-			public void onSuccess(Repository repository) {
+			public void setRepository(Repository repository) {
 				if(entityCallback != null) {
 					Entity result = null;
 					
@@ -93,10 +100,11 @@ public class RepositoryController {
 					entityCallback.setEntity(result);
 				}
 			}
+			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void setError(String message) {
 				eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryLoadError,
-						NotificationType.ERROR, caught.getMessage()));
+						NotificationType.ERROR, message));
 			}
 		});
 	}
@@ -271,5 +279,17 @@ public class RepositoryController {
 			}
 			
 		});
+	}
+	
+	private Repository getCachedRepository(long repositoryId) {
+		for (List<Repository> repositories : this.repositories.values()) {
+			for (Repository repository : repositories) {
+				if (repository.getId() == repositoryId) {
+					return repository;
+				}
+			}
+		}
+		
+		return null;
 	}
 }

@@ -81,6 +81,7 @@ public class ModelController {
 			@Override
 			public void setModels(List<ModelProxy> models) {
 				ModelProxy model = getCachedModel(modelId);
+				
 				if (model == null) {
 					loadModel(modelId, callback);
 				} else {
@@ -98,14 +99,15 @@ public class ModelController {
 				}
 			}
 		}
+		
 		return null;
 	}
 
 	private void loadModel(Long modelId, final ModelCallback callback) {
 		logger.debug("Loading model {}", modelId);
+		
 		try {
 			modelService.getModel(modelId, new AsyncCallback<Model>() {
-
 				@Override
 				public void onSuccess(Model model) {
 					callback.setModel(new ModelProxy(model));
