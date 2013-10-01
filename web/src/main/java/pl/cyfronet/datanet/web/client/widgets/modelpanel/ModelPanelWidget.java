@@ -120,11 +120,11 @@ public class ModelPanelWidget extends Composite implements View {
 	@Override
 	public void setNewVersionBusyState(boolean busy) {
 		if (busy) {
-			newVersionConfirm.setIcon(IconType.SPINNER);
+			newVersionConfirm.state().loading();
 			newVersionConfirm.setEnabled(false);
 			newVersionModalClose.setEnabled(false);
 		} else {
-			newVersionConfirm.setIcon(IconType.BRIEFCASE);
+			newVersionConfirm.state().reset();
 			newVersionConfirm.setEnabled(true);
 			newVersionModalClose.setEnabled(true);
 		}

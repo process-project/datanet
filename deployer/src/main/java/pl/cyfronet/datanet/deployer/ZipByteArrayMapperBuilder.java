@@ -10,8 +10,8 @@ import java.util.zip.ZipException;
 import org.apache.commons.io.FileUtils;
 
 public class ZipByteArrayMapperBuilder implements MapperBuilder {
-	
 	private static final String MODEL_DIR_NAME_DEFAULT = "model";
+	private static final String TOKEN_FILE_PATH = "config/.secret";
 	
 	private File outputDir;
 	private File mapperDir;
@@ -25,7 +25,7 @@ public class ZipByteArrayMapperBuilder implements MapperBuilder {
 	 * @param mapperDirName Name of the mapper directory which is a subdirectory of the outputDir.
 	 * @param models Models stored in a string map. Key: entity name ( equivalent to the model file name /*.json/ ), value: entity JSON Schema.
 	 */
-	public ZipByteArrayMapperBuilder(byte [] zipData, File outputDir,
+	public ZipByteArrayMapperBuilder(byte[] zipData, File outputDir,
 			String mapperDirName) {
 		this(zipData, outputDir, mapperDirName, null);
 	}
@@ -72,5 +72,9 @@ public class ZipByteArrayMapperBuilder implements MapperBuilder {
 	public void deleteMapper() {
 		FileUtils.deleteQuietly(mapperDir);
 	}
-	
+
+	@Override
+	public void writeToken(String token) throws IOException {
+		FileUtils.writeStringToFile(new File(mapperDir, TOKEN_FILE_PATH), token);
+	}	
 }

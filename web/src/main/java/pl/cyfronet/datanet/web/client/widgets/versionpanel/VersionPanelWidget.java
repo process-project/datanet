@@ -115,10 +115,10 @@ public class VersionPanelWidget extends Composite implements View {
 	@Override
 	public void setRemoveVersionBusyState(boolean busy) {
 		if (busy) {
-			removeVersion.setIcon(IconType.SPINNER);
+			removeVersion.state().loading();
 			removeVersion.setEnabled(false);
 		} else {
-			removeVersion.setIcon(IconType.REMOVE);
+			removeVersion.state().reset();
 			removeVersion.setEnabled(true);
 		}
 	}
@@ -132,11 +132,11 @@ public class VersionPanelWidget extends Composite implements View {
 	@Override
 	public void setStartDeployBusyState(boolean state) {
 		if (state) {
+			startDeploy.state().loading();
 			startDeploy.setEnabled(false);
-			startDeploy.setIcon(IconType.SPINNER);
 		} else {
+			startDeploy.state().reset();
 			startDeploy.setEnabled(true);
-			startDeploy.setIcon(IconType.CLOUD_UPLOAD);
 		}
 	}
 }

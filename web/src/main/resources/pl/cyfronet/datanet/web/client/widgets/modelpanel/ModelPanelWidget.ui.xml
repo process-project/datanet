@@ -52,8 +52,8 @@
 					</b:ButtonGroup>
 					<g:FlowPanel styleName="pull-right">
 						<b:ButtonGroup>														
-							<b:Button ui:field="save" icon="SAVE" loadingText="&lt;i class='icon-spinner'&gt;&lt;/i&gt; {messages.save}"><ui:text from="{messages.save}"/></b:Button>
-							<b:Button ui:field="delete" icon="REMOVE" type="DANGER" loadingText="&lt;i class='icon-spinner'&gt;&lt;/i&gt; {messages.delete}"><ui:text from="{messages.delete}"/></b:Button>
+							<b:Button ui:field="save" icon="SAVE" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.save}"><ui:text from="{messages.save}"/></b:Button>
+							<b:Button ui:field="delete" icon="REMOVE" type="DANGER" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.delete}"><ui:text from="{messages.delete}"/></b:Button>
 						</b:ButtonGroup>
 					</g:FlowPanel>
 				</g:FlowPanel>
@@ -75,7 +75,7 @@
 				</b:Fieldset>
 			</b:Form>
 			<b:ModalFooter>
-				<b:Button ui:field="newVersionConfirm" type="PRIMARY" icon="BRIEFCASE"><ui:text from="{messages.newVersionConfirmButtonLabel}"/></b:Button>
+				<b:Button ui:field="newVersionConfirm" type="PRIMARY" icon="BRIEFCASE" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.newVersionConfirmButtonLabel}"><ui:text from="{messages.newVersionConfirmButtonLabel}"/></b:Button>
 				<b:Button ui:field="newVersionModalClose"><ui:text from="{messages.newVersionModalCloseButtonLabel}"/></b:Button>
 			</b:ModalFooter>
 		</b:Modal>

@@ -1,8 +1,11 @@
 package pl.cyfronet.datanet.web.client.widgets.repositorypanel;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import pl.cyfronet.datanet.model.beans.AccessConfig;
+import pl.cyfronet.datanet.model.beans.AccessConfig.Access;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
@@ -28,6 +31,14 @@ public class RepositoryPanelPresenter implements Presenter {
 		void addEntity(String entityName, IsWidget isWidget);
 		void showEntity(int entityIndex);
 		boolean confirmRepositoryRemoval();
+		String getAccessLevel();
+		String getOwnerList();
+		void setOwners(String join);
+		void markPublicType();
+		void markPrivateType();
+		void showAccessConfigModal(boolean show);
+		void enableOwnersInput(boolean b);
+		void setAccessConfigSaveBusyState(boolean b);
 	}
 
 	private View view;
@@ -81,6 +92,72 @@ public class RepositoryPanelPresenter implements Presenter {
 			});
 		}
 	}
+
+	@Override
+	public void onSaveAccessConfig() {
+		view.setAccessConfigSaveBusyState(true);
+		
+		Access accessLevel = Access.valueOf(view.getAccessLevel());
+		String owners = view.getOwnerList();
+		AccessConfig accessConfig = new AccessConfig(accessLevel, Arrays.asList(owners.split(AccessConfig.OWNER_SEPARATOR)));
+		repositoryController.updateAccessConfig(repositoryId, accessConfig, new Command() {
+			@Override
+			public void execute() {
+				view.setAccessConfigSaveBusyState(false);
+				view.showAccessConfigModal(false);
+			}
+		});
+	}
+	
+	@Override
+	public void onShowAccessConfig() {
+		repositoryController.getRepository(repositoryId, new RepositoryCallback() {
+			@Override
+			public void setRepository(Repository repository) {
+				AccessConfig accessConfig = repository.getAccessConfig();
+				
+				if (accessConfig != null) {
+					switch (accessConfig.getAccess()) {
+						case privateAccess:
+							view.markPrivateType();
+							view.enableOwnersInput(true);
+						break;
+						case publicAccess:
+							view.markPublicType();
+							view.enableOwnersInput(false);
+						break;
+					}
+					
+					if (accessConfig.getOwners() != null) {
+						StringBuilder builder = new StringBuilder();
+						
+						for (String owner : accessConfig.getOwners()) {
+							builder.append(owner).append(AccessConfig.OWNER_SEPARATOR);
+						}
+					}
+					
+					view.showAccessConfigModal(true);
+				} else {
+					eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryAccessConfigNotAvailable, NotificationType.ERROR));
+				}
+			}
+			
+			@Override
+			public void setError(String message) {
+				//ignoring
+			}
+		});
+	}
+	
+	@Override
+	public void publicTypeSelected() {
+		view.enableOwnersInput(false);
+	}
+	
+	@Override
+	public void privateTypeSelected() {
+		view.enableOwnersInput(true);
+	}
 	
 	public void setRepository(long repositoryId) {
 		this.repositoryId = repositoryId;
@@ -98,7 +175,7 @@ public class RepositoryPanelPresenter implements Presenter {
 	public IsWidget getWidget() {
 		return view;
 	}
-	
+
 	private void showRepository(Repository repository) {
 		view.setRepositoryLink(repository.getUrl());
 		

@@ -52,10 +52,11 @@ public class Deployer {
 	 * @param repositoryType
 	 * @param repositoryName
 	 * @param models
+	 * @param token 
 	 * @return repository URL
 	 * @throws DeployerException
 	 */
-	public String deployRepository(RepositoryType repositoryType, String repositoryName, Map<String, String> models) throws DeployerException {
+	public String deployRepository(RepositoryType repositoryType, String repositoryName, Map<String, String> models, String token) throws DeployerException {
 		MapperBuilder builder = builders.get(repositoryType);
 		String url = null;
 		
@@ -73,6 +74,8 @@ public class Deployer {
 		try {
 			checkNamingConflicts(client, repositoryName);
 			File mapperDirectory = builder.buildMapper(models);
+			builder.writeToken(token);
+			
 			deployService = new DeployService(client, repositoryName, repositoryType.getServiceTypeName());
 			
 			url = createUriForNewRepository(repositoryName);

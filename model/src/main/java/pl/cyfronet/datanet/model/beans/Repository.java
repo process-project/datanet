@@ -10,6 +10,7 @@ public class Repository implements Serializable {
 	private String name;
 	private Version sourceModelVersion;
 	private String url;
+	private AccessConfig accessConfig;
 	
 	public long getId() {
 		return id;
@@ -75,5 +76,11 @@ public class Repository implements Serializable {
 	}
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	public AccessConfig getAccessConfig() {
+		return accessConfig;
+	}
+	public void setAccessConfig(AccessConfig accessConfig) {
+		this.accessConfig = accessConfig;
 	}	
 }

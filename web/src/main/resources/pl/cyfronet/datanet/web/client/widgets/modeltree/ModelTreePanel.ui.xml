@@ -3,7 +3,7 @@
 		xmlns:g="urn:import:com.google.gwt.user.client.ui"
 		xmlns:c="urn:import:com.google.gwt.user.cellview.client"
 		xmlns:b="urn:import:com.github.gwtbootstrap.client.ui">
-	<ui:with type="pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelMessageses" field="messages" />
+	<ui:with type="pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelMessages" field="messages"/>
 	<ui:style>
 		.main {
 			margin: 15px;			

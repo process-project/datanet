@@ -13,7 +13,6 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 public class Unzip {
 
@@ -71,5 +70,4 @@ public class Unzip {
 		}
 		zipStream.close();
 	}
-
 }

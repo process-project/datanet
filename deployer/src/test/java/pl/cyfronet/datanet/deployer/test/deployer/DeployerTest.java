@@ -69,7 +69,7 @@ public class DeployerTest {
 		Map<String, String> models = new HashMap<String, String>();
 		models.put("entity123", "test{\"type\": \"object\"}");
 		log.debug("deploying aplication: {}", models);
-		deployer.deployRepository(Deployer.RepositoryType.Mongo, repositoryName, models);
+		deployer.deployRepository(Deployer.RepositoryType.Mongo, repositoryName, models, "token");
 	}
 
 	private void sampleUndeploy() throws DeployerException {

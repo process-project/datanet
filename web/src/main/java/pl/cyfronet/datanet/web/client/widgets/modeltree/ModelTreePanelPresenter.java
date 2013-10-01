@@ -57,6 +57,7 @@ public class ModelTreePanelPresenter implements Presenter {
 		void setModels(List<TreeItem> modelTreeItems);
 		void setVersions(long modelId, List<TreeItem> versionTreeItems);
 		void setRepositories(long versionId, List<TreeItem> repoTreeItems);
+		String getNewModelName();
 	}
 
 	private View view;
@@ -95,7 +96,7 @@ public class ModelTreePanelPresenter implements Presenter {
 
 	@Override
 	public void onAddNewModel() {
-		modelController.createNewModel(new ModelCallback() {
+		modelController.createNewModel(view.getNewModelName(), new ModelCallback() {
 			@Override
 			public void setModel(ModelProxy model) {
 				placeController.goTo(new ModelPlace(model.getId()));

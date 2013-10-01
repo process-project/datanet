@@ -3,6 +3,7 @@ package pl.cyfronet.datanet.web.client.services;
 import java.util.List;
 import java.util.Map;
 
+import pl.cyfronet.datanet.model.beans.AccessConfig;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 
@@ -18,4 +19,5 @@ public interface RepositoryServiceAsync {
 	void saveData(long repositoryId, String entityName, Map<String, String> data, AsyncCallback<Void> asyncCallback);
 	void removeRepository(long repositoryId, AsyncCallback<Void> asyncCallback);
 	void getRepositoryCount(AsyncCallback<Integer> asyncCallback);
+	void updateAccessConfig(long repositoryId, AccessConfig accessConfig, AsyncCallback<Void> asyncCallback);
 }

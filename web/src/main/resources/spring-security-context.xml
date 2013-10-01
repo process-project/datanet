@@ -7,7 +7,7 @@
 				          http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<!-- This is a semi-dummy configuration of the http element so the filterProxyChain processes the requests
-	     and stores the security context holder in the session. The real security is done at the methos level
+	     and stores the security context holder in the session. The real security is done at the method level
 	     and by the RPC login service. -->
 	<http use-expressions="true">
 	    <intercept-url pattern="/*" access="permitAll"/>

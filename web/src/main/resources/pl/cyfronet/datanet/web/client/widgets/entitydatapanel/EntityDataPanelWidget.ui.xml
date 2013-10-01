@@ -34,7 +34,7 @@
 		<b:Modal ui:field="addRowPopup" title="{messages.repositoryAddEntity}" animation="true">
 			<b:Form ui:field="addEntityRowFormContainer" action="upload" encoding="multipart/form-data" method="post"></b:Form>
 			<b:ModalFooter>
-				<b:Button ui:field="saveEntityRow" icon="SAVE" type="PRIMARY" loadingText="&lt;i class='icon-spinner'&gt;&lt;/i&gt; {messages.saveNewEntityRow}"><ui:text from="{messages.saveNewEntityRow}"/></b:Button>
+				<b:Button ui:field="saveEntityRow" icon="SAVE" type="PRIMARY" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.saveNewEntityRow}"><ui:text from="{messages.saveNewEntityRow}"/></b:Button>
 			</b:ModalFooter>
 		</b:Modal>
 		<b:Modal ui:field="codeTemplatesModal" title="{messages.codeTemplatesModalHeader}" animation="true">

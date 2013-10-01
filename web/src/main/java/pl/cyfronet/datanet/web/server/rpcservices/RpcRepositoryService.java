@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.xml.bind.JAXBException;
 
@@ -17,6 +18,7 @@ import pl.cyfronet.datanet.deployer.Deployer;
 import pl.cyfronet.datanet.deployer.DeployerException;
 import pl.cyfronet.datanet.deployer.marshaller.MarshallerException;
 import pl.cyfronet.datanet.deployer.marshaller.ModelSchemaGenerator;
+import pl.cyfronet.datanet.model.beans.AccessConfig;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Model;
@@ -95,7 +97,9 @@ public class RpcRepositoryService implements RepositoryService {
 			log.debug("Retrieving repository DB bean for id {}", repositoryId);
 			
 			RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
-			Repository repository = createRepository(repositoryDbEntity);
+			AccessConfig accessConfig = repositoryClient.getAccessConfig(
+					repositoryDbEntity.getUrl(), repositoryDbEntity.getToken());
+			Repository repository = createRepository(repositoryDbEntity, accessConfig);
 			
 			return repository;
 		} catch (Exception e) {
@@ -161,10 +165,9 @@ public class RpcRepositoryService implements RepositoryService {
 		try {
 			Version version = versionDao.getVersion(versionId);
 			Map<String, String> models = modelSchemaGenerator.generateSchema(version);
-			String repositoryUrl = deployer.deployRepository(Deployer.RepositoryType.Mongo, repositoryName, models);
-			
+			String token = UUID.randomUUID().toString();
+			String repositoryUrl = deployer.deployRepository(Deployer.RepositoryType.Mongo, repositoryName, models, token);
 			UserDbEntity user = userDao.getUser(SpringSecurityHelper.getUserLogin());
-			
 			RepositoryDbEntity repository = new RepositoryDbEntity();
 
 			if (repository.getOwners() == null) {
@@ -176,10 +179,14 @@ public class RpcRepositoryService implements RepositoryService {
 			repository.setSourceModelVersion(versionDbEntity);
 			repository.setUrl(repositoryUrl);
 			repository.setName(repositoryName);
+			repository.setToken(token);
 			repositoryDao.saveRepository(repository);
 			versionDao.addVersionRepository(versionDbEntity, repository);
+			repositoryClient.waitUntilRepositoryAvailable(repositoryUrl);
 			
-			return createRepository(repository);
+			AccessConfig accessConfig = repositoryClient.getAccessConfig(repositoryUrl, token);
+			
+			return createRepository(repository, accessConfig);
 		} catch (MarshallerException e) {
 			String message = "Could not marshall model";
 			log.error(message, e);
@@ -238,11 +245,25 @@ public class RpcRepositoryService implements RepositoryService {
 		return result;
 	}
 	
-	private Repository createRepository(RepositoryDbEntity repositoryDbEntity) throws JAXBException {
+	@Override
+	public void updateAccessConfig(long repositoryId, AccessConfig accessConfig) throws RepositoryException {
+		try {
+			RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
+			log.info("Updating repository access configuration for repository with id {}", repositoryId);
+			repositoryClient.updateAccessConfiguration(repositoryDbEntity.getUrl(), repositoryDbEntity.getToken(), accessConfig);
+		} catch (Exception e) {
+			log.error("Access configuration for repository with id {} could not be updated", repositoryId);
+			log.error("Repository access configuration update error", e);
+			throw new RepositoryException(Code.RepositoryAccessConfigurationUpdateError, e.getMessage());
+		}
+	}
+	
+	private Repository createRepository(RepositoryDbEntity repositoryDbEntity, AccessConfig accessConfig) throws JAXBException {
 		Repository repository = new Repository();
 		repository.setId(repositoryDbEntity.getId());
 		repository.setName(repositoryDbEntity.getName());
 		repository.setUrl(repositoryDbEntity.getUrl());
+		repository.setAccessConfig(accessConfig);
 		
 		VersionDbEntity versionDbEntity = repositoryDbEntity.getSourceModelVersion();
 		List<Entity> entitiesList = jaxbEntityListBuilder.deserialize(versionDbEntity.getModelXml());

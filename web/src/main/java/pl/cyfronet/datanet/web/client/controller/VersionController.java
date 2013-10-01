@@ -53,10 +53,12 @@ public class VersionController {
 	}
 
 	public void getVersions(long modelId, final VersionsCallback callback, boolean forceRefresh) {
-		if (versions.get(modelId) == null || forceRefresh)
+		if (versions.get(modelId) == null || forceRefresh) {
 			loadVersions(modelId, callback);
-		else
+		}
+		else {
 			callback.setVersions(versions.get(modelId));
+		}
 	}
 	
 	public void getVersion(final Long versionId, final VersionCallback callback) {
@@ -137,9 +139,7 @@ public class VersionController {
 				else 
 					releaseNewVersion(model, versionName, callback);
 			}
-
 		});
-		
 	}
 	
 	private void releaseNewVersion(ModelProxy model, String versionName, final VersionCallback callback) {

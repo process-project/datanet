@@ -60,7 +60,7 @@
 			        </b:ControlGroup>
 			    </b:Fieldset>
 			    <b:FormActions>
-			        <b:Button type="PRIMARY" ui:field="loginButton" icon="SIGNIN"><ui:text from="{messages.submitLabel}"/></b:Button>
+			        <b:Button type="PRIMARY" ui:field="loginButton" icon="SIGNIN" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.submitLabel}"><ui:text from="{messages.submitLabel}"/></b:Button>
 			    </b:FormActions>
 			</b:Form>
 			<b:Alert ui:field="errorLabel" type="ERROR" close="false" visible="false"/>

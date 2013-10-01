@@ -33,11 +33,11 @@ public class ModelTreeViewModel implements TreeViewModel {
 	 */
 	private Map<Long, TreeItemsAsyncDataProvider> versionDataProviders;  
 	private Map<Long, TreeItemsAsyncDataProvider> repositoryDataProviders;  
-	private ModelTreePanelMessageses messages;
+	private ModelTreePanelMessages messages;
 	private SelectionModel<TreeItem> selection;
 	
 	
-	public ModelTreeViewModel(ModelTreePanelMessageses messages,
+	public ModelTreeViewModel(ModelTreePanelMessages messages,
 			SelectionModel<TreeItem> selection) {
 		this.messages = messages;
 		this.selection = selection;

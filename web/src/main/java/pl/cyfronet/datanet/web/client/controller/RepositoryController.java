@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import pl.cyfronet.datanet.model.beans.AccessConfig;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.callback.NextCallback;
@@ -55,27 +56,34 @@ public class RepositoryController {
 	}
 
 	public void getRepository(long repositoryId, final RepositoryCallback repositoryCallback) {
-		//TODO(DH): use cache
-		repositoryService.getRepository(repositoryId, new AsyncCallback<Repository>() {
-			@Override
-			public void onSuccess(Repository repository) {
-				if(repositoryCallback != null) {
-					repositoryCallback.setRepository(repository);
+		Repository repository = getCachedRepository(repositoryId);
+		
+		if (repository == null) {
+			repositoryService.getRepository(repositoryId, new AsyncCallback<Repository>() {
+				@Override
+				public void onSuccess(Repository repository) {
+					if(repositoryCallback != null) {
+						repositoryCallback.setRepository(repository);
+					}
 				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryLoadError,
+							NotificationType.ERROR, caught.getMessage()));
+				}
+			});
+		} else {
+			if(repositoryCallback != null) {
+				repositoryCallback.setRepository(repository);
 			}
-			@Override
-			public void onFailure(Throwable caught) {
-				eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryLoadError,
-						NotificationType.ERROR, caught.getMessage()));
-			}
-		});
+		}
 	}
-	
+
 	public void getEntity(long repositoryId, final String entityName, final EntityCallback entityCallback) {
-		//TODO(DH): use cache
-		repositoryService.getRepository(repositoryId, new AsyncCallback<Repository>() {
+		getRepository(repositoryId, new RepositoryCallback() {
 			@Override
-			public void onSuccess(Repository repository) {
+			public void setRepository(Repository repository) {
 				if(entityCallback != null) {
 					Entity result = null;
 					
@@ -92,10 +100,11 @@ public class RepositoryController {
 					entityCallback.setEntity(result);
 				}
 			}
+			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void setError(String message) {
 				eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryLoadError,
-						NotificationType.ERROR, caught.getMessage()));
+						NotificationType.ERROR, message));
 			}
 		});
 	}
@@ -247,5 +256,40 @@ public class RepositoryController {
 				}
 			}
 		});
+	}
+
+	public void updateAccessConfig(long repositoryId, AccessConfig accessConfig, final Command after) {
+		repositoryService.updateAccessConfig(repositoryId, accessConfig, new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryAccessConfigUpdateFailure, NotificationType.ERROR));
+				
+				if (after != null) {
+					after.execute();
+				}
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryAccessConfigUpdateSuccess, NotificationType.SUCCESS));
+				
+				if (after != null) {
+					after.execute();
+				}
+			}
+			
+		});
+	}
+	
+	private Repository getCachedRepository(long repositoryId) {
+		for (List<Repository> repositories : this.repositories.values()) {
+			for (Repository repository : repositories) {
+				if (repository.getId() == repositoryId) {
+					return repository;
+				}
+			}
+		}
+		
+		return null;
 	}
 }

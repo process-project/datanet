@@ -45,35 +45,18 @@ import com.google.web.bindery.event.shared.EventBus;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class ModelTreePanelPresenterTest {
-
-	@Mock
-	private View view;
-
-	@Mock
-	private ModelController modelController;
-	
-	@Mock
-	private VersionController versionController;
-
-	@Mock
-	private RepositoryController repositoryController;
-	
-	@Mock
-	private PlaceController placeController;
-
-	@Mock
-	private EventBus eventBus;
+	@Mock private View view;
+	@Mock private ModelController modelController;
+	@Mock private VersionController versionController;
+	@Mock private RepositoryController repositoryController;
+	@Mock private PlaceController placeController;
+	@Mock private EventBus eventBus;
 
 	private ModelTreePanelPresenter presenter;
-
 	private ModelProxy newModel;
-
 	private long selectedModelId = 1l;
-
 	private Model m1;
-
 	private Model m2;
-
 	private Model m3;
 
 	@Before
@@ -108,13 +91,13 @@ public class ModelTreePanelPresenterTest {
 			@Override
 			public Void answer(InvocationOnMock invocation) throws Throwable {
 				ModelCallback callback = (ModelCallback) invocation
-						.getArguments()[0];
+						.getArguments()[1];
 				newModel = new ModelProxy(new Model(), System
 						.currentTimeMillis());
 				callback.setModel(newModel);
 				return null;
 			}
-		}).when(modelController).createNewModel(any(ModelCallback.class));
+		}).when(modelController).createNewModel(any(String.class), any(ModelCallback.class));
 	}
 
 	private void whenAddingNewModel() {
@@ -122,7 +105,7 @@ public class ModelTreePanelPresenterTest {
 	}
 
 	private void thenNewModelAddedAndOpened() {
-		verify(modelController, times(1)).createNewModel(
+		verify(modelController, times(1)).createNewModel(any(String.class),
 				any(ModelCallback.class));
 		verify(placeController, times(1)).goTo(
 				argThat(new ModelPlaceMatcher(newModel.getId())));

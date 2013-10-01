@@ -14,6 +14,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.hibernate.SessionFactory;
 import org.pegdown.PegDownProcessor;
 import org.springframework.beans.factory.FactoryBean;
@@ -92,9 +93,8 @@ public class SpringConfiguration {
 	}
 	
 	@Bean
-	public SessionLocaleResolver localeResolver(){
+	public SessionLocaleResolver localeResolver() {
 	    SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-	    localeResolver.setDefaultLocale(new Locale("en"));
 	    
 	    return localeResolver;
 	}
@@ -197,7 +197,8 @@ public class SpringConfiguration {
 	
 	@Bean
 	public RestTemplate restTemplate() {
-		DefaultHttpClient httpClient = new DefaultHttpClient();
+		ThreadSafeClientConnManager connectionManager = new ThreadSafeClientConnManager();
+		DefaultHttpClient httpClient = new DefaultHttpClient(connectionManager);
 		BasicCredentialsProvider credentialsProvider =  new BasicCredentialsProvider();
 		credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("", ""));
 		httpClient.setCredentialsProvider(credentialsProvider);
