@@ -17,6 +17,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.Widget;
@@ -110,13 +111,8 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 	}
 
 	@Override
-	public String getOwnerList() {
-		return owners.getText().trim();
-	}
-
-	@Override
-	public void setOwners(String owners) {
-		this.owners.setText(owners);
+	public HasText getOwnerList() {
+		return owners;
 	}
 
 	@Override

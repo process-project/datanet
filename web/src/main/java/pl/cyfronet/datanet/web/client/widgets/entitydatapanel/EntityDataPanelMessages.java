@@ -17,4 +17,8 @@ public interface EntityDataPanelMessages extends Messages {
 	String codeTemplatesModalHeader();
 	String closeCodeTemplatesModalButtonLabel();
 	String codeTemplatesAbout();
+	String credentialsModalLabel();
+	String submitCredentialsButtonLabel();
+	String cancelSubmitCredentialsButtonLabel();
+	String userCredentialsAbout();
 }

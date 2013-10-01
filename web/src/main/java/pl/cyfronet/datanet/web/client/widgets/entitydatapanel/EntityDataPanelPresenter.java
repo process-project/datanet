@@ -8,6 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pl.cyfronet.datanet.model.beans.AccessConfig.Access;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Repository;
@@ -50,6 +51,10 @@ public class EntityDataPanelPresenter implements Presenter {
 		void addNewEntityRowCredentials();
 		void showTemplatesModal(boolean b);
 		void renderCodeTemplates(Map<String, String> codeTemplates);
+		HasText getPassword();
+		HasText getLogin();
+		void showCredentialsModal(boolean show);
+		void hideNewEntityRowCredentials();
 	}
 	
 	public interface DataCallback {
@@ -108,25 +113,19 @@ public class EntityDataPanelPresenter implements Presenter {
 
 	@Override
 	public void onSearch() {
-		Map<String, String> query = new HashMap<String, String>();
-		
-		for (String fieldName : searchFields.keySet()) {
-			if (!searchFields.get(fieldName).getText().trim().isEmpty()) {
-				query.put(fieldName, searchFields.get(fieldName).getText().trim());
-			}
-		}
-		
-		log.info("Search for map {} initiated", query);
-		
-		repositoryController.getEntityRows(repositoryId, entityName, 1, view.getDataTable().getVisibleRange().getLength(), query, new DataCallback() {
+		repositoryController.getRepository(repositoryId, new RepositoryCallback() {
 			@Override
-			public void onData(EntityData data) {
-				dataProvider.renderData(data);
+			public void setRepository(Repository repository) {
+				if (repository.getAccessConfig() != null && repository.getAccessConfig().getAccess() == Access.privateAccess) {
+					retrieveCredentialsAndUpdateData();
+				} else {
+					updateData();
+				}
 			}
 			
 			@Override
-			public void error() {
-				onDataRetrievalError();
+			public void setError(String message) {
+				//ignoring - proper event fired in the controller
 			}
 		});
 	}
@@ -210,6 +209,17 @@ public class EntityDataPanelPresenter implements Presenter {
 		});
 	}
 	
+	@Override
+	public void retrieveCredentialsAndUpdateData() {
+		view.showCredentialsModal(true);
+	}
+	
+	@Override
+	public void onSubmitCredentials() {
+		view.showCredentialsModal(false);
+		updateData();
+	}
+	
 	private void showSearchFields(List<Field> fields) {
 		for(Field field : fields) {
 			if (field.getType() == Type.String) {
@@ -232,7 +242,7 @@ public class EntityDataPanelPresenter implements Presenter {
 	}
 	
 	private void addNewRowFields(List<Field> fields) {
-		Map<Type, Integer> indexes = new HashMap<Type, Integer>();
+		final Map<Type, Integer> indexes = new HashMap<Type, Integer>();
 		view.initEntityUploadForm(repositoryId, entityName);
 		
 		for(Field field : fields) {
@@ -244,8 +254,79 @@ public class EntityDataPanelPresenter implements Presenter {
 			indexes.put(field.getType(), indexes.get(field.getType()) + 1);
 		}
 		
-		if (indexes.get(Type.File) != null) {
-			view.addNewEntityRowCredentials();
+		repositoryController.getRepository(repositoryId, new RepositoryCallback() {
+			@Override
+			public void setRepository(Repository repository) {
+				if (repository.getAccessConfig() != null && repository.getAccessConfig().getAccess() == Access.privateAccess ||
+						indexes.get(Type.File) != null) {
+					view.addNewEntityRowCredentials();
+				}
+			}
+			
+			@Override
+			public void setError(String message) {
+				//ignoring - proper event is fired in the  controller
+			}
+		});
+	}
+	
+	private void updateData() {
+		final Map<String, String> query = new HashMap<String, String>();
+		
+		for (String fieldName : searchFields.keySet()) {
+			if (!searchFields.get(fieldName).getText().trim().isEmpty()) {
+				query.put(fieldName, searchFields.get(fieldName).getText().trim());
+			}
 		}
+		
+		log.info("Search for map {} initiated", query);
+		repositoryController.getRepository(repositoryId, new RepositoryCallback() {
+			@Override
+			public void setRepository(Repository repository) {
+				String login = null;
+				String password = null;
+				
+				if (repository.getAccessConfig() != null && repository.getAccessConfig().getAccess() == Access.privateAccess) {
+					login = view.getLogin().getText();
+					password = view.getPassword().getText();
+				}
+				
+				repositoryController.getEntityRows(repositoryId, entityName, 1, view.getDataTable().getVisibleRange().getLength(), query, login, password, new DataCallback() {
+					@Override
+					public void onData(EntityData data) {
+						dataProvider.renderData(data);
+					}
+					
+					@Override
+					public void error() {
+						onDataRetrievalError();
+					}
+				});
+			}
+			
+			@Override
+			public void setError(String message) {
+				//ignoring - proper event fired by the controller
+			}
+		});
+	}
+
+	public void onAccessConfigChanged() {
+		repositoryController.getRepository(repositoryId, new RepositoryCallback() {
+			
+			@Override
+			public void setRepository(Repository repository) {
+				if (repository.getAccessConfig() != null && repository.getAccessConfig().getAccess() == Access.privateAccess) {
+					view.addNewEntityRowCredentials();
+				} else {
+					view.hideNewEntityRowCredentials();
+				}
+			}
+			
+			@Override
+			public void setError(String message) {
+				//ignoring - proper event fired in the controller
+			}
+		});
 	}
 }

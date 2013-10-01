@@ -16,11 +16,11 @@ public interface RepositoryService extends RemoteService {
 	List<Repository> getRepositories() throws RepositoryException;
 	void undeployRepository(long repositoryId) throws RepositoryException;
 	Repository getRepository(long repositoryId) throws RepositoryException;
-	EntityData getData(long repositoryId, String entityName, int start, int length, Map<String, String> query) throws RepositoryException;
 	List<Repository> getRepositories(long versionId) throws RepositoryException;
 	Repository deployModelVersion(long versionId, String repositoryName) throws RepositoryException;
 	void saveData(long repositoryId, String entityName, Map<String, String> data) throws RepositoryException;
 	void removeRepository(long repositoryId) throws RepositoryException;
 	int getRepositoryCount() throws RepositoryException;
 	void updateAccessConfig(long repositoryId, AccessConfig accessConfig) throws RepositoryException;
+	EntityData getData(long repositoryId, String entityName, int start, int length, Map<String, String> query, String login, String password) throws RepositoryException;
 }

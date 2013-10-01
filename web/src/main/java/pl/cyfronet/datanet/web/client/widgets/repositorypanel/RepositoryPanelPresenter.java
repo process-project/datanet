@@ -20,6 +20,8 @@ import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPre
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -32,8 +34,7 @@ public class RepositoryPanelPresenter implements Presenter {
 		void showEntity(int entityIndex);
 		boolean confirmRepositoryRemoval();
 		String getAccessLevel();
-		String getOwnerList();
-		void setOwners(String join);
+		HasText getOwnerList();
 		void markPublicType();
 		void markPrivateType();
 		void showAccessConfigModal(boolean show);
@@ -98,13 +99,17 @@ public class RepositoryPanelPresenter implements Presenter {
 		view.setAccessConfigSaveBusyState(true);
 		
 		Access accessLevel = Access.valueOf(view.getAccessLevel());
-		String owners = view.getOwnerList();
+		String owners = view.getOwnerList().getText().trim();
 		AccessConfig accessConfig = new AccessConfig(accessLevel, Arrays.asList(owners.split(AccessConfig.OWNER_SEPARATOR)));
 		repositoryController.updateAccessConfig(repositoryId, accessConfig, new Command() {
 			@Override
 			public void execute() {
 				view.setAccessConfigSaveBusyState(false);
 				view.showAccessConfigModal(false);
+				
+				for (EntityDataPanelPresenter entityDataPanelPresenter : entityDataPanelPresenters.values()) {
+					entityDataPanelPresenter.onAccessConfigChanged();
+				}
 			}
 		});
 	}
@@ -134,6 +139,12 @@ public class RepositoryPanelPresenter implements Presenter {
 						for (String owner : accessConfig.getOwners()) {
 							builder.append(owner).append(AccessConfig.OWNER_SEPARATOR);
 						}
+						
+						if (builder.length() > 0) {
+							builder.deleteCharAt(builder.length() - 1);
+						}
+						
+						view.getOwnerList().setText(builder.toString());
 					}
 					
 					view.showAccessConfigModal(true);

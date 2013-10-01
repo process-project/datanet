@@ -40,6 +40,7 @@ import pl.cyfronet.datanet.web.server.db.beans.RepositoryDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.VersionDbEntity;
 import pl.cyfronet.datanet.web.server.services.repositoryclient.RepositoryClient;
+import pl.cyfronet.datanet.web.server.services.repositoryclient.RepositoryClientFactory;
 import pl.cyfronet.datanet.web.server.util.SpringSecurityHelper;
 
 @Service("repositoryService")
@@ -55,6 +56,7 @@ public class RpcRepositoryService implements RepositoryService {
 	@Autowired private HibernateRepositoryDao repositoryDao;
 	@Autowired private JaxbEntityListBuilder jaxbEntityListBuilder;
 	@Autowired private RepositoryClient repositoryClient;
+	@Autowired private RepositoryClientFactory repositoryClientFactory;
 
 	@Override
 	public List<Repository> getRepositories() throws RepositoryException {
@@ -68,6 +70,10 @@ public class RpcRepositoryService implements RepositoryService {
 				repository.setSourceModelVersion(repository.getSourceModelVersion());
 				repository.setUrl(repositoryDbEntity.getUrl());
 				repositories.add(repository);
+				
+				AccessConfig accessConfig = repositoryClient.getAccessConfig(
+						repositoryDbEntity.getUrl(), repositoryDbEntity.getToken());
+				repository.setAccessConfig(accessConfig);
 			}
 			
 			return repositories;
@@ -111,7 +117,7 @@ public class RpcRepositoryService implements RepositoryService {
 	}
 
 	@Override
-	public EntityData getData(long repositoryId, String entityName, int start, int length, Map<String, String> query) throws RepositoryException {
+	public EntityData getData(long repositoryId, String entityName, int start, int length, Map<String, String> query, String login, String password) throws RepositoryException {
 		try {
 			RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
 			log.debug("Retrieving repository data for url {} entity {} start index {}, length {} and query {}",
@@ -137,7 +143,13 @@ public class RpcRepositoryService implements RepositoryService {
 				}
 			}
 			
-			return repositoryClient.retrieveRepositoryData(repositoryDbEntity.getUrl(), entityName, fileFields, start, length, query);
+			RepositoryClient client = repositoryClient;
+			
+			if (login != null && password != null) {
+				client = repositoryClientFactory.create(login, password);
+			}
+			
+			return client.retrieveRepositoryData(repositoryDbEntity.getUrl(), entityName, fileFields, start, length, query);
 		} catch (Exception e) {
 			String message = "Repository data retrieval error occurred";
 			log.error(message, e);
@@ -151,6 +163,13 @@ public class RpcRepositoryService implements RepositoryService {
 		
 		try {
 			result = versionDao.getVersionRepositories(versionId);
+			
+			for (Repository repository : result) {
+				RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repository.getId());
+				AccessConfig accessConfig = repositoryClient.getAccessConfig(
+						repository.getUrl(), repositoryDbEntity.getToken());
+				repository.setAccessConfig(accessConfig);
+			}
 		} catch (Exception e) {
 			String message = "Could not fetch repository beans from DB for version id " + versionId;
 			log.error(message, e);

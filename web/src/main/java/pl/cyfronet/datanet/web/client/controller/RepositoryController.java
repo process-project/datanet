@@ -109,8 +109,8 @@ public class RepositoryController {
 		});
 	}
 
-	public void getEntityRows(long repositoryId, final String entityName, int start, int length, Map<String, String> query, final DataCallback dataCallback) {
-		repositoryService.getData(repositoryId, entityName, start, length, query, new AsyncCallback<EntityData>() {
+	public void getEntityRows(long repositoryId, final String entityName, int start, int length, Map<String, String> query, String login, String password, final DataCallback dataCallback) {
+		repositoryService.getData(repositoryId, entityName, start, length, query, login, password, new AsyncCallback<EntityData>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				eventBus.fireEvent(new NotificationEvent(
@@ -258,7 +258,7 @@ public class RepositoryController {
 		});
 	}
 
-	public void updateAccessConfig(long repositoryId, AccessConfig accessConfig, final Command after) {
+	public void updateAccessConfig(final long repositoryId, final AccessConfig accessConfig, final Command after) {
 		repositoryService.updateAccessConfig(repositoryId, accessConfig, new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -271,6 +271,17 @@ public class RepositoryController {
 
 			@Override
 			public void onSuccess(Void result) {
+				getRepository(repositoryId, new RepositoryCallback() {
+					@Override
+					public void setRepository(Repository repository) {
+						repository.setAccessConfig(accessConfig);
+					}
+					
+					@Override
+					public void setError(String message) {
+						//ignoring - proper event is fired above
+					}
+				});
 				eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryAccessConfigUpdateSuccess, NotificationType.SUCCESS));
 				
 				if (after != null) {

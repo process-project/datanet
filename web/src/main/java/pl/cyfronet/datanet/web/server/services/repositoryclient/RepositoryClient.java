@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -156,8 +155,11 @@ public class RepositoryClient {
 		if (result.get("owners") != null) {
 			owners.addAll((List) result.get("owners"));
 		}
+		
+		AccessConfig accessConfig = new AccessConfig(access, owners);
+		log.debug("Access config for repository {} retrieved: {}", repositoryUrl, accessConfig);
 
-		return new AccessConfig(access, owners);
+		return accessConfig;
 	}
 	
 	public void updateAccessConfiguration(String repositoryUrl, String token, AccessConfig accessConfig) {

@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import pl.cyfronet.datanet.model.beans.Repository;
+import pl.cyfronet.datanet.model.beans.AccessConfig.Access;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter.DataCallback;
 
@@ -30,18 +33,20 @@ public class EntityRowDataProvider extends AsyncDataProvider<EntityRow> {
 	}
 	
 	@Override
-	protected void onRangeChanged(HasData<EntityRow> display) {
-		final Range range = display.getVisibleRange();
-		int startNumber = range.getStart() + 1;
-		repositoryController.getEntityRows(repositoryId, entityName, startNumber, range.getLength(), null, new DataCallback() {
+	protected void onRangeChanged(final HasData<EntityRow> display) {
+		repositoryController.getRepository(repositoryId, new RepositoryCallback() {
 			@Override
-			public void onData(EntityData data) {
-				renderData(data);
+			public void setRepository(Repository repository) {
+				if (repository.getAccessConfig() != null && repository.getAccessConfig().getAccess() == Access.privateAccess) {
+					presenter.retrieveCredentialsAndUpdateData();
+				} else {
+					updateRange(display);
+				}
 			}
-
+			
 			@Override
-			public void error() {
-				presenter.onDataRetrievalError();
+			public void setError(String message) {
+				//ignoring - event fired by the controller
 			}
 		});
 	}
@@ -57,5 +62,21 @@ public class EntityRowDataProvider extends AsyncDataProvider<EntityRow> {
 		
 		int startNumber = data.getStartEntityNumber() - 1;
 		updateRowData(startNumber, values);
+	}
+	
+	private void updateRange(final HasData<EntityRow> display) {
+		final Range range = display.getVisibleRange();
+		int startNumber = range.getStart() + 1;
+		repositoryController.getEntityRows(repositoryId, entityName, startNumber, range.getLength(), null, null, null, new DataCallback() {
+			@Override
+			public void onData(EntityData data) {
+				renderData(data);
+			}
+
+			@Override
+			public void error() {
+				presenter.onDataRetrievalError();
+			}
+		});
 	}
 }

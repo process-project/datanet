@@ -51,8 +51,12 @@ public class EntityDataPanelWidget extends Composite implements View {
 	@UiField FlowPanel bashCode;
 	@UiField FlowPanel rubyCode;
 	@UiField FlowPanel pythonCode;
+	@UiField Modal credentialsModal;
+	@UiField TextBox loginField;
+	@UiField PasswordTextBox passwordField;
 	
 	private Presenter presenter;
+	private FlowPanel credsPanel;
 	
 	public EntityDataPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -91,6 +95,16 @@ public class EntityDataPanelWidget extends Composite implements View {
 	@UiHandler("closeCodeTemplatesModal")
 	void onCloseCodeTemplatesModal(ClickEvent event) {
 		codeTemplatesModal.hide();
+	}
+	
+	@UiHandler("submitCredentials")
+	void onSubmitCredentials(ClickEvent event) {
+		presenter.onSubmitCredentials();
+	}
+	
+	@UiHandler("cancelSubmitCredentialsModal")
+	void onCancelSubmitCredentialsModal(ClickEvent event) {
+		credentialsModal.hide();
 	}
 	
 	@Override
@@ -208,7 +222,7 @@ public class EntityDataPanelWidget extends Composite implements View {
 
 	@Override
 	public void addNewEntityRowCredentials() {
-		FlowPanel credsPanel = new FlowPanel();
+		credsPanel = new FlowPanel();
 		credsPanel.getElement().setClassName("alert");
 		credsPanel.add(new HTML(messages.credentialsInfo()));
 		
@@ -240,6 +254,32 @@ public class EntityDataPanelWidget extends Composite implements View {
 		pythonCode.getElement().setInnerHTML("<pre><code class='python'>" + codeTemplates.get("python") + "</code></pre>");
 		pythonCode.getElement().setId("hljs-python");
 		doHighlightMarkup();
+	}
+	
+	@Override
+	public HasText getPassword() {
+		return passwordField;
+	}
+	
+	@Override
+	public HasText getLogin() {
+		return loginField;
+	}
+	
+	@Override
+	public void showCredentialsModal(boolean show) {
+		if (show) {
+			loginField.setText("");
+			passwordField.setText("");
+			credentialsModal.show();
+		} else {
+			credentialsModal.hide();
+		}
+	}
+	
+	@Override
+	public void hideNewEntityRowCredentials() {
+		addEntityRowFormContainer.remove(credsPanel);
 	}
 
 	private native void doHighlightMarkup() /*-{

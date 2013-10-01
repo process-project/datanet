@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.multipart.MultipartFile;
 
+import pl.cyfronet.datanet.model.beans.AccessConfig;
+import pl.cyfronet.datanet.model.beans.AccessConfig.Access;
 import pl.cyfronet.datanet.web.server.controllers.beans.EntityUpload;
 import pl.cyfronet.datanet.web.server.db.HibernateRepositoryDao;
 import pl.cyfronet.datanet.web.server.db.beans.RepositoryDbEntity;
@@ -43,9 +45,12 @@ public class FormController {
 		}
 
 		RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(entityUpload.getRepositoryId());
+		AccessConfig accessConfig = repositoryClient.getAccessConfig(
+				repositoryDbEntity.getUrl(), repositoryDbEntity.getToken());
 		
 		try {
-			if (areFilesPresent(entityUpload.getFiles())) {
+			if (areFilesPresent(entityUpload.getFiles()) || accessConfig.getAccess() == Access.privateAccess) {
+				log.debug("Uploading an entity row with user credentials");
 				Map<String, MultipartFile> files = new HashMap<>();
 				
 				//TODO(DH): convert the byte array to stream or request the repository directly from the client
@@ -58,6 +63,7 @@ public class FormController {
 				RepositoryClient repositoryClient = repositoryClientFactory.create(login, password);
 				repositoryClient.updateEntityRow(repositoryDbEntity.getUrl(), entityUpload.getEntityName(), null, fieldValues, files);
 			} else {
+				log.debug("Uploading an entity row without user credentials");
 				repositoryClient.updateEntityRow(repositoryDbEntity.getUrl(), entityUpload.getEntityName(), null, fieldValues, null);
 			}
 			
