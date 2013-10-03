@@ -104,7 +104,7 @@ public class EntityDataPanelWidget extends Composite implements View {
 	
 	@UiHandler("cancelSubmitCredentialsModal")
 	void onCancelSubmitCredentialsModal(ClickEvent event) {
-		credentialsModal.hide();
+		presenter.onCancelCredentialsModal();
 	}
 	
 	@Override

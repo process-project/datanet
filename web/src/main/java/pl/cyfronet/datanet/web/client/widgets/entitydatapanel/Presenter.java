@@ -11,4 +11,5 @@ public interface Presenter {
 	void onShowCodeTemplates();
 	void retrieveCredentialsAndUpdateData();
 	void onSubmitCredentials();
+	void onCancelCredentialsModal();
 }

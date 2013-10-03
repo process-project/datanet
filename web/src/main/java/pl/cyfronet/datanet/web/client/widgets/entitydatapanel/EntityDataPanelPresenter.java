@@ -313,7 +313,6 @@ public class EntityDataPanelPresenter implements Presenter {
 
 	public void onAccessConfigChanged() {
 		repositoryController.getRepository(repositoryId, new RepositoryCallback() {
-			
 			@Override
 			public void setRepository(Repository repository) {
 				if (repository.getAccessConfig() != null && repository.getAccessConfig().getAccess() == Access.privateAccess) {
@@ -328,5 +327,17 @@ public class EntityDataPanelPresenter implements Presenter {
 				//ignoring - proper event fired in the controller
 			}
 		});
+	}
+
+	@Override
+	public void onCancelCredentialsModal() {
+		//rendering an empty data set
+		EntityData entityData = new EntityData();
+		entityData.setTotalNumberOfEntities(0);
+		entityData.setStartEntityNumber(0);
+		entityData.setCurrentNumberOfEntities(0);
+		entityData.setEntityRows(new ArrayList<Map<String, String>>());
+		dataProvider.renderData(entityData);
+		view.showCredentialsModal(false);
 	}
 }
