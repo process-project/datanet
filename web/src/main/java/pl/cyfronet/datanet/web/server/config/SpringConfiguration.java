@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 

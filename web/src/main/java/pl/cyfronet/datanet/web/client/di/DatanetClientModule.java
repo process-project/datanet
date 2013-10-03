@@ -3,6 +3,8 @@ package pl.cyfronet.datanet.web.client.di;
 import pl.cyfronet.datanet.web.client.controller.ClientController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.VersionController;
+import pl.cyfronet.datanet.web.client.controller.timeout.SessionTimeoutAwareRpcRequestBuilder;
+import pl.cyfronet.datanet.web.client.controller.timeout.SessionTimeoutController;
 import pl.cyfronet.datanet.web.client.di.factory.EntityDataPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.di.factory.EntityPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.di.factory.EntityRowDataProviderFactory;
@@ -11,12 +13,21 @@ import pl.cyfronet.datanet.web.client.di.factory.ModelActivityFactory;
 import pl.cyfronet.datanet.web.client.di.factory.ModelPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.di.factory.RepositoryActivityFactory;
 import pl.cyfronet.datanet.web.client.di.factory.VersionActivityFactory;
+import pl.cyfronet.datanet.web.client.di.provider.LoginServiceProvider;
+import pl.cyfronet.datanet.web.client.di.provider.ModelServiceProvider;
 import pl.cyfronet.datanet.web.client.di.provider.PlaceControllerProvider;
+import pl.cyfronet.datanet.web.client.di.provider.RepositoryServiceProvider;
+import pl.cyfronet.datanet.web.client.di.provider.SessionTimeoutControllerProvider;
+import pl.cyfronet.datanet.web.client.di.provider.VersionServiceProvider;
 import pl.cyfronet.datanet.web.client.model.ModelController;
 import pl.cyfronet.datanet.web.client.mvp.AppPlaceHistoryMapper;
 import pl.cyfronet.datanet.web.client.mvp.activity.ModelActivity;
 import pl.cyfronet.datanet.web.client.mvp.activity.RepositoryActivity;
 import pl.cyfronet.datanet.web.client.mvp.activity.VersionActivity;
+import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
+import pl.cyfronet.datanet.web.client.services.ModelServiceAsync;
+import pl.cyfronet.datanet.web.client.services.RepositoryServiceAsync;
+import pl.cyfronet.datanet.web.client.services.VersionServiceAsync;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityRowDataProvider;
@@ -32,7 +43,6 @@ import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPre
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelWidget;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPanel;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPresenter;
-import pl.cyfronet.datanet.web.client.widgets.versionpanel.Presenter;
 import pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelWidget;
 
@@ -53,15 +63,24 @@ public class DatanetClientModule extends AbstractGinModule {
 		bind(VersionController.class).in(Singleton.class);
 		bind(RepositoryController.class).in(Singleton.class);
 		bind(EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
-		bind(PlaceController.class).toProvider(PlaceControllerProvider.class)
-				.in(Singleton.class);
-		bind(PlaceHistoryMapper.class).to(AppPlaceHistoryMapper.class).in(
-				Singleton.class);
+		bind(PlaceController.class).toProvider(PlaceControllerProvider.class).in(Singleton.class);
+		bind(PlaceHistoryMapper.class).to(AppPlaceHistoryMapper.class).in(Singleton.class);
+		bind(SessionTimeoutController.class).toProvider(SessionTimeoutControllerProvider.class).in(Singleton.class);
+		bind(SessionTimeoutAwareRpcRequestBuilder.class).in(Singleton.class);
 
+		configureAsyncServices();
 		configureViews();
 		configureActivities();
 		configurePresenterFactories();
+		configureModelPresenterFactories();		
 		configureDataProviderFactories();
+	}
+
+	private void configureAsyncServices() {
+		bind(LoginServiceAsync.class).toProvider(LoginServiceProvider.class).in(Singleton.class);
+		bind(ModelServiceAsync.class).toProvider(ModelServiceProvider.class).in(Singleton.class);
+		bind(RepositoryServiceAsync.class).toProvider(RepositoryServiceProvider.class).in(Singleton.class);
+		bind(VersionServiceAsync.class).toProvider(VersionServiceProvider.class).in(Singleton.class);
 	}
 
 	private void configureViews() {
@@ -72,7 +91,6 @@ public class DatanetClientModule extends AbstractGinModule {
 		bind(ModelPanelPresenter.View.class).to(ModelPanelWidget.class);
 		bind(EntityPanelPresenter.View.class).to(EntityPanelWidget.class);
 		bind(FieldPanelPresenter.View.class).to(FieldPanelWidget.class);
-		
 		bind(VersionPanelPresenter.View.class).to(VersionPanelWidget.class);
 	}
 
@@ -87,9 +105,7 @@ public class DatanetClientModule extends AbstractGinModule {
 	
 	private void configurePresenterFactories() {
 		install(new GinFactoryModuleBuilder().implement(EntityDataPanelPresenter.class,
-				EntityDataPanelPresenter.class).build(EntityDataPanelPresenterFactory.class));	
-		
-		configureModelPresenterFactories();		
+				EntityDataPanelPresenter.class).build(EntityDataPanelPresenterFactory.class));
 	}
 	
 	private void configureModelPresenterFactories() {

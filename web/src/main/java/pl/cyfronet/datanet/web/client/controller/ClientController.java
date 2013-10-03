@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.client.controller;
 
+import pl.cyfronet.datanet.web.client.controller.timeout.SessionTimeoutController;
 import pl.cyfronet.datanet.web.client.event.notification.GenericNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
@@ -26,14 +27,13 @@ import com.google.web.bindery.event.shared.EventBus;
 
 public class ClientController {
 	private LoginServiceAsync loginService;
-
 	private TopNavPresenter topNavPresenter;
 	private PlaceController placeController;
 	private EventBus eventBus;
 	private PlaceHistoryMapper historyMapper;
-
 	private AppActivityMapper appActivityMapper;
 	private WestActivityMapper westActivityMapper;
+	private SessionTimeoutController sessionTimeoutController;
 
 	@Inject
 	public ClientController(EventBus eventBus,
@@ -41,15 +41,16 @@ public class ClientController {
 			TopNavPresenter topNavPresenter,
 			WestActivityMapper westActivityManager,
 			PlaceController placeController, PlaceHistoryMapper historyMapper,
-			LoginServiceAsync loginService) {
+			LoginServiceAsync loginService,
+			SessionTimeoutController sessionTimeoutController) {
 		this.eventBus = eventBus;
 		this.appActivityMapper = appActivityMapper;
 		this.topNavPresenter = topNavPresenter;
 		this.westActivityMapper = westActivityManager;
 		this.placeController = placeController;
 		this.historyMapper = historyMapper;
-
 		this.loginService = loginService;
+		this.sessionTimeoutController = sessionTimeoutController;
 	}
 
 	public void start() {
@@ -59,6 +60,7 @@ public class ClientController {
 				if (!isLoggedIn) {
 					showLoginPanel();
 				} else {
+					sessionTimeoutController.start();
 					showMainPanel();
 				}
 			}
@@ -73,6 +75,7 @@ public class ClientController {
 	}
 
 	public void onLogin() {
+		sessionTimeoutController.start();
 		showMainPanel();
 	}
 
@@ -87,6 +90,7 @@ public class ClientController {
 
 			@Override
 			public void onSuccess(Void v) {
+				sessionTimeoutController.cancel();
 				showLoginPanel();
 			}
 		});
