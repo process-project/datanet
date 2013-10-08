@@ -52,8 +52,7 @@ public class FormController {
 			if (areFilesPresent(entityUpload.getFiles()) || accessConfig.getAccess() == Access.privateAccess) {
 				log.debug("Uploading an entity row with user credentials");
 				Map<String, MultipartFile> files = new HashMap<>();
-				
-				//TODO(DH): convert the byte array to stream or request the repository directly from the client
+
 				for (String fieldName : entityUpload.getFiles().keySet()) {
 					if (!entityUpload.getFiles().get(fieldName).isEmpty()) {
 						files.put(fieldName, entityUpload.getFiles().get(fieldName));
@@ -74,7 +73,7 @@ public class FormController {
 			} catch (IOException e) {
 				log.error("Could not write to response after entity upload", e);
 			}
-		} catch (RestClientException | URISyntaxException | IOException e) {
+		} catch (Exception e) {
 			log.error("Could not upload an entity", e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}

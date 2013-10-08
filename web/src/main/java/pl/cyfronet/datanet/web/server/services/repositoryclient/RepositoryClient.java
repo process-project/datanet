@@ -94,7 +94,8 @@ public class RepositoryClient {
 					HttpHeaders headers = new HttpHeaders();
 					headers.setContentDispositionFormData(fieldName, files.get(fieldName).getOriginalFilename());
 					headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-					HttpEntity fileEntity = new HttpEntity(files.get(fieldName).getBytes(), headers);
+					
+					HttpEntity fileEntity = new HttpEntity(new InputStreamResource(files.get(fieldName).getInputStream()), headers);
 					values.put(fieldName, (List) Arrays.asList(fileEntity));
 				}
 			}
