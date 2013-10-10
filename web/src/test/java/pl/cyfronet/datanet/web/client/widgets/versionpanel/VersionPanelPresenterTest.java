@@ -30,15 +30,14 @@ import pl.cyfronet.datanet.web.client.controller.RepositoryController.Repository
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCountCallback;
 import pl.cyfronet.datanet.web.client.controller.VersionController;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
-import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
+import pl.cyfronet.datanet.web.client.event.notification.RepositoryNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.VersionNotificationMessage;
 import pl.cyfronet.datanet.web.client.mvp.place.RepositoryPlace;
 import pl.cyfronet.datanet.web.client.widgets.versionpanel.VersionPanelPresenter.View;
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.web.bindery.event.shared.EventBus;
@@ -139,10 +138,21 @@ public class VersionPanelPresenterTest {
 		 givenWrongFormatForRepositoryName();
 		 whenDeployRepository();
 		 thenErrorPresented();
+	}	
+	
+	@Test
+	public void shouldShowErrorWhenNameContains_() throws Exception {
+		givenWrongFormatForRepositoryName("wrong_repo_name");
+		 whenDeployRepository();
+		 thenErrorPresented();
 	}
-
+	
 	private void givenWrongFormatForRepositoryName() {
-		repositoryName = "wrong repository name !@#";
+		givenWrongFormatForRepositoryName("wrong repository name !@#");
+	}
+	
+	private void givenWrongFormatForRepositoryName(String repoName) {
+		repositoryName = repoName;
 		when(messages.wrongNameFormat()).thenReturn(errorMsg);
 	}
 	

@@ -148,7 +148,7 @@ public class VersionPanelPresenter implements Presenter {
 	}
 
 	private boolean unvalidRepositoryNameFormat(String repositoryName) {		
-		return !repositoryName.matches("[a-zA-z\\d]*");
+		return !repositoryName.matches("[a-zA-Z0-9\\-]*");
 	}
 
 	private void deployRepository(String repositoryName) {
