@@ -20,7 +20,7 @@ public class FieldPanelPresenter {
 
 	public void setField(Field field) {
 		view.setName(field.getName());
-		view.setType(String.valueOf(field.getType()));
+		view.setType(field.getType().typeName());
 		view.setRequired(field.isRequired());
 	}
 
