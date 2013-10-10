@@ -69,7 +69,7 @@ public class TopNavPresenter implements Presenter {
 			path = path.substring(0, path.length() - 1);
 		}
 
-		Window.open(Window.Location.createUrlBuilder().setPath(path + "/docs/manual")
+		Window.open(Window.Location.createUrlBuilder().setPath(path + "/docs/manual/")
 				.buildString(), "_blank", "");
 	}
 

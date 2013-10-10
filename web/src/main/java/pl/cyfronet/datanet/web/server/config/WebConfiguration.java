@@ -25,6 +25,8 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 		registry.addResourceHandler("/css/**").addResourceLocations("/css/").setCachePeriod(YEAR);
 		registry.addResourceHandler("/img/**").addResourceLocations("/img/").setCachePeriod(YEAR);
 		registry.addResourceHandler("/highlight/**").addResourceLocations("/highlight/").setCachePeriod(YEAR);
+		registry.addResourceHandler("/docs/manual/resources/**").addResourceLocations("/manual/resources/").setCachePeriod(YEAR);
+		registry.addResourceHandler("/docs/resources/**").addResourceLocations("/manual/resources/").setCachePeriod(YEAR);
 	}
 	
 	@Override
