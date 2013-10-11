@@ -10,16 +10,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.pegdown.PegDownProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.context.support.ServletContextResource;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 @Controller
 public class MarkdownController {
-	private static final String BASE_PATH = "markdown";
+	private static final String BASE_PATH = "manual";
 	
 	@Autowired private PegDownProcessor processor;
 	
@@ -27,7 +28,7 @@ public class MarkdownController {
 	public String processMarkdown(@PathVariable String markdownResource,
 			HttpServletRequest request, HttpServletResponse response, Model model) {
 		Locale locale = RequestContextUtils.getLocale(request);
-		ClassPathResource resource = new ClassPathResource(BASE_PATH + "/" + markdownResource + "_" + locale.getLanguage() + ".md");
+		Resource resource = new ServletContextResource(request.getServletContext(), BASE_PATH + "/" + markdownResource + "_" + locale.getLanguage() + ".md");
 		
 		if (resource.exists()) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();

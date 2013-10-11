@@ -12,19 +12,11 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class EntityPanelWidget extends Composite implements View {
+	private static EntityPanelWidgetUiBinder uiBinder = GWT.create(EntityPanelWidgetUiBinder.class);
+	interface EntityPanelWidgetUiBinder extends UiBinder<Widget, EntityPanelWidget> {}
 
-	private static EntityPanelWidgetUiBinder uiBinder = GWT
-			.create(EntityPanelWidgetUiBinder.class);
-
-	interface EntityPanelWidgetUiBinder extends
-			UiBinder<Widget, EntityPanelWidget> {
-	}
-
-	@UiField
-	Label entityName;
-
-	@UiField
-	Panel fieldContainer;
+	@UiField Label entityName;
+	@UiField Panel fieldContainer;
 	
 	public EntityPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
