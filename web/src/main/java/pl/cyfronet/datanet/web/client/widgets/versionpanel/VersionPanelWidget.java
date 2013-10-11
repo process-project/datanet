@@ -9,7 +9,6 @@ import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -50,7 +49,6 @@ public class VersionPanelWidget extends Composite implements View {
 	void onPerformDeploy(ClickEvent event) {
 		performDeploy.state().loading();
 		cancelDeploy.setEnabled(false);		
-		
 		presenter.deploy(newRepositoryName.getText());
 	}
 	
