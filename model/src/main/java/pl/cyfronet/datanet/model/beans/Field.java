@@ -108,6 +108,18 @@ public class Field implements Serializable {
 	@Override
 	public String toString() {
 		return "Field [name=" + name + ", type=" + type + ", required="
-				+ required + ", target=" + target + "]";
+				+ required + "]";
+	}
+
+	public String getTypeName() {
+		if (target == null) {
+			return type.typeName();
+		} else {
+			if (type == Type.ObjectId) {
+				return target.getName();
+			} else {
+				return target.getName() + Type.TAB;
+			}
+		}
 	}
 }

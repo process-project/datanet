@@ -17,24 +17,16 @@ import com.google.web.bindery.event.shared.binder.EventBinder;
 import com.google.web.bindery.event.shared.binder.EventHandler;
 
 public class FieldPanelPresenter implements Presenter {
-
+	interface FieldPanelEventBinder extends EventBinder<FieldPanelPresenter> {}
+	private final FieldPanelEventBinder eventBinder = GWT.create(FieldPanelEventBinder.class);
+	
 	private static final String ARRAY = "[]";
-
-	interface FieldPanelEventBinder extends EventBinder<FieldPanelPresenter> {
-	}
-
-	private final FieldPanelEventBinder eventBinder = GWT
-			.create(FieldPanelEventBinder.class);
 
 	public interface View extends IsWidget {
 		void setPresenter(Presenter presenter);
-
 		void setName(String fieldName);
-
 		void selectType(String typeName);
-
 		void setRequired(boolean required);
-
 		void setTypes(List<String> types);
 	}
 
@@ -59,7 +51,7 @@ public class FieldPanelPresenter implements Presenter {
 	public void setField(Field field) {
 		this.field = field;
 		view.setName(field.getName());
-		view.selectType(field.getType().typeName());
+		view.selectType(field.getTypeName());
 		view.setRequired(field.isRequired());
 	}
 
@@ -104,6 +96,7 @@ public class FieldPanelPresenter implements Presenter {
 		if (typeName.endsWith(ARRAY)) {
 			return typeName.substring(0, typeName.length() - ARRAY.length());
 		}
+		
 		return typeName;
 	}	
 	
