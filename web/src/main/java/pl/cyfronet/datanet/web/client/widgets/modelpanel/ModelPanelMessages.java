@@ -15,4 +15,5 @@ public interface ModelPanelMessages extends Messages {
 	String confirmModelRemoval();
 	String save();
 	String delete();
+	String confirmSaveBeforeVersion();
 }

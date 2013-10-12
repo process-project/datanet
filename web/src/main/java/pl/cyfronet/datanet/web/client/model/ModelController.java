@@ -26,9 +26,7 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class ModelController {
-
-	private static final Logger logger = LoggerFactory
-			.getLogger(ModelTreePanelPresenter.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(ModelTreePanelPresenter.class.getName());
 
 	private ModelServiceAsync modelService;
 	private EventBus eventBus;

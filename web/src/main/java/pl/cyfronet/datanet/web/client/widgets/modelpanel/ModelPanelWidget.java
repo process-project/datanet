@@ -153,5 +153,10 @@ public class ModelPanelWidget extends Composite implements View {
 	@Override
 	public void setSaveEnabled(boolean enabled) {
 		save.setEnabled(enabled);
+	}
+
+	@Override
+	public boolean confirmSaveBeforeVersion() {
+		return Window.confirm(messages.confirmSaveBeforeVersion());
 	}	
 }
