@@ -5,7 +5,8 @@ public class LoginException extends Exception {
 
 	public enum Code {
 		Unknown,
-		UserPasswordUnknown
+		UserPasswordUnknown,
+		OpenIdAssociationFailed
 	}
 	
 	private Code errorCode;

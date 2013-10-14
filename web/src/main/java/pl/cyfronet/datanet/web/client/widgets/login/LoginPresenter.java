@@ -21,6 +21,11 @@ public class LoginPresenter implements Presenter {
 		void setBusyState(boolean busy);
 		void selectPlLocales();
 		void selectEnLocales();
+		HasText getOpenIdLogin();
+		void errorOpenIdLoginEmpty();
+		void setOpenIdBusyState(boolean state);
+		void openIdLoginInitializationError();
+		void redirect(String redirectionUrl);
 	}
 
 	private ClientController clientController;
@@ -93,5 +98,32 @@ public class LoginPresenter implements Presenter {
 	@Override
 	public void onSwitchLocale(String locale) {
 		clientController.switchLocale(locale);
+	}
+	
+	@Override
+	public void onOpenIdLoginInitiated() {
+		String openIdLogin = view.getOpenIdLogin().getText();
+		
+		if (openIdLogin.isEmpty()) {
+			view.errorOpenIdLoginEmpty();
+			
+			return;
+		}
+		
+		view.clearErrors();
+		view.setOpenIdBusyState(true);
+		loginService.initiateOpenIdLogin(openIdLogin, new AsyncCallback<String>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				view.openIdLoginInitializationError();
+				view.setOpenIdBusyState(false);
+			}
+
+			@Override
+			public void onSuccess(String redirectionUrl) {
+				view.setOpenIdBusyState(false);
+				view.redirect(redirectionUrl);
+			}
+		});
 	}
 }

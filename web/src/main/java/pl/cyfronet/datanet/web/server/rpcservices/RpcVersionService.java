@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
-import pl.cyfronet.datanet.web.client.errors.ModelException;
 import pl.cyfronet.datanet.web.client.errors.VersionException;
 import pl.cyfronet.datanet.web.client.errors.VersionException.Code;
 import pl.cyfronet.datanet.web.client.services.VersionService;

@@ -6,7 +6,6 @@ import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.TextBox;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -14,6 +13,7 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
@@ -28,6 +28,8 @@ public class LoginWidget extends Composite implements View {
 	@UiField Button loginButton;
 	@UiField Button switchToPl;
 	@UiField Button switchToEn;
+	@UiField TextBox openIdLoginField;
+	@UiField Button openIdLoginButton;
 	
 	private LoginMessages messages;
 	private Presenter presenter;
@@ -41,25 +43,41 @@ public class LoginWidget extends Composite implements View {
 	void loginClicked(ClickEvent event) {
 		presenter.onLogin();
 	}
+	
 	@UiHandler("loginField")
 	void loginTyping(KeyUpEvent event) {
 		if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 			presenter.onLogin();
 		}
 	}
+	
 	@UiHandler("passwordField")
 	void passwordTyping(KeyUpEvent event) {
 		if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 			presenter.onLogin();
 		}
 	}
+	
 	@UiHandler("switchToPl")
 	void onSwitchToPl(ClickEvent event) {
 		presenter.onSwitchLocale("pl");
 	}
+	
 	@UiHandler("switchToEn")
 	void onSwitchToEn(ClickEvent event) {
 		presenter.onSwitchLocale("en");
+	}
+	
+	@UiHandler("openIdLoginButton")
+	public void onOpenIdLogin(ClickEvent event) {
+		presenter.onOpenIdLoginInitiated();
+	}
+	
+	@UiHandler("openIdLoginField")
+	void openIdLoginTyping(KeyUpEvent event) {
+		if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+			presenter.onOpenIdLoginInitiated();
+		}
 	}
 
 	@Override
@@ -124,5 +142,36 @@ public class LoginWidget extends Composite implements View {
 	@Override
 	public void selectEnLocales() {
 		switchToEn.setActive(true);	
+	}
+
+	@Override
+	public HasText getOpenIdLogin() {
+		return openIdLoginField;
+	}
+
+	@Override
+	public void errorOpenIdLoginEmpty() {
+		errorLabel.setText(messages.openIdLoginEmpty());
+		alertVisible(true);
+	}
+
+	@Override
+	public void setOpenIdBusyState(boolean state) {
+		if (state) {
+			openIdLoginButton.state().loading();
+		} else {
+			openIdLoginButton.state().reset();
+		}
+	}
+
+	@Override
+	public void openIdLoginInitializationError() {
+		errorLabel.setText(messages.openIdLoginInitializationError());
+	}
+
+	@Override
+	public void redirect(String redirectionUrl) {
+		Window.alert(redirectionUrl);
+		Window.Location.replace(redirectionUrl);
 	}
 }

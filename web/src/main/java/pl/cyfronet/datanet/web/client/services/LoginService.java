@@ -10,4 +10,5 @@ public interface LoginService extends RemoteService {
 	boolean isUserLoggedIn();
 	void login(String user, String password) throws LoginException;
 	void logout();
+	String initiateOpenIdLogin(String openIdLogin) throws LoginException;
 }

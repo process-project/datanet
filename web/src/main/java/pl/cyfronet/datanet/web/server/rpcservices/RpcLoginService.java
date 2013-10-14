@@ -1,10 +1,21 @@
 package pl.cyfronet.datanet.web.server.rpcservices;
 
 import java.util.Calendar;
+import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
+import org.openid4java.consumer.ConsumerException;
+import org.openid4java.consumer.ConsumerManager;
+import org.openid4java.discovery.DiscoveryException;
+import org.openid4java.discovery.DiscoveryInformation;
+import org.openid4java.message.AuthRequest;
+import org.openid4java.message.MessageException;
+import org.openid4java.message.ax.FetchRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,13 +28,20 @@ import pl.cyfronet.datanet.web.client.services.LoginService;
 import pl.cyfronet.datanet.web.server.db.HibernateUserDao;
 import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
 import pl.cyfronet.datanet.web.server.services.security.PortalAuthenticationManager;
+import pl.cyfronet.datanet.web.server.util.WebSessionHelper;
 
 @Service("loginService")
 public class RpcLoginService implements LoginService {
 	private static final Logger log = LoggerFactory.getLogger(RpcLoginService.class);
 	
+	public static final String OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME = "cyfronet.datanet.openid.discoveries";
+	
 	@Autowired private PortalAuthenticationManager authenticationManager;
 	@Autowired private HibernateUserDao userDao;
+	@Autowired private ConsumerManager openIdManager;
+	
+	@Value("${open.id.return.url}") private String openIdReturnUrl;
+	@Value("${open.id.identifier.prefix}") private String openIdIdentifierPrefix;
 
 	@Override
 	public void login(String userLogin, String password) throws LoginException {
@@ -68,5 +86,28 @@ public class RpcLoginService implements LoginService {
 	@Override
 	public void logout() {
 		SecurityContextHolder.getContext().setAuthentication(null);
+	}
+
+	@Override
+	public String initiateOpenIdLogin(String openIdLogin) throws LoginException {
+		log.info("Initialising OpenID login procedure for user {}", openIdLogin);
+
+		try {
+			List<DiscoveryInformation> discoveries = openIdManager.discover(openIdIdentifierPrefix + openIdLogin);
+			DiscoveryInformation discovered = openIdManager.associate(discoveries);
+			HttpSession httpSession = WebSessionHelper.getCurrentSession();
+			httpSession.setAttribute(OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME, discovered);
+			
+			AuthRequest authReq = openIdManager.authenticate(discovered, openIdReturnUrl);
+			FetchRequest fetchRequest = FetchRequest.createFetchRequest();
+			fetchRequest.addAttribute("email", "http://schema.openid.net/contact/email", true);
+			fetchRequest.addAttribute("fullname", "http://schema.openid.net/namePerson", true);
+			fetchRequest.addAttribute("proxy", "http://openid.plgrid.pl/certificate/proxy ", false);
+			authReq.addExtension(fetchRequest);
+			
+			return authReq.getDestinationUrl(true);
+		} catch (DiscoveryException | MessageException | ConsumerException e) {
+			throw new LoginException(Code.OpenIdAssociationFailed);
+		}
 	}
 }

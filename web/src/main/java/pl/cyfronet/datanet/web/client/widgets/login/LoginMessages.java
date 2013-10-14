@@ -14,4 +14,9 @@ public interface LoginMessages extends Messages {
 	String passwordGhostLabel();
 	String datanetLogoAlt();
 	String versionLabel();
+	String openIdLoginLabel();
+	String standardLoginTabLabel();
+	String openIdLoginTabLabel();
+	String openIdLoginEmpty();
+	String openIdLoginInitializationError();
 }
