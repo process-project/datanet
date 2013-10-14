@@ -54,7 +54,7 @@ public class VersionController {
 
 	public void getVersions(long modelId, final VersionsCallback callback, boolean forceRefresh) {
 		if (versions.get(modelId) == null || forceRefresh) {
-			loadVersions(modelId, callback);
+			loadAndReturnVersions(modelId, callback);
 		}
 		else {
 			callback.setVersions(versions.get(modelId));
@@ -79,12 +79,19 @@ public class VersionController {
 				getVersions(modelId, new VersionsCallback() {
 					@Override
 					public void setVersions(List<Version> versions) {
+						Version returned = null;
 						for (Version version : versions) {
 							if (version.getId() == versionId) {
-								callback.setVersion(version);
+								returned = version;
 								break;
 							}
 						}
+						if (returned != null)
+							callback.setVersion(returned);
+						else 
+							eventBus.fireEvent(new NotificationEvent(
+									VersionNotificationMessage.versionLoadError,
+									NotificationType.ERROR));
 					}
 				}, false);
 			}
@@ -94,7 +101,7 @@ public class VersionController {
 	/*
 	 * Returns versions or empty list (should be safe even on failure)
 	 */
-	private void loadVersions(final Long modelId,  final VersionsCallback callback) {
+	private void loadAndReturnVersions(final Long modelId,  final VersionsCallback callback) {
 		log.info("Loading user models");
 		modelController.getModel(modelId, new ModelCallback() {	
 			@Override
