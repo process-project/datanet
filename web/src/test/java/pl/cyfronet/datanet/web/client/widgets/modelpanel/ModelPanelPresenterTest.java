@@ -376,4 +376,29 @@ public class ModelPanelPresenterTest {
 //		verify(view).resetSaveButton();
 		verify(view, times(2)).setSaveEnabled(false);
 	}
+	
+	@Test
+	public void shouldConfirmSaveBeforeVersionCreationIfModelIsDirty() {
+		when(view.confirmSaveBeforeVersion()).thenReturn(true);
+		doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				ModelCallback modelCallback = (ModelCallback) invocation.getArguments()[1];
+				modelCallback.setModel(new ModelProxy(new Model()));
+				
+				return null;
+			}
+			
+		}).when(modelController).saveModel(any(Long.class), any(ModelCallback.class));;
+		
+		ModelProxy modelProxy = new ModelProxy(new Model());
+		modelProxy.setDirty(true);
+		presenter.setModel(modelProxy);
+		
+		presenter.onNewVersionModal();
+		
+		verify(view).confirmSaveBeforeVersion();
+		verify(modelController).saveModel(any(Long.class), any(ModelCallback.class));
+		verify(view).showNewVersionModal();
+	}
 }

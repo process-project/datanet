@@ -3,22 +3,18 @@ package pl.cyfronet.datanet.model.beans;
 
 public enum Type {
 	ObjectId, ObjectIdArray,
-
 	String, StringArray,
-
 	Integer, IntegerArray,
-
 	Float, FloatArray,
-
 	Boolean, BooleanArray,
-
 	File;
 
-	private static final String ARRAY = "Array";
-	private static final String TAB = "[]";
+	static final String ARRAY = "Array";
+	static final String TAB = "[]";
 
 	public String typeName() {
 		String name = super.name();
+		
 		if (name.endsWith(ARRAY)) {
 			// String.format cannot be used because of GWT
 			return substring(name, ARRAY) + TAB;
@@ -35,6 +31,7 @@ public enum Type {
 				return ObjectIdArray;
 			}
 		}
+		
 		try {
 			return valueOf(typeString);
 		} catch (IllegalArgumentException e) {

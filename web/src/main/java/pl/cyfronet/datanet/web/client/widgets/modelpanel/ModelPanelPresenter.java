@@ -23,6 +23,7 @@ import pl.cyfronet.datanet.web.client.widgets.entitypanel.EntityPanelPresenter;
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -55,6 +56,7 @@ public class ModelPanelPresenter implements Presenter {
 		void setSaving();
 		void resetSaveButton();
 		void setSaveEnabled(boolean enabled);
+		boolean confirmSaveBeforeVersion();
 	}
 
 	@Inject
@@ -164,12 +166,24 @@ public class ModelPanelPresenter implements Presenter {
 				return entity;
 			}
 		}
+		
 		return null;
 	}
-	
+
 	@Override
 	public void onNewVersionModal() {
-		view.showNewVersionModal();
+		if (model.isDirty()) {
+			if (view.confirmSaveBeforeVersion()) {
+				doSave(new Command() {
+					@Override
+					public void execute() {
+						view.showNewVersionModal();
+					}
+				});
+			}
+		} else {
+			view.showNewVersionModal();
+		}
 	}
 
 	@Override
@@ -229,13 +243,22 @@ public class ModelPanelPresenter implements Presenter {
 
 	@Override
 	public void onSave() {
+		doSave(null);
+	}
+
+	private void doSave(final Command after) {
 		//view.setSaving();
+		
 		modelController.saveModel(model.getId(), new ModelCallback() {
 			@Override
 			public void setModel(final ModelProxy model) {
 				//XXX After reseting button I'm not able to set enabled to false - bug in bootstrap GWT?
 				//view.resetSaveButton();
 				view.setSaveEnabled(false);
+				
+				if (after != null) {
+					after.execute();
+				}
 			}
 		});
 	}

@@ -194,3 +194,10 @@ wspierane operatory przedstawiono poniżej.
     W takim przypadku wiersz encji zostanie zwrócony tylko wtedy jeśli zapisana tablica zawiera wszystkie
     przekazane wartości. Przykładowa część zapytania powinna wyglądać następująco:
     `...&tablica_numeryczna=45,34,98&...`.
+    
+* **złożone zapytania**: `>20` & `<=30`
+	W przypadku, gdy chcemy stworzyć bardziej złożone zapytanie, gdzie pojedynczy atrybut powinien spełniać kilka warunków możemy
+	skorzystać ze złożony zapytań. Tworzymy je podobnie jak w przykładach opisanych powyżej, z tą różnicą, że po nazwie atrybutu dodajemy
+	`[]`. Dzięki takiemu zakodowaniu parametrów do repozytorium przekazywana jest tablica warunków dla danego atrybutu. Przykładowe zapytanie 
+	może wyglądać następująco: `...&wiek[]=>20&wiek[]=<=30...`. W rezultacie zostaną zwrócone wszystkie rekordy, w których `wiek` znajduje 
+	się w przedziale `(20, 30]`. 

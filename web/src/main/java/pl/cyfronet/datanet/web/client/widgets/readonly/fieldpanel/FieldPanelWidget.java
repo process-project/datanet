@@ -10,18 +10,12 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FieldPanelWidget extends Composite implements View {
-
-	private static FieldPanelWidgetUiBinder uiBinder = GWT
-			.create(FieldPanelWidgetUiBinder.class);
-
-	interface FieldPanelWidgetUiBinder extends
-			UiBinder<Widget, FieldPanelWidget> {
-	}
+	private static FieldPanelWidgetUiBinder uiBinder = GWT.create(FieldPanelWidgetUiBinder.class);
+	interface FieldPanelWidgetUiBinder extends UiBinder<Widget, FieldPanelWidget> {}
 
 	@UiField Label name;
 	@UiField Label type;
 	@UiField Label required;
-	
 	
 	public FieldPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
