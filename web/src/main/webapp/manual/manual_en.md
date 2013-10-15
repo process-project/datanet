@@ -3,7 +3,8 @@
 ### Introduction
 
 DataNet is a platform for managing metadata and data models and deploying corresponding data repositories for collecting and sharing the data.
-The following sections describe the process presenting corresponding screenshots of the available user interface.
+The following sections describe the process presenting corresponding screenshots of the available user interface. If you wish to learn to use
+the platform by following a step-by-step tutorial please go to the [tutorial section](../tutorial/).
 
 The interface becomes available after a successful login procedure by providing valid PLGrid credentials in the login screen presented below.
 
