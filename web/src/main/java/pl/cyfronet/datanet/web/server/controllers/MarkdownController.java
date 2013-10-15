@@ -20,18 +20,15 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 
 @Controller
 public class MarkdownController {
+	private static final String BASE_PATH = "manual";
+	
 	@Autowired private PegDownProcessor processor;
 	
-	/**
-	 * Serves markdown files from <code>src/main/webapp/{markdownResource}/{markdownResource}_{locale}.md</code>.
-	 * E.g. request with the URL <code>/docs/manual</code> will process the <code>/src/main/webapp/manual/manual_en.md</code> file. The locale part
-	 * will be set according to the session settings.
-	 */
 	@RequestMapping("/docs/{markdownResource}")
 	public String processMarkdown(@PathVariable String markdownResource,
 			HttpServletRequest request, HttpServletResponse response, Model model) {
 		Locale locale = RequestContextUtils.getLocale(request);
-		Resource resource = new ServletContextResource(request.getServletContext(), markdownResource + "/" + markdownResource + "_" + locale.getLanguage() + ".md");
+		Resource resource = new ServletContextResource(request.getServletContext(), BASE_PATH + "/" + markdownResource + "_" + locale.getLanguage() + ".md");
 		
 		if (resource.exists()) {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -44,7 +41,6 @@ public class MarkdownController {
 			
 			String html = processor.markdownToHtml(new String(out.toByteArray()));
 			model.addAttribute("mdContents", html);
-			model.addAttribute("resourceKey", markdownResource);
 		}
 		
 		return "mdWrapper";
