@@ -36,7 +36,7 @@ relationships. Follow the steps below to accomplish this task.
         * required field with name **ordinal** and type **Integer** - this will hold the step number
         * required field with name **snapshot** and type **Integer[]** - this will hold the sorted sequence at a given step
         * required field with name **input** and type **Input** - this will reference the *Input* entity
-        * required field with name **image** and type **File** - this will hold the image of the sorted sequence being one frame of the final movie
+        * not required field with name **image** and type **File** - this will hold the image of the sorted sequence being one frame of the final movie
     * entity with name **Result** and fields:
         * required field with name **input** and type **Input** - this will reference the *Input* entity
         * required field with name **movie** and type **File** - this will hold the final movie
@@ -94,11 +94,11 @@ below to accomplish this task.
 
 5. Open the experiment by clicking it in the *Files* panel.
 
-    You should see four main code snippets which generate a random number sequence (Ruby), sort the sequence storing individual
-    steps (Python), generate step image using gnuplot (Bash) and produce the final movie (Bash job). Each of the codes
+    You should see three main code snippets which generate a random number sequence (Ruby), sort the sequence storing individual
+    steps (Python) and produce the final movie (Bash job). Each of the codes
     accesses the remote DataNet repository to store or retrieve relevant data. The first snippet is used to distribute repository
     URL among other snippets.
 
 6. Execute individual code snippets starting from the first one and observe the data table in the repository view for each of 
    the entities (you can refresh the view by refreshing the whole page). The data table should be filled in with data. The final
-   movie can be downloaded from the Result entity table.
+   movie can be downloaded from the *Result* entity table.
