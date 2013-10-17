@@ -28,7 +28,7 @@ relationships. Follow the steps below to accomplish this task.
 
     The model should look more or less the same as in the figure below.
     
-    ![Sort model with one entity](resources/model-one-entity.png)
+    ![Sort model with one entity](resources/tut-model-one-entity.png)
 
 7. Add two more entities with fields according to the structure below.
 
@@ -43,7 +43,7 @@ relationships. Follow the steps below to accomplish this task.
 
 8. Save the model which should resemble the one below now.
 
-    ![Final sort model](resources/final-sort-model.png)
+    ![Final sort model](resources/tut-final-sort-model.png)
 
 ### Creating a version and deploying the repository
 
@@ -61,7 +61,7 @@ deploy the version as a working repository. To do that follow the steps below.
     the model creation view with the difference that the model cannot be modified. It should be similar to the snapshot
     below.
     
-    ![Model version view](resources/model-version.png)
+    ![Model version view](resources/tut-model-version.png)
 
 3. In the version view click the <button class="btn btn-success"><i class="icon-cloud-upload"> Deploy repository...</i></button>
    button to deploy the repository.
@@ -75,7 +75,7 @@ deploy the version as a working repository. To do that follow the steps below.
     showing how to access the repository and take a peek at the data stored in it for each of the entities (for now the
     repository will be empty). For reference the repository view snapshot is given below.
     
-    ![Repository view](resources/model-repository.png)
+    ![Repository view](resources/tut-model-repository.png)
 
 ### Execution of the sorting code
 
@@ -94,9 +94,11 @@ below to accomplish this task.
 
 5. Open the experiment by clicking it in the *Files* panel.
 
-    You should see four code snippets which generate a random number sequence (Ruby), sort the sequence storing individual
+    You should see four main code snippets which generate a random number sequence (Ruby), sort the sequence storing individual
     steps (Python), generate step image using gnuplot (Bash) and produce the final movie (Bash job). Each of the codes
-    accesses the remote DataNet repository to store or retrieve relevant data.
+    accesses the remote DataNet repository to store or retrieve relevant data. The first snippet is used to distribute repository
+    URL among other snippets.
 
-6. Execute individual code snippets starting from the first one and observe the data table in the repository view (you
-   can refresh the view by refreshing the whole page).
+6. Execute individual code snippets starting from the first one and observe the data table in the repository view for each of 
+   the entities (you can refresh the view by refreshing the whole page). The data table should be filled in with data. The final
+   movie can be downloaded from the Result entity table.
