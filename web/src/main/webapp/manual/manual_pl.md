@@ -4,7 +4,7 @@
 
 DataNet jest platformą służącą do zarządzania modelami metadanych oraz danych i do udostępniania repozytoriów za pomocą których gromadzone
 dane mogą być współdzielone. Poniższe sekcje zawierają opis platformy prezentując rownież stosowne zrzuty obrazów dostępnych interfejsów
-użytkownika. Jeśli chcesz zapoznać się z platformą podążając krok po kroku według instrukcji przejdź do [sekcji z tutorialem](../tutorial/).
+użytkownika.
 
 Główny interfejs użytkownika staje się dostępny po pomyślnym zalogowaniu się poprzez użycie ważnego loginu i hasła infrastruktury PLGrid
 na ekranie logowania przedstawionym poniżej. 
