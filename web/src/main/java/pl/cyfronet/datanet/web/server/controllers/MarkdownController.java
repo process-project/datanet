@@ -27,7 +27,7 @@ public class MarkdownController {
 	 * E.g. request with the URL <code>/docs/manual</code> will process the <code>/src/main/webapp/manual/manual_en.md</code> file. The locale part
 	 * will be set according to the session settings.
 	 */
-	@RequestMapping("/docs/{markdownResource}")
+	@RequestMapping("/documentation/{markdownResource}")
 	public String processMarkdown(@PathVariable String markdownResource,
 			HttpServletRequest request, HttpServletResponse response, Model model) {
 		Locale locale = RequestContextUtils.getLocale(request);
