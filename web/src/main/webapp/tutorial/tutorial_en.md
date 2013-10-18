@@ -27,7 +27,7 @@ relationships. Follow the steps below to accomplish this task.
 6. Save the model by using the <button class="btn"><i class="icon-save"> Save</i></button> button.
 
     The model should look more or less the same as in the figure below.
-    
+
     ![Sort model with one entity](resources/tut-model-one-entity.png)
 
 7. Add two more entities with fields according to the structure below.

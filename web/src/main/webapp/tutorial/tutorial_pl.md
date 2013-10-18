@@ -99,4 +99,4 @@ dane aktywnego konta PLGrid, dostęp do jednej z infrastruktur obliczeniowych PL
 
 6. Uruchom poszczególne fragmenty kodów zaczynając odpierwszego i obserwuj dane w widoku repozytorium dla każdej z encji (widok
    można odświeżyć poprzez odświeżenie całej strony). Tabela z danymi powinna zostać uzupełniona danymi z repozytorium. Końcowy
-   film może zostać ściągnięty z tabeli dla encji *Result*. 
+   film może zostać ściągnięty z tabeli dla encji *Result*.
