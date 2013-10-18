@@ -39,8 +39,7 @@ public class RpcLoginService implements LoginService {
 	@Autowired private PortalAuthenticationManager authenticationManager;
 	@Autowired private HibernateUserDao userDao;
 	@Autowired private ConsumerManager openIdManager;
-	
-	@Value("${open.id.return.url}") private String openIdReturnUrl;
+
 	@Value("${open.id.identifier.prefix}") private String openIdIdentifierPrefix;
 
 	@Override
@@ -98,6 +97,7 @@ public class RpcLoginService implements LoginService {
 			HttpSession httpSession = WebSessionHelper.getCurrentSession();
 			httpSession.setAttribute(OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME, discovered);
 			
+			String openIdReturnUrl = WebSessionHelper.getCurrentUrl();
 			AuthRequest authReq = openIdManager.authenticate(discovered, openIdReturnUrl);
 			FetchRequest fetchRequest = FetchRequest.createFetchRequest();
 			fetchRequest.addAttribute("email", "http://schema.openid.net/contact/email", true);

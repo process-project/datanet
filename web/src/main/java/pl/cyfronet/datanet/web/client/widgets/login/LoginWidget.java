@@ -171,7 +171,6 @@ public class LoginWidget extends Composite implements View {
 
 	@Override
 	public void redirect(String redirectionUrl) {
-		Window.alert(redirectionUrl);
 		Window.Location.replace(redirectionUrl);
 	}
 }

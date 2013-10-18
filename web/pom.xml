@@ -276,6 +276,13 @@
 			<artifactId>openid4java</artifactId>
 			<version>0.9.8</version>
 		</dependency>
+
+		<!-- GRID proxy dependencies -->
+		<dependency>
+			<groupId>eu.eu-emi.security</groupId>
+			<artifactId>canl</artifactId>
+			<version>1.2.1</version>
+		</dependency>
 		
 		<!-- Tests -->
 		<dependency>

@@ -16,17 +16,12 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 public class MainController {
 	private static final Logger log = LoggerFactory.getLogger(MainController.class);
 	
-	@RequestMapping({"/", "/login"})
+	@RequestMapping({"/"})
 	public String main(Model model, HttpServletRequest request) throws IOException {	
 		Locale locale = RequestContextUtils.getLocale(request);
 		model.addAttribute("locale", locale.getLanguage());
 		log.debug("Setting locale to {}", locale.getLanguage());
 		
 		return "main";
-	}
-	
-	@RequestMapping("/help")
-	public String help() throws IOException {
-		return "help";
 	}
 }
