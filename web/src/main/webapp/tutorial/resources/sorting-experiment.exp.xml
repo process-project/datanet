@@ -47,7 +47,6 @@ repositoryUrl = open('repo.txt', 'r').read().strip()
 #reading in the input id
 f = open('input-id.txt', 'r')
 inputId = f.read()
-print inputId
 
 #retrieving the array from DataNet
 response = requests.get(repositoryUrl + 'Input/' + inputId, auth = ('public', 'public'))
@@ -75,7 +74,7 @@ def dumpState(array, index):
     for number in array:
         dataFile.write(str(number) + &quot;\n&quot;)
     dataFile.close()
-    os.system('gnuplot gnuplot.plt')
+    os.system('gnuplot gnuplot.plt &gt; /dev/null 2&gt;&amp;1')
     response = requests.post(repositoryUrl + 'Step', auth = ('plgtesthar', 'que2feeTaifoush'), data = {'ordinal': index, 'snapshot': str(array), 'input': inputId}, files = {'image': open('frame.png', 'r')})
 
 #sorting and dumping steps
@@ -88,7 +87,9 @@ for i in range(1, l):
         array[j] = array[j-1]
         j -= 1
     array[j] = val
-    dumpState(array, i)</code>
+    dumpState(array, i)
+
+print &quot;Finished.&quot;</code>
     </snippet>
     <snippet interpreter="Bash-3.2-PBS-I" id="a4">
         <name>Złożenie końcowego filmu</name>
@@ -112,6 +113,9 @@ do
   echo $imageUrl
   curl -o frame${i}.png -uplgtesthar:que2feeTaifoush $imageUrl
 done
+
+#loading the ffmpeg module
+module load tools/ffmpeg/1.2.1
 
 #generating the final movie
 FRAMERATE=10
