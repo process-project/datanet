@@ -12,7 +12,7 @@ For our sorting experiment we want to store input number series and the final so
 but also, all the intermediary sorting steps. We will use a model consisting of three entities with
 relationships. Follow the steps below to accomplish this task.
 
-1. Login to DataNet [here](https://gs2.cyfronet.pl/datanet) (you will have to have a valid PLGrid account).
+1. Login to DataNet [here](../../) (you will have to have a valid PLGrid account).
 
 2. Create a new model by clicking the <button class="btn btn-success"><i class="icon-plus"></i> Add new model</button> and change its name in the *Model name* field
    to your liking.
@@ -99,6 +99,8 @@ below to accomplish this task.
     accesses the remote DataNet repository to store or retrieve relevant data. The first snippet is used to distribute repository
     URL among other snippets.
 
-6. Execute individual code snippets starting from the first one and observe the data table in the repository view for each of 
+6. Update your repository location inside first code snippet
+
+7. Execute individual code snippets starting from the first one and observe the data table in the repository view for each of 
    the entities (you can refresh the view by refreshing the whole page). The data table should be filled in with data. The final
    movie can be downloaded from the *Result* entity table.

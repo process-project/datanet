@@ -13,7 +13,7 @@ W naszym eksperymencie sortującym będziemy chcieli zapisać wejściową serię
 proces sortowania jak również wszystkie pośrednie kroki sortowania. Do tego celu użyjemy modelu składającego się
 z trzech powiązanych encji. Proszę podążać za krokami poniżej w celu wykonania tego zadania.
 
-1. Proszę zalogować się do DataNet [tutaj](https://gs2.cyfronet.pl/datanet) (potrzebne będą login i hasło PLGrid).
+1. Proszę zalogować się do DataNet [tutaj](../../) (potrzebne będą login i hasło PLGrid).
 
 2. Utwórz nowy model przez kliknięcie przycisku <button class="btn btn-success"><i class="icon-plus"></i> Dodaj nowy model</button>.
 
@@ -97,6 +97,8 @@ dane aktywnego konta PLGrid, dostęp do jednej z infrastruktur obliczeniowych PL
     w celu zapisania lub pobrania odpowiednich danych. Pierwszy fragment kodu służy do rozpropagowania adresu repozytorium do innych
     fragmentów.
 
-6. Uruchom poszczególne fragmenty kodów zaczynając odpierwszego i obserwuj dane w widoku repozytorium dla każdej z encji (widok
+6. Zaktualizuj adres swojego repozytorium w pierwszym fragmencie kodu
+
+7. Uruchom poszczególne fragmenty kodów zaczynając odpierwszego i obserwuj dane w widoku repozytorium dla każdej z encji (widok
    można odświeżyć poprzez odświeżenie całej strony). Tabela z danymi powinna zostać uzupełniona danymi z repozytorium. Końcowy
    film może zostać ściągnięty z tabeli dla encji *Result*.
