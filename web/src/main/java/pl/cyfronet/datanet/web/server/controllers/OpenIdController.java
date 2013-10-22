@@ -68,7 +68,12 @@ public class OpenIdController {
 					String fullname = (String) fullNames.get(0);
 					List<String> proxies = fetchResp.getAttributeValues("proxy");
 					String proxy = (String) proxies.get(0);
-					log.debug("Retrieved from OpenID: email: {}, full name: {} and proxy: {}", new Object[] {email, fullname, proxy});
+					List<String> userCerts = fetchResp.getAttributeValues("userCert");
+					String userCert = (String) userCerts.get(0);
+					List<String> userPrivKeys = fetchResp.getAttributeValues("userCert");
+					String userPrivKey = (String) userPrivKeys.get(0);
+					log.debug("Retrieved from OpenID: email: {}, full name: {}, proxy: {}, proxyPrivKey {} and userCert {}",
+							new Object[] {email, fullname, proxy, userPrivKey, userCert});
 					
 					//checking the proxy
 					try {
