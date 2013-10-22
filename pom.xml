@@ -13,8 +13,8 @@
 	</parent>
 
 	<scm>
-		<connection>scm:git:ssh://git@dev.cyfronet.pl/datanet.git</connection>
-		<developerConnection>scm:git:ssh://git@dev.cyfronet.pl/datanet.git</developerConnection>
+		<connection>scm:git:ssh://git@dev.cyfronet.pl/datanet/datanet.git</connection>
+		<developerConnection>scm:git:ssh://git@dev.cyfronet.pl/datanet/datanet.git</developerConnection>
 		<url>http://dev.cyfronet.pl/gitlab/datanet</url>
 		<tag>datanet-0.1.0</tag>
 	</scm>
