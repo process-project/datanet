@@ -7,7 +7,7 @@
         <name>Ustawienie adresu repozytorium</name>
         <description></description>
         <output>a8</output>
-        <code>echo &quot;http://sortrepo6.datanet.cyfronet.pl/&quot; &gt; repo.txt</code>
+        <code>echo &quot;https://sortingtutrepo.datanet.cyfronet.pl/&quot; &gt; repo.txt</code>
     </snippet>
     <snippet interpreter="Ruby-2.0.0" id="a1">
         <name>Generacja losowych liczb</name>
@@ -49,7 +49,7 @@ f = open('input-id.txt', 'r')
 inputId = f.read()
 
 #retrieving the array from DataNet
-response = requests.get(repositoryUrl + 'Input/' + inputId, auth = ('public', 'public'))
+response = requests.get(repositoryUrl + 'Input/' + inputId, auth = ('public', 'public'), verify = False)
 array = json.loads(response.content)['input']
 
 #storing the length of array
@@ -75,7 +75,7 @@ def dumpState(array, index):
         dataFile.write(str(number) + &quot;\n&quot;)
     dataFile.close()
     os.system('gnuplot gnuplot.plt &gt; /dev/null 2&gt;&amp;1')
-    response = requests.post(repositoryUrl + 'Step', auth = ('plgtesthar', 'que2feeTaifoush'), data = {'ordinal': index, 'snapshot': str(array), 'input': inputId}, files = {'image': open('frame.png', 'r')})
+    response = requests.post(repositoryUrl + 'Step', auth = ('plgtesthar', 'que2feeTaifoush'), data = {'ordinal': index, 'snapshot': str(array), 'input': inputId}, files = {'image': open('frame.png', 'r')}, verify = False)
 
 #sorting and dumping steps
 l = len(array)
@@ -106,12 +106,12 @@ LENGTH=$(($LENGTH-1))
 for i in $(eval echo &quot;{0..$LENGTH}&quot;)
 do
   URL=${REPO}Step?input=${INPUT_ID}\&amp;ordinal=${i}
-  imageId=`curl -upublic:public $URL`
+  imageId=`curl -k -upublic:public $URL`
   imageId=`echo $imageId | sed s/.*image\&quot;:\&quot;// | sed s/\&quot;.*//`
   echo $imageId
   imageUrl=${REPO}file/${imageId}
   echo $imageUrl
-  curl -o frame${i}.png -uplgtesthar:que2feeTaifoush $imageUrl
+  curl -k -o frame${i}.png -uplgtesthar:que2feeTaifoush $imageUrl
 done
 
 #loading the ffmpeg module
@@ -125,7 +125,7 @@ ffmpeg -r $FRAMERATE -b 16777216 -i frame%d.png $OUT
 
 #storing the final movie in DataNet
 storeUrl=$REPO/Result
-curl -uplgtesthar:que2feeTaifoush -F input=${INPUT_ID} -F movie=@${OUT} $storeUrl</code>
+curl -k -uplgtesthar:que2feeTaifoush -F input=${INPUT_ID} -F movie=@${OUT} $storeUrl</code>
     </snippet>
     <inputOutput fileName="input-id.txt" id="a5">
         <name>input-id</name>
