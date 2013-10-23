@@ -70,7 +70,7 @@ public class OpenIdController {
 					String proxy = (String) proxies.get(0);
 					List<String> userCerts = fetchResp.getAttributeValues("userCert");
 					String userCert = (String) userCerts.get(0);
-					List<String> userPrivKeys = fetchResp.getAttributeValues("userCert");
+					List<String> userPrivKeys = fetchResp.getAttributeValues("userPrivKey");
 					String userPrivKey = (String) userPrivKeys.get(0);
 					log.debug("Retrieved from OpenID: email: {}, full name: {}, proxy: {}, proxyPrivKey {} and userCert {}",
 							new Object[] {email, fullname, proxy, userPrivKey, userCert});
