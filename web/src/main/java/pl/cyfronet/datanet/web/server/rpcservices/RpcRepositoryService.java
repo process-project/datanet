@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.server.rpcservices;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import pl.cyfronet.datanet.deployer.Deployer;
 import pl.cyfronet.datanet.deployer.DeployerException;
@@ -186,6 +189,7 @@ public class RpcRepositoryService implements RepositoryService {
 			Map<String, String> models = modelSchemaGenerator.generateSchema(version);
 			String token = UUID.randomUUID().toString();
 			String repositoryUrl = deployer.deployRepository(Deployer.RepositoryType.Mongo, repositoryName, models, token);
+			repositoryUrl = changeToHttps(repositoryUrl);
 			UserDbEntity user = userDao.getUser(SpringSecurityHelper.getUserLogin());
 			RepositoryDbEntity repository = new RepositoryDbEntity();
 
@@ -218,7 +222,7 @@ public class RpcRepositoryService implements RepositoryService {
 			throw new RepositoryException(Code.ModelDeployError, e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * @deprecated instead use the following action: pl.cyfronet.datanet.web.server.controllers.FormController.handleForm(EntityUpload)
 	 */
@@ -312,5 +316,12 @@ public class RpcRepositoryService implements RepositoryService {
 			log.error(message, e);
 			throw new ModelException(pl.cyfronet.datanet.web.client.errors.ModelException.Code.ModelRetrievalError);
 		}
+	}
+	
+	private String changeToHttps(String repositoryUrl) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(repositoryUrl);
+		builder.scheme("https");
+		
+		return builder.build().toUriString();
 	}
 }

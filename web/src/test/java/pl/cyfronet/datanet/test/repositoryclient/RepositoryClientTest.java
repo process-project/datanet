@@ -4,6 +4,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +56,7 @@ public class RepositoryClientTest {
 	}
 	
 //	@Test
-	public void insertFileData() throws RestClientException, URISyntaxException, IOException {
+	public void insertFileData() throws RestClientException, URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException {
 		String time = String.valueOf(System.currentTimeMillis());
 		Map<String, String> data = new HashMap<>();
 		data.put("meta", "testing file insertion at " + time);
