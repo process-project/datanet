@@ -19,7 +19,9 @@ public class WebSessionHelper {
 	public static String getCurrentUrl() {
 		ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		HttpServletRequest request = requestAttributes.getRequest();
-		String result = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+		
+		String serverPort = (request.getServerPort() != 443 && request.getServerPort() != 80) ? ":" + String.valueOf(request.getServerPort()) : "";
+		String result = request.getScheme() + "://" + request.getServerName() + serverPort + request.getContextPath();
 		
 	    return result;
 	}

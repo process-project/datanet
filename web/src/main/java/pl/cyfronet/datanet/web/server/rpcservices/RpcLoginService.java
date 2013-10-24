@@ -104,7 +104,7 @@ public class RpcLoginService implements LoginService {
 			fetchRequest.addAttribute("fullname", "http://schema.openid.net/namePerson", true);
 			fetchRequest.addAttribute("proxy", "http://openid.plgrid.pl/certificate/proxy ", false);
 			fetchRequest.addAttribute("userCert", "http://openid.plgrid.pl/certificate/userCert", false);
-//			fetchRequest.addAttribute("proxyPrivKey", "http://openid.plgrid.pl/certificate/proxyPrivKey", false);
+			fetchRequest.addAttribute("proxyPrivKey", "http://openid.plgrid.pl/certificate/proxyPrivKey", false);
 			authReq.addExtension(fetchRequest);
 			
 			return authReq.getDestinationUrl(true);
