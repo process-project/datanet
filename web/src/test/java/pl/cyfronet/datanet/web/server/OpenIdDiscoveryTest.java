@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.server;
 
+import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -70,5 +71,10 @@ public class OpenIdDiscoveryTest {
 		DiscoveryInformation discovered = consumerManager.associate(discoveries);
 		log.info("Discovered: {}", discovered);
 		Assert.assertNotNull(discovered);
+	}
+	
+	@Test
+	public void shouldEncodeUtf8() {
+		log.info("{}", new String("\n".getBytes(Charset.forName("UTF-8"))));
 	}
 }

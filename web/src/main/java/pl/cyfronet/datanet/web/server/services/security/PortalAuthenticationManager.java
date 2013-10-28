@@ -17,7 +17,7 @@ import pl.cyfronet.datanet.web.server.services.portallogin.PortalLoginHandler;
 
 @Service
 public class PortalAuthenticationManager implements AuthenticationManager {
-	private final static String USER_ROLE = "ROLE_USER";
+	public final static String USER_ROLE = "ROLE_USER";
 	
 	@Autowired private PortalLoginHandler portalLoginHandler;
 	

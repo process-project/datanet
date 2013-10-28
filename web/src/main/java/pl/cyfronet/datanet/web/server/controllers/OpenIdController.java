@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,18 +28,27 @@ import org.openid4java.message.ax.FetchResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
+import pl.cyfronet.datanet.web.server.services.security.PortalAuthenticationManager;
 import eu.emi.security.authn.x509.proxy.ProxyUtils;
 
 @Controller
 public class OpenIdController {
 	private static final Logger log = LoggerFactory.getLogger(OpenIdController.class);
 	
-	@Autowired MainController mainController;
+	@Autowired private MainController mainController;
 	@Autowired private ConsumerManager openIdManager;
+	@Autowired private MessageSource messages;
 	
 	@SuppressWarnings({"unchecked" })
 	@RequestMapping(value = "/", params = "openid.ns")
@@ -72,27 +84,56 @@ public class OpenIdController {
 					String userCert = (String) userCerts.get(0);
 					List<String> proxyPrivKeys = fetchResp.getAttributeValues("proxyPrivKey");
 					String proxyPrivKey = (String) proxyPrivKeys.get(0);
-					log.debug("Retrieved from OpenID: email: {}, full name: {}, proxy: {}, proxyPrivKey {} and userCert {}",
-							new Object[] {email, fullname, proxy, proxyPrivKey, userCert});
+					boolean canLogin = true;
 					
-					//checking the proxy
 					try {
-						ByteArrayInputStream baos = new ByteArrayInputStream((userCert + "\n"+ proxyPrivKey + "\n" + proxy).getBytes());
+						String completeProxy = getProxyContent(proxy, userCert, proxyPrivKey);
 						CertificateFactory cf = CertificateFactory.getInstance("X.509");
-						X509Certificate crt = (X509Certificate) cf.generateCertificate(baos);
-						boolean result = ProxyUtils.isProxy(crt);
-						log.debug("Is proxy: {}", result);
+						X509Certificate crt = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(replaceBrWithNewLines(proxy).getBytes()));
+						
+						if (!ProxyUtils.isProxy(crt)) {
+							model.addAttribute("processingError", messages.getMessage("open.id.user.proxy.unrecongnized", null, RequestContextUtils.getLocale(request)));
+							canLogin = false;
+						}
+						
+						Date current = Calendar.getInstance().getTime();
+						
+						if (current.after(crt.getNotAfter()) || current.before(crt.getNotBefore())) {
+							model.addAttribute("processingError", messages.getMessage("open.id.user.proxy.expired", null, RequestContextUtils.getLocale(request)));
+							canLogin = false;
+						}
 					} catch (CertificateException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						log.error("Could not retrieve a valid user proxy");
+						log.error("Error was:", e);
+						model.addAttribute("processingError", messages.getMessage("open.id.user.proxy.error", null, RequestContextUtils.getLocale(request)));
+						canLogin = false;
+					}
+					
+					if (canLogin) {
+						List<GrantedAuthority> authorities = new ArrayList<>();
+						authorities.add(new SimpleGrantedAuthority(PortalAuthenticationManager.USER_ROLE));
+						
+						Authentication authentication = new UsernamePasswordAuthenticationToken(authSuccess.getIdentity(), "", authorities);
+						SecurityContextHolder.getContext().setAuthentication(authentication);
 					}
 	            }
+	        } else {
+	        	model.addAttribute("processingError", messages.getMessage("open.id.verification.failed", null, RequestContextUtils.getLocale(request)));
 	        }
 		} catch (MessageException | DiscoveryException | AssociationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Could not properly finish the OpenID login procedure");
+			log.error("Error was:", e);
+			model.addAttribute("processingError", messages.getMessage("open.id.sequence.error", null, RequestContextUtils.getLocale(request)));
 		}
 
 		return mainController.main(model, request);
+	}
+
+	private String getProxyContent(String proxy, String userCert, String proxyPrivKey) {
+		return replaceBrWithNewLines(userCert) + replaceBrWithNewLines(proxyPrivKey) + replaceBrWithNewLines(proxy);
+	}
+
+	private String replaceBrWithNewLines(String contents) {
+		return contents.replaceAll("<br>", "\n");
 	}
 }
