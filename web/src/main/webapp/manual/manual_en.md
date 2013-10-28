@@ -3,7 +3,8 @@
 ### Introduction
 
 DataNet is a platform for managing metadata and data models and deploying corresponding data repositories for collecting and sharing the data.
-The following sections describe the process presenting corresponding screenshots of the available user interface.
+The following sections describe the process presenting corresponding screenshots of the available user interface. If you wish to learn to use
+the platform by following a step-by-step tutorial please go to the [tutorial section](../tutorial/).
 
 The interface becomes available after a successful login procedure by providing valid PLGrid credentials in the login screen presented below.
 
@@ -188,3 +189,9 @@ The supported operators are listed below.
     In case a field has an array type a list of values can be given to match the stored contents. In such case
     an entity row will be returned only if the stored array contains all of the passed values. A sample query
     part could look like this: `...&array_number_field=45,34,98&...`.
+    
+* **complex queries**: `>20` & `<=30`
+	In case when attribute should fulfill complex query conditions you can pass conditions array encoded into 
+	query parameters. It is done by adding `[]` at the end of attribute name. E.g. when you want to return all
+	records for user entity, where user is in age higher than 20 and not higher than 30 than you can use following
+	query params: `...&age[]=>20&age[]=<=30...`

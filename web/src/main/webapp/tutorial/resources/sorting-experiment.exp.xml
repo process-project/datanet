@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<experiment>
+    <metadata>
+        <creationDate>2013-10-15 11:19</creationDate>
+    </metadata>
+    <snippet interpreter="Bash-3.2" id="a7">
+        <name>Ustawienie adresu repozytorium</name>
+        <description></description>
+        <output>a8</output>
+        <code>echo &quot;https://sortingtutrepo.datanet.cyfronet.pl/&quot; &gt; repo.txt</code>
+    </snippet>
+    <snippet interpreter="Ruby-2.0.0" id="a1">
+        <name>Generacja losowych liczb</name>
+        <description></description>
+        <input>a8</input>
+        <output>a5</output>
+        <code>require 'rest_client'
+require 'json'
+
+#reading in the repository URL
+repositoryUrl = File.new('repo.txt', 'r').read().strip()
+
+#generating numbers to be sorted
+size = 10
+array = (1..size).map {rand(size)}
+
+#saving the array in DataNet
+repository = RestClient::Resource.new(repositoryUrl + 'Input', :user =&gt; 'public', :password =&gt; 'public')
+jdata = {:input =&gt; array, :description =&gt; 'Another sorting sequence'}.to_json
+inputId = repository.post jdata, content_type: :json
+
+#storing input ID to be passed to the next snippet
+File.open('input-id.txt', 'w') {|f| f.write(inputId)}</code>
+    </snippet>
+    <snippet interpreter="Python-2.7.5" id="a2">
+        <name>Sortowanie i zapis kroków</name>
+        <description></description>
+        <input>a5</input>
+        <output>a9</output>
+        <code>import requests
+import json
+import os
+
+#reading in the repository URL
+repositoryUrl = open('repo.txt', 'r').read().strip()
+
+#reading in the input id
+f = open('input-id.txt', 'r')
+inputId = f.read()
+
+#retrieving the array from DataNet
+response = requests.get(repositoryUrl + 'Input/' + inputId, auth = ('public', 'public'), verify = False)
+array = json.loads(response.content)['input']
+
+#storing the length of array
+f = open('array-length.txt', 'w')
+f.write(str(len(array)))
+f.close()
+
+#preparing a gnuplot script
+plot = open('gnuplot.plt', 'w')
+plot.write(&quot;&quot;&quot;set terminal png
+set output \&quot;frame.png\&quot;
+unset key\nunset xtics; unset ytics
+set style fill solid 0.25 border
+set boxwidth 0.8
+plot \&quot;data.txt\&quot; using 0:1 with boxes
+&quot;&quot;&quot;)
+plot.close()
+
+#DataNet dump function
+def dumpState(array, index):
+    dataFile = open('data.txt', 'w')
+    for number in array:
+        dataFile.write(str(number) + &quot;\n&quot;)
+    dataFile.close()
+    os.system('gnuplot gnuplot.plt &gt; /dev/null 2&gt;&amp;1')
+    response = requests.post(repositoryUrl + 'Step', auth = ('plgtesthar', 'que2feeTaifoush'), data = {'ordinal': index, 'snapshot': str(array), 'input': inputId}, files = {'image': open('frame.png', 'r')}, verify = False)
+
+#sorting and dumping steps
+l = len(array)
+dumpState(array, 0)
+for i in range(1, l):
+    val = array[i]
+    j = i
+    while j &gt; 0 and array[j-1] &gt; val:
+        array[j] = array[j-1]
+        j -= 1
+    array[j] = val
+    dumpState(array, i)
+
+print &quot;Finished.&quot;</code>
+    </snippet>
+    <snippet interpreter="Bash-3.2-PBS-I" id="a4">
+        <name>Złożenie końcowego filmu</name>
+        <description></description>
+        <input>a5</input>
+        <input>a9</input>
+        <input>a8</input>
+        <code>#retrieving frames from DataNet
+REPO=`cat repo.txt`
+INPUT_ID=`cat input-id.txt`
+LENGTH=`cat array-length.txt`
+LENGTH=$(($LENGTH-1))
+
+for i in $(eval echo &quot;{0..$LENGTH}&quot;)
+do
+  URL=${REPO}Step?input=${INPUT_ID}\&amp;ordinal=${i}
+  imageId=`curl -k -upublic:public $URL`
+  imageId=`echo $imageId | sed s/.*image\&quot;:\&quot;// | sed s/\&quot;.*//`
+  echo $imageId
+  imageUrl=${REPO}file/${imageId}
+  echo $imageUrl
+  curl -k -o frame${i}.png -uplgtesthar:que2feeTaifoush $imageUrl
+done
+
+#loading the ffmpeg module
+module load tools/ffmpeg/1.2.1
+
+#generating the final movie
+FRAMERATE=10
+OUT=plot.flv
+rm -rf $OUT
+ffmpeg -r $FRAMERATE -b 16777216 -i frame%d.png $OUT
+
+#storing the final movie in DataNet
+storeUrl=$REPO/Result
+curl -k -uplgtesthar:que2feeTaifoush -F input=${INPUT_ID} -F movie=@${OUT} $storeUrl</code>
+    </snippet>
+    <inputOutput fileName="input-id.txt" id="a5">
+        <name>input-id</name>
+        <description></description>
+        <producedBySnippet>a1</producedBySnippet>
+        <consumedBySnippet>a2</consumedBySnippet>
+        <consumedBySnippet>a4</consumedBySnippet>
+    </inputOutput>
+    <inputOutput fileName="repo.txt" id="a8">
+        <name>repo</name>
+        <description></description>
+        <producedBySnippet>a7</producedBySnippet>
+        <consumedBySnippet>a1</consumedBySnippet>
+        <consumedBySnippet>a4</consumedBySnippet>
+    </inputOutput>
+    <inputOutput fileName="array-length.txt" id="a9">
+        <name>array-length</name>
+        <description></description>
+        <producedBySnippet>a2</producedBySnippet>
+        <consumedBySnippet>a4</consumedBySnippet>
+    </inputOutput>
+</experiment>

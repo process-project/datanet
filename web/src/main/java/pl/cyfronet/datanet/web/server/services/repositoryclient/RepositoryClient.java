@@ -49,7 +49,8 @@ public class RepositoryClient {
 		
 		String entityUrl = buildEntityUrl(repositoryUrl, entityName, query);
 		@SuppressWarnings("unchecked")
-		List<Map<String, String>> entities = restTemplate.getForObject(entityUrl, List.class);
+		List<Map<String, Object>> entities = restTemplate.getForObject(entityUrl, List.class);
+		log.trace("Retrieved repository entities: {}", entities);
 		EntityData entityData = new EntityData();
 		entityData.setEntityName(entityName);
 		entityData.setTotalNumberOfEntities(entities.size());
@@ -61,13 +62,19 @@ public class RepositoryClient {
 			int currentIndex = start - 1;
 			
 			while((entityData.getEntityRows().size() <= length || length < 0) && currentIndex < entities.size()) {				
-				Map<String, String> fields = entities.get(currentIndex++);
+				Map<String, Object> fields = entities.get(currentIndex++);
 				
 				if (fileFields != null && fileFields.size() > 0) {
 					processFileData(fields, fileFields, repositoryUrl);
 				}
 				
-				entityData.getEntityRows().add(fields);
+				Map<String, String> values = new HashMap<>();
+				
+				for (String key: fields.keySet()) {
+					values.put(key, fields.get(key).toString());
+				}
+				
+				entityData.getEntityRows().add(values);
 			}
 			
 			entityData.setCurrentNumberOfEntities(entityData.getEntityRows().size());
@@ -194,10 +201,10 @@ public class RepositoryClient {
 		return url;
 	}
 
-	private void processFileData(Map<String, String> data, List<String> fileFields, String repositoryUrl) throws RestClientException, URISyntaxException {
+	private void processFileData(Map<String, Object> data, List<String> fileFields, String repositoryUrl) throws RestClientException, URISyntaxException {
 		for (String fileFieldName : fileFields) {
 			if (data.keySet().contains(fileFieldName)) {
-				String id = data.remove(fileFieldName);
+				String id = data.remove(fileFieldName).toString();
 				String fileName = restTemplate.getForObject(buildFileNameUrl(repositoryUrl, id), String.class);
 				data.put(fileFieldName, fileName + ";" + repositoryUrl + "/file/" + id);
 			}
