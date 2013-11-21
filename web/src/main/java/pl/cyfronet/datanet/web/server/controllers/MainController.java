@@ -16,7 +16,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 public class MainController {
 	private static final Logger log = LoggerFactory.getLogger(MainController.class);
 	
-	@RequestMapping({"/"})
+	@RequestMapping("/")
 	public String main(Model model, HttpServletRequest request) throws IOException {	
 		Locale locale = RequestContextUtils.getLocale(request);
 		model.addAttribute("locale", locale.getLanguage());
