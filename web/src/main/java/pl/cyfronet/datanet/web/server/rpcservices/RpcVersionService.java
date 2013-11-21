@@ -17,8 +17,10 @@ import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
 import pl.cyfronet.datanet.web.client.errors.VersionException;
 import pl.cyfronet.datanet.web.client.errors.VersionException.Code;
 import pl.cyfronet.datanet.web.client.services.VersionService;
+import pl.cyfronet.datanet.web.server.db.HibernateModelDao;
 import pl.cyfronet.datanet.web.server.db.HibernateVersionDao;
 import pl.cyfronet.datanet.web.server.db.beans.VersionDbEntity;
+import pl.cyfronet.datanet.web.server.util.SpringSecurityHelper;
 
 @Service("versionService")
 @Secured("ROLE_USER")
@@ -27,16 +29,21 @@ public class RpcVersionService implements VersionService {
 	
 	@Autowired private HibernateVersionDao versionDao;
 	@Autowired private JaxbEntityListBuilder jaxbEntityListBuilder;
+	@Autowired private HibernateModelDao modelDao;
 	
 	@Override
 	public List<Version> getVersions(long modelId) throws VersionException {
-		try {	
-			List<VersionDbEntity> versionDbEnts = versionDao.getVersions(modelId);
-			List<Version> versions = new ArrayList<>();
-			if (versionDbEnts != null)
-				for (VersionDbEntity versionDbEnt : versionDbEnts)
-					versions.add(getVersion(versionDbEnt));
-			return versions;
+		try {
+			if (modelDao.isModelOwner(modelId, SpringSecurityHelper.getUserLogin())) {
+				List<VersionDbEntity> versionDbEnts = versionDao.getVersions(modelId);
+				List<Version> versions = new ArrayList<>();
+				if (versionDbEnts != null)
+					for (VersionDbEntity versionDbEnt : versionDbEnts)
+						versions.add(getVersion(versionDbEnt));
+				return versions;
+			} else {
+				throw new VersionException(Code.VersionModelAuthorizationError);
+			}
 		} catch (Exception e) {
 			String message = "Could not retrieve versions for model " + modelId;
 			log.error(message, e);
@@ -60,7 +67,11 @@ public class RpcVersionService implements VersionService {
 	@Override
 	public Version getVersion(long versionId) throws VersionException {
 		try {
-			return versionDao.getVersion(versionId);
+			if (versionDao.isVersionOwner(versionId, SpringSecurityHelper.getUserLogin())) {
+				return versionDao.getVersion(versionId);
+			} else {
+				throw new VersionException(Code.VersionAuthorizationError);
+			}
 		} catch (Exception e) {
 			String message = "Could not retrieve version" + versionId;
 			log.error(message, e);
@@ -71,15 +82,19 @@ public class RpcVersionService implements VersionService {
 	@Override
 	public Version addVersion(long modelId, Version version)
 			throws VersionException {
-		try {	
-			VersionDbEntity versionDbEntity = new VersionDbEntity();		
-			versionDbEntity.setName(version.getName());
-			versionDbEntity.setModelXml(jaxbEntityListBuilder.serialize(version.getEntities()));
-			versionDbEntity.setTimestamp(version.getTimestamp());
-			versionDao.saveVersion(modelId, versionDbEntity);
-			version.setId(versionDbEntity.getId());
-			
-			return version;
+		try {
+			if (modelDao.isModelOwner(modelId, SpringSecurityHelper.getUserLogin())) {
+				VersionDbEntity versionDbEntity = new VersionDbEntity();		
+				versionDbEntity.setName(version.getName());
+				versionDbEntity.setModelXml(jaxbEntityListBuilder.serialize(version.getEntities()));
+				versionDbEntity.setTimestamp(version.getTimestamp());
+				versionDao.saveVersion(modelId, versionDbEntity);
+				version.setId(versionDbEntity.getId());
+				
+				return version;
+			} else {
+				throw new VersionException(Code.VersionModelAuthorizationError);
+			}
 		} catch (Exception e) {
 			String message = "Could not add version for model " + modelId;
 			log.error(message, e);

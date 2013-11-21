@@ -66,4 +66,16 @@ public class HibernateModelDao {
 		sessionFactory.getCurrentSession().delete(model);
 	}
 
+	@Transactional
+	public boolean isModelOwner(long modelId, String userLogin) {
+		ModelDbEntity model = getModel(modelId);
+		
+		for (UserDbEntity owner : model.getOwners()) {
+			if (owner.getLogin() != null && owner.getLogin().equals(userLogin)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }

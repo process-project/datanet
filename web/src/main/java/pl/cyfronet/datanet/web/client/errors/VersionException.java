@@ -8,7 +8,9 @@ public class VersionException extends Exception {
 	public enum Code {
 		Unknown,
 		VersionRetrievalError, 
-		VersionSaveError
+		VersionSaveError,
+		VersionModelAuthorizationError,
+		VersionAuthorizationError
 	}
 	
 	private Code errorCode;

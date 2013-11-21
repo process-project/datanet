@@ -63,4 +63,19 @@ public class HibernateRepositoryDao {
 	public ModelDbEntity getModelForRepository(long repositoryId) {
 		return getRepository(repositoryId).getSourceModelVersion().getModel();
 	}
+
+	@Transactional
+	public boolean isRepositoryOwner(long repositoryId, String userLogin) {
+		RepositoryDbEntity repository = getRepository(repositoryId);
+		
+		if (repository != null) {
+			for (UserDbEntity owner : repository.getOwners()) {
+				if (owner.getLogin() != null && owner.getLogin().equals(userLogin)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
 }

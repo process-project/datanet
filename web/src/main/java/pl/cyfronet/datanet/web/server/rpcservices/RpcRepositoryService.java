@@ -1,6 +1,5 @@
 package pl.cyfronet.datanet.web.server.rpcservices;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import pl.cyfronet.datanet.deployer.Deployer;
@@ -90,10 +88,14 @@ public class RpcRepositoryService implements RepositoryService {
 	@Override
 	public void undeployRepository(long repositoryId) throws RepositoryException {
 		try {
-			RepositoryDbEntity repository = repositoryDao.getRepository(repositoryId);
-			String repositoryName = repository.getName().substring(4);
-			deployer.undeployRepository(repositoryName);
-			repositoryDao.deleteRepository(repository);
+			if (repositoryDao.isRepositoryOwner(repositoryId, SpringSecurityHelper.getUserLogin())) {
+				RepositoryDbEntity repository = repositoryDao.getRepository(repositoryId);
+				String repositoryName = repository.getName().substring(4);
+				deployer.undeployRepository(repositoryName);
+				repositoryDao.deleteRepository(repository);
+			} else {
+				throw new RepositoryException(Code.RepositoryAuthorizationError);
+			}
 		} catch (DeployerException e) {
 			log.error("Deployer undeploy repository failure", e);
 			throw new RepositoryException(Code.RepositoryUndeployError);
@@ -103,14 +105,18 @@ public class RpcRepositoryService implements RepositoryService {
 	@Override
 	public Repository getRepository(long repositoryId) throws RepositoryException {
 		try {
-			log.debug("Retrieving repository DB bean for id {}", repositoryId);
-			
-			RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
-			AccessConfig accessConfig = repositoryClient.getAccessConfig(
-					repositoryDbEntity.getUrl(), repositoryDbEntity.getToken());
-			Repository repository = createRepository(repositoryDbEntity, accessConfig);
-			
-			return repository;
+			if (repositoryDao.isRepositoryOwner(repositoryId, SpringSecurityHelper.getUserLogin())) {
+				log.debug("Retrieving repository DB bean for id {}", repositoryId);
+				
+				RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
+				AccessConfig accessConfig = repositoryClient.getAccessConfig(
+						repositoryDbEntity.getUrl(), repositoryDbEntity.getToken());
+				Repository repository = createRepository(repositoryDbEntity, accessConfig);
+				
+				return repository;
+			} else {
+				throw new RepositoryException(Code.RepositoryAuthorizationError);
+			}
 		} catch (Exception e) {
 			String message = "Could not fetch repository bean from DB for repository id " + repositoryId;
 			log.error(message, e);
@@ -168,10 +174,12 @@ public class RpcRepositoryService implements RepositoryService {
 			result = versionDao.getVersionRepositories(versionId);
 			
 			for (Repository repository : result) {
-				RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repository.getId());
-				AccessConfig accessConfig = repositoryClient.getAccessConfig(
-						repository.getUrl(), repositoryDbEntity.getToken());
-				repository.setAccessConfig(accessConfig);
+				if (repositoryDao.isRepositoryOwner(repository.getId(), SpringSecurityHelper.getUserLogin())) {
+					RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repository.getId());
+					AccessConfig accessConfig = repositoryClient.getAccessConfig(
+							repository.getUrl(), repositoryDbEntity.getToken());
+					repository.setAccessConfig(accessConfig);
+				}
 			}
 		} catch (Exception e) {
 			String message = "Could not fetch repository beans from DB for version id " + versionId;
@@ -241,10 +249,14 @@ public class RpcRepositoryService implements RepositoryService {
 	@Override
 	public void removeRepository(long repositoryId) throws RepositoryException {
 		try {
-			RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
-			log.info("Removing repository with id {} and name {}", repositoryId, repositoryDbEntity.getName());
-			deployer.undeployRepository(repositoryDbEntity.getName());
-			repositoryDao.deleteRepository(repositoryDbEntity);
+			if (repositoryDao.isRepositoryOwner(repositoryId, SpringSecurityHelper.getUserLogin())) {
+				RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
+				log.info("Removing repository with id {} and name {}", repositoryId, repositoryDbEntity.getName());
+				deployer.undeployRepository(repositoryDbEntity.getName());
+				repositoryDao.deleteRepository(repositoryDbEntity);
+			} else {
+				throw new RepositoryException(Code.RepositoryAuthorizationError);
+			}
 		} catch (Exception e) {
 			log.error("Repository with id {} could not be removed", repositoryId);
 			log.error("Repository removal error", e);
@@ -271,9 +283,13 @@ public class RpcRepositoryService implements RepositoryService {
 	@Override
 	public void updateAccessConfig(long repositoryId, AccessConfig accessConfig) throws RepositoryException {
 		try {
-			RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
-			log.info("Updating repository access configuration for repository with id {}", repositoryId);
-			repositoryClient.updateAccessConfiguration(repositoryDbEntity.getUrl(), repositoryDbEntity.getToken(), accessConfig);
+			if (repositoryDao.isRepositoryOwner(repositoryId, SpringSecurityHelper.getUserLogin())) {
+				RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
+				log.info("Updating repository access configuration for repository with id {}", repositoryId);
+				repositoryClient.updateAccessConfiguration(repositoryDbEntity.getUrl(), repositoryDbEntity.getToken(), accessConfig);
+			} else {
+				throw new RepositoryException(Code.RepositoryAuthorizationError);
+			}
 		} catch (Exception e) {
 			log.error("Access configuration for repository with id {} could not be updated", repositoryId);
 			log.error("Repository access configuration update error", e);

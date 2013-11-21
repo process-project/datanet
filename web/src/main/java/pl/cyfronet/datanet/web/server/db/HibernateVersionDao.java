@@ -16,6 +16,7 @@ import pl.cyfronet.datanet.model.beans.Version;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
 import pl.cyfronet.datanet.web.server.db.beans.ModelDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.RepositoryDbEntity;
+import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
 import pl.cyfronet.datanet.web.server.db.beans.VersionDbEntity;
 
 @org.springframework.stereotype.Repository
@@ -104,5 +105,20 @@ public class HibernateVersionDao {
 	
 	private ModelDbEntity getModel(long id) {
 		return (ModelDbEntity) sessionFactory.getCurrentSession().load(ModelDbEntity.class, id);
+	}
+
+	@Transactional
+	public boolean isVersionOwner(long versionId, String userLogin) {
+		VersionDbEntity version = getVersionDbEntity(versionId);
+		
+		if (version.getModel() != null && version.getModel().getOwners() !=  null) {
+			for (UserDbEntity owner : version.getModel().getOwners()) {
+				if (owner.getLogin() != null && owner.getLogin().equals(userLogin)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 }
