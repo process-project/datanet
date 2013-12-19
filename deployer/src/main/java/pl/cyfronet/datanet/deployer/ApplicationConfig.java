@@ -11,10 +11,15 @@ import org.cloudfoundry.client.lib.Staging;
  */
 public class ApplicationConfig {
 
-	private final String uriPostfix;
+	private String uriPostfix;
 	private final Staging staging;
 	private final int memory;
 	private final Map<String, String> envVars;
+	
+	public ApplicationConfig(String uriPostfix) {
+		this();
+		this.uriPostfix = uriPostfix;
+	}
 	
 	public ApplicationConfig(String uriPostfix, Staging staging, int memory,
 			Map<String, String> envVarsMap) {
@@ -26,7 +31,7 @@ public class ApplicationConfig {
 	}
 
 	public ApplicationConfig() {
-		this.uriPostfix = "datanet.cyfronet.pl";
+		this.uriPostfix = "paas.datanet.plgrid.pl";
 		this.staging = new Staging("rack");
 		this.staging.setRuntime("ruby193");
 		this.memory = 128;
@@ -50,5 +55,4 @@ public class ApplicationConfig {
 	public String getUriPostfix() {
 		return uriPostfix;
 	}
-
 }

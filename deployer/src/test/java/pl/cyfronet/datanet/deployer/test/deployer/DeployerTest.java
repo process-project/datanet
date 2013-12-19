@@ -1,7 +1,6 @@
 package pl.cyfronet.datanet.deployer.test.deployer;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.Date;
@@ -27,8 +26,7 @@ import pl.cyfronet.datanet.deployer.ZipFileMapperBuilder;
 import pl.cyfronet.datanet.deployer.test.SpringTestContext;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class,
-		classes = SpringTestContext.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = SpringTestContext.class)
 public class DeployerTest {
 	private final static Logger log = LoggerFactory.getLogger(CloudfoundryInfrastructureTest.class);
 	

@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 public class Deployer {
 	private static final Logger log = LoggerFactory.getLogger(Deployer.class);
 	
+	private static final String REPO_URL_TEMPLATE = "https://{repo}";
+	
 	public enum RepositoryType {
 		Mongo("mongodb");
 		private String serviceTypeName;
@@ -70,6 +72,7 @@ public class Deployer {
 		CloudFoundryClient client = prepareNewClient();
 		DeployService deployService = null;
 		DeployApplication deployApplication = null;
+		String finalUrl = null;
 		
 		try {
 			checkNamingConflicts(client, repositoryName);
@@ -83,7 +86,9 @@ public class Deployer {
 			deployApplication = new DeployApplication(client, appConfig, repositoryName, service.getName(), mapperDirectory, url);
 			deployApplication.execute();
 			
-			log.debug("Repository '{}' successfully deployed. URL: http://{}", repositoryName, url);
+			finalUrl = REPO_URL_TEMPLATE.replace("{repo}", url);
+			
+			log.debug("Repository '{}' successfully deployed. URL: {}", repositoryName, finalUrl);
 		} catch (IOException e) {
 			log.warn("Repository '{}' deployment failed", repositoryName, e);
 		} catch (DeployerException e) {
@@ -99,7 +104,7 @@ public class Deployer {
 			client.logout();
 		}		
 		
-		return "http://" + url;
+		return finalUrl;
 	}
 	
 	public List<String> listRepostories() throws DeployerException {

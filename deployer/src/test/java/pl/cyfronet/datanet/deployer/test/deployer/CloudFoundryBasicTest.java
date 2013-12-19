@@ -50,8 +50,9 @@ public class CloudFoundryBasicTest {
 	public void cfEnvCheck() {
 		CloudInfo cloudInfo = client.getCloudInfo();
 		List<CloudApplication> cloudApplications = client.getApplications();
-		log.debug("cloud frameworks: {}", cloudInfo.getFrameworks());
-		log.debug("cloud applications: {}", cloudApplications);
+		log.info("cloud frameworks: {}", cloudInfo.getFrameworks());
+		log.info("cloud applications: {}", cloudApplications);
+		log.info("service configurations: {}", client.getServiceConfigurations());
 		Assert.assertTrue(cloudInfo != null);
 		Assert.assertTrue(cloudApplications != null);
 	}

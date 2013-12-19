@@ -75,6 +75,7 @@ public class SpringConfiguration {
 	@Value("${cf.username}") private String cfUsername;
 	@Value("${cf.password}") private String cfPassword;
 	@Value("${cf.unzip.path}") private String cfUnzipPath;
+	@Value("${cf.app.postfix}") private String cfAppPostfix;
 	
 	/**
 	 * Properties configuration. The properties can later be accessed from
@@ -197,7 +198,7 @@ public class SpringConfiguration {
 		builderMap.put(Deployer.RepositoryType.Mongo, new ZipByteArrayMapperBuilder(IOUtils.toByteArray(zipStream),
 				new File(cfUnzipPath), APP_FOLDER_NAME));
 		Deployer deployer = new Deployer(cfUsername, cfPassword, cfTarget,
-				new ApplicationConfig(), builderMap);
+				new ApplicationConfig(cfAppPostfix), builderMap);
 		return deployer;
 	}
 	

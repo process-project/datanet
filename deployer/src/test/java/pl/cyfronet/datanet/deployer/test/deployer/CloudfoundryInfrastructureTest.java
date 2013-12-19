@@ -38,14 +38,14 @@ import pl.cyfronet.datanet.deployer.Unzip;
 import pl.cyfronet.datanet.deployer.test.SpringTestContext;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class,
-		classes = SpringTestContext.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = SpringTestContext.class)
 public class CloudfoundryInfrastructureTest {
 	private final static Logger log = LoggerFactory.getLogger(CloudfoundryInfrastructureTest.class);
 	
 	@Value("${cf.target}") private String cfTarget;
 	@Value("${cf.user}") private String cfUser;
 	@Value("${cf.pass}") private String cfPass;
+	@Value("${cf.app.postfix}") private String cfAppPostfix;
 	
 	private CloudFoundryClient client;
 	
@@ -60,7 +60,7 @@ public class CloudfoundryInfrastructureTest {
 	private static final int MEMORY = 128;
 
 	private final Staging staging;
-	private final List<String> uris;
+	private List<String> uris;
 	private final Map<String, String> envVarsMap;
 	private final String appName;
 	private final String serviceName;
@@ -76,7 +76,6 @@ public class CloudfoundryInfrastructureTest {
 		
 		appName = APP_NAME_BASE + uniqueComponent;
 		serviceName = SERVICE_NAME_BASE + uniqueComponent;
-		uris = asList(String.format("%s.datanet.cyfronet.pl", appName));
 
 		envVarsMap = new HashMap<String, String>();
 		envVarsMap.put("BUNDLE_WITHOUT", "test");
@@ -85,6 +84,9 @@ public class CloudfoundryInfrastructureTest {
 
 	@Before
 	public void setup() throws MalformedURLException {
+		uris = asList(String.format("%s.%s", appName, cfAppPostfix));
+		log.debug("URIs: {}", uris);
+		
 		client = new CloudFoundryClient(cfUser, cfPass, cfTarget);
 		client.login();
 	}

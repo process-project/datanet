@@ -120,7 +120,7 @@ public class OpenIdController {
 	        } else {
 	        	model.addAttribute("processingError", messages.getMessage("open.id.verification.failed", null, RequestContextUtils.getLocale(request)));
 	        }
-		} catch (MessageException | DiscoveryException | AssociationException e) {
+		} catch (Exception e) {
 			log.error("Could not properly finish the OpenID login procedure");
 			log.error("Error was:", e);
 			model.addAttribute("processingError", messages.getMessage("open.id.sequence.error", null, RequestContextUtils.getLocale(request)));
