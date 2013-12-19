@@ -147,6 +147,7 @@ public class RepositoryClient {
 			result = restTemplate.getForObject(buildConfigUrl(repositoryUrl, token), Map.class);
 		} catch (RestClientException e) {
 			log.warn("Could not obtain access configuration for repository with url {}", repositoryUrl);
+			log.warn("Error for the above was: ", e);
 			
 			return null;
 		}
