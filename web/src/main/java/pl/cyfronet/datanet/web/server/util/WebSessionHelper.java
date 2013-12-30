@@ -21,7 +21,8 @@ public class WebSessionHelper {
 		HttpServletRequest request = requestAttributes.getRequest();
 		
 		String serverPort = (request.getServerPort() != 443 && request.getServerPort() != 80) ? ":" + String.valueOf(request.getServerPort()) : "";
-		String result = request.getScheme() + "://" + request.getServerName() + serverPort + request.getContextPath();
+		String result = request.getScheme() + "://" + request.getServerName() + serverPort +
+				(request.getContextPath().equals("") ? "/" : request.getContextPath());
 		
 	    return result;
 	}

@@ -93,6 +93,7 @@ public class OpenIdController {
 						
 						if (!ProxyUtils.isProxy(crt)) {
 							model.addAttribute("processingError", messages.getMessage("open.id.user.proxy.unrecongnized", null, RequestContextUtils.getLocale(request)));
+							log.info("OpenID login for {} impossible because of invalid proxy certificate", authSuccess.getIdentity());
 							canLogin = false;
 						}
 						
@@ -100,6 +101,7 @@ public class OpenIdController {
 						
 						if (current.after(crt.getNotAfter()) || current.before(crt.getNotBefore())) {
 							model.addAttribute("processingError", messages.getMessage("open.id.user.proxy.expired", null, RequestContextUtils.getLocale(request)));
+							log.info("OpenID login for {} impossible because of expired proxy certificate", authSuccess.getIdentity());
 							canLogin = false;
 						}
 					} catch (CertificateException e) {

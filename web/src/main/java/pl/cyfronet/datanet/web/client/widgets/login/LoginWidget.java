@@ -167,6 +167,7 @@ public class LoginWidget extends Composite implements View {
 	@Override
 	public void openIdLoginInitializationError() {
 		errorLabel.setText(messages.openIdLoginInitializationError());
+		alertVisible(true);
 	}
 
 	@Override

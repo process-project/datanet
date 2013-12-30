@@ -5,12 +5,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import org.openid4java.consumer.ConsumerException;
 import org.openid4java.consumer.ConsumerManager;
-import org.openid4java.discovery.DiscoveryException;
 import org.openid4java.discovery.DiscoveryInformation;
 import org.openid4java.message.AuthRequest;
-import org.openid4java.message.MessageException;
 import org.openid4java.message.ax.FetchRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,12 +89,15 @@ public class RpcLoginService implements LoginService {
 		log.info("Initialising OpenID login procedure for user {}", openIdLogin);
 
 		try {
+			@SuppressWarnings("unchecked")
 			List<DiscoveryInformation> discoveries = openIdManager.discover(openIdIdentifierPrefix + openIdLogin);
 			DiscoveryInformation discovered = openIdManager.associate(discoveries);
 			HttpSession httpSession = WebSessionHelper.getCurrentSession();
 			httpSession.setAttribute(OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME, discovered);
 			
 			String openIdReturnUrl = WebSessionHelper.getCurrentUrl();
+			log.debug("Return URL for OpenID association request is {}", openIdReturnUrl);
+			
 			AuthRequest authReq = openIdManager.authenticate(discovered, openIdReturnUrl);
 			FetchRequest fetchRequest = FetchRequest.createFetchRequest();
 			fetchRequest.addAttribute("email", "http://schema.openid.net/contact/email", true);
@@ -108,7 +108,7 @@ public class RpcLoginService implements LoginService {
 			authReq.addExtension(fetchRequest);
 			
 			return authReq.getDestinationUrl(true);
-		} catch (DiscoveryException | MessageException | ConsumerException e) {
+		} catch (Exception e) {
 			throw new LoginException(Code.OpenIdAssociationFailed);
 		}
 	}
