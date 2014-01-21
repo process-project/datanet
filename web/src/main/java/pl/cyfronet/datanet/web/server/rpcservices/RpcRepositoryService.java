@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -155,7 +156,8 @@ public class RpcRepositoryService implements RepositoryService {
 			RepositoryClient client = repositoryClient;
 			
 			if (login != null && password != null) {
-				client = repositoryClientFactory.create(login, password);
+				client = repositoryClientFactory.create(
+						(String) SecurityContextHolder.getContext().getAuthentication().getCredentials());
 			}
 			
 			return client.retrieveRepositoryData(repositoryDbEntity.getUrl(), entityName, fileFields, start, length, query);

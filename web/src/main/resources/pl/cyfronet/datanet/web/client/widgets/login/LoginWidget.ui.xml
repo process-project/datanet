@@ -43,46 +43,19 @@
 	    <g:HTMLPanel>
 	    	<g:Image url="img/datanet-logo-143x40.png" altText="{messages.datanetLogoAlt}" styleName="{style.logo}"/>
 	    </g:HTMLPanel>
-	    <b:TabPanel>
-	    	<b:Tab heading="{messages.standardLoginTabLabel}" active="true">
-	    		<g:HTMLPanel>
-					<b:Form type="HORIZONTAL">
-					    <b:Fieldset>
-					        <b:ControlGroup>
-					            <b:ControlLabel for="login"><ui:text from="{messages.loginLabel}"/></b:ControlLabel>
-					            <b:Controls>
-					                <b:TextBox ui:field="loginField" placeholder="{messages.loginGhostLabel}"/>
-					            </b:Controls>
-					        </b:ControlGroup>
-					        <b:ControlGroup>
-					            <b:ControlLabel for="password"><ui:text from="{messages.passwordLabel}"/></b:ControlLabel>
-					            <b:Controls>
-					                <b:PasswordTextBox ui:field="passwordField" placeholder="{messages.passwordGhostLabel}"/>
-					            </b:Controls>
-					        </b:ControlGroup>
-					    </b:Fieldset>
-					    <b:FormActions>
-					        <b:Button type="PRIMARY" ui:field="loginButton" icon="SIGNIN" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.submitLabel}"><ui:text from="{messages.submitLabel}"/></b:Button>
-					    </b:FormActions>
-					</b:Form>
-				</g:HTMLPanel>
-	    	</b:Tab>
-	    	<b:Tab heading="{messages.openIdLoginTabLabel}">
-	    		<b:Form type="HORIZONTAL">
-				    <b:Fieldset>
-				        <b:ControlGroup>
-				            <b:ControlLabel for="openIdLogin"><ui:text from="{messages.loginLabel}"/></b:ControlLabel>
-				            <b:Controls>
-				                <b:TextBox ui:field="openIdLoginField" placeholder="{messages.loginGhostLabel}"/>
-				            </b:Controls>
-				        </b:ControlGroup>
-				    </b:Fieldset>
-				    <b:FormActions>
-				        <b:Button ui:field="openIdLoginButton" type="PRIMARY" icon="SIGNIN" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.openIdLoginLabel}"><ui:text from="{messages.openIdLoginLabel}"/></b:Button>
-				    </b:FormActions>
-				</b:Form>
-	    	</b:Tab>
-	    </b:TabPanel>
+	    <b:Form type="HORIZONTAL">
+		    <b:Fieldset>
+		        <b:ControlGroup>
+		            <b:ControlLabel for="openIdLogin"><ui:text from="{messages.loginLabel}"/></b:ControlLabel>
+		            <b:Controls>
+		                <b:TextBox ui:field="openIdLoginField" placeholder="{messages.loginGhostLabel}"/>
+		            </b:Controls>
+		        </b:ControlGroup>
+		    </b:Fieldset>
+		    <b:FormActions>
+		        <b:Button ui:field="openIdLoginButton" type="PRIMARY" icon="SIGNIN" loadingText="&lt;i class='icon-spinner icon-spin'&gt;&lt;/i&gt; {messages.openIdLoginLabel}"><ui:text from="{messages.openIdLoginLabel}"/></b:Button>
+		    </b:FormActions>
+		</b:Form>
 	    <b:Alert ui:field="errorLabel" type="ERROR" close="false" visible="false"/>
 	</g:HTMLPanel>
 </ui:UiBinder>

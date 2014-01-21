@@ -67,7 +67,7 @@ public class RepositoryClientTest {
 		Map<String, MultipartFile> files = new HashMap<>();
 		files.put("file", file);
 		
-		RepositoryClient repositoryClient = repositoryClientFactory.create("secret", "secret");
+		RepositoryClient repositoryClient = repositoryClientFactory.create("proxy");
 		repositoryClient.updateEntityRow("http://filemodel.datanet.cyfronet.pl", "fileentity", null, data, files);
 	}
 	

@@ -4,7 +4,6 @@ import pl.cyfronet.datanet.web.client.widgets.login.LoginPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.Alert;
 import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -21,11 +20,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class LoginWidget extends Composite implements View {
 	private static LoginWidgetUiBinder uiBinder = GWT.create(LoginWidgetUiBinder.class);
 	interface LoginWidgetUiBinder extends UiBinder<Widget, LoginWidget> {}
-	
-	@UiField TextBox loginField;
-	@UiField PasswordTextBox passwordField;
+
 	@UiField Alert errorLabel;
-	@UiField Button loginButton;
 	@UiField Button switchToPl;
 	@UiField Button switchToEn;
 	@UiField TextBox openIdLoginField;
@@ -37,25 +33,6 @@ public class LoginWidget extends Composite implements View {
 	public LoginWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
 		messages = GWT.create(LoginMessages.class);
-	}
-	
-	@UiHandler("loginButton")
-	void loginClicked(ClickEvent event) {
-		presenter.onLogin();
-	}
-	
-	@UiHandler("loginField")
-	void loginTyping(KeyUpEvent event) {
-		if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-			presenter.onLogin();
-		}
-	}
-	
-	@UiHandler("passwordField")
-	void passwordTyping(KeyUpEvent event) {
-		if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-			presenter.onLogin();
-		}
 	}
 	
 	@UiHandler("switchToPl")
@@ -86,16 +63,6 @@ public class LoginWidget extends Composite implements View {
 	}
 
 	@Override
-	public HasText getLogin() {
-		return loginField;
-	}
-
-	@Override
-	public HasText getPassword() {
-		return passwordField;
-	}
-
-	@Override
 	public void errorLoginOrPasswordEmpty() {
 		errorLabel.setText(messages.loginOrPasswordEmpty());
 		alertVisible(true);
@@ -121,17 +88,6 @@ public class LoginWidget extends Composite implements View {
 	
 	private void alertVisible(boolean visible) {
 		errorLabel.setVisible(visible);
-	}
-
-	@Override
-	public void setBusyState(boolean busy) {
-		if (busy) {
-			loginButton.state().loading();
-			loginButton.setEnabled(false);
-		} else {
-			loginButton.state().reset();
-			loginButton.setEnabled(true);
-		}
 	}
 	
 	@Override

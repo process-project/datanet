@@ -8,7 +8,6 @@ import pl.cyfronet.datanet.web.client.errors.LoginException;
 @RemoteServiceRelativePath("../rpcservices/loginService")
 public interface LoginService extends RemoteService {
 	boolean isUserLoggedIn();
-	void login(String user, String password) throws LoginException;
 	void logout();
 	String initiateOpenIdLogin(String openIdLogin) throws LoginException;
 }

@@ -1,6 +1,5 @@
 package pl.cyfronet.datanet.web.server.rpcservices;
 
-import java.util.Calendar;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -13,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,8 +21,6 @@ import pl.cyfronet.datanet.web.client.errors.LoginException;
 import pl.cyfronet.datanet.web.client.errors.LoginException.Code;
 import pl.cyfronet.datanet.web.client.services.LoginService;
 import pl.cyfronet.datanet.web.server.db.HibernateUserDao;
-import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
-import pl.cyfronet.datanet.web.server.services.security.PortalAuthenticationManager;
 import pl.cyfronet.datanet.web.server.util.WebSessionHelper;
 
 @Service("loginService")
@@ -32,40 +28,12 @@ public class RpcLoginService implements LoginService {
 	private static final Logger log = LoggerFactory.getLogger(RpcLoginService.class);
 	
 	public static final String OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME = "cyfronet.datanet.openid.discoveries";
-	
-	@Autowired private PortalAuthenticationManager authenticationManager;
+	public static final String USER_ROLE = "ROLE_USER";
+
 	@Autowired private HibernateUserDao userDao;
 	@Autowired private ConsumerManager openIdManager;
 
 	@Value("${open.id.identifier.prefix}") private String openIdIdentifierPrefix;
-
-	@Override
-	public void login(String userLogin, String password) throws LoginException {
-		try {
-			Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(userLogin, password);
-			Authentication authenticationResult = authenticationManager.authenticate(authenticationRequest);
-			SecurityContextHolder.getContext().setAuthentication(authenticationResult);
-			log.info("User {} successfully logged in", userLogin);
-			
-			UserDbEntity user = userDao.getUser(userLogin);
-			
-			if(user == null) {
-				user = new UserDbEntity();
-				user.setLogin(userLogin);
-			}
-			
-			user.setLastLogin(Calendar.getInstance().getTime());
-			userDao.saveUser(user);
-		} catch (Exception e) {
-			log.error("There was an authentication problem", e);
-			
-			if(e.getCause() != null && e.getCause() instanceof LoginException) {
-				throw (LoginException) e.getCause();
-			} else {
-				throw new LoginException(Code.Unknown);
-			}
-		}
-	}
 
 	@Override
 	public boolean isUserLoggedIn() {

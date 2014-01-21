@@ -1,10 +1,12 @@
 package pl.cyfronet.datanet.test.presenters.login;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -43,104 +45,83 @@ public class LoginPresenterTest {
 	
 	@Test
 	public void emptyLoginOrPasswordFields() {
-		when(view.getLogin()).thenReturn(MockingUtil.mockHasText(""));
-		when(view.getPassword()).thenReturn(MockingUtil.mockHasText("notEmpty"));
+		when(view.getOpenIdLogin()).thenReturn(MockingUtil.mockHasText(""));
 		
-		loginPresenter.onLogin();
+		loginPresenter.onOpenIdLoginInitiated();
 		
-		verify(view).errorLoginOrPasswordEmpty();
+		verify(view).errorOpenIdLoginEmpty();
 	}
 	
 	@Test
 	public void messageCleanup() {
-		when(view.getLogin()).thenReturn(MockingUtil.mockHasText("loginValid"));
-		when(view.getPassword()).thenReturn(MockingUtil.mockHasText("passwordValid"));
+		when(view.getOpenIdLogin()).thenReturn(MockingUtil.mockHasText("loginValid"));
 		
-		loginPresenter.onLogin();
+		loginPresenter.onOpenIdLoginInitiated();
 		
 		verify(view).clearErrors();
 	}
 	
 	@Test
 	public void rpcServiceSuccess() {
-		when(view.getLogin()).thenReturn(MockingUtil.mockHasText("loginValid"));
-		when(view.getPassword()).thenReturn(MockingUtil.mockHasText("passwordValid"));
+		when(view.getOpenIdLogin()).thenReturn(MockingUtil.mockHasText("loginValid"));
 		doAnswer(new Answer<Void>() {
 			@Override
 			public Void answer(InvocationOnMock invocation) throws Throwable {
-				AsyncCallback<Void> callback = (AsyncCallback<Void>) invocation.getArguments()[2];
+				AsyncCallback<Void> callback = (AsyncCallback<Void>) invocation.getArguments()[1];
 				callback.onSuccess(null);
 				return null;
-			}}).when(loginService).login(anyString(), anyString(), any(AsyncCallback.class));
+			}}).when(loginService).initiateOpenIdLogin(anyString(), any(AsyncCallback.class));
 		
-		loginPresenter.onLogin();
+		loginPresenter.onOpenIdLoginInitiated();
 		
-		verify(clientController).onLogin();
-	}
-	
-	@Test
-	public void wrongLoginOrPassword() {
-		when(view.getLogin()).thenReturn(MockingUtil.mockHasText("loginValid"));
-		when(view.getPassword()).thenReturn(MockingUtil.mockHasText("passwordValid"));
-		doAnswer(new Answer<Void>() {
-			@Override
-			public Void answer(InvocationOnMock invocation) throws Throwable {
-				AsyncCallback<Void> callback = (AsyncCallback<Void>) invocation.getArguments()[2];
-				callback.onFailure(new LoginException(Code.UserPasswordUnknown));
-				return null;
-			}}).when(loginService).login(anyString(), anyString(), any(AsyncCallback.class));
-		
-		loginPresenter.onLogin();
-		
-		verify(view).errorWrongLoginOrPassword();
+		verify(view).clearErrors();
+		verify(view, times(2)).setOpenIdBusyState(anyBoolean());
+		verify(view).redirect(anyString());
 	}
 	
 	@Test
 	public void busyStateWhenLoginSuccess() {
-		when(view.getLogin()).thenReturn(MockingUtil.mockHasText("loginValid"));
-		when(view.getPassword()).thenReturn(MockingUtil.mockHasText("passwordValid"));
+		when(view.getOpenIdLogin()).thenReturn(MockingUtil.mockHasText("loginValid"));
 		doAnswer(new Answer<Void>() {
 			@Override
 			public Void answer(InvocationOnMock invocation) throws Throwable {
-				AsyncCallback<Void> callback = (AsyncCallback<Void>) invocation.getArguments()[2];
+				AsyncCallback<Void> callback = (AsyncCallback<Void>) invocation.getArguments()[1];
 				callback.onSuccess(null);
 				return null;
-			}}).when(loginService).login(anyString(), anyString(), any(AsyncCallback.class));
+			}}).when(loginService).initiateOpenIdLogin(anyString(), any(AsyncCallback.class));
 		
-		loginPresenter.onLogin();
+		loginPresenter.onOpenIdLoginInitiated();
 		
 		InOrder order = inOrder(view);
-		order.verify(view).setBusyState(true);
-		order.verify(view).setBusyState(false);
+		order.verify(view).setOpenIdBusyState(true);
+		order.verify(view).setOpenIdBusyState(false);
 	}
 	
 	@Test
 	public void busyStateWhenLoginFailure() {
-		when(view.getLogin()).thenReturn(MockingUtil.mockHasText("loginValid"));
-		when(view.getPassword()).thenReturn(MockingUtil.mockHasText("passwordValid"));
+		when(view.getOpenIdLogin()).thenReturn(MockingUtil.mockHasText("loginValid"));
 		doAnswer(new Answer<Void>() {
 			@Override
 			public Void answer(InvocationOnMock invocation) throws Throwable {
-				AsyncCallback<Void> callback = (AsyncCallback<Void>) invocation.getArguments()[2];
+				AsyncCallback<Void> callback = (AsyncCallback<Void>) invocation.getArguments()[1];
 				callback.onFailure(new LoginException(Code.UserPasswordUnknown));
 				return null;
-			}}).when(loginService).login(anyString(), anyString(), any(AsyncCallback.class));
+			}}).when(loginService).initiateOpenIdLogin(anyString(), any(AsyncCallback.class));
 		
-		loginPresenter.onLogin();
+		loginPresenter.onOpenIdLoginInitiated();
 		
 		InOrder order = inOrder(view);
-		order.verify(view).setBusyState(true);
-		order.verify(view).setBusyState(false);
+		order.verify(view).setOpenIdBusyState(true);
+		order.verify(view).setOpenIdBusyState(false);
 	}
 	
 	@Test
 	public void noBusyStateWhenEmptyFields() {
-		when(view.getLogin()).thenReturn(MockingUtil.mockHasText("loginValid"));
-		when(view.getPassword()).thenReturn(MockingUtil.mockHasText(""));
+		when(view.getOpenIdLogin()).thenReturn(MockingUtil.mockHasText(""));
 		
-		loginPresenter.onLogin();
+		loginPresenter.onOpenIdLoginInitiated();
 		
-		verify(view, never()).setBusyState(true);
-		verify(view, never()).setBusyState(false);
+		verify(view, never()).setOpenIdBusyState(true);
+		verify(view, never()).setOpenIdBusyState(false);
 	}
 }

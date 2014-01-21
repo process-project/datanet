@@ -1,51 +1,33 @@
 package pl.cyfronet.datanet.web.server.services.repositoryclient;
 
+import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HttpContext;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
 public class RepositoryClientFactory {
-	public RepositoryClient create(String login, String password)
+	public RepositoryClient create(final String proxyCertificate)
 			throws NoSuchAlgorithmException, KeyManagementException {
-		SSLContext sslContext = SSLContext.getInstance("SSL");
-		sslContext.init(null, new TrustManager[] { new X509TrustManager() {
-			public X509Certificate[] getAcceptedIssuers() {
-				return null;
-			}
-
-			public void checkClientTrusted(X509Certificate[] certs, String authType) {
-			}
-
-			public void checkServerTrusted(X509Certificate[] certs, String authType) {
-			}
-		}}, new SecureRandom());
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		SSLSocketFactory sslSocketFactory = new SSLSocketFactory(sslContext, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-		httpClient.getConnectionManager().getSchemeRegistry().register(new Scheme("https", 443, sslSocketFactory));
-		BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-		credentialsProvider.setCredentials(AuthScope.ANY,
-				new UsernamePasswordCredentials(login, password));
-		httpClient.setCredentialsProvider(credentialsProvider);
+		httpClient.addRequestInterceptor(new HttpRequestInterceptor() {
+			@Override
+			public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
+				request.addHeader(new BasicHeader("Grid-Proxy", proxyCertificate));
+			}
+		});
 		HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
 				httpClient);
 
-		return new RepositoryClient(new RestTemplate(
-				httpComponentsClientHttpRequestFactory));
+		return new RepositoryClient(new RestTemplate(httpComponentsClientHttpRequestFactory));
 	}
 }

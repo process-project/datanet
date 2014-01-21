@@ -14,14 +14,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.openid4java.association.AssociationException;
 import org.openid4java.consumer.ConsumerManager;
 import org.openid4java.consumer.VerificationResult;
-import org.openid4java.discovery.DiscoveryException;
 import org.openid4java.discovery.DiscoveryInformation;
 import org.openid4java.discovery.Identifier;
 import org.openid4java.message.AuthSuccess;
-import org.openid4java.message.MessageException;
 import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchResponse;
@@ -39,7 +36,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-import pl.cyfronet.datanet.web.server.services.security.PortalAuthenticationManager;
+import pl.cyfronet.datanet.web.server.rpcservices.RpcLoginService;
 import eu.emi.security.authn.x509.proxy.ProxyUtils;
 
 @Controller
@@ -85,9 +82,10 @@ public class OpenIdController {
 					List<String> proxyPrivKeys = fetchResp.getAttributeValues("proxyPrivKey");
 					String proxyPrivKey = (String) proxyPrivKeys.get(0);
 					boolean canLogin = true;
+					String completeProxy = null;
 					
 					try {
-						String completeProxy = getProxyContent(proxy, userCert, proxyPrivKey);
+						completeProxy = getProxyContent(proxy, userCert, proxyPrivKey);
 						CertificateFactory cf = CertificateFactory.getInstance("X.509");
 						X509Certificate crt = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(replaceBrWithNewLines(proxy).getBytes()));
 						
@@ -113,9 +111,9 @@ public class OpenIdController {
 					
 					if (canLogin) {
 						List<GrantedAuthority> authorities = new ArrayList<>();
-						authorities.add(new SimpleGrantedAuthority(PortalAuthenticationManager.USER_ROLE));
+						authorities.add(new SimpleGrantedAuthority(RpcLoginService.USER_ROLE));
 						
-						Authentication authentication = new UsernamePasswordAuthenticationToken(authSuccess.getIdentity(), "", authorities);
+						Authentication authentication = new UsernamePasswordAuthenticationToken(authSuccess.getIdentity(), completeProxy, authorities);
 						SecurityContextHolder.getContext().setAuthentication(authentication);
 					}
 	            }
