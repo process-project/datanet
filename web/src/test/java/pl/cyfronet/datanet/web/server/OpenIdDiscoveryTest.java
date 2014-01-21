@@ -64,7 +64,7 @@ public class OpenIdDiscoveryTest {
 	public void shouldRetrieveOpenIdInfo() throws DiscoveryException {
 		String returnToUrl = "http://example.com/openid";
 		@SuppressWarnings("unchecked")
-		List<DiscoveryInformation> discoveries = consumerManager.discover("https://openid-test.grid.cyf-kr.edu.pl/plglogin");
+		List<DiscoveryInformation> discoveries = consumerManager.discover("https://openid.plgrid.pl/plglogin");
 		log.info("Discoveries: {}", discoveries);
 		Assert.assertNotNull(discoveries);
 		
