@@ -55,28 +55,5 @@
 				<b:Button ui:field="closeCodeTemplatesModal"><ui:text from="{messages.closeCodeTemplatesModalButtonLabel}"/></b:Button>
 			</b:ModalFooter>
 		</b:Modal>
-		<b:Modal ui:field="credentialsModal" title="{messages.credentialsModalLabel}" animation="true">
-			<b:Paragraph><ui:text from="{messages.userCredentialsAbout}"/></b:Paragraph>
-			<b:Form type="HORIZONTAL">
-			    <b:Fieldset>
-			        <b:ControlGroup>
-			            <b:ControlLabel for="login"><ui:text from="{loginMessages.loginLabel}"/></b:ControlLabel>
-			            <b:Controls>
-			                <b:TextBox ui:field="loginField" placeholder="{loginMessages.loginGhostLabel}"/>
-			            </b:Controls>
-			        </b:ControlGroup>
-			        <b:ControlGroup>
-			            <b:ControlLabel for="password"><ui:text from="{loginMessages.passwordLabel}"/></b:ControlLabel>
-			            <b:Controls>
-			                <b:PasswordTextBox ui:field="passwordField" placeholder="{loginMessages.passwordGhostLabel}"/>
-			            </b:Controls>
-			        </b:ControlGroup>
-			    </b:Fieldset>
-			</b:Form>
-			<b:ModalFooter>
-				<b:Button ui:field="submitCredentials" type="PRIMARY"><ui:text from="{messages.submitCredentialsButtonLabel}"/></b:Button>
-				<b:Button ui:field="cancelSubmitCredentialsModal"><ui:text from="{messages.cancelSubmitCredentialsButtonLabel}"/></b:Button>
-			</b:ModalFooter>
-		</b:Modal>
 	</g:FlowPanel>
 </ui:UiBinder>

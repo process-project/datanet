@@ -22,5 +22,5 @@ public interface RepositoryService extends RemoteService {
 	void removeRepository(long repositoryId) throws RepositoryException;
 	int getRepositoryCount() throws RepositoryException;
 	void updateAccessConfig(long repositoryId, AccessConfig accessConfig) throws RepositoryException;
-	EntityData getData(long repositoryId, String entityName, int start, int length, Map<String, String> query, String login, String password) throws RepositoryException;
+	EntityData getData(long repositoryId, String entityName, int start, int length, Map<String, String> query) throws RepositoryException;
 }

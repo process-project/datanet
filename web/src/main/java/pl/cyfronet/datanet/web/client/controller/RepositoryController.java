@@ -109,8 +109,8 @@ public class RepositoryController {
 		});
 	}
 
-	public void getEntityRows(long repositoryId, final String entityName, int start, int length, Map<String, String> query, String login, String password, final DataCallback dataCallback) {
-		repositoryService.getData(repositoryId, entityName, start, length, query, login, password, new AsyncCallback<EntityData>() {
+	public void getEntityRows(long repositoryId, final String entityName, int start, int length, Map<String, String> query, final DataCallback dataCallback) {
+		repositoryService.getData(repositoryId, entityName, start, length, query, new AsyncCallback<EntityData>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				eventBus.fireEvent(new NotificationEvent(

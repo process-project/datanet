@@ -20,7 +20,6 @@ import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPre
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;

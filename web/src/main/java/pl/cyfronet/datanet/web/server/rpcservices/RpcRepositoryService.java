@@ -127,7 +127,7 @@ public class RpcRepositoryService implements RepositoryService {
 	}
 
 	@Override
-	public EntityData getData(long repositoryId, String entityName, int start, int length, Map<String, String> query, String login, String password) throws RepositoryException {
+	public EntityData getData(long repositoryId, String entityName, int start, int length, Map<String, String> query) throws RepositoryException {
 		try {
 			RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
 			log.debug("Retrieving repository data for url {} entity {} start index {}, length {} and query {}",
@@ -153,12 +153,8 @@ public class RpcRepositoryService implements RepositoryService {
 				}
 			}
 			
-			RepositoryClient client = repositoryClient;
-			
-			if (login != null && password != null) {
-				client = repositoryClientFactory.create(
-						(String) SecurityContextHolder.getContext().getAuthentication().getCredentials());
-			}
+			RepositoryClient client = repositoryClientFactory.create(
+					(String) SecurityContextHolder.getContext().getAuthentication().getCredentials());
 			
 			return client.retrieveRepositoryData(repositoryDbEntity.getUrl(), entityName, fileFields, start, length, query);
 		} catch (Exception e) {

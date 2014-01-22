@@ -51,9 +51,6 @@ public class EntityDataPanelPresenter implements Presenter {
 		void addNewEntityRowCredentials();
 		void showTemplatesModal(boolean b);
 		void renderCodeTemplates(Map<String, String> codeTemplates);
-		HasText getPassword();
-		HasText getLogin();
-		void showCredentialsModal(boolean show);
 		void hideNewEntityRowCredentials();
 	}
 	
@@ -116,11 +113,7 @@ public class EntityDataPanelPresenter implements Presenter {
 		repositoryController.getRepository(repositoryId, new RepositoryCallback() {
 			@Override
 			public void setRepository(Repository repository) {
-				if (repository.getAccessConfig() != null && repository.getAccessConfig().getAccess() == Access.privateAccess) {
-					retrieveCredentialsAndUpdateData();
-				} else {
-					updateData();
-				}
+				updateData();
 			}
 			
 			@Override
@@ -209,17 +202,6 @@ public class EntityDataPanelPresenter implements Presenter {
 		});
 	}
 	
-	@Override
-	public void retrieveCredentialsAndUpdateData() {
-		view.showCredentialsModal(true);
-	}
-	
-	@Override
-	public void onSubmitCredentials() {
-		view.showCredentialsModal(false);
-		updateData();
-	}
-	
 	private void showSearchFields(List<Field> fields) {
 		for(Field field : fields) {
 			if (field.getType() == Type.String) {
@@ -283,15 +265,7 @@ public class EntityDataPanelPresenter implements Presenter {
 		repositoryController.getRepository(repositoryId, new RepositoryCallback() {
 			@Override
 			public void setRepository(Repository repository) {
-				String login = null;
-				String password = null;
-				
-				if (repository.getAccessConfig() != null && repository.getAccessConfig().getAccess() == Access.privateAccess) {
-					login = view.getLogin().getText();
-					password = view.getPassword().getText();
-				}
-				
-				repositoryController.getEntityRows(repositoryId, entityName, 1, view.getDataTable().getVisibleRange().getLength(), query, login, password, new DataCallback() {
+				repositoryController.getEntityRows(repositoryId, entityName, 1, view.getDataTable().getVisibleRange().getLength(), query, new DataCallback() {
 					@Override
 					public void onData(EntityData data) {
 						dataProvider.renderData(data);
@@ -327,17 +301,5 @@ public class EntityDataPanelPresenter implements Presenter {
 				//ignoring - proper event fired in the controller
 			}
 		});
-	}
-
-	@Override
-	public void onCancelCredentialsModal() {
-		//rendering an empty data set
-		EntityData entityData = new EntityData();
-		entityData.setTotalNumberOfEntities(0);
-		entityData.setStartEntityNumber(0);
-		entityData.setCurrentNumberOfEntities(0);
-		entityData.setEntityRows(new ArrayList<Map<String, String>>());
-		dataProvider.renderData(entityData);
-		view.showCredentialsModal(false);
 	}
 }

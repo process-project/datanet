@@ -9,7 +9,4 @@ public interface Presenter {
 	void beforeEntitySubmitted();
 	void afterEntitySubmitted(String results);
 	void onShowCodeTemplates();
-	void retrieveCredentialsAndUpdateData();
-	void onSubmitCredentials();
-	void onCancelCredentialsModal();
 }

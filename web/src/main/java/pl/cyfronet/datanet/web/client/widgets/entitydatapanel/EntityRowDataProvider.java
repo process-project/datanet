@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import pl.cyfronet.datanet.model.beans.Repository;
-import pl.cyfronet.datanet.model.beans.AccessConfig.Access;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
@@ -37,11 +36,7 @@ public class EntityRowDataProvider extends AsyncDataProvider<EntityRow> {
 		repositoryController.getRepository(repositoryId, new RepositoryCallback() {
 			@Override
 			public void setRepository(Repository repository) {
-				if (repository.getAccessConfig() != null && repository.getAccessConfig().getAccess() == Access.privateAccess) {
-					presenter.retrieveCredentialsAndUpdateData();
-				} else {
-					updateRange(display);
-				}
+				updateRange(display);
 			}
 			
 			@Override
@@ -67,7 +62,7 @@ public class EntityRowDataProvider extends AsyncDataProvider<EntityRow> {
 	private void updateRange(final HasData<EntityRow> display) {
 		final Range range = display.getVisibleRange();
 		int startNumber = range.getStart() + 1;
-		repositoryController.getEntityRows(repositoryId, entityName, startNumber, range.getLength(), null, null, null, new DataCallback() {
+		repositoryController.getEntityRows(repositoryId, entityName, startNumber, range.getLength(), null, new DataCallback() {
 			@Override
 			public void onData(EntityData data) {
 				renderData(data);
