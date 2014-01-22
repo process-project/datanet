@@ -208,26 +208,6 @@ public class EntityDataPanelWidget extends Composite implements View {
 	}
 
 	@Override
-	public void addNewEntityRowCredentials() {
-		credsPanel = new FlowPanel();
-		credsPanel.getElement().setClassName("alert");
-		credsPanel.add(new HTML(messages.credentialsInfo()));
-		
-		TextBox loginInput = new TextBox();
-		loginInput.setName("login");
-		loginInput.setPlaceholder(messages.loginPlaceholder());
-		credsPanel.add(new ControlLabel(messages.login()));
-		credsPanel.add(loginInput);
-		
-		PasswordTextBox passwordInput = new PasswordTextBox();
-		passwordInput.setName("password");
-		passwordInput.setPlaceholder(messages.passwordPlaceholder());
-		credsPanel.add(new ControlLabel(messages.password()));
-		credsPanel.add(passwordInput);
-		addEntityRowFormContainer.add(credsPanel);
-	}
-
-	@Override
 	public void showTemplatesModal(boolean b) {
 		codeTemplatesModal.show();
 	}
@@ -241,11 +221,6 @@ public class EntityDataPanelWidget extends Composite implements View {
 		pythonCode.getElement().setInnerHTML("<pre><code class='python'>" + codeTemplates.get("python") + "</code></pre>");
 		pythonCode.getElement().setId("hljs-python");
 		doHighlightMarkup();
-	}
-	
-	@Override
-	public void hideNewEntityRowCredentials() {
-		addEntityRowFormContainer.remove(credsPanel);
 	}
 
 	private native void doHighlightMarkup() /*-{

@@ -105,10 +105,6 @@ public class RepositoryPanelPresenter implements Presenter {
 			public void execute() {
 				view.setAccessConfigSaveBusyState(false);
 				view.showAccessConfigModal(false);
-				
-				for (EntityDataPanelPresenter entityDataPanelPresenter : entityDataPanelPresenters.values()) {
-					entityDataPanelPresenter.onAccessConfigChanged();
-				}
 			}
 		});
 	}
