@@ -89,6 +89,8 @@ public class RepositoryClient {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void updateEntityRow(String repositoryUrl, String entityName, String entityRowId,
 			Map<String, String> entityRow, Map<String, MultipartFile> files) throws RestClientException, URISyntaxException, IOException {
+		log.debug("Updating entity row for repository {} and entity {}", repositoryUrl, entityName);
+		
 		if (entityRowId == null) {
 			MultiValueMap<String, Object> values = new LinkedMultiValueMap<>();
 			
@@ -198,6 +200,8 @@ public class RepositoryClient {
 			
 			url = url.substring(0, url.length() - 1);
 		}
+		
+		log.trace("Built entity URL: {}", url);
 		
 		return url;
 	}

@@ -8,7 +8,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pl.cyfronet.datanet.model.beans.AccessConfig.Access;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Field;
 import pl.cyfronet.datanet.model.beans.Repository;
@@ -48,10 +47,8 @@ public class EntityDataPanelPresenter implements Presenter {
 		Form getEntityUploadForm();
 		void setBusyState(boolean b);
 		void initEntityUploadForm(long repositoryId, String entityName);
-		void addNewEntityRowCredentials();
 		void showTemplatesModal(boolean b);
 		void renderCodeTemplates(Map<String, String> codeTemplates);
-		void hideNewEntityRowCredentials();
 	}
 	
 	public interface DataCallback {
@@ -235,21 +232,6 @@ public class EntityDataPanelPresenter implements Presenter {
 			newEntityRowFields.put(field.getName(), view.addNewEntityRowField(field.getName(), field.getType(), indexes.get(field.getType())));
 			indexes.put(field.getType(), indexes.get(field.getType()) + 1);
 		}
-		
-		repositoryController.getRepository(repositoryId, new RepositoryCallback() {
-			@Override
-			public void setRepository(Repository repository) {
-				if (repository.getAccessConfig() != null && repository.getAccessConfig().getAccess() == Access.privateAccess ||
-						indexes.get(Type.File) != null) {
-					view.addNewEntityRowCredentials();
-				}
-			}
-			
-			@Override
-			public void setError(String message) {
-				//ignoring - proper event is fired in the  controller
-			}
-		});
 	}
 	
 	private void updateData() {
@@ -281,24 +263,6 @@ public class EntityDataPanelPresenter implements Presenter {
 			@Override
 			public void setError(String message) {
 				//ignoring - proper event fired by the controller
-			}
-		});
-	}
-
-	public void onAccessConfigChanged() {
-		repositoryController.getRepository(repositoryId, new RepositoryCallback() {
-			@Override
-			public void setRepository(Repository repository) {
-				if (repository.getAccessConfig() != null && repository.getAccessConfig().getAccess() == Access.privateAccess) {
-					view.addNewEntityRowCredentials();
-				} else {
-					view.hideNewEntityRowCredentials();
-				}
-			}
-			
-			@Override
-			public void setError(String message) {
-				//ignoring - proper event fired in the controller
 			}
 		});
 	}
