@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
@@ -22,7 +23,7 @@ public class RepositoryClientFactory {
 		httpClient.addRequestInterceptor(new HttpRequestInterceptor() {
 			@Override
 			public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
-				request.addHeader(new BasicHeader("Grid-Proxy", proxyCertificate));
+				request.addHeader(new BasicHeader("Grid-Proxy", Base64.encodeBase64String(proxyCertificate.getBytes())));
 			}
 		});
 		HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
