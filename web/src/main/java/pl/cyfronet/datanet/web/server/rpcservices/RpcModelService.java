@@ -66,8 +66,8 @@ public class RpcModelService implements ModelService {
 			}
 			
 			modelDbEntity.getOwners().add(user);
-			
 			modelDao.saveModel(modelDbEntity);
+			log.info("Model {} saved for user {}", modelDbEntity.getName(), user.getLogin());
 
 			// return model id, updated by hibernate with new unique id
 			model.setId(modelDbEntity.getId());

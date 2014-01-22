@@ -36,6 +36,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+import pl.cyfronet.datanet.web.server.db.HibernateUserDao;
+import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
 import pl.cyfronet.datanet.web.server.rpcservices.RpcLoginService;
 import eu.emi.security.authn.x509.proxy.ProxyUtils;
 
@@ -46,6 +48,7 @@ public class OpenIdController {
 	@Autowired private MainController mainController;
 	@Autowired private ConsumerManager openIdManager;
 	@Autowired private MessageSource messages;
+	@Autowired private HibernateUserDao userDao;
 	
 	@SuppressWarnings({"unchecked" })
 	@RequestMapping(value = "/", params = "openid.ns")
@@ -110,6 +113,16 @@ public class OpenIdController {
 					}
 					
 					if (canLogin) {
+						UserDbEntity user = userDao.getUser(authSuccess.getIdentity());
+						
+						if(user == null) {
+							user = new UserDbEntity();
+							user.setLogin(authSuccess.getIdentity());
+						}
+						
+						user.setLastLogin(Calendar.getInstance().getTime());
+						userDao.saveUser(user);
+						
 						List<GrantedAuthority> authorities = new ArrayList<>();
 						authorities.add(new SimpleGrantedAuthority(RpcLoginService.USER_ROLE));
 						
