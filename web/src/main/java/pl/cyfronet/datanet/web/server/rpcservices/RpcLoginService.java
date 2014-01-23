@@ -1,5 +1,7 @@
 package pl.cyfronet.datanet.web.server.rpcservices;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -87,9 +89,16 @@ public class RpcLoginService implements LoginService {
 		String proxy = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
 		
 		if (proxy != null) {
-			String base64Proxy = Base64.encodeBase64String(proxy.getBytes()).replaceAll("\n", "");
+			String encodedProxy = null;
 			
-			return base64Proxy;
+			try {
+				encodedProxy = URLEncoder.encode(proxy, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				log.error("Could not encode user proxy. Ignoring and returning null", e);
+				return null;
+			}
+			
+			return encodedProxy;
 		}
 		
 		return null;
