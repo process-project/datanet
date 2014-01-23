@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.binary.Base64;
 import org.openid4java.consumer.ConsumerManager;
 import org.openid4java.discovery.DiscoveryInformation;
 import org.openid4java.message.AuthRequest;
@@ -79,5 +80,18 @@ public class RpcLoginService implements LoginService {
 		} catch (Exception e) {
 			throw new LoginException(Code.OpenIdAssociationFailed);
 		}
+	}
+
+	@Override
+	public String retrieveUserProxy() {
+		String proxy = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+		
+		if (proxy != null) {
+			String base64Proxy = Base64.encodeBase64String(proxy.getBytes()).replaceAll("\n", "");
+			
+			return base64Proxy;
+		}
+		
+		return null;
 	}
 }
