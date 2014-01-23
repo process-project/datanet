@@ -1,9 +1,12 @@
 package pl.cyfronet.datanet.web.server.rpcservices;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.binary.Base64;
 import org.openid4java.consumer.ConsumerManager;
 import org.openid4java.discovery.DiscoveryInformation;
 import org.openid4java.message.AuthRequest;
@@ -79,5 +82,25 @@ public class RpcLoginService implements LoginService {
 		} catch (Exception e) {
 			throw new LoginException(Code.OpenIdAssociationFailed);
 		}
+	}
+
+	@Override
+	public String retrieveUserProxy() {
+		String proxy = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+		
+		if (proxy != null) {
+			String encodedProxy = null;
+			
+			try {
+				encodedProxy = URLEncoder.encode(proxy, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				log.error("Could not encode user proxy. Ignoring and returning null", e);
+				return null;
+			}
+			
+			return encodedProxy;
+		}
+		
+		return null;
 	}
 }
