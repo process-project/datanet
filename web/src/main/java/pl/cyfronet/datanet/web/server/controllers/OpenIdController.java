@@ -143,7 +143,7 @@ public class OpenIdController {
 	}
 
 	private String getProxyContent(String proxy, String userCert, String proxyPrivKey) {
-		return replaceBrWithNewLines(userCert) + replaceBrWithNewLines(proxyPrivKey) + replaceBrWithNewLines(proxy);
+		return replaceBrWithNewLines(proxy) + replaceBrWithNewLines(proxyPrivKey) + replaceBrWithNewLines(userCert);
 	}
 
 	private String replaceBrWithNewLines(String contents) {
