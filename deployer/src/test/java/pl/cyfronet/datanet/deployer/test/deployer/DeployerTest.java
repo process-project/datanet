@@ -1,6 +1,8 @@
 package pl.cyfronet.datanet.deployer.test.deployer;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.Date;
@@ -8,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,8 +24,8 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import pl.cyfronet.datanet.deployer.ApplicationConfig;
 import pl.cyfronet.datanet.deployer.Deployer;
 import pl.cyfronet.datanet.deployer.DeployerException;
-import pl.cyfronet.datanet.deployer.MapperBuilder;
-import pl.cyfronet.datanet.deployer.ZipFileMapperBuilder;
+import pl.cyfronet.datanet.deployer.MapperBuilderFactory;
+import pl.cyfronet.datanet.deployer.ZipByteArrayMapperBuilderFactory;
 import pl.cyfronet.datanet.deployer.test.SpringTestContext;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -44,16 +47,18 @@ public class DeployerTest {
 	private Deployer deployer;
 	
 	@Before
-	public void prepare() throws URISyntaxException, MalformedURLException {
+	public void prepare() throws URISyntaxException, IOException {
 		Date date = new Date();
 		Random random = new Random();
 		
 		String uniqueComponent = String.format("_%d_%d", date.getTime(), Math.abs(random.nextInt()));
 		repositoryName = REPOSITORY_NAME + uniqueComponent;
 		
-		File zip = new File(this.getClass().getClassLoader().getResource(ZIP_NAME).toURI());
-		Map <Deployer.RepositoryType, MapperBuilder> builderMap = new HashMap<Deployer.RepositoryType, MapperBuilder>();
-		builderMap.put(Deployer.RepositoryType.Mongo, new ZipFileMapperBuilder(zip, new File(UNZIP_PATH), APP_FOLDER_NAME));
+		InputStream zipStream = this.getClass().getClassLoader()
+				.getResourceAsStream(ZIP_NAME);
+		
+		Map <Deployer.RepositoryType, MapperBuilderFactory> builderMap = new HashMap<Deployer.RepositoryType, MapperBuilderFactory>();
+		builderMap.put(Deployer.RepositoryType.Mongo, new ZipByteArrayMapperBuilderFactory(IOUtils.toByteArray(zipStream), new File(UNZIP_PATH), APP_FOLDER_NAME));
 		deployer = new Deployer(cfUser, cfPass, cfTarget, new ApplicationConfig(), builderMap);
 	}
 	

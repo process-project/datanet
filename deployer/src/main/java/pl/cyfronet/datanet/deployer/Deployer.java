@@ -38,9 +38,9 @@ public class Deployer {
 	private String password;
 
 	private ApplicationConfig appConfig;
-	private Map<RepositoryType, MapperBuilder> builders;
+	private Map<RepositoryType, MapperBuilderFactory> builders;
 	
-	public Deployer(String email, String password, String cloudControllerUrl, ApplicationConfig appConfig, Map<RepositoryType, MapperBuilder> builders) 
+	public Deployer(String email, String password, String cloudControllerUrl, ApplicationConfig appConfig, Map<RepositoryType, MapperBuilderFactory> builders) 
 			throws MalformedURLException {
 		this.email = email;
 		this.password = password;
@@ -59,7 +59,7 @@ public class Deployer {
 	 * @throws DeployerException
 	 */
 	public String deployRepository(RepositoryType repositoryType, String repositoryName, Map<String, String> models, String token) throws DeployerException {
-		MapperBuilder builder = builders.get(repositoryType);
+		MapperBuilder builder = builders.get(repositoryType).create();
 		String url = null;
 		
 		if (builder == null) {
