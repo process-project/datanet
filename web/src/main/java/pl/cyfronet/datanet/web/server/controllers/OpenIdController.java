@@ -128,6 +128,8 @@ public class OpenIdController {
 						
 						Authentication authentication = new UsernamePasswordAuthenticationToken(authSuccess.getIdentity(), completeProxy, authorities);
 						SecurityContextHolder.getContext().setAuthentication(authentication);
+						
+						return "redirect:" + request.getContextPath();
 					}
 	            }
 	        } else {

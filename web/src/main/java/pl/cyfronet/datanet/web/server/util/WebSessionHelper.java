@@ -22,7 +22,7 @@ public class WebSessionHelper {
 		
 		String serverPort = (request.getServerPort() != 443 && request.getServerPort() != 80) ? ":" + String.valueOf(request.getServerPort()) : "";
 		String result = request.getScheme() + "://" + request.getServerName() + serverPort +
-				(request.getContextPath().equals("") ? "/" : request.getContextPath());
+				(request.getContextPath().equals("") ? "/" : (request.getContextPath() + "/"));
 		
 	    return result;
 	}
