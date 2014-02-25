@@ -54,7 +54,7 @@ public class Unzip {
 		ZipInputStream zipStream = new ZipInputStream(inputStream);
 
 		if (!outputFolder.exists())
-			outputFolder.mkdir();
+			outputFolder.mkdirs();
 
 		ZipEntry entry;
 		while ((entry = zipStream.getNextEntry()) != null) {
