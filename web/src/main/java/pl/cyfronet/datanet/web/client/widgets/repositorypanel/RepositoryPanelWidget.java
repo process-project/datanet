@@ -9,12 +9,14 @@ import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TabPanel;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HasText;
@@ -63,12 +65,12 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 	}
 	
 	@UiHandler("privateCheck")
-	void onPrivateTypeSelected(ValueChangeEvent<Boolean> event) {
+	void onPrivateTypeSelected(ClickEvent event) {
 		presenter.privateTypeSelected();
 	}
 	
 	@UiHandler("publicCheck")
-	void onPublicTypeSelected(ValueChangeEvent<Boolean> event) {
+	void onPublicTypeSelected(ClickEvent event) {
 		presenter.publicTypeSelected();
 	}
 
