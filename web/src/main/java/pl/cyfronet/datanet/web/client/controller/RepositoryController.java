@@ -5,6 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.datanet.model.beans.AccessConfig;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Repository;
@@ -23,6 +26,8 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class RepositoryController {
+	private final static Logger log = LoggerFactory.getLogger(RepositoryController.class);
+	
 	public interface RepositoryCallback {
 		void setRepository(Repository repository);
 		void setError(String message);
@@ -160,10 +165,12 @@ public class RepositoryController {
 					@Override
 					public void setRepositories(List<Repository> list) {
 						repositories.get(versionId).add(repository);
+						log.debug("Repository after creation: {}", repository);
 						eventBus.fireEvent(new VersionRepositoryChangedEvent(versionId, repository.getId()));
 						eventBus.fireEvent(new NotificationEvent(
 								RepositoryNotificationMessage.repositoryDeployed, NotificationType.SUCCESS));						
 						
+						log.debug("Repository callback: {}", repositoryCallback);
 						if (repositoryCallback != null) {
 							repositoryCallback.setRepository(repository);
 						}

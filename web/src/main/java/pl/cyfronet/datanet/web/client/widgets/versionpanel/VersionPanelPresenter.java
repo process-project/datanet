@@ -2,6 +2,9 @@ package pl.cyfronet.datanet.web.client.widgets.versionpanel;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.model.beans.Version;
@@ -27,6 +30,8 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class VersionPanelPresenter implements Presenter {
+	private static final Logger log = LoggerFactory.getLogger(VersionPanelPresenter.class);
+	
 	public interface View extends IsWidget {
 		void setModelName(String name);
 		HasWidgets getEntityContainer();
@@ -156,6 +161,7 @@ public class VersionPanelPresenter implements Presenter {
 				new RepositoryCallback() {
 					@Override
 					public void setRepository(final Repository repository) {
+						log.debug("Setting new repository: {}", repository);
 						view.hideDeployModal();
 						placeController.goTo(new RepositoryPlace(repository.getId()));
 					}
