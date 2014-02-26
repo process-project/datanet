@@ -6,8 +6,10 @@ import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.isVersio
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +33,11 @@ public class ModelTreeViewModel implements TreeViewModel {
 	/**
 	 * A mapping from model id to version data provider
 	 */
-	private Map<Long, TreeItemsAsyncDataProvider> versionDataProviders;  
-	private Map<Long, TreeItemsAsyncDataProvider> repositoryDataProviders;  
+	private Map<Long, TreeItemsAsyncDataProvider> versionDataProviders;
+	private Map<Long, TreeItemsAsyncDataProvider> repositoryDataProviders;
 	private ModelTreePanelMessages messages;
 	private SelectionModel<TreeItem> selection;
-	
-	
+
 	public ModelTreeViewModel(ModelTreePanelMessages messages,
 			SelectionModel<TreeItem> selection) {
 		this.messages = messages;
@@ -47,14 +48,14 @@ public class ModelTreeViewModel implements TreeViewModel {
 
 	@Override
 	public <T> NodeInfo<?> getNodeInfo(T value) {
-		
+
 		TreeItem treeItem = (TreeItem) value;
 		TreeItemsAsyncDataProvider dataProvider = null;
-		
+
 		Cell<TreeItem> cell = null;
 		if (isRoot(treeItem)) {
-			dataProvider = new TreeItemsAsyncDataProvider(null);
-			rootDataProvider = dataProvider; 
+			dataProvider = new TreeItemsAsyncDataProvider(null, null);
+			rootDataProvider = dataProvider;
 			cell = new AbstractCell<TreeItem>() {
 				@Override
 				public void render(Context context, TreeItem value,
@@ -123,11 +124,11 @@ public class ModelTreeViewModel implements TreeViewModel {
 	public TreeItemsAsyncDataProvider getModelProvider() {
 		return rootDataProvider;
 	}
-	
+
 	public TreeItemsAsyncDataProvider getVersionProvider(long modelId) {
 		return versionDataProviders.get(modelId);
 	}
-	
+
 	public TreeItemsAsyncDataProvider getRepositoryProvider(long versionId) {
 		return repositoryDataProviders.get(versionId);
 	}
@@ -136,9 +137,11 @@ public class ModelTreeViewModel implements TreeViewModel {
 
 		private TreeItem current;
 		private List<TreeItem> children;
-		
-		public TreeItemsAsyncDataProvider(TreeItem current) {
+		private Long parentId;
+
+		public TreeItemsAsyncDataProvider(TreeItem current, Long parentId) {
 			this.current = current;
+			this.parentId = parentId;
 		}
 
 		@Override
@@ -165,17 +168,33 @@ public class ModelTreeViewModel implements TreeViewModel {
 
 		private void createChildrenDataProviders() {
 			Map<Long, TreeItemsAsyncDataProvider> childrenProviders = null;
-			if(isRoot(current)) {
+			Long parentId = null;
+			if (isRoot(current)) {
 				childrenProviders = versionDataProviders;
 			} else if (isModel(current)) {
+				parentId = current.getId();
 				childrenProviders = repositoryDataProviders;
 			}
-			
-			if(childrenProviders != null && children != null) {
-				childrenProviders.clear();
-				
+
+			if (childrenProviders != null && children != null) {
+				removeOwnedProviders(childrenProviders, parentId);
+
 				for (TreeItem child : children) {
-					childrenProviders.put(child.getId(), new TreeItemsAsyncDataProvider(child));
+					childrenProviders.put(child.getId(),
+							new TreeItemsAsyncDataProvider(child, parentId));
+				}
+			}
+		}
+
+		private void removeOwnedProviders(
+				Map<Long, TreeItemsAsyncDataProvider> childrenProviders,
+				Long parentId) {
+			Iterator<Entry<Long, TreeItemsAsyncDataProvider>> it = childrenProviders
+					.entrySet().iterator();
+			while (it.hasNext()) {
+				Entry<Long, TreeItemsAsyncDataProvider> item = it.next();
+				if (item.getValue().getParentId() == parentId) {
+					it.remove();
 				}
 			}
 		}
@@ -186,7 +205,12 @@ public class ModelTreeViewModel implements TreeViewModel {
 
 		private void loading() {
 			updateRowCount(1, true);
-			updateRowData(0, Arrays.asList(TreeItem.newLoading(messages.loading())));
+			updateRowData(0,
+					Arrays.asList(TreeItem.newLoading(messages.loading())));
+		}
+
+		public Long getParentId() {
+			return parentId;
 		}
 	}
 }
