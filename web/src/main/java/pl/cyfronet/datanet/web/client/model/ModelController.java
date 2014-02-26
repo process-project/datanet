@@ -26,7 +26,7 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class ModelController {
-	private static final Logger logger = LoggerFactory.getLogger(ModelTreePanelPresenter.class.getName());
+	private static final Logger log = LoggerFactory.getLogger(ModelTreePanelPresenter.class.getName());
 
 	private ModelServiceAsync modelService;
 	private EventBus eventBus;
@@ -44,6 +44,7 @@ public class ModelController {
 
 	public void getModels(final ModelsCallback callback, boolean forceRefresh) {
 		if (models == null || forceRefresh) {
+			log.debug("Models are empty or foce refresh ({}), loading from server", forceRefresh);
 			loadModels(callback);
 		} else {
 			callback.setModels(models);
@@ -51,11 +52,11 @@ public class ModelController {
 	}
 
 	private void loadModels(final ModelsCallback callback) {
-		logger.debug("Loading user models");
+		log.debug("Loading user models");
 		modelService.getModels(new AsyncCallback<List<Model>>() {
 			@Override
 			public void onSuccess(List<Model> result) {
-				logger.debug("Models loaded");
+				log.debug("Models loaded");
 				models = new ArrayList<ModelProxy>();
 				for (Model model : result) {
 					models.add(new ModelProxy(model));
@@ -65,7 +66,7 @@ public class ModelController {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				logger.warn("Unable to load models, sending notification. {}",
+				log.warn("Unable to load models, sending notification. {}",
 						caught.getMessage());
 				eventBus.fireEvent(new NotificationEvent(
 						ModelNotificationMessage.modelListLoadError,
@@ -102,7 +103,7 @@ public class ModelController {
 	}
 
 	private void loadModel(Long modelId, final ModelCallback callback) {
-		logger.debug("Loading model {}", modelId);
+		log.debug("Loading model {}", modelId);
 		
 		try {
 			modelService.getModel(modelId, new AsyncCallback<Model>() {

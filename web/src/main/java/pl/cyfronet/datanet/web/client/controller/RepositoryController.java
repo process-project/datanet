@@ -135,6 +135,7 @@ public class RepositoryController {
 	
 	public void getRepositories(final long versionId, final RepositoriesCallback callback, boolean forceRefresh) {
 		if (repositories.get(versionId) == null || forceRefresh) {
+			log.debug("Repositories for {} are empty or foce refresh ({}), loading from server", versionId, forceRefresh);
 			loadRepositories(versionId, new NextCallback() {
 				@Override
 				public void next() {

@@ -6,10 +6,6 @@ import static pl.cyfronet.datanet.web.client.widgets.modeltree.ItemType.isVersio
 
 import java.util.List;
 
-import org.mortbay.log.Log;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreePanelPresenter.View;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.ModelTreeViewModel.TreeItemsAsyncDataProvider;
 import pl.cyfronet.datanet.web.client.widgets.modeltree.Presenter.TreeItemCallback;
@@ -31,8 +27,6 @@ public class ModelTreePanel extends Composite implements View {
 	private static ModelTreePanelUiBinder uiBinder = GWT.create(ModelTreePanelUiBinder.class);
 	interface ModelTreePanelUiBinder extends UiBinder<Widget, ModelTreePanel> {}
 	
-	private static final Logger log = LoggerFactory.getLogger(ModelTreePanel.class);
-
 	@UiField(provided = true)
 	CellTree modelsTree;
 
@@ -149,8 +143,6 @@ public class ModelTreePanel extends Composite implements View {
 	public void setRepositories(long versionId, List<TreeItem> repoTreeItems) {
 		TreeItemsAsyncDataProvider reposotoriesProvider = model
 				.getRepositoryProvider(versionId);
-		log.debug("Repository provider: {}", reposotoriesProvider);
-		log.debug("Repository tree items: {}", repoTreeItems);
 		reposotoriesProvider.updateRowCount(repoTreeItems.size(), true);
 		reposotoriesProvider.updateRowData(0, repoTreeItems);
 	}

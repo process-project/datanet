@@ -54,6 +54,7 @@ public class VersionController {
 
 	public void getVersions(long modelId, final VersionsCallback callback, boolean forceRefresh) {
 		if (versions.get(modelId) == null || forceRefresh) {
+			log.debug("Versions for {} are empty or foce refresh ({}), loading from server", modelId, forceRefresh);
 			loadAndReturnVersions(modelId, callback);
 		}
 		else {
