@@ -128,6 +128,9 @@ public class RpcRepositoryService implements RepositoryService {
 
 	@Override
 	public EntityData getData(long repositoryId, String entityName, int start, int length, Map<String, String> query) throws RepositoryException {
+		log.debug("Fetching repository data for repository with id {} and entity name {} starting with {} and length {} and query {}",
+				new Object[] {repositoryId, entityName, start, length, query});
+		
 		try {
 			RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
 			log.debug("Retrieving repository data for url {} entity {} start index {}, length {} and query {}",
@@ -158,7 +161,7 @@ public class RpcRepositoryService implements RepositoryService {
 			
 			return client.retrieveRepositoryData(repositoryDbEntity.getUrl(), entityName, fileFields, start, length, query);
 		} catch (Exception e) {
-			String message = "Repository data retrieval error occurred";
+			String message = "Repository data retrieval error occurred for repository with id " + repositoryId;
 			log.error(message, e);
 			throw new RepositoryException(Code.RepositoryDataRetrievalError, message, e);
 		}
