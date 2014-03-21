@@ -11,6 +11,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -82,6 +83,11 @@ public class TopNavPanel extends Composite implements View {
 	void onHelp(ClickEvent event) {
 		presenter.onHelp();
 	}
+	
+	@UiHandler("retrieveProxy")
+	void retrieveProxy(ClickEvent event) {
+		presenter.onRetrieveProxy();
+	}
 
 	@Override
 	public void setPresenter(Presenter presenter) {
@@ -96,5 +102,16 @@ public class TopNavPanel extends Composite implements View {
 	@Override
 	public void selectEnLocales() {
 		switchToEn.setActive(true);	
+	}
+
+	@Override
+	public void setUrl(String path) {
+		String baseUrl = GWT.getHostPageBaseURL();
+		
+		if(baseUrl.endsWith("/")) {
+			baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+		}
+		
+		Window.Location.replace(baseUrl + path);
 	}
 }

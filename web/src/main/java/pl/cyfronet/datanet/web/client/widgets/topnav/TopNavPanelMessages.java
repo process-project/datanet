@@ -7,4 +7,5 @@ public interface TopNavPanelMessages extends Messages {
 	String datanetMain();
 	String help();
 	String versionLabel();
+	String retrieveProxy();
 }

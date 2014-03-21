@@ -32,6 +32,7 @@
 		<b:Label addStyleNames="{style.version-label}"><ui:text from="{messages.versionLabel}"/>: <ui:text from="{constants.version}"/></b:Label>
 		<b:Alert ui:field="messageLabel" close="false" visible="false" addStyleNames="{style.messageLabel}"/>
 		<b:ButtonGroup addStyleNames="{style.header-buttons}">
+			<b:Button ui:field="retrieveProxy" icon="DOWNLOAD"><ui:text from="{messages.retrieveProxy}"/></b:Button>
 		    <b:Button ui:field="help" icon="QUESTION_SIGN" type="INFO"><ui:text from="{messages.help}"/></b:Button>
 			<b:Button ui:field="logout" icon="SIGNOUT" type="DANGER"><ui:text from="{messages.logout}"/></b:Button>
 		</b:ButtonGroup>

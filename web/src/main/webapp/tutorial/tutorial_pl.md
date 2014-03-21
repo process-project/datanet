@@ -84,21 +84,25 @@ dane aktywnego konta PLGrid, dostęp do jednej z infrastruktur obliczeniowych PL
 
 1. Ściągnij eksperyment sortujący na lokalną maszynę za pomocą [tego linku](resources/sorting-experiment.exp.xml).
 
-2. Upewnij się, że masz dostęp do jednej z infrastruktur obliczeniowych PLGrid sprawdzając listę usług w [portalu PLGrid](https://portal.plgrid.pl).
+2. Zapisz proxy przez kliknięcie przycisku <button class="btn"><i class="icon-download"> Zapisz proxy</i></button>, który znajduje się w prawym górnym rogu aplikacji DataNet.
 
-3. Zaloguj się do GridSpace Experiment Workbench za pomocą [tej strony](https://gs2.plgrid.pl) klikając w przycisk *Login »*.
+3. Upewnij się, że masz dostęp do jednej z infrastruktur obliczeniowych PLGrid sprawdzając listę usług w [portalu PLGrid](https://portal.plgrid.pl).
 
-4. Używając przycisku *Upload file* w panelu *Files* wgraj plik eksperymentu zapisanego w pierwszym kroku.
+4. Zaloguj się do GridSpace Experiment Workbench za pomocą [tej strony](https://gs2.plgrid.pl) klikając w przycisk *Login »*.
 
-5. Otwórz eksperyment kliknąwszy go w panelu *Files*.
+5. Używając przycisku *Upload file* w panelu *Files* wgraj plik eksperymentu zapisany w pierwszym kroku.
+
+6. Ponowanie wgraj plik z proxy zapisany w kroku drugim.
+
+7. Otwórz eksperyment kliknąwszy go w panelu *Files*.
 
     Zostaną wyświetlone trzy główne fragmenty kodów, które generują losowy ciąg liczb (Ruby), sortują ciąg zapisując poszególne kroki
     sortowania (Python) i generują końcowy film (zadanie w języku Bash). Każdy z kodów odwołuje się do zdalnego repozytorium DataNet
     w celu zapisania lub pobrania odpowiednich danych. Pierwszy fragment kodu służy do rozpropagowania adresu repozytorium do innych
     fragmentów.
 
-6. Zaktualizuj adres swojego repozytorium w pierwszym fragmencie kodu
+8. Zaktualizuj adres swojego repozytorium w pierwszym fragmencie kodu
 
-7. Uruchom poszczególne fragmenty kodów zaczynając odpierwszego i obserwuj dane w widoku repozytorium dla każdej z encji (widok
+9. Uruchom poszczególne fragmenty kodów zaczynając odpierwszego i obserwuj dane w widoku repozytorium dla każdej z encji (widok
    można odświeżyć poprzez odświeżenie całej strony). Tabela z danymi powinna zostać uzupełniona danymi z repozytorium. Końcowy
    film może zostać ściągnięty z tabeli dla encji *Result*.

@@ -24,6 +24,7 @@ public class TopNavPresenter implements Presenter {
 		void displayMessage(String message, MessageType type);
 		void selectPlLocales();
 		void selectEnLocales();
+		void setUrl(String string);
 	}
 
 	private Provider<ClientController> clientController;
@@ -103,5 +104,10 @@ public class TopNavPresenter implements Presenter {
 		}
 		
 		return message;
+	}
+
+	@Override
+	public void onRetrieveProxy() {
+		view.setUrl("/downloadProxy");
 	}
 }

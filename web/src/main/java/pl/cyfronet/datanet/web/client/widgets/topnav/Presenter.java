@@ -7,4 +7,5 @@ public interface Presenter {
 	void onSwitchLocale(String string);
 	void onHelp();
 	IsWidget getWidget();
+	void onRetrieveProxy();
 }

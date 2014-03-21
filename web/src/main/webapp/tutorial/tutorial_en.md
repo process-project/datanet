@@ -85,22 +85,26 @@ below to accomplish this task.
 
 1. Download a sorting experiment to your local machine from [here](resources/sorting-experiment.exp.xml).
 
-2. Make sure you have access to one of the PLGrid computing infrastructures by checking your services in the
+2. Download your proxy by clicking the <button class="btn"><i class="icon-download"> Download proxy</i></button> button which is located in the top-right corner of the DataNet application.
+
+3. Make sure you have access to one of the PLGrid computing infrastructures by checking your services in the
    [PLGrid portal](https://portal.plgrid.pl).
 
-3. Login to GridSapce Experiment Workbench through [this page](https://gs2.plgrid.pl) by clicking the *Login »* button.
+4. Login to GridSpace Experiment Workbench through [this page](https://gs2.plgrid.pl) by clicking the *Login »* button.
 
-4. By using the *Upload file* button in the *Files* panel upload the experiment saved in the first step.
+5. By using the *Upload file* button in the *Files* panel upload the experiment saved in the first step.
 
-5. Open the experiment by clicking it in the *Files* panel.
+6. Again, upload the proxy file saved in the second step.
+
+7. Open the experiment by clicking it in the *Files* panel.
 
     You should see three main code snippets which generate a random number sequence (Ruby), sort the sequence storing individual
     steps (Python) and produce the final movie (Bash job). Each of the codes
     accesses the remote DataNet repository to store or retrieve relevant data. The first snippet is used to distribute repository
     URL among other snippets.
 
-6. Update your repository location inside first code snippet
+8. Update your repository location inside first code snippet
 
-7. Execute individual code snippets starting from the first one and observe the data table in the repository view for each of 
+9. Execute individual code snippets starting from the first one and observe the data table in the repository view for each of 
    the entities (you can refresh the view by refreshing the whole page). The data table should be filled in with data. The final
    movie can be downloaded from the *Result* entity table.

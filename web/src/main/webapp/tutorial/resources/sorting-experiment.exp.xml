@@ -7,7 +7,7 @@
         <name>Ustawienie adresu repozytorium</name>
         <description></description>
         <output>a8</output>
-        <code>echo &quot;https://sortingtutrepo.datanet.cyfronet.pl/&quot; &gt; repo.txt</code>
+        <code>echo &quot;https://change.paas.datanet.plgrid.pl/&quot; &gt; repo.txt</code>
     </snippet>
     <snippet interpreter="Ruby-2.0.0" id="a1">
         <name>Generacja losowych liczb</name>
@@ -16,16 +16,21 @@
         <output>a5</output>
         <code>require 'rest_client'
 require 'json'
+require 'base64'
 
 #reading in the repository URL
 repositoryUrl = File.new('repo.txt', 'r').read().strip()
+
+proxy = File.read('user-proxy.pem')
+proxy_base64 = Base64.encode64(proxy).gsub(&quot;
+&quot;, &quot;&quot;)
 
 #generating numbers to be sorted
 size = 10
 array = (1..size).map {rand(size)}
 
 #saving the array in DataNet
-repository = RestClient::Resource.new(repositoryUrl + 'Input', :user =&gt; 'public', :password =&gt; 'public')
+repository = RestClient::Resource.new(repositoryUrl + 'Input', :headers =&gt; {'GRID_PROXY' =&gt; proxy_base64})
 jdata = {:input =&gt; array, :description =&gt; 'Another sorting sequence'}.to_json
 inputId = repository.post jdata, content_type: :json
 
@@ -40,16 +45,21 @@ File.open('input-id.txt', 'w') {|f| f.write(inputId)}</code>
         <code>import requests
 import json
 import os
+import base64
 
 #reading in the repository URL
 repositoryUrl = open('repo.txt', 'r').read().strip()
 
+proxy_file = open('user-proxy.pem', 'r')
+proxy_payload = proxy_file.read()
+proxy_payload_base64 = base64.b64encode(proxy_payload)
+
 #reading in the input id
 f = open('input-id.txt', 'r')
-inputId = f.read()
+inputId = json.loads(f.read())['id']
 
 #retrieving the array from DataNet
-response = requests.get(repositoryUrl + 'Input/' + inputId, auth = ('public', 'public'), verify = False)
+response = requests.get(repositoryUrl + 'Input/' + inputId, headers={'GRID_PROXY': proxy_payload_base64})
 array = json.loads(response.content)['input']
 
 #storing the length of array
@@ -75,7 +85,7 @@ def dumpState(array, index):
         dataFile.write(str(number) + &quot;\n&quot;)
     dataFile.close()
     os.system('gnuplot gnuplot.plt &gt; /dev/null 2&gt;&amp;1')
-    response = requests.post(repositoryUrl + 'Step', auth = ('plgtesthar', 'que2feeTaifoush'), data = {'ordinal': index, 'snapshot': str(array), 'input': inputId}, files = {'image': open('frame.png', 'r')}, verify = False)
+    response = requests.post(repositoryUrl + 'Step', headers={'GRID_PROXY': proxy_payload_base64}, data = {'ordinal': index, 'snapshot': str(array), 'input': inputId}, files = {'image': open('frame.png', 'r')})
 
 #sorting and dumping steps
 l = len(array)
@@ -103,6 +113,9 @@ INPUT_ID=`cat input-id.txt`
 LENGTH=`cat array-length.txt`
 LENGTH=$(($LENGTH-1))
 
+cat user-proxy.pem | base64 | tr -d '\n' &gt; /tmp/my_proxy_base64
+export PROXY=`cat /tmp/my_proxy_base64`
+
 for i in $(eval echo &quot;{0..$LENGTH}&quot;)
 do
   URL=${REPO}Step?input=${INPUT_ID}\&amp;ordinal=${i}
@@ -111,7 +124,7 @@ do
   echo $imageId
   imageUrl=${REPO}file/${imageId}
   echo $imageUrl
-  curl -k -o frame${i}.png -uplgtesthar:que2feeTaifoush $imageUrl
+  curl -k -o frame${i}.png -H &quot;GRID_PROXY: $PROXY&quot; $imageUrl
 done
 
 #loading the ffmpeg module
@@ -125,7 +138,7 @@ ffmpeg -r $FRAMERATE -b 16777216 -i frame%d.png $OUT
 
 #storing the final movie in DataNet
 storeUrl=$REPO/Result
-curl -k -uplgtesthar:que2feeTaifoush -F input=${INPUT_ID} -F movie=@${OUT} $storeUrl</code>
+curl -k -H &quot;GRID_PROXY: $PROXY&quot; -F input=${INPUT_ID} -F movie=@${OUT} $storeUrl</code>
     </snippet>
     <inputOutput fileName="input-id.txt" id="a5">
         <name>input-id</name>
