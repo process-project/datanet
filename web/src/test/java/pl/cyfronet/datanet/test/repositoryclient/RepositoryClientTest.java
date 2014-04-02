@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,8 +21,6 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.multipart.MultipartFile;
 
-import pl.cyfronet.datanet.model.beans.AccessConfig;
-import pl.cyfronet.datanet.model.beans.AccessConfig.Access;
 import pl.cyfronet.datanet.web.server.config.SpringConfiguration;
 import pl.cyfronet.datanet.web.server.services.repositoryclient.RepositoryClient;
 import pl.cyfronet.datanet.web.server.services.repositoryclient.RepositoryClientFactory;
@@ -32,7 +29,6 @@ import pl.cyfronet.datanet.web.server.services.repositoryclient.RepositoryClient
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class,
 		classes = SpringConfiguration.class)
 public class RepositoryClientTest {
-	@Autowired private RepositoryClient repositoryClient;
 	@Autowired private RepositoryClientFactory repositoryClientFactory;
 	
 	@Mock private MultipartFile file;
@@ -44,14 +40,17 @@ public class RepositoryClientTest {
 	
 	//TODO(DH): create a test repository beforehand
 //	@Test
-	public void retrieveData() throws RestClientException, URISyntaxException {
+	public void retrieveData() throws RestClientException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException {
+		RepositoryClient repositoryClient = repositoryClientFactory.create("proxy");
 		repositoryClient.retrieveRepositoryData("http://testmodel.datanet.cyfronet.pl", "testentity", null, 1, -1, null);
 	}
 	
 //	@Test
-	public void insertData() throws RestClientException, URISyntaxException, IOException {
+	public void insertData() throws RestClientException, URISyntaxException, IOException, KeyManagementException, NoSuchAlgorithmException {
 		Map<String, String> data = new HashMap<>();
 		data.put("testfield", "It is " + System.currentTimeMillis() + " millis from the epoch");
+		
+		RepositoryClient repositoryClient = repositoryClientFactory.create("proxy");
 		repositoryClient.updateEntityRow("http://testmodel.datanet.cyfronet.pl", "testentity", null, data, null);
 	}
 	

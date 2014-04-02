@@ -57,7 +57,6 @@ public class RpcRepositoryService implements RepositoryService {
 	@Autowired private HibernateVersionDao versionDao;
 	@Autowired private HibernateRepositoryDao repositoryDao;
 	@Autowired private JaxbEntityListBuilder jaxbEntityListBuilder;
-	@Autowired private RepositoryClient repositoryClient;
 	@Autowired private RepositoryClientFactory repositoryClientFactory;
 
 	@Override
@@ -72,6 +71,9 @@ public class RpcRepositoryService implements RepositoryService {
 				repository.setSourceModelVersion(repository.getSourceModelVersion());
 				repository.setUrl(repositoryDbEntity.getUrl());
 				repositories.add(repository);
+				
+				RepositoryClient repositoryClient = repositoryClientFactory.create(
+						(String) SecurityContextHolder.getContext().getAuthentication().getCredentials());
 				
 				AccessConfig accessConfig = repositoryClient.getAccessConfig(
 						repositoryDbEntity.getUrl(), repositoryDbEntity.getToken());
@@ -108,6 +110,9 @@ public class RpcRepositoryService implements RepositoryService {
 		try {
 			if (repositoryDao.isRepositoryOwner(repositoryId, SpringSecurityHelper.getUserLogin())) {
 				log.debug("Retrieving repository DB bean for id {}", repositoryId);
+				
+				RepositoryClient repositoryClient = repositoryClientFactory.create(
+						(String) SecurityContextHolder.getContext().getAuthentication().getCredentials());
 				
 				RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
 				AccessConfig accessConfig = repositoryClient.getAccessConfig(
@@ -176,6 +181,8 @@ public class RpcRepositoryService implements RepositoryService {
 			
 			for (Repository repository : result) {
 				if (repositoryDao.isRepositoryOwner(repository.getId(), SpringSecurityHelper.getUserLogin())) {
+					RepositoryClient repositoryClient = repositoryClientFactory.create(
+							(String) SecurityContextHolder.getContext().getAuthentication().getCredentials());
 					RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repository.getId());
 					AccessConfig accessConfig = repositoryClient.getAccessConfig(
 							repository.getUrl(), repositoryDbEntity.getToken());
@@ -214,6 +221,9 @@ public class RpcRepositoryService implements RepositoryService {
 			repository.setToken(token);
 			repositoryDao.saveRepository(repository);
 			versionDao.addVersionRepository(versionDbEntity, repository);
+			
+			RepositoryClient repositoryClient = repositoryClientFactory.create(
+					(String) SecurityContextHolder.getContext().getAuthentication().getCredentials());
 			repositoryClient.waitUntilRepositoryAvailable(repositoryUrl);
 			
 			AccessConfig accessConfig = repositoryClient.getAccessConfig(repositoryUrl, token);
@@ -240,6 +250,9 @@ public class RpcRepositoryService implements RepositoryService {
 	public void saveData(long repositoryId, String entityName, Map<String, String> data) throws RepositoryException {
 		try {
 			RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
+			
+			RepositoryClient repositoryClient = repositoryClientFactory.create(
+					(String) SecurityContextHolder.getContext().getAuthentication().getCredentials());
 			repositoryClient.updateEntityRow(repositoryDbEntity.getUrl(), entityName, null, data, null);
 		} catch (Exception e) {
 			log.error("Repository entity row data could not be saved", e);
@@ -287,6 +300,8 @@ public class RpcRepositoryService implements RepositoryService {
 			if (repositoryDao.isRepositoryOwner(repositoryId, SpringSecurityHelper.getUserLogin())) {
 				RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
 				log.info("Updating repository access configuration for repository with id {}", repositoryId);
+				RepositoryClient repositoryClient = repositoryClientFactory.create(
+						(String) SecurityContextHolder.getContext().getAuthentication().getCredentials());
 				repositoryClient.updateAccessConfiguration(repositoryDbEntity.getUrl(), repositoryDbEntity.getToken(), accessConfig);
 			} else {
 				throw new RepositoryException(Code.RepositoryAuthorizationError);
