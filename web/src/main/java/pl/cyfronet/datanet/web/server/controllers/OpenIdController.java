@@ -1,6 +1,7 @@
 package pl.cyfronet.datanet.web.server.controllers;
 
 import static pl.cyfronet.datanet.web.server.rpcservices.RpcLoginService.OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME;
+import static pl.cyfronet.datanet.web.server.rpcservices.RpcLoginService.OPEN_ID_CONSUMER_MANAGER;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -46,7 +47,6 @@ public class OpenIdController {
 	private static final Logger log = LoggerFactory.getLogger(OpenIdController.class);
 	
 	@Autowired private MainController mainController;
-	@Autowired private ConsumerManager openIdManager;
 	@Autowired private MessageSource messages;
 	@Autowired private HibernateUserDao userDao;
 	
@@ -55,6 +55,9 @@ public class OpenIdController {
 	public String processOpenId(Model model, HttpServletRequest request) throws IOException {
 		ParameterList response = new ParameterList(request.getParameterMap());
 		DiscoveryInformation discovered = (DiscoveryInformation) request.getSession().getAttribute(OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME);
+		ConsumerManager openIdManager = (ConsumerManager) request.getSession().getAttribute(OPEN_ID_CONSUMER_MANAGER);
+		request.getSession().removeAttribute(OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME);
+		request.getSession().removeAttribute(OPEN_ID_CONSUMER_MANAGER);
 		StringBuffer receivingURL = request.getRequestURL();
 		String queryString = request.getQueryString();
 		

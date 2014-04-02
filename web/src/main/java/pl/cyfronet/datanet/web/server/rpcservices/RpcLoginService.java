@@ -2,14 +2,27 @@ package pl.cyfronet.datanet.web.server.rpcservices;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.List;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpSession;
 
 import org.openid4java.consumer.ConsumerManager;
+import org.openid4java.consumer.InMemoryConsumerAssociationStore;
+import org.openid4java.consumer.InMemoryNonceVerifier;
+import org.openid4java.discovery.Discovery;
 import org.openid4java.discovery.DiscoveryInformation;
+import org.openid4java.discovery.html.HtmlResolver;
+import org.openid4java.discovery.yadis.YadisResolver;
 import org.openid4java.message.AuthRequest;
 import org.openid4java.message.ax.FetchRequest;
+import org.openid4java.server.RealmVerifierFactory;
+import org.openid4java.util.HttpFetcherFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +43,10 @@ public class RpcLoginService implements LoginService {
 	private static final Logger log = LoggerFactory.getLogger(RpcLoginService.class);
 	
 	public static final String OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME = "cyfronet.datanet.openid.discoveries";
+	public static final String OPEN_ID_CONSUMER_MANAGER = "cyfronet.datanet.openid.consumer.manager";
 	public static final String USER_ROLE = "ROLE_USER";
 
 	@Autowired private HibernateUserDao userDao;
-	@Autowired private ConsumerManager openIdManager;
 
 	@Value("${open.id.identifier.prefix}") private String openIdIdentifierPrefix;
 
@@ -59,11 +72,13 @@ public class RpcLoginService implements LoginService {
 		log.info("Initialising OpenID login procedure for user {}", openIdLogin);
 
 		try {
+			ConsumerManager openIdManager = createConsumerManager();
 			@SuppressWarnings("unchecked")
 			List<DiscoveryInformation> discoveries = openIdManager.discover(openIdIdentifierPrefix + openIdLogin);
 			DiscoveryInformation discovered = openIdManager.associate(discoveries);
 			HttpSession httpSession = WebSessionHelper.getCurrentSession();
 			httpSession.setAttribute(OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME, discovered);
+			httpSession.setAttribute(OPEN_ID_CONSUMER_MANAGER, openIdManager);
 			
 			String openIdReturnUrl = WebSessionHelper.getCurrentUrl();
 			log.debug("Return URL for OpenID association request is {}", openIdReturnUrl);
@@ -81,6 +96,36 @@ public class RpcLoginService implements LoginService {
 		} catch (Exception e) {
 			throw new LoginException(Code.OpenIdAssociationFailed);
 		}
+	}
+
+	private ConsumerManager createConsumerManager() throws NoSuchAlgorithmException, KeyManagementException {
+		TrustManager[] tma = new TrustManager[] { new X509TrustManager() {
+			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+				return null;
+			}
+
+			public void checkClientTrusted(X509Certificate[] certs,
+					String authType) {
+			}
+
+			public void checkServerTrusted(X509Certificate[] certs,
+					String authType) {
+			}
+		} };
+
+		SSLContext sc = SSLContext.getInstance("SSL");
+		sc.init(null, tma, new java.security.SecureRandom());
+
+		HttpFetcherFactory hff = new HttpFetcherFactory(sc);
+		YadisResolver yr = new YadisResolver(hff);
+		RealmVerifierFactory rvf = new RealmVerifierFactory(yr);
+		Discovery d = new Discovery(new HtmlResolver(hff), yr,
+				Discovery.getXriResolver());
+		ConsumerManager consumerManager = new ConsumerManager(rvf, d, hff);
+		consumerManager.setAssociations(new InMemoryConsumerAssociationStore());
+		consumerManager.setNonceVerifier(new InMemoryNonceVerifier(5000));
+		
+		return consumerManager;
 	}
 
 	@Override
