@@ -105,6 +105,13 @@ The repository view also provides a utility which generates code samples in a fe
 access to the repository. The code is specific for a given repository and its entities and can be copied
 and executed straight away. To access the utility click the
 <button class="btn"><i class="icon-pencil"></i> Show code templates</button> button.
+Below is a sample template for Bash which shows how with the `curl` tool a repository can be accessed.
+
+---
+
+![Code template in Bash](resources/code_template_en.png)
+
+---
 
 ### Repository data browsing and filtering
 

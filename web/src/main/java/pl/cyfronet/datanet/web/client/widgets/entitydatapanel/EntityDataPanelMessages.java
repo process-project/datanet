@@ -21,4 +21,5 @@ public interface EntityDataPanelMessages extends Messages {
 	String submitCredentialsButtonLabel();
 	String cancelSubmitCredentialsButtonLabel();
 	String userCredentialsAbout();
+	String fieldPlaceholderPrefix();
 }

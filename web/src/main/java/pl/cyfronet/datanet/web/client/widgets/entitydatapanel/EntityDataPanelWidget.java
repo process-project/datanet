@@ -17,7 +17,6 @@ import com.github.gwtbootstrap.client.ui.FormLabel;
 import com.github.gwtbootstrap.client.ui.Icon;
 import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
-import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.SimplePager;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.IconType;
@@ -30,7 +29,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Widget;
@@ -159,8 +157,8 @@ public class EntityDataPanelWidget extends Composite implements View {
 			default:
 				TextBox textBox = new TextBox();
 				textBox.setName("fields['" + name + "']");
+				textBox.getElement().setAttribute("placeholder", getFieldPlaceholder(type));
 				widget = textBox;
-				
 			break;
 		}
 		
@@ -221,6 +219,40 @@ public class EntityDataPanelWidget extends Composite implements View {
 		pythonCode.getElement().setInnerHTML("<pre><code class='python'>" + codeTemplates.get("python") + "</code></pre>");
 		pythonCode.getElement().setId("hljs-python");
 		doHighlightMarkup();
+	}
+	
+	private String getFieldPlaceholder(Type type) {
+		String placeholder = messages.fieldPlaceholderPrefix() + " ";
+		String postfix = "";
+		
+		switch(type) {
+			case Boolean:
+				postfix = "true or false";
+			break;
+			case BooleanArray:
+				postfix = "[true, false]";
+			break;
+			case Float:
+				postfix = "3.14";
+			break;
+			case FloatArray:
+				postfix = "[3.14, -7.56]";
+			break;
+			case Integer:
+				postfix = "42";
+			break;
+			case IntegerArray:
+				postfix = "[42, -56]";
+			break;
+			case String:
+				postfix = "example";
+			break;
+			case StringArray:
+				postfix = "[\"example1\", \"eample2\"]";
+			break;
+		}
+		
+		return placeholder + postfix;
 	}
 
 	private native void doHighlightMarkup() /*-{

@@ -101,10 +101,16 @@ klient ma do niego dostęp i może modyfikować jego zawartość,
 zdefiniowanych w okienku konfiguracyjnym.
 
 Widok repozytorium udostępnia również narzędzie generujące przykładowe kody w wybranych językach
-programowania umozliwiające dostęp do repozytorium. Kod jest specyficzny dla danego repozytorium i jego encji
+programowania umożliwiające dostęp do repozytorium. Kod jest specyficzny dla danego repozytorium i jego encji
 i może być kopiowany i uruchamiany bez dodatkowych modyfikacji. Aby wyświetlić przykładowe kody
 należy użyć przycisku <button class="btn"><i class="icon-pencil"></i> Wyświelt szablony kodów</button>.
+Poniżej zamieszczono przykładowy szablon dla języka Bash, pokazujący jak za pomocą polecenia `curl` można uzyskać dostęp do repozytorium.
 
+---
+
+![Szablon kodu w języku Bash](resources/code_template_pl.png)
+
+---
 
 ### Przeglądanie i filtrowanie danych w repozytorium
 
