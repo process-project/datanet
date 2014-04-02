@@ -29,7 +29,6 @@ import pl.cyfronet.datanet.web.server.services.repositoryclient.RepositoryClient
 public class FormController {
 	private static final Logger log = LoggerFactory.getLogger(FormController.class);
 	
-	@Autowired private RepositoryClient repositoryClient;
 	@Autowired private HibernateRepositoryDao repositoryDao;
 	@Autowired private RepositoryClientFactory repositoryClientFactory;
 
@@ -44,12 +43,12 @@ public class FormController {
 		}
 
 		RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(entityUpload.getRepositoryId());
-		AccessConfig accessConfig = repositoryClient.getAccessConfig(
-				repositoryDbEntity.getUrl(), repositoryDbEntity.getToken());
 		
 		try {
-			if (areFilesPresent(entityUpload.getFiles()) || accessConfig.getAccess() == Access.privateAccess) {
-				log.debug("Uploading an entity row with user credentials");
+			RepositoryClient repositoryClient = repositoryClientFactory.create(
+					(String) SecurityContextHolder.getContext().getAuthentication().getCredentials());
+			
+			if (areFilesPresent(entityUpload.getFiles())) {
 				Map<String, MultipartFile> files = new HashMap<>();
 
 				for (String fieldName : entityUpload.getFiles().keySet()) {
@@ -57,14 +56,10 @@ public class FormController {
 						files.put(fieldName, entityUpload.getFiles().get(fieldName));
 					}
 				}
-				
-				RepositoryClient repositoryClient = repositoryClientFactory.create(
-						(String) SecurityContextHolder.getContext().getAuthentication().getCredentials());
-				repositoryClient.updateEntityRow(repositoryDbEntity.getUrl(), entityUpload.getEntityName(), null, fieldValues, files);
-			} else {
-				log.debug("Uploading an entity row without user credentials");
-				repositoryClient.updateEntityRow(repositoryDbEntity.getUrl(), entityUpload.getEntityName(), null, fieldValues, null);
 			}
+			
+			log.debug("Uploading an entity row with user credentials");
+			repositoryClient.updateEntityRow(repositoryDbEntity.getUrl(), entityUpload.getEntityName(), null, fieldValues, null);
 			
 			response.setStatus(HttpServletResponse.SC_OK);
 			
