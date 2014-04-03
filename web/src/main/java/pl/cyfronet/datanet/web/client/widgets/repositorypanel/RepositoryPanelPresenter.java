@@ -2,6 +2,7 @@ package pl.cyfronet.datanet.web.client.widgets.repositorypanel;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import pl.cyfronet.datanet.model.beans.AccessConfig;
@@ -34,6 +35,7 @@ public class RepositoryPanelPresenter implements Presenter {
 		boolean confirmRepositoryRemoval();
 		String getAccessLevel();
 		HasText getOwnerList();
+		HasText getCorsOrigins();
 		void markPublicType();
 		void markPrivateType();
 		void showAccessConfigModal(boolean show);
@@ -99,7 +101,10 @@ public class RepositoryPanelPresenter implements Presenter {
 		
 		Access accessLevel = Access.valueOf(view.getAccessLevel());
 		String owners = view.getOwnerList().getText().trim();
-		AccessConfig accessConfig = new AccessConfig(accessLevel, Arrays.asList(owners.split(AccessConfig.OWNER_SEPARATOR)));
+		String corsOrigins = view.getCorsOrigins().getText().trim();
+		AccessConfig accessConfig = new AccessConfig(accessLevel, 
+				Arrays.asList(owners.split(AccessConfig.OWNER_SEPARATOR)),
+				Arrays.asList(corsOrigins.split(AccessConfig.OWNER_SEPARATOR)));
 		repositoryController.updateAccessConfig(repositoryId, accessConfig, new Command() {
 			@Override
 			public void execute() {
@@ -128,18 +133,13 @@ public class RepositoryPanelPresenter implements Presenter {
 						break;
 					}
 					
-					if (accessConfig.getOwners() != null) {
-						StringBuilder builder = new StringBuilder();
-						
-						for (String owner : accessConfig.getOwners()) {
-							builder.append(owner).append(AccessConfig.OWNER_SEPARATOR);
-						}
-						
-						if (builder.length() > 0) {
-							builder.deleteCharAt(builder.length() - 1);
-						}
-						
-						view.getOwnerList().setText(builder.toString());
+					if (accessConfig.getOwners() != null) {											
+						view.getOwnerList().setText(
+							toStringWithSeparator(accessConfig.getOwners()));
+					}
+					if (accessConfig.getCorsOrigins() != null) {						
+						view.getCorsOrigins().setText(
+							toStringWithSeparator(accessConfig.getCorsOrigins()));
 					}
 					
 					view.showAccessConfigModal(true);
@@ -153,6 +153,19 @@ public class RepositoryPanelPresenter implements Presenter {
 				//ignoring
 			}
 		});
+	}
+	
+	private String toStringWithSeparator(List<String> tab) {
+		StringBuilder builder = new StringBuilder();
+		
+		for (String owner : tab) {
+			builder.append(owner).append(AccessConfig.OWNER_SEPARATOR);
+		}
+		
+		if (builder.length() > 0) {
+			builder.deleteCharAt(builder.length() - 1);
+		}
+		return builder.toString();
 	}
 	
 	@Override

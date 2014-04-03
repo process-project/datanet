@@ -38,6 +38,7 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 	@UiField RadioButton privateCheck;
 	@UiField RadioButton publicCheck;
 	@UiField TextBox owners;
+	@UiField TextBox corsOrigins;
 	@UiField Button saveAccessConfig;
 	
 	public RepositoryPanelWidget() {
@@ -117,6 +118,11 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 		return owners;
 	}
 
+	@Override
+	public HasText getCorsOrigins() {
+		return corsOrigins;
+	}
+	
 	@Override
 	public void markPublicType() {
 		privateCheck.setValue(false);

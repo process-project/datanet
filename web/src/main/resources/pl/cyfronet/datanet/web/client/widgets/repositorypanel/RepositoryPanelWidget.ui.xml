@@ -68,6 +68,13 @@
 									<b:HelpBlock><ui:text from="{messages.aboutRepositoryOwners}"/></b:HelpBlock>
 								</b:Controls>
 							</b:ControlGroup>
+							<b:ControlGroup>
+								<b:ControlLabel for="corsOrigins"><ui:text from="{messages.corsOriginsLabel}"/></b:ControlLabel>
+								<b:Controls>
+									<b:TextBox ui:field="corsOrigins"/>
+									<b:HelpBlock><ui:text from="{messages.aboutCorsOrigins}"/></b:HelpBlock>
+								</b:Controls>
+							</b:ControlGroup>
 						</b:Fieldset>
 					</b:Form>
 					<b:ModalFooter>

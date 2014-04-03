@@ -149,6 +149,7 @@ public class RepositoryClient {
 		
 		Access access = null;
 		List<String> owners = new ArrayList<>();
+		List<String> corsOrigins = new ArrayList<>();
 		
 		if (result.get("repository_type") != null && result.get("repository_type").equals("private")) {
 			access = Access.privateAccess;
@@ -160,7 +161,11 @@ public class RepositoryClient {
 			owners.addAll((List) result.get("owners"));
 		}
 		
-		AccessConfig accessConfig = new AccessConfig(access, owners);
+		if (result.get("cors_origins") != null) {
+			corsOrigins.addAll((List) result.get("cors_origins"));
+		}
+		
+		AccessConfig accessConfig = new AccessConfig(access, owners, corsOrigins);
 		log.debug("Access config for repository {} retrieved: {}", repositoryUrl, accessConfig);
 
 		return accessConfig;
@@ -170,6 +175,7 @@ public class RepositoryClient {
 		Map<String, Object> request = new HashMap<>();
 		request.put("repository_type", accessConfig.getAccess() == Access.publicAccess ? "public" : "private");
 		request.put("owners", accessConfig.getOwners());
+		request.put("cors_origins", accessConfig.getCorsOrigins());
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);

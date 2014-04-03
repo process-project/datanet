@@ -15,13 +15,15 @@ public class AccessConfig implements Serializable {
 	
 	private Access access;
 	private List<String> owners;
-	
+	private List<String> corsOrigins;
+
 	public AccessConfig() {
 	}
 	
-	public AccessConfig(Access access, List<String> owners) {
+	public AccessConfig(Access access, List<String> owners, List<String> corsOrigins) {
 		this.access = access;
 		this.owners = owners;
+		this.corsOrigins = corsOrigins;
 	}
 	
 	public Access getAccess() {
@@ -32,8 +34,13 @@ public class AccessConfig implements Serializable {
 		return owners;
 	}
 	
+	public List<String> getCorsOrigins() {
+		return corsOrigins;
+	}
+	
 	@Override
 	public String toString() {
-		return "AccessConfig [access=" + access + ", owners=" + owners + "]";
+		return "AccessConfig [access=" + access + ", owners=" + owners
+				+ ", corsOrigins=" + corsOrigins + "]";
 	}
 }
