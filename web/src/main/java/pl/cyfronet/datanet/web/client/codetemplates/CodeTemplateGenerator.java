@@ -80,7 +80,7 @@ public class CodeTemplateGenerator {
 	private String getPythonFields(List<String> regularFields, List<String> fileFields, List<String> arrayStringFields, List<String> arrayRegularFields) {
 		StringBuilder builder = new StringBuilder();
 		
-		if (regularFields.size() > 0) {
+		if (regularFields.size() > 0 || arrayStringFields.size() > 0 || arrayRegularFields.size() > 0) {
 			builder.append("data = {");
 			
 			for (String regularField : regularFields) {
