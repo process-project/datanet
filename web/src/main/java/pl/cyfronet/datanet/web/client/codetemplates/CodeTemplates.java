@@ -8,4 +8,6 @@ public interface CodeTemplates extends ConstantsWithLookup {
 	String codeTemplatePython();
 	String fieldRegularValue();
 	String fieldFileValue();
+	String fieldArrayStringValue();
+	String fieldArrayRegularValue();
 }

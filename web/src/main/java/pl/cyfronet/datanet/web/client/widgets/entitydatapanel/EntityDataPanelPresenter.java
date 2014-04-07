@@ -1,6 +1,7 @@
 package pl.cyfronet.datanet.web.client.widgets.entitydatapanel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,10 +169,16 @@ public class EntityDataPanelPresenter implements Presenter {
 						if (entity.getFields() != null) {
 							List<String> regularFields = new ArrayList<String>();
 							List<String> fileFields = new ArrayList<String>();
+							List<String> arrayStringFields = new ArrayList<String>();
+							List<String> arrayRegularFields = new ArrayList<String>();
 							
-							for (Field field : entity.getFields()) {
-								if (field.getType() == Type.File) {
+							for(Field field : entity.getFields()) {
+								if(field.getType() == Type.File) {
 									fileFields.add(field.getName());
+								} else if(Arrays.asList(Type.ObjectIdArray, Type.StringArray).contains(field.getType())){
+									arrayStringFields.add(field.getName());
+								} else if(Arrays.asList(Type.BooleanArray, Type.FloatArray, Type.IntegerArray).contains(field.getType())) {
+									arrayRegularFields.add(field.getName());
 								} else {
 									regularFields.add(field.getName());
 								}
@@ -179,11 +186,11 @@ public class EntityDataPanelPresenter implements Presenter {
 							
 							Map<String, String> codeTemplates = new HashMap<String, String>();
 							codeTemplates.put("bash", codeTemplateGenerator.getCodeTemplate(
-									Language.Bash, repository.getUrl(), entityName, regularFields, fileFields));
+									Language.Bash, repository.getUrl(), entityName, regularFields, fileFields, arrayStringFields, arrayRegularFields));
 							codeTemplates.put("ruby", codeTemplateGenerator.getCodeTemplate(
-									Language.Ruby, repository.getUrl(), entityName, regularFields, fileFields));
+									Language.Ruby, repository.getUrl(), entityName, regularFields, fileFields, arrayStringFields, arrayRegularFields));
 							codeTemplates.put("python", codeTemplateGenerator.getCodeTemplate(
-									Language.Python, repository.getUrl(), entityName, regularFields, fileFields));
+									Language.Python, repository.getUrl(), entityName, regularFields, fileFields, arrayStringFields, arrayRegularFields));
 							view.renderCodeTemplates(codeTemplates);
 							view.showTemplatesModal(true);
 						}

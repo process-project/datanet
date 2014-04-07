@@ -15,6 +15,7 @@ public class CodeTemplateGenerator {
 	private static final String CURL_FIELD_TEMPLATE = "-F {field}";
 	private static final String RUBY_REGULAR_FIELD_TEMPLATE = ":{field} => '{value}', ";
 	private static final String RUBY_FILE_FIELD_TEMPLATE = ":{field} => File.new('{value}', 'rb'), ";
+	private static final String RUBY_ARRAY_FIELD_TEMPLATE = ":{field} => {value}, ";
 	private static final String PYTHON_REGULAR_FIELD_TEMPLATE = "'{field}': '{value}', ";
 	private static final String PYTHON_FILE_FIELD_TEMPLATE = "'{field}': open('{value}', 'rb'), ";
 	
@@ -25,29 +26,30 @@ public class CodeTemplateGenerator {
 		this.codeTemplates = codeTemplates;
 	}
 	
-	public String getCodeTemplate(Language language, String repositoryUrl, String entityName, List<String> regularFields, List<String> fileFields) {
+	public String getCodeTemplate(Language language, String repositoryUrl, String entityName, List<String> regularFields, List<String> fileFields,
+			List<String> arrayStringFields, List<String> arrayRegularFields) {
 		String codeTemplate = codeTemplates.getString(PREFIX + language.name());
 		codeTemplate = codeTemplate.replaceAll("\\{repository_url\\}", repositoryUrl);
 		codeTemplate = codeTemplate.replaceAll("\\{entity_name\\}", entityName);
-		codeTemplate = codeTemplate.replaceAll("\\{fields\\}", getFields(language, regularFields, fileFields));
+		codeTemplate = codeTemplate.replaceAll("\\{fields\\}", getFields(language, regularFields, fileFields, arrayStringFields, arrayRegularFields));
 		
 		return codeTemplate; 
 	}
 
-	private String getFields(Language language, List<String> regularFields, List<String> fileFields) {
+	private String getFields(Language language, List<String> regularFields, List<String> fileFields, List<String> arrayStringFields, List<String> arrayRegularFields) {
 		switch (language) {
 			case Bash:
-				return getBashCurlFields(regularFields, fileFields);
+				return getBashCurlFields(regularFields, fileFields, arrayStringFields, arrayRegularFields);
 			case Ruby:
-				return getRubyFields(regularFields, fileFields);
+				return getRubyFields(regularFields, fileFields, arrayStringFields, arrayRegularFields);
 			case Python:
-				return getPythonFields(regularFields, fileFields);
+				return getPythonFields(regularFields, fileFields, arrayStringFields, arrayRegularFields);
 		}
 		
 		return null;
 	}
 
-	private String getRubyFields(List<String> regularFields, List<String> fileFields) {
+	private String getRubyFields(List<String> regularFields, List<String> fileFields, List<String> arrayStringFields, List<String> arrayRegularFields) {
 		StringBuilder builder = new StringBuilder();
 		
 		for (String regularField : regularFields) {
@@ -56,6 +58,14 @@ public class CodeTemplateGenerator {
 		
 		for (String fileField : fileFields) {
 			builder.append(RUBY_FILE_FIELD_TEMPLATE.replace("{field}", fileField).replace("{value}", codeTemplates.fieldFileValue()));
+		}
+		
+		for(String arrayStringField : arrayStringFields) {
+			builder.append(RUBY_ARRAY_FIELD_TEMPLATE.replace("{field}", arrayStringField).replace("{value}", codeTemplates.fieldArrayStringValue()));
+		}
+		
+		for(String arrayRegularField : arrayRegularFields) {
+			builder.append(RUBY_ARRAY_FIELD_TEMPLATE.replace("{field}", arrayRegularField).replace("{value}", codeTemplates.fieldArrayRegularValue()));
 		}
 		
 		String result = builder.toString();
@@ -67,7 +77,7 @@ public class CodeTemplateGenerator {
 		return result;
 	}
 
-	private String getPythonFields(List<String> regularFields, List<String> fileFields) {
+	private String getPythonFields(List<String> regularFields, List<String> fileFields, List<String> arrayStringFields, List<String> arrayRegularFields) {
 		StringBuilder builder = new StringBuilder();
 		
 		if (regularFields.size() > 0) {
@@ -75,6 +85,14 @@ public class CodeTemplateGenerator {
 			
 			for (String regularField : regularFields) {
 				builder.append(PYTHON_REGULAR_FIELD_TEMPLATE.replace("{field}", regularField).replace("{value}", codeTemplates.fieldRegularValue()));
+			}
+			
+			for(String arrayStringField : arrayStringFields) {
+				builder.append(PYTHON_REGULAR_FIELD_TEMPLATE.replace("{field}", arrayStringField).replace("{value}", codeTemplates.fieldArrayStringValue()));
+			}
+			
+			for(String arrayRegularField : arrayRegularFields) {
+				builder.append(PYTHON_REGULAR_FIELD_TEMPLATE.replace("{field}", arrayRegularField).replace("{value}", codeTemplates.fieldArrayRegularValue()));
 			}
 			
 			builder.delete(builder.length() - 2, builder.length());
@@ -99,15 +117,23 @@ public class CodeTemplateGenerator {
 		return builder.toString();
 	}
 
-	private String getBashCurlFields(List<String> regularFields, List<String> fileFields) {
+	private String getBashCurlFields(List<String> regularFields, List<String> fileFields, List<String> arrayStringFields, List<String> arrayRegularFields) {
 		StringBuilder builder = new StringBuilder();
 		
-		for (String regularField : regularFields) {
+		for(String regularField : regularFields) {
 			builder.append(CURL_FIELD_TEMPLATE.replace("{field}", regularField + "=" + codeTemplates.fieldRegularValue() + " "));
 		}
 		
-		for (String fileField : fileFields) {
+		for(String fileField : fileFields) {
 			builder.append(CURL_FIELD_TEMPLATE.replace("{field}", fileField + "=@" + codeTemplates.fieldFileValue() + " "));
+		}
+		
+		for(String arrayStringField : arrayStringFields) {
+			builder.append(CURL_FIELD_TEMPLATE.replace("{field}", arrayStringField + "='" + codeTemplates.fieldArrayStringValue() + "' "));
+		}
+		
+		for(String arrayRegularField : arrayRegularFields) {
+			builder.append(CURL_FIELD_TEMPLATE.replace("{field}", arrayRegularField + "='" + codeTemplates.fieldArrayRegularValue() + "' "));
 		}
 		
 		String result = builder.toString();
