@@ -1,6 +1,7 @@
 package pl.cyfronet.datanet.web.server.controllers;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import pl.cyfronet.datanet.model.beans.AccessConfig;
-import pl.cyfronet.datanet.model.beans.AccessConfig.Access;
 import pl.cyfronet.datanet.web.server.controllers.beans.EntityUpload;
 import pl.cyfronet.datanet.web.server.db.HibernateRepositoryDao;
 import pl.cyfronet.datanet.web.server.db.beans.RepositoryDbEntity;
@@ -47,10 +46,9 @@ public class FormController {
 		try {
 			RepositoryClient repositoryClient = repositoryClientFactory.create(
 					(String) SecurityContextHolder.getContext().getAuthentication().getCredentials());
+			Map<String, MultipartFile> files = new HashMap<>();
 			
 			if (areFilesPresent(entityUpload.getFiles())) {
-				Map<String, MultipartFile> files = new HashMap<>();
-
 				for (String fieldName : entityUpload.getFiles().keySet()) {
 					if (!entityUpload.getFiles().get(fieldName).isEmpty()) {
 						files.put(fieldName, entityUpload.getFiles().get(fieldName));
@@ -59,7 +57,7 @@ public class FormController {
 			}
 			
 			log.debug("Uploading an entity row with user credentials");
-			repositoryClient.updateEntityRow(repositoryDbEntity.getUrl(), entityUpload.getEntityName(), null, fieldValues, null);
+			repositoryClient.updateEntityRow(repositoryDbEntity.getUrl(), entityUpload.getEntityName(), null, fieldValues, files);
 			
 			response.setStatus(HttpServletResponse.SC_OK);
 			
