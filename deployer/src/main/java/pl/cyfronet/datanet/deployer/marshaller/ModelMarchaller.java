@@ -91,12 +91,13 @@ public class ModelMarchaller {
 
 		objectNode.put("title", entity.getName());
 		objectNode.put("type", "object");
-
+		
+		ArrayNode required = objectNode.putArray("required");
 		ObjectNode properties = objectNode.putObject("properties");
-		ArrayNode links = objectNode.putArray("links");
+		ArrayNode links = objectNode.putArray("links");		
 
 		for (Field field : entity.getFields()) {
-			buildField(field, properties, links);
+			buildField(field, required, properties, links);			
 		}
 
 		if (links.size() == 0) {
@@ -110,10 +111,14 @@ public class ModelMarchaller {
 		}
 	}
 
-	private void buildField(Field field, ObjectNode rootNode,
+	private void buildField(Field field, ArrayNode required, ObjectNode rootNode,
 			ArrayNode linksArray) throws MarshallerException {
 		Type type = field.getType();
 
+		if(field.isRequired()) {
+			required.add(field.getName());
+		}
+		
 		if (typeMap.keySet().contains(type)) {
 			createSimpleTypeField(field, rootNode);
 		} else if (arrayTypeMap.keySet().contains(type)) {
@@ -131,15 +136,13 @@ public class ModelMarchaller {
 	}
 
 	private void createSimpleTypeField(Field field, ObjectNode rootNode) {
-		createProperty(rootNode, field.getName(), typeMap.get(field.getType()),
-				field.isRequired());
+		createProperty(rootNode, field.getName(), typeMap.get(field.getType()));
 	}
 
 	private ObjectNode createProperty(ObjectNode parent, String name,
-			String type, boolean required) {
+			String type) {
 		ObjectNode fieldObject = parent.putObject(name);
 		fieldObject.put("type", type);
-		fieldObject.put("required", required);
 
 		return fieldObject;
 	}
@@ -151,7 +154,7 @@ public class ModelMarchaller {
 	private void createArrayTypeField(Field field, ObjectNode rootNode,
 			String type) {
 		ObjectNode fieldObject = createProperty(rootNode, field.getName(),
-				"array", field.isRequired());
+				"array");
 		ObjectNode arrayInfo = fieldObject.putObject("items");
 		arrayInfo.put("type", type);
 	}
@@ -170,7 +173,7 @@ public class ModelMarchaller {
 	private void createOneToOneRelation(Field field, String target,
 			ObjectNode rootNode, ArrayNode linksArray) {
 		createProperty(rootNode, String.format("%s", field.getName()),
-				"string", field.isRequired());
+				"string");
 		createLinkToOne(linksArray, field.getName(), target);
 	}
 
