@@ -13,7 +13,8 @@ public class RepositoryException extends Exception {
 		RepositoryDataSavingError,
 		RepositoryRemovalError,
 		RepositoryAccessConfigurationUpdateError,
-		RepositoryAuthorizationError
+		RepositoryAuthorizationError,
+		RepositoryCountExceededError
 	}
 	
 	private Code errorCode;

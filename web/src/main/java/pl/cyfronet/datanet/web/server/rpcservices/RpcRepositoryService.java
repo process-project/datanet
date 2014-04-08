@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,8 @@ public class RpcRepositoryService implements RepositoryService {
 	@Autowired private JaxbEntityListBuilder jaxbEntityListBuilder;
 	@Autowired private RepositoryClientFactory repositoryClientFactory;
 
+	@Value("${max.number.of.repositories.per.user}") private int maxRepoCount;
+	
 	@Override
 	public List<Repository> getRepositories() throws RepositoryException {
 		try {
@@ -201,6 +204,10 @@ public class RpcRepositoryService implements RepositoryService {
 	@Override
 	public Repository deployModelVersion(long versionId, String repositoryName) throws RepositoryException {
 		try {
+			if (getRepositoryCount() >= maxRepoCount) {
+				throw new RepositoryException(Code.RepositoryAuthorizationError, "You can create maximum 5 repositories");
+			}
+			
 			Version version = versionDao.getVersion(versionId);
 			Map<String, String> models = modelSchemaGenerator.generateSchema(version);
 			String token = UUID.randomUUID().toString();
@@ -313,7 +320,7 @@ public class RpcRepositoryService implements RepositoryService {
 		}
 	}
 	
-	private Repository createRepository(RepositoryDbEntity repositoryDbEntity, AccessConfig accessConfig) throws JAXBException {
+	private Repository createRepository(RepositoryDbEntity repositoryDbEntity, AccessConfig accessConfig) throws JAXBException {		
 		Repository repository = new Repository();
 		repository.setId(repositoryDbEntity.getId());
 		repository.setName(repositoryDbEntity.getName());
