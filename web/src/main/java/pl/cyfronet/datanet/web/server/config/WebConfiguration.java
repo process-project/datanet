@@ -14,21 +14,19 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 @ComponentScan({"pl.cyfronet.datanet.web.server.controllers",
 				"pl.cyfronet.datanet.web.server.rpcservices"})
 public class WebConfiguration extends WebMvcConfigurerAdapter {
-	private static final int YEAR = 31556926;
-	
 	/**
 	 * Web resources configuration
 	 */
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/ria/**").addResourceLocations("/ria/").setCachePeriod(YEAR);
-		registry.addResourceHandler("/css/**").addResourceLocations("/css/").setCachePeriod(YEAR);
-		registry.addResourceHandler("/img/**").addResourceLocations("/img/").setCachePeriod(YEAR);
-		registry.addResourceHandler("/highlight/**").addResourceLocations("/highlight/").setCachePeriod(YEAR);
+		registry.addResourceHandler("/ria/**").addResourceLocations("/ria/");
+		registry.addResourceHandler("/css/**").addResourceLocations("/css/");
+		registry.addResourceHandler("/img/**").addResourceLocations("/img/");
+		registry.addResourceHandler("/highlight/**").addResourceLocations("/highlight/");
 		
-		registry.addResourceHandler("/documentation/manual/resources/**").addResourceLocations("/manual/resources/").setCachePeriod(YEAR);
-		registry.addResourceHandler("/documentation/tutorial/resources/**").addResourceLocations("/tutorial/resources/").setCachePeriod(YEAR);
-		registry.addResourceHandler("/documentation/resources/**").addResourceLocations("/manual/resources/", "/tutorial/resources/").setCachePeriod(YEAR);
+		registry.addResourceHandler("/documentation/manual/resources/**").addResourceLocations("/manual/resources/");
+		registry.addResourceHandler("/documentation/tutorial/resources/**").addResourceLocations("/tutorial/resources/");
+		registry.addResourceHandler("/documentation/resources/**").addResourceLocations("/manual/resources/", "/tutorial/resources/");
 	}
 	
 	@Override
