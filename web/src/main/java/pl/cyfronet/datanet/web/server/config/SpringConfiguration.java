@@ -88,7 +88,7 @@ public class SpringConfiguration {
 				new ClassPathResource("datanet.properties"),
 				new ClassPathResource("datanet-override.properties"),
                 //properties shared with the client
-				new ClassPathResource("src/main/resources/pl/cyfronet/datanet/web/client/controller/AppProperties.properties")
+				new ClassPathResource("pl/cyfronet/datanet/web/client/controller/AppProperties.properties")
         };
         properies.setLocations(resourceLocations);
         properies.setIgnoreResourceNotFound(true);

@@ -84,7 +84,7 @@ public class ModelMarchallerTest {
 	private void thenEntityWithFieldGenerated(String fieldName,
 			String typeName, boolean required) throws Exception {
 		Map<String, Object> property = getProperty(fieldName);
-		assertEquals(required, (Boolean) property.get("required"));
+		assertEquals(required, isRequired(fieldName));
 		assertEquals(typeName, property.get("type"));
 	}
 
@@ -116,7 +116,7 @@ public class ModelMarchallerTest {
 	private void thenEntityWithArrayFieldGenerated(String fieldName,
 			String typeName, boolean required) throws Exception {
 		Map<String, Object> property = getProperty(fieldName);
-		assertEquals(required, (Boolean) property.get("required"));
+		assertEquals(required, isRequired(fieldName));
 		assertEquals("array", property.get("type"));
 		Map<String, String> items = (Map<String, String>) property.get("items");
 		assertEquals(typeName, items.get("type"));
@@ -132,6 +132,13 @@ public class ModelMarchallerTest {
 		return properties.get(propertyName);
 	}
 
+	@SuppressWarnings("unchecked")
+	private boolean isRequired(String propertyName) throws Exception {
+		Map<String, Object> e1Data = getE1Data();
+		List<String> required = (List<String>) e1Data.get("required");
+		return required.contains(propertyName);
+	}
+	
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> getE1Data() throws IOException,
 			JsonParseException, JsonMappingException {
@@ -185,7 +192,7 @@ public class ModelMarchallerTest {
 		Map<String, Object> property = getProperty(fieldName);
 		assertNotNull(property);
 		assertEquals("string", property.get("type"));
-		assertTrue((Boolean) property.get("required"));
+		assertTrue((Boolean) isRequired(fieldName));
 	}
 
 	private void thenLinkToOneIsCreated(String fieldName, String target)
