@@ -11,8 +11,9 @@ public class FileCell extends AbstractCell<String> {
 	@Override
 	public void render(com.google.gwt.cell.client.Cell.Context context, String value, SafeHtmlBuilder sb) {
 		if (value != null) {
-			String fileName = value.split(SEPARATOR).length > 0 ? value.split(SEPARATOR)[0] : "";
-			String url = value.split(SEPARATOR).length > 1 ? value.split(SEPARATOR)[1] : "";
+			String[] elements = value.split(SEPARATOR);
+			String url = elements.length > 1 ? elements[elements.length - 1] : "";
+			String fileName = elements.length > 0 ? value.substring(0, value.length() - url.length() - 1) : "";			
 			
 			if (ClientController.getUserProxy() != null) {
 				url += "?grid_proxy=" + ClientController.getUserProxy();
