@@ -5,14 +5,14 @@
 	<head>
 		<meta charset="UTF-8"/>
 		<title><spring:message code="404.page.title"/></title>
-		<link href="img/favicon.ico" rel="icon" type="image/x-icon" />
-		<link rel="stylesheet" href="css/error.css">		
+		<link href="<c:url value="/img/favicon.ico" />" rel="icon" type="image/x-icon" />
+		<link rel="stylesheet" href="<c:url value="/css/error.css"/>">		
 	</head>
 	<body>
     	<h1>404</h1>
-    	<img src="img/datanet-logo-143x40.png" />
-		<h3><spring:message code="404.page.message"/></h3>
+    	<img src="<c:url value="/img/datanet-logo-143x40.png"/>" />
+		<h3><spring:message code="404.page.message" /></h3>
 		<hr/>
-		<p><spring:message code="404.page.description"/></p>
+		<p><spring:message code="404.page.description" /></p>
 	</body>
 </html>
