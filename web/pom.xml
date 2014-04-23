@@ -82,12 +82,7 @@
 							<goal>exploded</goal>
 						</goals>
 					</execution>
-				</executions>
-				<configuration>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-					<!-- web.xml is a dummy making the GWT plugin happy -->
-					<warSourceExcludes>WEB-INF/web.xml</warSourceExcludes>
-				</configuration>
+				</executions>				
 			</plugin>
 		</plugins>
 	</build>
