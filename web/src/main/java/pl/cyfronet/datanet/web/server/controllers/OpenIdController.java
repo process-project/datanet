@@ -1,7 +1,7 @@
 package pl.cyfronet.datanet.web.server.controllers;
 
-import static pl.cyfronet.datanet.web.server.rpcservices.RpcLoginService.OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME;
 import static pl.cyfronet.datanet.web.server.rpcservices.RpcLoginService.OPEN_ID_CONSUMER_MANAGER;
+import static pl.cyfronet.datanet.web.server.rpcservices.RpcLoginService.OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.openid4java.consumer.ConsumerManager;
 import org.openid4java.consumer.VerificationResult;
@@ -32,6 +33,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,8 +54,8 @@ public class OpenIdController {
 	
 	@SuppressWarnings({"unchecked" })
 	@RequestMapping(value = "/", params = "openid.ns")
-	public String processOpenId(Model model, HttpServletRequest request) throws IOException {
-		ParameterList response = new ParameterList(request.getParameterMap());
+	public String processOpenId(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		ParameterList parameterList = new ParameterList(request.getParameterMap());
 		DiscoveryInformation discovered = (DiscoveryInformation) request.getSession().getAttribute(OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME);
 		ConsumerManager openIdManager = (ConsumerManager) request.getSession().getAttribute(OPEN_ID_CONSUMER_MANAGER);
 		request.getSession().removeAttribute(OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME);
@@ -68,7 +70,7 @@ public class OpenIdController {
 		VerificationResult verification = null;
 		
 		try {
-			verification = openIdManager.verify(receivingURL.toString(), response, discovered);
+			verification = openIdManager.verify(receivingURL.toString(), parameterList, discovered);
 			Identifier verified = verification.getVerifiedId();
 			
 			if (verified != null) {
@@ -131,6 +133,9 @@ public class OpenIdController {
 						
 						Authentication authentication = new UsernamePasswordAuthenticationToken(authSuccess.getIdentity(), completeProxy, authorities);
 						SecurityContextHolder.getContext().setAuthentication(authentication);
+						
+						SessionFixationProtectionStrategy fixation = new SessionFixationProtectionStrategy();
+						fixation.onAuthentication(authentication, request, response);
 						
 						return "redirect:/";
 					}
