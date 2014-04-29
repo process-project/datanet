@@ -130,7 +130,10 @@ public class RpcLoginService implements LoginService {
 					X509Certificate issuerX509Cert = (X509Certificate) cf.generateCertificate(issuerCert.getInputStream());
 					issuerKey = issuerX509Cert.getPublicKey();
 				} catch (CertificateException | IOException e) {
-					throw new CertificateException("Could not read issuer certificate to perform verification");
+					String msg = "Could not read issuer certificate to perform verification";
+					log.warn(msg);
+					
+					throw new CertificateException(msg);
 				}
 				
 				if(issuerKey != null) {
@@ -149,13 +152,22 @@ public class RpcLoginService implements LoginService {
 							serverCert.verify(issuerKey);
 							log.debug("OpenID provider certificate validation successful");
 						} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException e) {
-							throw new CertificateException("Presented certificate is not valid.");
+							String msg = "Presented certificate is not valid.";
+							log.warn(msg);
+							
+							throw new CertificateException(msg);
 						}
 					} else {
-						throw new CertificateException("Valid server certificate could not be found to perform verification");
+						String msg = "Valid server certificate could not be found to perform verification";
+						log.warn(msg);
+						
+						throw new CertificateException(msg);
 					}
 				} else {
-					throw new CertificateException("Could not read issuer public key to perform verification");
+					String msg = "Could not read issuer public key to perform verification";
+					log.warn(msg);
+					
+					throw new CertificateException(msg);
 				}
 			}
 		} };
