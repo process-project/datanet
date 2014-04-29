@@ -10,7 +10,8 @@ public class VersionException extends Exception {
 		VersionRetrievalError, 
 		VersionSaveError,
 		VersionModelAuthorizationError,
-		VersionAuthorizationError
+		VersionAuthorizationError,
+		VersionValidationError
 	}
 	
 	private Code errorCode;

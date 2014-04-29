@@ -82,12 +82,7 @@
 							<goal>exploded</goal>
 						</goals>
 					</execution>
-				</executions>
-				<configuration>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-					<!-- web.xml is a dummy making the GWT plugin happy -->
-					<warSourceExcludes>WEB-INF/web.xml</warSourceExcludes>
-				</configuration>
+				</executions>				
 			</plugin>
 		</plugins>
 	</build>
@@ -135,6 +130,11 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
+		</dependency>
+		<dependency>
+		    <groupId>net.kencochrane.raven</groupId>
+		    <artifactId>raven-log4j</artifactId>
+		    <version>4.1.2</version>
 		</dependency>
 
 		<!-- Spring dependencies -->
@@ -274,6 +274,14 @@
 			<artifactId>openid4java</artifactId>
 			<version>0.9.8</version>
 		</dependency>
+
+		<!-- Against XSS -->
+		<dependency>
+			<groupId>org.owasp.esapi</groupId>
+			<artifactId>esapi</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		            
 
 		<!-- GRID proxy dependencies -->
 		<dependency>

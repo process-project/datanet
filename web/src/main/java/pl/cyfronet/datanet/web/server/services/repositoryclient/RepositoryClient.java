@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -30,9 +32,11 @@ public class RepositoryClient {
 	private static final Logger log = LoggerFactory.getLogger(RepositoryClient.class);
 	
 	private RestTemplate restTemplate;
+	private Encoder encoder;
 	
 	public RepositoryClient(RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
+		encoder = ESAPI.encoder();
 	}
 
 	public EntityData retrieveRepositoryData(String repositoryUrl, String entityName, List<String> fileFields, int start, int length, Map<String, String> query) throws RestClientException, URISyntaxException {
@@ -64,7 +68,12 @@ public class RepositoryClient {
 				Map<String, String> values = new HashMap<>();
 				
 				for (String key: fields.keySet()) {
-					values.put(key, fields.get(key).toString());
+					String value = fields.get(key).toString();
+					if(!fileFields.contains(key)) {
+						value = encoder.encodeForHTML(value);
+					}											
+					
+					values.put(key, value);
 				}
 				
 				entityData.getEntityRows().add(values);
@@ -210,7 +219,7 @@ public class RepositoryClient {
 			if (data.keySet().contains(fileFieldName)) {
 				String id = data.remove(fileFieldName).toString();
 				String fileName = restTemplate.getForObject(buildFileNameUrl(repositoryUrl, id), String.class);
-				data.put(fileFieldName, fileName + ";" + repositoryUrl + "/file/" + id);
+				data.put(fileFieldName, encoder.encodeForHTML(fileName) + ";" + repositoryUrl + "/file/" + id);
 			}
 		}
 	}
