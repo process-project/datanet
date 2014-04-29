@@ -1,17 +1,29 @@
 package pl.cyfronet.datanet.web.server.rpcservices;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.security.InvalidKeyException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PublicKey;
+import java.security.SignatureException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpSession;
 
+import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.openid4java.consumer.ConsumerManager;
 import org.openid4java.consumer.InMemoryConsumerAssociationStore;
 import org.openid4java.consumer.InMemoryNonceVerifier;
@@ -27,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,6 +62,8 @@ public class RpcLoginService implements LoginService {
 	@Autowired private HibernateUserDao userDao;
 
 	@Value("${open.id.identifier.prefix}") private String openIdIdentifierPrefix;
+	@Value("${open.id.allowed.host}") private String openIdAllowedHost;
+	@Value("classpath:PolishGridCA.pem") private Resource issuerCert;
 
 	@Override
 	public boolean isUserLoggedIn() {
@@ -101,22 +116,91 @@ public class RpcLoginService implements LoginService {
 	private ConsumerManager createConsumerManager() throws NoSuchAlgorithmException, KeyManagementException {
 		TrustManager[] tma = new TrustManager[] { new X509TrustManager() {
 			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-				return null;
+				return new X509Certificate[] {};
 			}
 
-			public void checkClientTrusted(X509Certificate[] certs,
-					String authType) {
+			public void checkClientTrusted(X509Certificate[] certs,	String authType) {
 			}
 
-			public void checkServerTrusted(X509Certificate[] certs,
-					String authType) {
+			public void checkServerTrusted(X509Certificate[] certs,	String authType) throws CertificateException {
+				PublicKey issuerKey = null;
+				
+				try {
+					CertificateFactory cf = CertificateFactory.getInstance("X.509");
+					X509Certificate issuerX509Cert = (X509Certificate) cf.generateCertificate(issuerCert.getInputStream());
+					issuerKey = issuerX509Cert.getPublicKey();
+				} catch (CertificateException | IOException e) {
+					throw new CertificateException("Could not read issuer certificate to perform verification");
+				}
+				
+				if(issuerKey != null) {
+					X509Certificate serverCert = null;
+					
+					for(X509Certificate cert : certs) {
+						if(cert.getSubjectDN().getName() != null && cert.getSubjectDN().getName().contains(openIdAllowedHost)) {
+							serverCert = cert;
+							
+							break;
+						}
+					}
+					
+					if(serverCert != null) {
+						try {
+							serverCert.verify(issuerKey);
+							log.debug("OpenID provider certificate validation successful");
+						} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException e) {
+							throw new CertificateException("Presented certificate is not valid.");
+						}
+					} else {
+						throw new CertificateException("Valid server certificate could not be found to perform verification");
+					}
+				} else {
+					throw new CertificateException("Could not read issuer public key to perform verification");
+				}
 			}
 		} };
 
 		SSLContext sc = SSLContext.getInstance("SSL");
 		sc.init(null, tma, new java.security.SecureRandom());
 
-		HttpFetcherFactory hff = new HttpFetcherFactory(sc);
+		HttpFetcherFactory hff = new HttpFetcherFactory(sc, new X509HostnameVerifier() {
+			@Override
+			public boolean verify(String hostname, SSLSession session) {
+				return verify(hostname);
+			}
+
+			@Override
+			public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {
+				if(!verify(host)) {
+					throw new SSLException("Host " + host + " is not allowed.");
+				}
+			}
+			
+			@Override
+			public void verify(String host, X509Certificate cert) throws SSLException {
+				if(!verify(host)) {
+					throw new SSLException("Host " + host + " is not allowed.");
+				}
+			}
+			
+			@Override
+			public void verify(String host, SSLSocket ssl) throws IOException {
+				if(!verify(host)) {
+					throw new SSLException("Host " + host + " is not allowed.");
+				}
+			}
+			
+			private boolean verify(String hostname) {
+				boolean result = openIdAllowedHost != null && openIdAllowedHost.equals(hostname);
+				
+				if(!result) {
+					log.warn("OpenID host verification failed for {}. Allowed host: {}",
+							hostname, openIdAllowedHost);
+				}
+				
+				return result;
+			}
+		});
 		YadisResolver yr = new YadisResolver(hff);
 		RealmVerifierFactory rvf = new RealmVerifierFactory(yr);
 		Discovery d = new Discovery(new HtmlResolver(hff), yr,

@@ -1,7 +1,7 @@
 package pl.cyfronet.datanet.web.server.controllers;
 
-import static pl.cyfronet.datanet.web.server.rpcservices.RpcLoginService.OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME;
 import static pl.cyfronet.datanet.web.server.rpcservices.RpcLoginService.OPEN_ID_CONSUMER_MANAGER;
+import static pl.cyfronet.datanet.web.server.rpcservices.RpcLoginService.OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
