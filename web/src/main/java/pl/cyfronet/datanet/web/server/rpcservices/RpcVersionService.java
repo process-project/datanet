@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Version;
+import pl.cyfronet.datanet.model.beans.validator.ModelValidator;
+import pl.cyfronet.datanet.model.beans.validator.ModelValidator.ModelError;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
 import pl.cyfronet.datanet.web.client.errors.VersionException;
 import pl.cyfronet.datanet.web.client.errors.VersionException.Code;
@@ -32,7 +34,7 @@ public class RpcVersionService implements VersionService {
 	@Autowired private HibernateModelDao modelDao;
 	
 	@Override
-	public List<Version> getVersions(long modelId) throws VersionException {
+	public List<Version> getVersions(long modelId) throws VersionException {		
 		try {
 			if (modelDao.isModelOwner(modelId, SpringSecurityHelper.getUserLogin())) {
 				List<VersionDbEntity> versionDbEnts = versionDao.getVersions(modelId);
@@ -82,6 +84,7 @@ public class RpcVersionService implements VersionService {
 	@Override
 	public Version addVersion(long modelId, Version version)
 			throws VersionException {
+		validateVersion(version);
 		try {
 			if (modelDao.isModelOwner(modelId, SpringSecurityHelper.getUserLogin())) {
 				VersionDbEntity versionDbEntity = new VersionDbEntity();		
@@ -105,5 +108,14 @@ public class RpcVersionService implements VersionService {
 	@Override
 	public void removeVersion(long versionId) throws VersionException {
 		versionDao.removeVersion(versionId);
+	}
+	
+	private void validateVersion(Version version) throws VersionException {
+		ModelValidator modelValidator = new ModelValidator();
+		List<ModelError> validateModel = modelValidator.validateModel(version);
+		
+		if(validateModel.size() > 0) {
+			throw new VersionException(Code.VersionValidationError, "Version validation errror");
+		}
 	}
 }

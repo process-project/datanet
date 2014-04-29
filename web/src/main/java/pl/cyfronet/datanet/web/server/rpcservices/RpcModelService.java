@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Model;
+import pl.cyfronet.datanet.model.beans.validator.ModelValidator;
+import pl.cyfronet.datanet.model.beans.validator.ModelValidator.ModelError;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
 import pl.cyfronet.datanet.model.util.ModelBuilder;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
@@ -36,7 +38,9 @@ public class RpcModelService implements ModelService {
 	@Override
 	public Model saveModel(Model model) throws ModelException {
 		log.info("Processing model save request for model {}", model);
-
+		
+		validateModel(model);
+		
 		try {
 			// TODO: Create optimized DAO method for this case
 			List<ModelDbEntity> availableUserModels = modelDao.getUserModels(SpringSecurityHelper.getUserLogin());
@@ -48,7 +52,7 @@ public class RpcModelService implements ModelService {
 					throw new ModelException(Code.ModelNameNotUnique);
 				}
 			}
-
+			
 			UserDbEntity user = userDao.getUser(SpringSecurityHelper.getUserLogin());
 			ModelDbEntity modelDbEntity = new ModelDbEntity();
 			modelDbEntity.setId(model.getId());
@@ -129,6 +133,15 @@ public class RpcModelService implements ModelService {
 			String message = "Could not retrieve models";
 			log.error(message, e);
 			throw new ModelException(Code.ModelRetrievalError);
+		}
+	}
+	
+	private void validateModel(Model model) throws ModelException {
+		ModelValidator modelValidator = new ModelValidator();
+		List<ModelError> validateModel = modelValidator.validateModel(model);
+		
+		if(validateModel.size() > 0) {
+			throw new ModelException(Code.ModelValidationError, "Model validation error");
 		}
 	}
 }
