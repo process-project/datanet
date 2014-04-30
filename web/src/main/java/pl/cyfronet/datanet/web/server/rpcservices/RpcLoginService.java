@@ -9,7 +9,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.SignatureException;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -63,7 +62,7 @@ public class RpcLoginService implements LoginService {
 
 	@Value("${open.id.identifier.prefix}") private String openIdIdentifierPrefix;
 	@Value("${open.id.allowed.host}") private String openIdAllowedHost;
-	@Value("classpath:PolishGridCA.pem") private Resource issuerCert;
+	@Value("classpath:openid_issuer_cert.pem") private Resource issuerCert;
 
 	@Override
 	public boolean isUserLoggedIn() {
