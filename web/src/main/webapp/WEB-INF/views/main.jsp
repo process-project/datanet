@@ -24,7 +24,8 @@
 	</head>
 	<body>
     	<iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1' style="position:absolute;width:0;height:0;border:0"></iframe>
-    	<c:if test="${processingError}">
+    	<p>Error: ${processingError}</p>
+    	<c:if test="${processingError != null}">
     		<div id="processingError" style="display: none;">
     			${processingError}
     		</div>

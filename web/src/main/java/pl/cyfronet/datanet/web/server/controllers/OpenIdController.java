@@ -67,6 +67,12 @@ public class OpenIdController {
             receivingURL.append("?").append(queryString);
 		}
 		
+		if(discovered == null || openIdManager == null) {
+			model.addAttribute("processingError", messages.getMessage("open.id.verification.failed", null, RequestContextUtils.getLocale(request)));
+			
+			return mainController.main(model, request);
+		}
+		
 		VerificationResult verification = null;
 		
 		try {

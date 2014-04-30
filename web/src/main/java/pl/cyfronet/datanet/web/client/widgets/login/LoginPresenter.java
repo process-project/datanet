@@ -22,6 +22,7 @@ public class LoginPresenter implements Presenter {
 		void setOpenIdBusyState(boolean state);
 		void openIdLoginInitializationError();
 		void redirect(String redirectionUrl);
+		void showExternalErrors(String string);
 	}
 
 	private ClientController clientController;
@@ -79,5 +80,9 @@ public class LoginPresenter implements Presenter {
 				view.redirect(redirectionUrl);
 			}
 		});
+	}
+
+	public void showExternalErrors() {
+		view.showExternalErrors("processingError");
 	}
 }

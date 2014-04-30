@@ -151,6 +151,7 @@ public class ClientController {
 				new LoginWidget(), this);
 		clearPanels();
 		RootPanel.get().add(loginPresenter.getWidget());
+		loginPresenter.showExternalErrors();
 	}
 
 	private void clearPanels() {
