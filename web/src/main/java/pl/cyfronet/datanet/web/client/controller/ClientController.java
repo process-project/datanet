@@ -26,8 +26,6 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 
 public class ClientController {
-	private static String userProxy;
-	
 	private LoginServiceAsync loginService;
 	private TopNavPresenter topNavPresenter;
 	private PlaceController placeController;
@@ -54,10 +52,6 @@ public class ClientController {
 		this.loginService = loginService;
 		this.sessionTimeoutController = sessionTimeoutController;
 	}
-	
-	public static String getUserProxy() {
-		return userProxy;
-	}
 
 	public void start() {
 		loginService.isUserLoggedIn(new AsyncCallback<Boolean>() {
@@ -66,21 +60,8 @@ public class ClientController {
 				if (!isLoggedIn) {
 					showLoginPanel();
 				} else {
-					loginService.retrieveUserProxy(new AsyncCallback<String>() {
-						@Override
-						public void onFailure(Throwable t) {
-							eventBus.fireEvent(new NotificationEvent(
-									GenericNotificationMessage.rpcError,
-									NotificationType.ERROR, t.getLocalizedMessage()));
-						}
-
-						@Override
-						public void onSuccess(String userProxy) {
-							ClientController.userProxy = userProxy;
-							sessionTimeoutController.start();
-							showMainPanel();
-						}
-					});
+					sessionTimeoutController.start();
+					showMainPanel();
 				}
 			}
 

@@ -1,8 +1,6 @@
 package pl.cyfronet.datanet.web.server.rpcservices;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -221,25 +219,5 @@ public class RpcLoginService implements LoginService {
 		consumerManager.setNonceVerifier(new InMemoryNonceVerifier(5000));
 		
 		return consumerManager;
-	}
-
-	@Override
-	public String retrieveUserProxy() {
-		String proxy = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
-		
-		if (proxy != null) {
-			String encodedProxy = null;
-			
-			try {
-				encodedProxy = URLEncoder.encode(proxy, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				log.error("Could not encode user proxy. Ignoring and returning null", e);
-				return null;
-			}
-			
-			return encodedProxy;
-		}
-		
-		return null;
 	}
 }

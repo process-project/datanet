@@ -1,6 +1,7 @@
 package pl.cyfronet.datanet.web.server.services.repositoryclient;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,18 +9,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletOutputStream;
+
+import org.apache.commons.io.IOUtils;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequest;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -230,5 +239,22 @@ public class RepositoryClient {
 
 	private String buildConfigUrl(String repositoryUrl, String token) {
 		return repositoryUrl + "/_configuration?private_token=" + token;
+	}
+
+	public void getFile(String fileUrl, final OutputStream outputStream) {
+		restTemplate.execute(fileUrl, HttpMethod.GET, new RequestCallback() {
+			
+			@Override
+			public void doWithRequest(ClientHttpRequest request) throws IOException {
+				//nothing to be added here
+			}
+		}, new ResponseExtractor<Void>() {
+			@Override
+			public Void extractData(ClientHttpResponse response) throws IOException {
+				IOUtils.copy(response.getBody(), outputStream);
+				
+				return null;
+			}
+		});
 	}
 }

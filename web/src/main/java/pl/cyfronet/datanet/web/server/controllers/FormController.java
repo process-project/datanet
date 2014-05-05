@@ -1,7 +1,6 @@
 package pl.cyfronet.datanet.web.server.controllers;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
