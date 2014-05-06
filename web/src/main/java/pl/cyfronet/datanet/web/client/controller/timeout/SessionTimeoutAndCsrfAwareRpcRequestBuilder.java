@@ -1,11 +1,8 @@
 package pl.cyfronet.datanet.web.client.controller.timeout;
 
+import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 import pl.cyfronet.datanet.web.client.util.CsrfUtil;
 
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.MetaElement;
-import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
@@ -46,5 +43,9 @@ public class SessionTimeoutAndCsrfAwareRpcRequestBuilder extends RpcRequestBuild
 		super.doFinish(rb);
 		rb.setHeader(CsrfUtil.getCsrfHeaderName(), CsrfUtil.getCsrfValue());
 		rb.setCallback(new SessionTimeoutAwareRequestCallback(rb.getCallback()));
+	}
+
+	public void setLoginService(LoginServiceAsync loginService) {
+		sessionTimeoutController.setLoginService(loginService);
 	}
 }

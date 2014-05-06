@@ -20,6 +20,7 @@ import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.web.client.codetemplates.CodeTemplateGenerator;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.EntityCallback;
+import pl.cyfronet.datanet.web.client.controller.timeout.SessionTimeoutController;
 import pl.cyfronet.datanet.web.client.di.factory.EntityRowDataProviderFactory;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter.View;
@@ -34,6 +35,7 @@ public class EntityDataPresenterTest {
 	@Mock private EventBus eventBus;
 	@Mock private EntityRowDataProvider entityRowDataProvider;
 	@Mock private CodeTemplateGenerator codeTemplateGenerator;
+	@Mock private SessionTimeoutController sessionTimeoutController;
 	
 	private EntityDataPanelPresenter entityDataPanelPresenter;
 	
@@ -41,7 +43,8 @@ public class EntityDataPresenterTest {
 	public void prepare() {
 		MockitoAnnotations.initMocks(this);
 		entityDataPanelPresenter = new EntityDataPanelPresenter(
-				view, repositoryController, 0, "entity", entityRowDataProviderFactory, eventBus, codeTemplateGenerator);
+				view, repositoryController, 0, "entity", entityRowDataProviderFactory, eventBus, codeTemplateGenerator,
+				sessionTimeoutController);
 		when(entityRowDataProviderFactory.create(Mockito.anyLong(), Mockito.anyString(), Mockito.any(EntityDataPanelPresenter.class))).
 				thenReturn(entityRowDataProvider);
 	}

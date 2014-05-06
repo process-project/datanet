@@ -15,13 +15,15 @@ public class LoginServiceProvider implements Provider<LoginServiceAsync> {
 	@Inject
 	public LoginServiceProvider(SessionTimeoutAndCsrfAwareRpcRequestBuilder requestBuilder) {
 		this.requestBuilder = requestBuilder;
-		
 	}
 	
 	@Override
 	public LoginServiceAsync get() {
 		LoginServiceAsync loginService = GWT.create(LoginService.class);
 		((ServiceDefTarget) loginService).setRpcRequestBuilder(requestBuilder);
+		
+		//this is used to break the injection cycle which would exist in normal constructor injection
+		requestBuilder.setLoginService(loginService);
 		
 		return loginService;
 	}

@@ -19,6 +19,7 @@ import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.EntityCallback;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
+import pl.cyfronet.datanet.web.client.controller.timeout.SessionTimeoutController;
 import pl.cyfronet.datanet.web.client.di.factory.EntityRowDataProviderFactory;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
@@ -68,12 +69,13 @@ public class EntityDataPanelPresenter implements Presenter {
 	private Map<String, HasText> newEntityRowFields;
 	private EventBus eventBus;
 	private CodeTemplateGenerator codeTemplateGenerator;
+	private SessionTimeoutController sessionTimeoutController;
 	
 	@Inject
 	public EntityDataPanelPresenter(View view, RepositoryController repositoryController,
 			@Assisted long repositoryId, @Assisted String entityName,
 			EntityRowDataProviderFactory entityRowDataProviderFactory, EventBus eventBus,
-			CodeTemplateGenerator codeTemplateGenerator) {
+			CodeTemplateGenerator codeTemplateGenerator, SessionTimeoutController sessionTimeoutController) {
 		this.view = view;
 		this.repositoryController = repositoryController;
 		this.repositoryId = repositoryId;
@@ -81,6 +83,7 @@ public class EntityDataPanelPresenter implements Presenter {
 		this.entityRowDataProviderFactory = entityRowDataProviderFactory;
 		this.eventBus = eventBus;
 		this.codeTemplateGenerator = codeTemplateGenerator;
+		this.sessionTimeoutController = sessionTimeoutController;
 		view.setPresenter(this);
 		searchFields = new HashMap<String, HasText>();
 		newEntityRowFields = new HashMap<String, HasText>();
@@ -144,6 +147,7 @@ public class EntityDataPanelPresenter implements Presenter {
 	
 	@Override
 	public void afterEntitySubmitted(String results) {
+		sessionTimeoutController.resetSessionTimeout();
 		view.setBusyState(false);
 		view.hideNewEntityRowPopup();
 		

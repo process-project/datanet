@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import pl.cyfronet.datanet.web.client.controller.ClientController;
+import pl.cyfronet.datanet.web.client.controller.timeout.SessionTimeoutController;
 import pl.cyfronet.datanet.web.client.event.notification.ModelNotificationMessage;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
@@ -28,21 +29,13 @@ import com.google.web.bindery.event.shared.SimpleEventBus;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class TopNavPresenterTest {
-
-	@Mock
-	private View view;
-
-	@Mock
-	private Provider<ClientController> clientControllerProvider;
-
-	@Mock
-	private ClientController clientController;
-
-	@Mock
-	private NotificationMessages notificationMessages;
+	@Mock private View view;
+	@Mock private Provider<ClientController> clientControllerProvider;
+	@Mock private ClientController clientController;
+	@Mock private NotificationMessages notificationMessages;
+	@Mock private SessionTimeoutController sessionTimeoutController;
 
 	private TopNavPresenter topNavPresenter;
-
 	private Map<NotificationMessage, String> messagesMap;
 
 	@Before
@@ -50,7 +43,7 @@ public class TopNavPresenterTest {
 		MockitoAnnotations.initMocks(this);
 		when(clientControllerProvider.get()).thenReturn(clientController);
 		topNavPresenter = new TopNavPresenter(view, new SimpleEventBus(), clientControllerProvider,
-				notificationMessages);
+				notificationMessages, sessionTimeoutController);
 		initMessages();
 	}
 

@@ -1,6 +1,7 @@
 package pl.cyfronet.datanet.web.client.widgets.topnav;
 
 import pl.cyfronet.datanet.web.client.controller.ClientController;
+import pl.cyfronet.datanet.web.client.controller.timeout.SessionTimeoutController;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent;
 import pl.cyfronet.datanet.web.client.event.notification.NotificationEvent.NotificationType;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPanel.MessageType;
@@ -30,15 +31,17 @@ public class TopNavPresenter implements Presenter {
 	private Provider<ClientController> clientController;
 	private View view;
 	private NotificationMessages notificationMessages;
+	private SessionTimeoutController sessionTimeoutController;
 
 	@Inject
 	public TopNavPresenter(View view, EventBus eventBus, Provider<ClientController> clientController,
-			NotificationMessages notificationMessages) {
+			NotificationMessages notificationMessages, SessionTimeoutController sessionTimeoutController) {
 		eventBinder.bindEventHandlers(this, eventBus);
 		
 		this.view = view;
 		this.clientController = clientController;
 		this.notificationMessages = notificationMessages;		
+		this.sessionTimeoutController = sessionTimeoutController;
 		
 		view.setPresenter(this);		
 		initLocalesButtons();
@@ -108,6 +111,7 @@ public class TopNavPresenter implements Presenter {
 
 	@Override
 	public void onRetrieveProxy() {
+		sessionTimeoutController.resetSessionTimeout();
 		view.submitProxyForm();
 	}
 }
