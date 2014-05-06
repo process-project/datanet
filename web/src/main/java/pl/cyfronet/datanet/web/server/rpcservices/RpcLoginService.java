@@ -106,6 +106,7 @@ public class RpcLoginService implements LoginService {
 			
 			return authReq.getDestinationUrl(true);
 		} catch (Exception e) {
+			log.error("Could not properly initiate OpenID authentication", e);
 			throw new LoginException(Code.OpenIdAssociationFailed);
 		}
 	}

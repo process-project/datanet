@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 @Controller
@@ -29,13 +30,13 @@ public class MainController {
 		return "main";
 	}
 	
-	@RequestMapping("/downloadProxy")
+	@RequestMapping(value = "/downloadProxy", method = RequestMethod.POST)
 	@Secured("ROLE_USER")
 	public void fetchProxy(HttpServletResponse response) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		
 		if(authentication != null) {
-			response.setContentType("application/x-x509-user-cert");
+			response.setContentType("application/octet-stream");
 			response.setHeader("Content-Disposition","attachment; filename=user-proxy.pem");
 			
 			try {

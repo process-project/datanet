@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletOutputStream;
-
 import org.apache.commons.io.IOUtils;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;

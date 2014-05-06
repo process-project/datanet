@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.client.widgets.topnav;
 
+import pl.cyfronet.datanet.web.client.util.CsrfUtil;
 import pl.cyfronet.datanet.web.client.widgets.topnav.TopNavPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.Alert;
@@ -11,8 +12,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Widget;
 
 public class TopNavPanel extends Composite implements View {
@@ -30,9 +32,11 @@ public class TopNavPanel extends Composite implements View {
 	@UiField Alert messageLabel;
 	@UiField Button switchToPl;
 	@UiField Button switchToEn;
+	@UiField FormPanel downloadProxyForm;
 	
 	public TopNavPanel() {
 		initWidget(uiBinder.createAndBindUi(this));
+		downloadProxyForm.add(new Hidden(CsrfUtil.getCsrfParameterName(), CsrfUtil.getCsrfValue()));
 	}
 	
 	public void displayMessage(String message, MessageType messageType) {
@@ -105,13 +109,7 @@ public class TopNavPanel extends Composite implements View {
 	}
 
 	@Override
-	public void setUrl(String path) {
-		String baseUrl = GWT.getHostPageBaseURL();
-		
-		if(baseUrl.endsWith("/")) {
-			baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
-		}
-		
-		Window.Location.replace(baseUrl + path);
+	public void submitProxyForm() {
+		downloadProxyForm.submit();
 	}
 }

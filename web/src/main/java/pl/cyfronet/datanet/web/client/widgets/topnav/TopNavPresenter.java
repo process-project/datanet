@@ -24,7 +24,7 @@ public class TopNavPresenter implements Presenter {
 		void displayMessage(String message, MessageType type);
 		void selectPlLocales();
 		void selectEnLocales();
-		void setUrl(String string);
+		void submitProxyForm();
 	}
 
 	private Provider<ClientController> clientController;
@@ -108,6 +108,6 @@ public class TopNavPresenter implements Presenter {
 
 	@Override
 	public void onRetrieveProxy() {
-		view.setUrl("/downloadProxy");
+		view.submitProxyForm();
 	}
 }

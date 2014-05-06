@@ -3,7 +3,7 @@ package pl.cyfronet.datanet.web.client.di;
 import pl.cyfronet.datanet.web.client.controller.ClientController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.VersionController;
-import pl.cyfronet.datanet.web.client.controller.timeout.SessionTimeoutAwareRpcRequestBuilder;
+import pl.cyfronet.datanet.web.client.controller.timeout.SessionTimeoutAndCsrfAwareRpcRequestBuilder;
 import pl.cyfronet.datanet.web.client.controller.timeout.SessionTimeoutController;
 import pl.cyfronet.datanet.web.client.di.factory.EntityDataPanelPresenterFactory;
 import pl.cyfronet.datanet.web.client.di.factory.EntityPanelPresenterFactory;
@@ -66,7 +66,7 @@ public class DatanetClientModule extends AbstractGinModule {
 		bind(PlaceController.class).toProvider(PlaceControllerProvider.class).in(Singleton.class);
 		bind(PlaceHistoryMapper.class).to(AppPlaceHistoryMapper.class).in(Singleton.class);
 		bind(SessionTimeoutController.class).toProvider(SessionTimeoutControllerProvider.class).in(Singleton.class);
-		bind(SessionTimeoutAwareRpcRequestBuilder.class).in(Singleton.class);
+		bind(SessionTimeoutAndCsrfAwareRpcRequestBuilder.class).in(Singleton.class);
 
 		configureAsyncServices();
 		configureViews();

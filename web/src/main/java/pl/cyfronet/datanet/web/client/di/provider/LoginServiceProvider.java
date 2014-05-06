@@ -1,6 +1,6 @@
 package pl.cyfronet.datanet.web.client.di.provider;
 
-import pl.cyfronet.datanet.web.client.controller.timeout.SessionTimeoutAwareRpcRequestBuilder;
+import pl.cyfronet.datanet.web.client.controller.timeout.SessionTimeoutAndCsrfAwareRpcRequestBuilder;
 import pl.cyfronet.datanet.web.client.services.LoginService;
 import pl.cyfronet.datanet.web.client.services.LoginServiceAsync;
 
@@ -10,10 +10,10 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class LoginServiceProvider implements Provider<LoginServiceAsync> {
-	private SessionTimeoutAwareRpcRequestBuilder requestBuilder;
+	private SessionTimeoutAndCsrfAwareRpcRequestBuilder requestBuilder;
 
 	@Inject
-	public LoginServiceProvider(SessionTimeoutAwareRpcRequestBuilder requestBuilder) {
+	public LoginServiceProvider(SessionTimeoutAndCsrfAwareRpcRequestBuilder requestBuilder) {
 		this.requestBuilder = requestBuilder;
 		
 	}

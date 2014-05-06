@@ -23,12 +23,12 @@
 		<cloud.foundry.version>0.7.5</cloud.foundry.version>
 		<gwt.version>2.5.1</gwt.version>
 		<gwt.bootstrap.version>2.2.1.0</gwt.bootstrap.version>
-		<spring.version>3.2.4.RELEASE</spring.version>
-		<spring.security.version>3.2.0.M2</spring.security.version>
+		<spring.version>3.2.8.RELEASE</spring.version>
+		<spring.security.version>3.2.3.RELEASE</spring.security.version>
 	</properties>
 
 	<repositories>
-	    <!-- provides cloudfoundry artefacts -->
+	    <!-- provides cloudfoundry artifacts -->
 	    <repository>
 			<id>Spring Framework Milestone Repository</id>
 			<url>http://maven.springframework.org/milestone</url>

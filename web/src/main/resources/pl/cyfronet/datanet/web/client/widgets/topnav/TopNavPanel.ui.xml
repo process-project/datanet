@@ -26,6 +26,9 @@
 				margin-left: 20px;
 				float: left;
 			}
+			.download-proxy-form {
+				display: none;
+			}
 		</ui:style>
 	<g:FlowPanel styleName="{style.header}">
 		<g:Image url="img/datanet-logo-143x40.png" altText="{messages.datanetMain}" styleName="{style.logo}"/>
@@ -39,6 +42,7 @@
 		<b:ButtonGroup toggle="radio" addStyleNames="{style.header-buttons}">
 		    <b:Button ui:field="switchToPl" size="MINI">PL</b:Button>
 		    <b:Button ui:field="switchToEn" size="MINI">EN</b:Button>
-		</b:ButtonGroup>		
+		</b:ButtonGroup>
+		<g:FormPanel ui:field="downloadProxyForm" action="downloadProxy" method="POST" addStyleNames="{style.download-proxy-form}"></g:FormPanel>		
 	</g:FlowPanel>		
 </ui:UiBinder>

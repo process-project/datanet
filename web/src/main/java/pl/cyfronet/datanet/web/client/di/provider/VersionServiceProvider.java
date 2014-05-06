@@ -1,6 +1,6 @@
 package pl.cyfronet.datanet.web.client.di.provider;
 
-import pl.cyfronet.datanet.web.client.controller.timeout.SessionTimeoutAwareRpcRequestBuilder;
+import pl.cyfronet.datanet.web.client.controller.timeout.SessionTimeoutAndCsrfAwareRpcRequestBuilder;
 import pl.cyfronet.datanet.web.client.services.VersionService;
 import pl.cyfronet.datanet.web.client.services.VersionServiceAsync;
 
@@ -10,10 +10,10 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class VersionServiceProvider implements Provider<VersionServiceAsync> {
-	private SessionTimeoutAwareRpcRequestBuilder requestBuilder;
+	private SessionTimeoutAndCsrfAwareRpcRequestBuilder requestBuilder;
 
 	@Inject
-	public VersionServiceProvider(SessionTimeoutAwareRpcRequestBuilder requestBuilder) {
+	public VersionServiceProvider(SessionTimeoutAndCsrfAwareRpcRequestBuilder requestBuilder) {
 		this.requestBuilder = requestBuilder;
 	}
 	

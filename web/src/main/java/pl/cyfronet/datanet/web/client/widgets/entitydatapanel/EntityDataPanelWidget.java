@@ -3,6 +3,7 @@ package pl.cyfronet.datanet.web.client.widgets.entitydatapanel;
 import java.util.Map;
 
 import pl.cyfronet.datanet.model.beans.Type;
+import pl.cyfronet.datanet.web.client.util.CsrfUtil;
 import pl.cyfronet.datanet.web.client.widgets.entitydatapanel.EntityDataPanelPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.Button;
@@ -194,15 +195,9 @@ public class EntityDataPanelWidget extends Composite implements View {
 
 	@Override
 	public void initEntityUploadForm(long repositoryId, String entityName) {
-		Hidden repositoryIdInput = new Hidden();
-		repositoryIdInput.setName("repositoryId");
-		repositoryIdInput.setValue(String.valueOf(repositoryId));
-		addEntityRowFormContainer.add(repositoryIdInput);
-		
-		Hidden entityNameInput = new Hidden();
-		entityNameInput.setName("entityName");
-		entityNameInput.setValue(entityName);
-		addEntityRowFormContainer.add(entityNameInput);
+		addEntityRowFormContainer.add(new Hidden("repositoryId", String.valueOf(repositoryId)));
+		addEntityRowFormContainer.add(new Hidden("entityName", entityName));
+		addEntityRowFormContainer.add(new Hidden(CsrfUtil.getCsrfParameterName(), CsrfUtil.getCsrfValue()));
 	}
 
 	@Override

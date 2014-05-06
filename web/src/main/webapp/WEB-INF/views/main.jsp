@@ -4,7 +4,10 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<meta name="gwt:property" content="locale=${locale}">
+		<meta name="gwt:property" content="locale=${locale}"/>
+		<meta name="_csrf" content="${_csrf.token}"/>
+		<meta name="_csrf_header" content="${_csrf.headerName}"/>
+		<meta name="_csrf_parameter_name" content="${_csrf.parameterName}"/>
 		<title><spring:message code="main.page.title"/></title>
 		<link href="<c:url value="/img/favicon.ico"/>" rel="icon" type="image/x-icon" />
 		<!--[if lt IE 9]>
