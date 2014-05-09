@@ -41,6 +41,9 @@ public class RepositoryPanelPresenter implements Presenter {
 		void showAccessConfigModal(boolean show);
 		void enableOwnersInput(boolean b);
 		void setAccessConfigSaveBusyState(boolean b);
+		void showMissingRepositoryErrorMessage();
+		void enableControls(boolean enable);
+		void setMissingRepositoryLink();
 	}
 
 	private View view;
@@ -183,11 +186,15 @@ public class RepositoryPanelPresenter implements Presenter {
 		repositoryController.getRepository(repositoryId, new RepositoryCallback() {
 			@Override
 			public void setRepository(Repository repository) {
+				view.enableControls(true);
 				showRepository(repository);
 			}
 
 			@Override
 			public void setError(String message) {
+				view.enableControls(false);
+				view.setMissingRepositoryLink();
+				view.showMissingRepositoryErrorMessage();
 			}});
 	}
 

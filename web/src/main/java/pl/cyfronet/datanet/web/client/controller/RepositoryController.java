@@ -74,8 +74,17 @@ public class RepositoryController {
 				
 				@Override
 				public void onFailure(Throwable caught) {
-					eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryLoadError,
-							NotificationType.ERROR, caught.getMessage()));
+					if(caught.getMessage() != null) {
+						eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryLoadError,
+								NotificationType.ERROR, caught.getMessage()));
+					} else {
+						eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryLoadErrorNoMessage,
+								NotificationType.ERROR, (String) null));
+					}
+					
+					if(repositoryCallback != null) {
+						repositoryCallback.setError(caught.getMessage());
+					}
 				}
 			});
 		} else {

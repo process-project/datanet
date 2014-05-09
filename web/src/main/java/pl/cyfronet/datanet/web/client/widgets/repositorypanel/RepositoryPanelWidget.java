@@ -3,22 +3,22 @@ package pl.cyfronet.datanet.web.client.widgets.repositorypanel;
 import pl.cyfronet.datanet.web.client.widgets.repositorypanel.RepositoryPanelPresenter.View;
 
 import com.github.gwtbootstrap.client.ui.Button;
+import com.github.gwtbootstrap.client.ui.Label;
 import com.github.gwtbootstrap.client.ui.Modal;
 import com.github.gwtbootstrap.client.ui.RadioButton;
 import com.github.gwtbootstrap.client.ui.Tab;
 import com.github.gwtbootstrap.client.ui.TabPanel;
 import com.github.gwtbootstrap.client.ui.TextBox;
+import com.github.gwtbootstrap.client.ui.constants.LabelType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -40,6 +40,9 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 	@UiField TextBox owners;
 	@UiField TextBox corsOrigins;
 	@UiField Button saveAccessConfig;
+	@UiField Button accessConfiguration;
+	@UiField Button removeRepository;
+	@UiField FlowPanel errorPanel;
 	
 	public RepositoryPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -82,6 +85,7 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 
 	@Override
 	public void setRepositoryLink(String link) {
+		repositoryLink.setEnabled(true);
 		repositoryLink.setHref(link);
 		repositoryLink.setText(link);
 	}
@@ -156,5 +160,21 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 		} else {
 			saveAccessConfig.state().reset();
 		}
+	}
+
+	@Override
+	public void showMissingRepositoryErrorMessage() {
+		errorPanel.add(new Label(LabelType.IMPORTANT, messages.missingRepositoryError()));
+	}
+
+	@Override
+	public void enableControls(boolean enabled) {
+		accessConfiguration.setEnabled(enabled);
+		removeRepository.setEnabled(enabled);
+	}
+
+	@Override
+	public void setMissingRepositoryLink() {
+		repositoryLink.setText(messages.missingRepositoryLink());
 	}
 }

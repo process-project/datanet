@@ -31,6 +31,10 @@
 			color: #ffffff;
 			text-decoration: none;
 		}
+		.error {
+			margin: 10px auto;
+			text-align: center;
+		}
 	</ui:style>
 	<g:DockLayoutPanel addStyleNames="{style.main}">
 		<g:north size="60">
@@ -49,7 +53,8 @@
 		</g:north>
 		<g:center>
 		    <g:FlowPanel addStyleNames="{style.tabs}">
-				<b:TabPanel tabPosition="top" ui:field="tabPanel" />
+		    	<g:FlowPanel ui:field="errorPanel" addStyleNames="{style.error}"/>
+				<b:TabPanel tabPosition="top" ui:field="tabPanel"/>
 				<b:Modal ui:field="accessConfigModal" title="{messages.accessConfigurationLabel}" animation="true" closeVisible="false">
 					<b:Form type="HORIZONTAL">
 						<b:Fieldset>

@@ -18,4 +18,6 @@ public interface RepositoryPanelMessages extends Messages {
 	String aboutRepositoryOwners();
 	String corsOriginsLabel();
 	String aboutCorsOrigins();
+	String missingRepositoryLink();
+	String missingRepositoryError();
 }
