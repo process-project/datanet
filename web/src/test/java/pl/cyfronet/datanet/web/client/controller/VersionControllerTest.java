@@ -128,6 +128,7 @@ public class VersionControllerTest {
 		Long versionId = (long)3214;
 		version.setId(versionId);
 		version.setModelId(modelId);
+		version.setName("a");
 		givenVersions.add(version);
 		doAnswer(returnSuccess(version)).when(versionService).getVersion(eq(versionId), any(AsyncCallback.class));
 		
@@ -135,6 +136,7 @@ public class VersionControllerTest {
 		version = new Version();
 		version.setId(versionId);
 		version.setModelId(modelId);
+		version.setName("b");
 		givenVersions.add(version);
 		doAnswer(returnSuccess(version)).when(versionService).getVersion(eq(versionId), any(AsyncCallback.class));
 		
