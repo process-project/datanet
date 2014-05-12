@@ -2,7 +2,7 @@ package pl.cyfronet.datanet.model.beans;
 
 import java.io.Serializable;
 
-public class Version extends Model implements Serializable {
+public class Version extends Model implements Serializable, Comparable<Version> {
 	private static final long serialVersionUID = 6566696681377524989L;
 	
 	private long modelId;
@@ -25,5 +25,10 @@ public class Version extends Model implements Serializable {
 	
 	public void setModelId(long modelId) {
 		this.modelId = modelId;
+	}
+
+	@Override
+	public int compareTo(Version o) {
+		return getName().compareToIgnoreCase(o.getName());
 	}	
 }

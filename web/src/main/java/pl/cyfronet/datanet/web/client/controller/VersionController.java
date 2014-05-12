@@ -1,6 +1,7 @@
 package pl.cyfronet.datanet.web.client.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,12 +88,13 @@ public class VersionController {
 								break;
 							}
 						}
-						if (returned != null)
+						if (returned != null) {							
 							callback.setVersion(returned);
-						else 
+						} else { 
 							eventBus.fireEvent(new NotificationEvent(
 									VersionNotificationMessage.versionLoadError,
 									NotificationType.ERROR));
+						}
 					}
 				}, false);
 			}
@@ -113,11 +115,11 @@ public class VersionController {
 						public void onSuccess(List<Version> result) {
 							log.info("Versions for model {} loaded", modelId);
 							
-							if (result != null && result.size() > 0)
-								versions.put(modelId, result);
-							else 
-								versions.put(modelId, result);
+							if (result != null && result.size() > 0) {
+								Collections.sort(result);
+							}
 							
+							versions.put(modelId, result);
 							callback.setVersions(versions.get(modelId));
 						}
 						
@@ -171,7 +173,10 @@ public class VersionController {
 						versions.put(result.getModelId(), new ArrayList<Version>());
 					}
 					
-					versions.get(result.getModelId()).add(result);
+					List<Version> modelVersions = versions.get(result.getModelId()); 
+					modelVersions.add(result);
+					Collections.sort(modelVersions);
+					
 					eventBus.fireEvent(new ModelVersionChangedEvent(result.getModelId(), result.getId()));
 					eventBus.fireEvent(new NotificationEvent(
 							VersionNotificationMessage.versionReleased,
