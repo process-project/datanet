@@ -28,6 +28,7 @@ import pl.cyfronet.datanet.model.beans.Model;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.model.beans.Type;
 import pl.cyfronet.datanet.model.beans.Version;
+import pl.cyfronet.datanet.model.beans.validator.RepositoryValidator;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 import pl.cyfronet.datanet.web.client.errors.ModelException;
@@ -203,6 +204,8 @@ public class RpcRepositoryService implements RepositoryService {
 	
 	@Override
 	public Repository deployModelVersion(long versionId, String repositoryName) throws RepositoryException {
+		validateRepository(repositoryName);
+		
 		try {
 			if (getRepositoryCount() >= maxRepoCount) {
 				throw new RepositoryException(Code.RepositoryAuthorizationError, "You can create maximum 5 repositories");
@@ -362,5 +365,13 @@ public class RpcRepositoryService implements RepositoryService {
 		builder.scheme("https");
 		
 		return builder.build().toUriString();
+	}
+	
+	private void validateRepository(String repositoryName) throws RepositoryException {
+		RepositoryValidator validator = new RepositoryValidator();		
+		
+		if(!validator.isValidName(repositoryName)) {
+			throw new RepositoryException(Code.RespositoryValidationError, "Repository validation error");
+		}
 	}
 }
