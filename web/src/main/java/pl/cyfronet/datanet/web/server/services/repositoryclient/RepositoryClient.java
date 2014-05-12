@@ -76,6 +76,7 @@ public class RepositoryClient {
 				
 				for (String key: fields.keySet()) {
 					String value = fields.get(key).toString();
+					
 					if(!fileFields.contains(key)) {
 						value = encoder.encodeForHTML(value);
 					}											

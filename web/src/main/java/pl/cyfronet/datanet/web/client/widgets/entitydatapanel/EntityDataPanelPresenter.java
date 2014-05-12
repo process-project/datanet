@@ -211,6 +211,8 @@ public class EntityDataPanelPresenter implements Presenter {
 	}
 	
 	private void showSearchFields(List<Field> fields) {
+		searchFields.put("id", view.addSearchField("id", Type.ObjectId));
+		
 		for(Field field : fields) {
 			if (field.getType() == Type.String) {
 				searchFields.put(field.getName(), view.addSearchField(field.getName(), field.getType()));
@@ -220,6 +222,7 @@ public class EntityDataPanelPresenter implements Presenter {
 	
 	private void showData(List<Field> fields) {
 		Map<String, Type> fieldNames = new HashMap<String, Type>();
+		fieldNames.put("id", Type.ObjectId);
 		
 		for(Field field : fields) {
 			fieldNames.put(field.getName(), field.getType());
