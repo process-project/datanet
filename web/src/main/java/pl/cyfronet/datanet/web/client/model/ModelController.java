@@ -1,6 +1,7 @@
 package pl.cyfronet.datanet.web.client.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -61,6 +62,8 @@ public class ModelController {
 				for (Model model : result) {
 					models.add(new ModelProxy(model));
 				}
+				Collections.sort(models);
+				
 				callback.setModels(models);
 			}
 
@@ -179,6 +182,8 @@ public class ModelController {
 							models.remove(index);
 							proxy = new ModelProxy(result);
 							models.add(index, proxy);
+							
+							Collections.sort(models);
 						}
 						
 						proxy.setDirty(false);

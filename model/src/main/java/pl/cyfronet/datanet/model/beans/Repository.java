@@ -3,7 +3,7 @@ package pl.cyfronet.datanet.model.beans;
 import java.io.Serializable;
 
 
-public class Repository implements Serializable {
+public class Repository implements Serializable, Comparable<Repository> {
 	private static final long serialVersionUID = 6983667746241352161L;
 	
 	private long id;
@@ -82,5 +82,9 @@ public class Repository implements Serializable {
 	}
 	public void setAccessConfig(AccessConfig accessConfig) {
 		this.accessConfig = accessConfig;
+	}
+	@Override
+	public int compareTo(Repository o) {
+		return getName().compareToIgnoreCase(o.getName());
 	}	
 }

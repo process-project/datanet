@@ -14,7 +14,7 @@ import pl.cyfronet.datanet.model.beans.Model;
  * 
  * @author marek
  */
-public class ModelProxy extends Model {
+public class ModelProxy extends Model implements Comparable<ModelProxy> {
 
 	private static final long serialVersionUID = 1727938745935329386L;
 
@@ -116,5 +116,10 @@ public class ModelProxy extends Model {
 		if (getId() != other.getId())
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(ModelProxy o) {
+		return getName().compareToIgnoreCase(o.getName());
 	}
 }

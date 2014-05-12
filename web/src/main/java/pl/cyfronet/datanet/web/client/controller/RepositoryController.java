@@ -1,5 +1,6 @@
 package pl.cyfronet.datanet.web.client.controller;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -174,7 +175,10 @@ public class RepositoryController {
 				getRepositories(versionId, new RepositoriesCallback() {
 					@Override
 					public void setRepositories(List<Repository> list) {
-						repositories.get(versionId).add(repository);
+						List<Repository> versionRepositories = repositories.get(versionId); 
+						versionRepositories.add(repository);
+						Collections.sort(versionRepositories);
+						
 						log.debug("Repository after creation: {}", repository);
 						eventBus.fireEvent(new VersionRepositoryChangedEvent(versionId, repository.getId()));
 						eventBus.fireEvent(new NotificationEvent(
@@ -249,6 +253,9 @@ public class RepositoryController {
 
 			@Override
 			public void onSuccess(List<Repository> result) {
+				if (result != null) {
+					Collections.sort(result);
+				}
 				repositories.put(versionId, result);
 				
 				if(nextCallback != null) {
