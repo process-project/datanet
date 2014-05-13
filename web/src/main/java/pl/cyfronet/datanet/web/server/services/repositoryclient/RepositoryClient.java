@@ -2,7 +2,6 @@ package pl.cyfronet.datanet.web.server.services.repositoryclient;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -40,11 +37,9 @@ public class RepositoryClient {
 	private static final Logger log = LoggerFactory.getLogger(RepositoryClient.class);
 	
 	private RestTemplate restTemplate;
-	private Encoder encoder;
 	
 	public RepositoryClient(RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
-		encoder = ESAPI.encoder();
 	}
 
 	public EntityData retrieveRepositoryData(String repositoryUrl, String entityName, List<String> fileFields, int start, int length, Map<String, String> query) throws RestClientException, URISyntaxException {
@@ -78,9 +73,9 @@ public class RepositoryClient {
 				for (String key: fields.keySet()) {
 					String value = fields.get(key).toString();
 					
-					if(!fileFields.contains(key)) {
-						value = encoder.encodeForHTML(value);
-					}											
+//					if(!fileFields.contains(key)) {
+//						value = encoder.encodeForXML(value);
+//					}											
 					
 					values.put(key, value);
 				}
@@ -234,7 +229,7 @@ public class RepositoryClient {
 			if (data.keySet().contains(fileFieldName)) {
 				String id = data.remove(fileFieldName).toString();
 				String fileName = restTemplate.getForObject(buildFileNameUrl(repositoryUrl, id), String.class);
-				data.put(fileFieldName, encoder.encodeForHTML(fileName) + ";" + repositoryUrl + "/file/" + id);
+				data.put(fileFieldName, fileName + ";" + repositoryUrl + "/file/" + id);
 			}
 		}
 	}
