@@ -2,6 +2,7 @@ package pl.cyfronet.datanet.web.server.services.repositoryclient;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -199,6 +200,12 @@ public class RepositoryClient {
 		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(request, headers);
 		restTemplate.put(buildConfigUrl(repositoryUrl, token), requestEntity);
 	}
+	
+	public void removeEntityRow(String repositoryUrl, String rowId, String entityName) throws RestClientException, URISyntaxException {
+		String deleteUrl = buildEntityRowUrl(repositoryUrl, entityName, rowId);
+		log.info("Requesting a delete operation on resource {}", deleteUrl);
+		restTemplate.delete(deleteUrl);
+	}
 
 	private String buildEntityUrl(String repositoryUrl, String entityName, Map<String, String> query) throws URISyntaxException {
 		if (repositoryUrl != null && !repositoryUrl.endsWith("/")) {
@@ -255,5 +262,9 @@ public class RepositoryClient {
 				return null;
 			}
 		});
+	}
+
+	private String buildEntityRowUrl(String url, String entityName, String rowId) throws URISyntaxException {
+		return buildEntityUrl(url, entityName, null) + "/" + rowId;
 	}
 }

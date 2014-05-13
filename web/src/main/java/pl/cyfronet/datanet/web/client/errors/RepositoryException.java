@@ -15,7 +15,8 @@ public class RepositoryException extends Exception {
 		RepositoryAccessConfigurationUpdateError,
 		RepositoryAuthorizationError,
 		RepositoryCountExceededError, 
-		RespositoryValidationError
+		RespositoryValidationError,
+		RepositoryEntityRowRemovalError
 	}
 	
 	private Code errorCode;

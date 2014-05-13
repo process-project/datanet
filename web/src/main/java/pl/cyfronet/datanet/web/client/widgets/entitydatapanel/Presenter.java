@@ -9,4 +9,5 @@ public interface Presenter {
 	void beforeEntitySubmitted();
 	void afterEntitySubmitted(String results);
 	void onShowCodeTemplates();
+	void onRemoveRow(String rowId);
 }

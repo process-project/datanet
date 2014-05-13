@@ -50,6 +50,10 @@ public class RepositoryController {
 		void onRepositorycount(int repositoryCount);
 	}
 	
+	public interface EntityRowRemovedCallback {
+		void onEntityRowRemoved();
+	}
+	
 	private RepositoryServiceAsync repositoryService;
 	private EventBus eventBus;
 	private HashMap<Long, List<Repository>> repositories;
@@ -326,5 +330,21 @@ public class RepositoryController {
 		}
 		
 		return null;
+	}
+
+	public void removeEntityRow(long repositoryId, String rowId, String entityName, final EntityRowRemovedCallback callback) {
+		repositoryService.removeEntityRow(repositoryId, rowId, entityName, new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryEntityRowRemovalFailure, NotificationType.ERROR));
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				if(callback != null) {
+					callback.onEntityRowRemoved();
+				}
+			}
+		});
 	}
 }
