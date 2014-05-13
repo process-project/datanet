@@ -20,4 +20,5 @@ public interface RepositoryServiceAsync {
 	void removeRepository(long repositoryId, AsyncCallback<Void> asyncCallback);
 	void getRepositoryCount(AsyncCallback<Integer> asyncCallback);
 	void updateAccessConfig(long repositoryId, AccessConfig accessConfig, AsyncCallback<Void> asyncCallback);
+	void removeEntityRow(long repositoryId, String rowId, String entityName, AsyncCallback<Void> asyncCallback);
 }

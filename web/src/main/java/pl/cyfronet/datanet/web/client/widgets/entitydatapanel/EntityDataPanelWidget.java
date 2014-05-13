@@ -28,6 +28,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
@@ -131,6 +132,8 @@ public class EntityDataPanelWidget extends Composite implements View {
 				dataTable.addColumn(new EntityTextColumn(fieldName), fieldName);
 			}
 		}
+		
+		dataTable.addColumn(new EntityActionColumn(new RemoveCell(messages.removeRowButtonLabel(), presenter)), messages.actionColumnLabel());
 	}
 	
 	@Override
@@ -260,4 +263,9 @@ public class EntityDataPanelWidget extends Composite implements View {
 		block = $doc.getElementById("hljs-python");
 		$wnd.hljs.highlightBlock(block);
 	}-*/;
+
+	@Override
+	public boolean confirmRowRemoval() {
+		return Window.confirm(messages.rowRemovalConfirmation());
+	}
 }

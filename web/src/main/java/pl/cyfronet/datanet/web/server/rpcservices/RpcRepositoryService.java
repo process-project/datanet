@@ -323,6 +323,25 @@ public class RpcRepositoryService implements RepositoryService {
 		}
 	}
 	
+	@Override
+	public void removeEntityRow(long repositoryId, String rowId, String entityName) throws RepositoryException {
+		try {
+			if (repositoryDao.isRepositoryOwner(repositoryId, SpringSecurityHelper.getUserLogin())) {
+				RepositoryDbEntity repositoryDbEntity = repositoryDao.getRepository(repositoryId);
+				log.info("Removing repository entity row for repository id {} and row id {}", repositoryId, rowId);
+				RepositoryClient repositoryClient = repositoryClientFactory.create(
+						(String) SecurityContextHolder.getContext().getAuthentication().getCredentials());
+				repositoryClient.removeEntityRow(repositoryDbEntity.getUrl(), rowId, entityName);
+			} else {
+				throw new RepositoryException(Code.RepositoryAuthorizationError);
+			}
+		} catch (Exception e) {
+			log.error("Repository entity row cloud not be deleted", repositoryId);
+			log.error("Repository entity row removal error", e);
+			throw new RepositoryException(Code.RepositoryEntityRowRemovalError, e.getMessage());
+		}
+	}
+	
 	private Repository createRepository(RepositoryDbEntity repositoryDbEntity, AccessConfig accessConfig) throws JAXBException {		
 		Repository repository = new Repository();
 		repository.setId(repositoryDbEntity.getId());

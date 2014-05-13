@@ -15,6 +15,8 @@ public enum RepositoryNotificationMessage implements NotificationMessage {
 	repositoryAccessConfigUpdateSuccess,
 	repositoryAccessConfigUpdateFailure,
 	repositoryLoadErrorNoMessage,
+	repositoryEntityRowRemovalFailure,
+	repositoryEntityRowRemoved,
 	;
 
 	@Override

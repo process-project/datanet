@@ -17,6 +17,7 @@ import pl.cyfronet.datanet.web.client.codetemplates.CodeTemplateGenerator;
 import pl.cyfronet.datanet.web.client.codetemplates.CodeTemplateGenerator.Language;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.EntityCallback;
+import pl.cyfronet.datanet.web.client.controller.RepositoryController.EntityRowRemovedCallback;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController.RepositoryCallback;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 import pl.cyfronet.datanet.web.client.controller.timeout.SessionTimeoutController;
@@ -51,6 +52,7 @@ public class EntityDataPanelPresenter implements Presenter {
 		void initEntityUploadForm(long repositoryId, String entityName);
 		void showTemplatesModal(boolean b);
 		void renderCodeTemplates(Map<String, String> codeTemplates);
+		boolean confirmRowRemoval();
 	}
 	
 	public interface DataCallback {
@@ -279,5 +281,17 @@ public class EntityDataPanelPresenter implements Presenter {
 				//ignoring - proper event fired by the controller
 			}
 		});
+	}
+
+	@Override
+	public void onRemoveRow(String rowId) {
+		if(view.confirmRowRemoval()) {
+			repositoryController.removeEntityRow(repositoryId, rowId, entityName, new EntityRowRemovedCallback() {
+				@Override
+				public void onEntityRowRemoved() {
+					eventBus.fireEvent(new NotificationEvent(RepositoryNotificationMessage.repositoryEntityRowRemoved, NotificationType.SUCCESS));
+					view.refreshDataTable();
+				}});
+		}
 	}
 }
