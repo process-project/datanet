@@ -3,6 +3,7 @@ package pl.cyfronet.datanet.web.server.services.repositoryclient;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -101,7 +102,12 @@ public class RepositoryClient {
 			MultiValueMap<String, Object> values = new LinkedMultiValueMap<>();
 			
 			for(String key : entityRow.keySet()) {
-				values.put(key, (List) Arrays.asList(entityRow.get(key)));
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentDispositionFormData(key, null);
+				headers.setContentType(new MediaType("text", "plain", Charset.forName("utf-8")));
+				
+				HttpEntity fieldEntity = new HttpEntity(entityRow.get(key), headers);
+				values.put(key, (List) Arrays.asList(fieldEntity));
 			}
 			
 			if (files != null) {

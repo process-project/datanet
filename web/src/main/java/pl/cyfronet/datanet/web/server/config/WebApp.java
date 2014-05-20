@@ -31,13 +31,13 @@ public class WebApp implements WebApplicationInitializer {
 		//TODO(DH): see if this could go away when spring-security is updated to a 3.2.x release
 		servletContext.addListener(new ContextLoaderListener(root));
 		
-		FilterRegistration.Dynamic securityFilter = servletContext.addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
-		securityFilter.addMappingForUrlPatterns(null, true, "/*");
-		
 		FilterRegistration.Dynamic characterEncodingFilter = servletContext.addFilter("characterEncodingFilter", new CharacterEncodingFilter());
 		characterEncodingFilter.setInitParameter("encoding", "UTF-8");
 		characterEncodingFilter.setInitParameter("forceEncoding", "true");
 		characterEncodingFilter.addMappingForUrlPatterns(null, true, "/*");
+		
+		FilterRegistration.Dynamic securityFilter = servletContext.addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
+		securityFilter.addMappingForUrlPatterns(null, true, "/*");
 		
 		FilterRegistration.Dynamic requestFilter = servletContext.addFilter("requestContextFilter", new RequestContextFilter());
 		requestFilter.addMappingForUrlPatterns(null, true, "/rpcservices/*");

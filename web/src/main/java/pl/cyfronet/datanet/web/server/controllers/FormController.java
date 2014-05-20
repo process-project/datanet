@@ -34,6 +34,7 @@ public class FormController {
 	public void handleForm(@RequestParam(value = "login", required = false) String login, @RequestParam(value = "password", required = false) String password,
 			@ModelAttribute("entityUpload") EntityUpload entityUpload, HttpServletResponse response) {
 		log.debug("Uploading entity {}", entityUpload);
+		
 		Map<String, String> fieldValues = new HashMap<>();
 		
 		for(String fieldName : entityUpload.getFields().keySet()) {
