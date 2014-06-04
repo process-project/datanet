@@ -12,10 +12,11 @@ public class FileCell extends AbstractCell<String> {
 	public void render(com.google.gwt.cell.client.Cell.Context context, String value, SafeHtmlBuilder sb) {
 		if (value != null) {
 			String[] elements = value.split(SEPARATOR);
-			String url = elements.length > 1 ? elements[elements.length - 1] : "";
-			String fileName = elements.length > 0 ? value.substring(0, value.length() - url.length() - 1) : "";			
+			String fileName = elements.length > 0 ? elements[0] : "";
+			String repositoryId = elements.length > 1 ? elements[1] : "";
+			String fileId = elements.length > 2 ? elements[2] : "";
 			SafeHtml encodedFileName = SafeHtmlUtils.fromString(fileName);
-			sb.appendHtmlConstant("<a href='download?fileUrl=" + url + "&fileName=" + encodedFileName.asString() + "' target='_blank'>")
+			sb.appendHtmlConstant("<a href='download?fileId=" + fileId + "&repositoryId=" + repositoryId + "&fileName=" + encodedFileName.asString() + "' target='_blank'>")
 					.append(encodedFileName)
 					.appendHtmlConstant("</a>");
 		}

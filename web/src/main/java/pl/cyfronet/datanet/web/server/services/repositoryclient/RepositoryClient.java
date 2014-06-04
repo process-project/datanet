@@ -43,7 +43,7 @@ public class RepositoryClient {
 		this.restTemplate = restTemplate;
 	}
 
-	public EntityData retrieveRepositoryData(String repositoryUrl, String entityName, List<String> fileFields, int start, int length, Map<String, String> query) throws RestClientException, URISyntaxException {
+	public EntityData retrieveRepositoryData(String repositoryId, String repositoryUrl, String entityName, List<String> fileFields, int start, int length, Map<String, String> query) throws RestClientException, URISyntaxException {
 		if(start < 1) {
 			throw new IllegalArgumentException("start number value has to be at least 1");
 		}
@@ -66,18 +66,13 @@ public class RepositoryClient {
 				Map<String, Object> fields = entities.get(currentIndex++);
 				
 				if (fileFields != null && fileFields.size() > 0) {
-					processFileData(fields, fileFields, repositoryUrl);
+					processFileData(fields, fileFields, repositoryUrl, repositoryId);
 				}
 				
 				Map<String, String> values = new HashMap<>();
 				
 				for (String key: fields.keySet()) {
 					String value = fields.get(key).toString();
-					
-//					if(!fileFields.contains(key)) {
-//						value = encoder.encodeForXML(value);
-//					}											
-					
 					values.put(key, value);
 				}
 				
@@ -230,12 +225,12 @@ public class RepositoryClient {
 		return url;
 	}
 
-	private void processFileData(Map<String, Object> data, List<String> fileFields, String repositoryUrl) throws RestClientException, URISyntaxException {
+	private void processFileData(Map<String, Object> data, List<String> fileFields, String repositoryUrl, String repositoryId) throws RestClientException, URISyntaxException {
 		for (String fileFieldName : fileFields) {
 			if (data.keySet().contains(fileFieldName)) {
 				String id = data.remove(fileFieldName).toString();
 				String fileName = restTemplate.getForObject(buildFileNameUrl(repositoryUrl, id), String.class);
-				data.put(fileFieldName, fileName + ";" + repositoryUrl + "/file/" + id);
+				data.put(fileFieldName, fileName + ";" + repositoryId + ";" + id);
 			}
 		}
 	}
@@ -250,7 +245,6 @@ public class RepositoryClient {
 
 	public void getFile(String fileUrl, final OutputStream outputStream) {
 		restTemplate.execute(fileUrl, HttpMethod.GET, new RequestCallback() {
-			
 			@Override
 			public void doWithRequest(ClientHttpRequest request) throws IOException {
 				//nothing to be added here

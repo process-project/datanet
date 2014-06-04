@@ -42,7 +42,7 @@ public class RepositoryClientTest {
 //	@Test
 	public void retrieveData() throws RestClientException, URISyntaxException, KeyManagementException, NoSuchAlgorithmException {
 		RepositoryClient repositoryClient = repositoryClientFactory.create("proxy");
-		repositoryClient.retrieveRepositoryData("http://testmodel.datanet.cyfronet.pl", "testentity", null, 1, -1, null);
+		repositoryClient.retrieveRepositoryData("", "http://testmodel.datanet.cyfronet.pl", "testentity", null, 1, -1, null);
 	}
 	
 //	@Test

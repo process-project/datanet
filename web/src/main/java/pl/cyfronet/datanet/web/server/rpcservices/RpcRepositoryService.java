@@ -168,7 +168,7 @@ public class RpcRepositoryService implements RepositoryService {
 			RepositoryClient client = repositoryClientFactory.create(
 					(String) SecurityContextHolder.getContext().getAuthentication().getCredentials());
 			
-			return client.retrieveRepositoryData(repositoryDbEntity.getUrl(), entityName, fileFields, start, length, query);
+			return client.retrieveRepositoryData(String.valueOf(repositoryId), repositoryDbEntity.getUrl(), entityName, fileFields, start, length, query);
 		} catch (Exception e) {
 			String message = "Repository data retrieval error occurred for repository with id " + repositoryId;
 			log.error(message, e);
