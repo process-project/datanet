@@ -22,7 +22,6 @@ public class ZipFileMapperBuilder implements MapperBuilder {
 	 * @param archiveFile Archive containing mapper.
 	 * @param outputDir Directory in which the archive will be extracted. This directory will be created if it does not exist and will be removed on cleanup.
 	 * @param mapperDirName Name of the mapper directory which is a subdirectory of the outputDir.
-	 * @param models Models stored in a string map. Key: entity name ( equivalent to the model file name /*.json/ ), value: entity JSON Schema.
 	 */
 	public ZipFileMapperBuilder(File archiveFile, File outputDir,
 			String mapperDirName) {
@@ -35,7 +34,6 @@ public class ZipFileMapperBuilder implements MapperBuilder {
 	 * @param outputDir Directory in which the archive will be extracted. This directory will be created if it does not exist and will be removed on cleanup.
 	 * @param mapperDirName Name of the mapper directory which is a subdirectory of the outputDir.  
 	 * @param modelDirName Name of the directory in which the model files will be placed. 
-	 * @param models Models stored in a string map. Key: entity name ( equivalent to the model file name /*.json/ ), value: entity JSON Schema.
 	 */
 	public ZipFileMapperBuilder(File archiveFile, File outputDir,
 			String mapperDirName, String modelDirName) {
