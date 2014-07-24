@@ -37,6 +37,7 @@ import org.springframework.security.web.authentication.session.SessionFixationPr
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import pl.cyfronet.datanet.web.server.db.HibernateUserDao;
@@ -53,8 +54,10 @@ public class OpenIdController {
 	@Autowired private HibernateUserDao userDao;
 	
 	@SuppressWarnings({"unchecked" })
-	@RequestMapping(value = "/", params = "openid.ns")
+	@RequestMapping(value = "/", params = "openid.ns", method = RequestMethod.POST)
 	public String processOpenId(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		log.info("Processing OpenID POST request");
+		
 		ParameterList parameterList = new ParameterList(request.getParameterMap());
 		DiscoveryInformation discovered = (DiscoveryInformation) request.getSession().getAttribute(OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME);
 		ConsumerManager openIdManager = (ConsumerManager) request.getSession().getAttribute(OPEN_ID_CONSUMER_MANAGER);
@@ -69,6 +72,7 @@ public class OpenIdController {
 		
 		if(discovered == null || openIdManager == null) {
 			model.addAttribute("processingError", messages.getMessage("open.id.verification.failed", null, RequestContextUtils.getLocale(request)));
+			log.error("OpenID login procedure failed. Missing discovery information or consumer manager");
 			
 			return mainController.main(model, request);
 		}
@@ -79,10 +83,10 @@ public class OpenIdController {
 			verification = openIdManager.verify(receivingURL.toString(), parameterList, discovered);
 			Identifier verified = verification.getVerifiedId();
 			
-			if (verified != null) {
+			if(verified != null) {
 	            AuthSuccess authSuccess = (AuthSuccess) verification.getAuthResponse();
 
-	            if (authSuccess.hasExtension(AxMessage.OPENID_NS_AX)) {
+	            if(authSuccess.hasExtension(AxMessage.OPENID_NS_AX)) {
 	                FetchResponse fetchResp = (FetchResponse) authSuccess.getExtension(AxMessage.OPENID_NS_AX);
 
 					List<String> emails = fetchResp.getAttributeValues("email");
@@ -123,7 +127,7 @@ public class OpenIdController {
 						canLogin = false;
 					}
 					
-					if (canLogin) {
+					if(canLogin) {
 						UserDbEntity user = userDao.getUser(authSuccess.getIdentity());
 						
 						if(user == null) {
@@ -145,9 +149,12 @@ public class OpenIdController {
 						
 						return "redirect:/";
 					}
+	            } else {
+	            	log.error("OpenId login procedure failed. Missing OpenID NS AX extension");
 	            }
 	        } else {
 	        	model.addAttribute("processingError", messages.getMessage("open.id.verification.failed", null, RequestContextUtils.getLocale(request)));
+	        	log.error("OpenID login procedure failed. Missing verification result");
 	        }
 		} catch (Exception e) {
 			log.error("Could not properly finish the OpenID login procedure");

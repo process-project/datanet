@@ -23,8 +23,13 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/**")
 				.permitAll()
 				.and()
+			.csrf()
+				//the following matches all POST requests which do not contain 'openid.ns' in the path
+				//which basically protects all POST requests that are not originated by the OpenID server
+				.requireCsrfProtectionMatcher(new NegativePostParamRequestMatcher("openid.ns"))
+				.and()
 			.formLogin()
-				.loginPage("/")
+				.loginPage("/login")
 				.and()
 			.anonymous()
 				.and()

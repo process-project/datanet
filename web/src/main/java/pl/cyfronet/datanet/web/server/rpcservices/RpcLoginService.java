@@ -102,6 +102,9 @@ public class RpcLoginService implements LoginService {
 			fetchRequest.addAttribute("proxy", "http://openid.plgrid.pl/certificate/proxy ", false);
 			fetchRequest.addAttribute("userCert", "http://openid.plgrid.pl/certificate/userCert", false);
 			fetchRequest.addAttribute("proxyPrivKey", "http://openid.plgrid.pl/certificate/proxyPrivKey", false);
+			
+			//the following attribute changes the redirection method to POST
+			fetchRequest.addAttribute("POSTresponse", "http://openid.plgrid.pl/POSTresponse", true);
 			authReq.addExtension(fetchRequest);
 			
 			return authReq.getDestinationUrl(true);
