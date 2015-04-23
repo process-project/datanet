@@ -68,6 +68,7 @@
 						<module>pl.cyfronet.datanet.web.ria</module>
 					</modules>
 					<buildOutputDirectory>${project.build.directory}/${project.build.finalName}</buildOutputDirectory>
+					<noServer>true</noServer>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -154,8 +155,8 @@
 		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>
-			<artifactId>cglib</artifactId>
-			<version>3.0</version>
+			<artifactId>cglib-nodep</artifactId>
+			<version>3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -256,10 +257,11 @@
 		
 		<!-- markdown dependencies -->
 		<dependency>
-			<groupId>org.pegdown</groupId>
-			<artifactId>pegdown</artifactId>
-			<version>1.4.1</version>
+			<groupId>com.github.rjeschke</groupId>
+			<artifactId>txtmark</artifactId>
+			<version>0.13</version>
 		</dependency>
+		
 		
 		<!-- Commons dependencies -->
 		<dependency>

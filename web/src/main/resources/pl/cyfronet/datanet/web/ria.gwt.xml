@@ -24,10 +24,5 @@
 	<set-property name="locale" value="en,pl"/>
 
 	<!-- Logging configuration -->
-	<set-property name="gwt.logging.popupHandler" value="DISABLED"/>
 	<set-property name="gwt.logging.logLevel" value="FINE"/>
-	
-	<!-- Super Dev Mode properties -->
-	<define-linker name="xsiframe" class="com.google.gwt.core.linker.MyCrossSiteIframeLinker"/>
-	<add-linker name="xsiframe"/>
 </module>

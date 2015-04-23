@@ -25,7 +25,6 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.hibernate.SessionFactory;
-import org.pegdown.PegDownProcessor;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
@@ -237,10 +236,5 @@ public class SpringConfiguration {
 	@Bean
 	public StandardServletMultipartResolver multipartResolver() {
 		return new StandardServletMultipartResolver();
-	}
-	
-	@Bean
-	public PegDownProcessor markdownProcessor() {
-		return new PegDownProcessor();
 	}
 }
