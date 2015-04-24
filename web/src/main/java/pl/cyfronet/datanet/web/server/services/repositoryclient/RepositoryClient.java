@@ -1,5 +1,9 @@
 package pl.cyfronet.datanet.web.server.services.repositoryclient;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static pl.cyfronet.datanet.model.beans.AccessConfig.Access.publicAccess;
+import static pl.cyfronet.datanet.model.beans.AccessConfig.Isolation.isolationEnabled;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
@@ -32,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import pl.cyfronet.datanet.model.beans.AccessConfig;
 import pl.cyfronet.datanet.model.beans.AccessConfig.Access;
+import pl.cyfronet.datanet.model.beans.AccessConfig.Isolation;
 import pl.cyfronet.datanet.web.client.controller.beans.EntityData;
 
 public class RepositoryClient {
@@ -164,22 +169,31 @@ public class RepositoryClient {
 		Access access = null;
 		List<String> owners = new ArrayList<>();
 		List<String> corsOrigins = new ArrayList<>();
+		Isolation isolation = null;
 		
-		if (result.get("repository_type") != null && result.get("repository_type").equals("private")) {
+		if(result.get("repository_type") != null && result.get("repository_type").equals("private")) {
 			access = Access.privateAccess;
 		} else if (result.get("repository_type") != null && result.get("repository_type").equals("public")) {
 			access = Access.publicAccess;
 		}
 		
-		if (result.get("owners") != null) {
+		if(result.get("owners") != null) {
 			owners.addAll((List) result.get("owners"));
 		}
 		
-		if (result.get("cors_origins") != null) {
+		if(result.get("cors_origins") != null) {
 			corsOrigins.addAll((List) result.get("cors_origins"));
 		}
 		
-		AccessConfig accessConfig = new AccessConfig(access, owners, corsOrigins);
+		if(result.get("data_separation") != null && result.get("data_separation").equals(true)) {
+			isolation = Isolation.isolationEnabled;
+		} else if(result.get("data_separation") != null && result.get("data_separation").equals(false)) {
+			isolation = Isolation.isolationDisabled;
+		} else {
+			isolation = Isolation.isolationDisabled;
+		}
+		
+		AccessConfig accessConfig = new AccessConfig(access, owners, corsOrigins, isolation);
 		log.debug("Access config for repository {} retrieved: {}", repositoryUrl, accessConfig);
 
 		return accessConfig;
@@ -187,12 +201,14 @@ public class RepositoryClient {
 	
 	public void updateAccessConfiguration(String repositoryUrl, String token, AccessConfig accessConfig) {
 		Map<String, Object> request = new HashMap<>();
-		request.put("repository_type", accessConfig.getAccess() == Access.publicAccess ? "public" : "private");
+		request.put("repository_type", accessConfig.getAccess() == publicAccess ? "public" : "private");
 		request.put("owners", accessConfig.getOwners());
 		request.put("cors_origins", accessConfig.getCorsOrigins());
+		request.put("data_separation", accessConfig.getIsolation() == isolationEnabled ? true : false);
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setContentType(APPLICATION_JSON);
+		
 		HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(request, headers);
 		restTemplate.put(buildConfigUrl(repositoryUrl, token), requestEntity);
 	}

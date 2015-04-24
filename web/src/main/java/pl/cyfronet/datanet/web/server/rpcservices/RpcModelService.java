@@ -45,6 +45,7 @@ public class RpcModelService implements ModelService {
 			// TODO: Create optimized DAO method for this case
 			List<ModelDbEntity> availableUserModels = modelDao.getUserModels(SpringSecurityHelper.getUserLogin());
 			ModelDbEntity currentModel = null;
+			
 			for (ModelDbEntity dbModel : availableUserModels) {
 				if(model.getId() == dbModel.getId()) {
 					currentModel = dbModel;

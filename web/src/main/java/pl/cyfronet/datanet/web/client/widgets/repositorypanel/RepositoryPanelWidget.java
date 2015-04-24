@@ -43,6 +43,8 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 	@UiField Button accessConfiguration;
 	@UiField Button removeRepository;
 	@UiField FlowPanel errorPanel;
+	@UiField RadioButton isolationEnabled;
+	@UiField RadioButton isolationDisabled;
 	
 	public RepositoryPanelWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -110,7 +112,7 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 
 	@Override
 	public String getAccessLevel() {
-		if (privateCheck.getValue()) {
+		if(privateCheck.getValue()) {
 			return "privateAccess";
 		} else {
 			return "publicAccess";
@@ -176,5 +178,20 @@ public class RepositoryPanelWidget extends ResizeComposite implements View {
 	@Override
 	public void setMissingRepositoryLink() {
 		repositoryLink.setText(messages.missingRepositoryLink());
+	}
+
+	@Override
+	public String getIsolation() {
+		if(isolationEnabled.getValue()) {
+			return "isolationEnabled";
+		} else {
+			return "isolationDisabled";
+		}
+	}
+
+	@Override
+	public void markIsolation(boolean isolation) {
+		isolationEnabled.setValue(isolation);
+		isolationDisabled.setValue(!isolation);
 	}
 }

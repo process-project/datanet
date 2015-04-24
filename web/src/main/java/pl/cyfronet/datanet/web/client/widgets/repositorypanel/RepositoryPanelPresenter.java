@@ -1,12 +1,14 @@
 package pl.cyfronet.datanet.web.client.widgets.repositorypanel;
 
-import java.util.Arrays;
+import static java.util.Arrays.asList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import pl.cyfronet.datanet.model.beans.AccessConfig;
 import pl.cyfronet.datanet.model.beans.AccessConfig.Access;
+import pl.cyfronet.datanet.model.beans.AccessConfig.Isolation;
 import pl.cyfronet.datanet.model.beans.Entity;
 import pl.cyfronet.datanet.model.beans.Repository;
 import pl.cyfronet.datanet.web.client.controller.RepositoryController;
@@ -44,6 +46,8 @@ public class RepositoryPanelPresenter implements Presenter {
 		void showMissingRepositoryErrorMessage();
 		void enableControls(boolean enable);
 		void setMissingRepositoryLink();
+		String getIsolation();
+		void markIsolation(boolean b);
 	}
 
 	private View view;
@@ -103,11 +107,11 @@ public class RepositoryPanelPresenter implements Presenter {
 		view.setAccessConfigSaveBusyState(true);
 		
 		Access accessLevel = Access.valueOf(view.getAccessLevel());
+		Isolation isolation = Isolation.valueOf(view.getIsolation());
 		String owners = view.getOwnerList().getText().trim();
 		String corsOrigins = view.getCorsOrigins().getText().trim();
-		AccessConfig accessConfig = new AccessConfig(accessLevel, 
-				Arrays.asList(owners.split(AccessConfig.OWNER_SEPARATOR)),
-				Arrays.asList(corsOrigins.split(AccessConfig.OWNER_SEPARATOR)));
+		AccessConfig accessConfig = new AccessConfig(accessLevel, asList(owners.split(AccessConfig.OWNER_SEPARATOR)),
+				asList(corsOrigins.split(AccessConfig.OWNER_SEPARATOR)), isolation);
 		repositoryController.updateAccessConfig(repositoryId, accessConfig, new Command() {
 			@Override
 			public void execute() {
@@ -124,7 +128,7 @@ public class RepositoryPanelPresenter implements Presenter {
 			public void setRepository(Repository repository) {
 				AccessConfig accessConfig = repository.getAccessConfig();
 				
-				if (accessConfig != null) {
+				if(accessConfig != null) {
 					switch (accessConfig.getAccess()) {
 						case privateAccess:
 							view.markPrivateType();
@@ -136,13 +140,23 @@ public class RepositoryPanelPresenter implements Presenter {
 						break;
 					}
 					
-					if (accessConfig.getOwners() != null) {											
+					if(accessConfig.getOwners() != null) {											
 						view.getOwnerList().setText(
 							toStringWithSeparator(accessConfig.getOwners()));
 					}
-					if (accessConfig.getCorsOrigins() != null) {						
+					
+					if(accessConfig.getCorsOrigins() != null) {						
 						view.getCorsOrigins().setText(
 							toStringWithSeparator(accessConfig.getCorsOrigins()));
+					}
+					
+					switch(accessConfig.getIsolation()) {
+						case isolationEnabled:
+							view.markIsolation(true);
+						break;
+						case isolationDisabled:
+							view.markIsolation(false);
+						break;
 					}
 					
 					view.showAccessConfigModal(true);

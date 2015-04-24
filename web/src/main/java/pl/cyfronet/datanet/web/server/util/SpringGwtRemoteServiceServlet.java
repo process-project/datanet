@@ -33,14 +33,15 @@ public class SpringGwtRemoteServiceServlet extends RemoteServiceServlet {
 			Object handler = getBean(getThreadLocalRequest());
 			RPCRequest rpcRequest = RPC.decodeRequest(payload, handler.getClass(), this);
 			onAfterRequestDeserialized(rpcRequest);
-			log.trace("Invoking {}.{}", handler.getClass().getName(),
-					rpcRequest.getMethod().getName());
+			log.trace("Invoking {}.{}", handler.getClass().getName(), rpcRequest.getMethod().getName());
 			
-			return RPC.invokeAndEncodeResponse(handler, rpcRequest.getMethod(),
-					rpcRequest.getParameters(),
-					rpcRequest.getSerializationPolicy());
-		} catch (IncompatibleRemoteServiceException e) {
-			log("An IncompatibleRemoteServiceException was thrown while processing this call.", e);
+			return RPC.invokeAndEncodeResponse(handler, rpcRequest.getMethod(), rpcRequest.getParameters(), rpcRequest.getSerializationPolicy());
+		} catch(IncompatibleRemoteServiceException e) {
+			log.error("An IncompatibleRemoteServiceException was thrown while processing this call.", e);
+			
+			return RPC.encodeResponseForFailure(null, e);
+		} catch(Exception e) {
+			log.error("Could not properly handle an RPC call", e);
 			
 			return RPC.encodeResponseForFailure(null, e);
 		}

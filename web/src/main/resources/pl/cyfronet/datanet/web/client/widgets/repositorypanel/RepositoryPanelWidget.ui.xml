@@ -80,6 +80,14 @@
 									<b:HelpBlock><ui:text from="{messages.aboutCorsOrigins}"/></b:HelpBlock>
 								</b:Controls>
 							</b:ControlGroup>
+							<b:ControlGroup>
+								<b:ControlLabel for="isolation"><ui:text from="{messages.isolationLabel}"/></b:ControlLabel>
+								<b:Controls>
+									<b:RadioButton ui:field="isolationEnabled" name="isolation"><ui:text from="{messages.isolationEnabledLabel}"/></b:RadioButton>
+									<b:RadioButton ui:field="isolationDisabled" name="isolation"><ui:text from="{messages.isolationDisabledLabel}"/></b:RadioButton>
+									<b:HelpBlock><ui:text from="{messages.aboutIsolation}"/></b:HelpBlock>
+								</b:Controls>
+							</b:ControlGroup>
 						</b:Fieldset>
 					</b:Form>
 					<b:ModalFooter>

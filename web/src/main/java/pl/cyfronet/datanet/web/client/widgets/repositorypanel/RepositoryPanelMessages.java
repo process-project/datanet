@@ -20,4 +20,8 @@ public interface RepositoryPanelMessages extends Messages {
 	String aboutCorsOrigins();
 	String missingRepositoryLink();
 	String missingRepositoryError();
+	String isolationLabel();
+	String isolationEnabledLabel();
+	String isolationDisabledLabel();
+	String aboutIsolation();
 }

@@ -4,11 +4,16 @@ import java.io.Serializable;
 import java.util.List;
 
 public class AccessConfig implements Serializable {
-	private static final long serialVersionUID = 5209968519331332799L;
+	private static final long serialVersionUID = -9049554852117750777L;
 
 	public enum Access {
 		publicAccess,
 		privateAccess
+	}
+	
+	public enum Isolation {
+		isolationEnabled,
+		isolationDisabled
 	}
 	
 	public static final String OWNER_SEPARATOR = ",";
@@ -16,14 +21,16 @@ public class AccessConfig implements Serializable {
 	private Access access;
 	private List<String> owners;
 	private List<String> corsOrigins;
-
+	private Isolation isolation;
+	
 	public AccessConfig() {
 	}
 	
-	public AccessConfig(Access access, List<String> owners, List<String> corsOrigins) {
+	public AccessConfig(Access access, List<String> owners, List<String> corsOrigins, Isolation isolation) {
 		this.access = access;
 		this.owners = owners;
 		this.corsOrigins = corsOrigins;
+		this.isolation = isolation;
 	}
 	
 	public Access getAccess() {
@@ -40,7 +47,14 @@ public class AccessConfig implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "AccessConfig [access=" + access + ", owners=" + owners
-				+ ", corsOrigins=" + corsOrigins + "]";
+		return "AccessConfig [access=" + access + ", owners=" + owners + ", corsOrigins=" + corsOrigins + ", isolation=" + isolation + "]";
+	}
+
+	public Isolation getIsolation() {
+		return isolation;
+	}
+
+	public void setIsolation(Isolation isolation) {
+		this.isolation = isolation;
 	}
 }
