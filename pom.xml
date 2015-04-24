@@ -23,11 +23,16 @@
 		<cloud.foundry.version>0.7.5</cloud.foundry.version>
 		<gwt.version>2.7.0</gwt.version>
 		<gwt.bootstrap.version>2.2.1.0</gwt.bootstrap.version>
-		<spring.version>3.2.8.RELEASE</spring.version>
-		<spring.security.version>3.2.3.RELEASE</spring.security.version>
+		<spring.version>3.2.13.RELEASE</spring.version>
+		<spring.security.version>3.2.7.RELEASE</spring.security.version>
 	</properties>
 
 	<repositories>
+		<!-- required to see the parent project -->
+		<repository>
+			<id>dice-mvnrepo</id>
+			<url>http://dev.cyfronet.pl/mvnrepo</url>
+		</repository>
 	    <!-- provides cloudfoundry artifacts -->
 	    <repository>
 			<id>Spring Framework Milestone Repository</id>
