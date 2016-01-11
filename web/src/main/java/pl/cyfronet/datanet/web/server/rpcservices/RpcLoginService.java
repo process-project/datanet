@@ -11,6 +11,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
@@ -21,6 +22,9 @@ import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpSession;
 
 import org.apache.http.conn.ssl.X509HostnameVerifier;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x500.style.IETFUtils;
 import org.openid4java.consumer.ConsumerManager;
 import org.openid4java.consumer.InMemoryConsumerAssociationStore;
 import org.openid4java.consumer.InMemoryNonceVerifier;
@@ -141,10 +145,23 @@ public class RpcLoginService implements LoginService {
 					X509Certificate serverCert = null;
 					
 					for(X509Certificate cert : certs) {
-						if(cert.getSubjectDN().getName() != null && cert.getSubjectDN().getName().contains(openIdAllowedHost)) {
-							serverCert = cert;
+						String dn = IETFUtils.valueToString(
+								new X500Name(cert.getSubjectX500Principal().getName()).getRDNs(BCStyle.CN)[0].getFirst().getValue());
+						
+						if(dn != null) {
+							dn = dn.replaceAll("\\.", "\\.").replaceAll("\\*", ".*");
+							log.debug("DN pattern: {}", dn);
 							
-							break;
+							Pattern pattern = Pattern.compile(dn);
+							
+							if(pattern.matcher(openIdAllowedHost).matches()) {
+								log.debug("{} matches {}", dn, openIdAllowedHost);
+								serverCert = cert;
+								
+								break;
+							} else {
+								log.debug("{} does not match {}", dn, openIdAllowedHost);
+							}
 						}
 					}
 					
