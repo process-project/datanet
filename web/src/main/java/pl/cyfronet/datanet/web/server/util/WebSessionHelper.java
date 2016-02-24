@@ -17,10 +17,12 @@ public class WebSessionHelper {
 	 * Returns current application URL down to the context path.
 	 */
 	public static String getCurrentUrl() {
-		ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		ServletRequestAttributes requestAttributes =
+				(ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		HttpServletRequest request = requestAttributes.getRequest();
 		
-		String serverPort = (request.getServerPort() != 443 && request.getServerPort() != 80) ? ":" + String.valueOf(request.getServerPort()) : "";
+		String serverPort = (request.getServerPort() != 443 && request.getServerPort() != 80)
+				? ":" + String.valueOf(request.getServerPort()) : "";
 		String result = request.getScheme() + "://" + request.getServerName() + serverPort +
 				(request.getContextPath().equals("") ? "/" : (request.getContextPath() + "/"));
 		

@@ -1,7 +1,9 @@
 package pl.cyfronet.datanet.web.server.controllers;
 
-import static pl.cyfronet.datanet.web.server.rpcservices.RpcLoginService.OPEN_ID_CONSUMER_MANAGER;
-import static pl.cyfronet.datanet.web.server.rpcservices.RpcLoginService.OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME;
+import static pl.cyfronet.datanet.web.server.rpcservices.RpcLoginService
+		.OPEN_ID_CONSUMER_MANAGER;
+import static pl.cyfronet.datanet.web.server.rpcservices.RpcLoginService
+		.OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,10 +42,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
+import eu.emi.security.authn.x509.proxy.ProxyUtils;
 import pl.cyfronet.datanet.web.server.db.HibernateUserDao;
 import pl.cyfronet.datanet.web.server.db.beans.UserDbEntity;
 import pl.cyfronet.datanet.web.server.rpcservices.RpcLoginService;
-import eu.emi.security.authn.x509.proxy.ProxyUtils;
+import pl.cyfronet.datanet.web.server.util.WebSessionHelper;
 
 @Controller
 public class OpenIdController {
@@ -55,24 +58,32 @@ public class OpenIdController {
 	
 	@SuppressWarnings({"unchecked" })
 	@RequestMapping(value = "/", params = "openid.ns", method = RequestMethod.POST)
-	public String processOpenId(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public String processOpenId(Model model, HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
 		log.info("Processing OpenID POST request");
 		
 		ParameterList parameterList = new ParameterList(request.getParameterMap());
-		DiscoveryInformation discovered = (DiscoveryInformation) request.getSession().getAttribute(OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME);
-		ConsumerManager openIdManager = (ConsumerManager) request.getSession().getAttribute(OPEN_ID_CONSUMER_MANAGER);
+		DiscoveryInformation discovered = (DiscoveryInformation) request.getSession()
+				.getAttribute(OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME);
+		ConsumerManager openIdManager = (ConsumerManager) request.getSession()
+				.getAttribute(OPEN_ID_CONSUMER_MANAGER);
 		request.getSession().removeAttribute(OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME);
 		request.getSession().removeAttribute(OPEN_ID_CONSUMER_MANAGER);
-		StringBuffer receivingURL = request.getRequestURL();
+		String receivingURL = WebSessionHelper.getCurrentUrl();
 		String queryString = request.getQueryString();
 		
 		if (queryString != null && queryString.length() > 0) {
-            receivingURL.append("?").append(queryString);
+            receivingURL += "?" + queryString;
 		}
 		
+		log.debug("Receiving URL resolved during OpenID verification: {}", receivingURL);
+		
 		if(discovered == null || openIdManager == null) {
-			model.addAttribute("processingError", messages.getMessage("open.id.verification.failed", null, RequestContextUtils.getLocale(request)));
-			log.error("OpenID login procedure failed. Missing discovery information or consumer manager");
+			model.addAttribute("processingError",
+					messages.getMessage("open.id.verification.failed", null,
+							RequestContextUtils.getLocale(request)));
+			log.error("OpenID login procedure failed. Missing discovery information or "
+					+ "consumer manager");
 			
 			return mainController.main(model, request);
 		}
@@ -87,7 +98,8 @@ public class OpenIdController {
 	            AuthSuccess authSuccess = (AuthSuccess) verification.getAuthResponse();
 
 	            if(authSuccess.hasExtension(AxMessage.OPENID_NS_AX)) {
-	                FetchResponse fetchResp = (FetchResponse) authSuccess.getExtension(AxMessage.OPENID_NS_AX);
+	                FetchResponse fetchResp = (FetchResponse) authSuccess.getExtension(
+	                		AxMessage.OPENID_NS_AX);
 
 					List<String> emails = fetchResp.getAttributeValues("email");
 	                String email = (String) emails.get(0);
@@ -105,25 +117,35 @@ public class OpenIdController {
 					try {
 						completeProxy = getProxyContent(proxy, userCert, proxyPrivKey);
 						CertificateFactory cf = CertificateFactory.getInstance("X.509");
-						X509Certificate crt = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(replaceBrWithNewLines(proxy).getBytes()));
+						X509Certificate crt = (X509Certificate) cf.generateCertificate(
+								new ByteArrayInputStream(replaceBrWithNewLines(proxy).getBytes()));
 						
 						if (!ProxyUtils.isProxy(crt)) {
-							model.addAttribute("processingError", messages.getMessage("open.id.user.proxy.unrecongnized", null, RequestContextUtils.getLocale(request)));
-							log.info("OpenID login for {} impossible because of invalid proxy certificate", authSuccess.getIdentity());
+							model.addAttribute("processingError",
+									messages.getMessage("open.id.user.proxy.unrecongnized", null,
+											RequestContextUtils.getLocale(request)));
+							log.info("OpenID login for {} impossible because of invalid proxy "
+									+ "certificate", authSuccess.getIdentity());
 							canLogin = false;
 						}
 						
 						Date current = Calendar.getInstance().getTime();
 						
-						if (current.after(crt.getNotAfter()) || current.before(crt.getNotBefore())) {
-							model.addAttribute("processingError", messages.getMessage("open.id.user.proxy.expired", null, RequestContextUtils.getLocale(request)));
-							log.info("OpenID login for {} impossible because of expired proxy certificate", authSuccess.getIdentity());
+						if (current.after(crt.getNotAfter())
+								|| current.before(crt.getNotBefore())) {
+							model.addAttribute("processingError",
+									messages.getMessage("open.id.user.proxy.expired", null,
+											RequestContextUtils.getLocale(request)));
+							log.info("OpenID login for {} impossible because of expired proxy "
+									+ "certificate", authSuccess.getIdentity());
 							canLogin = false;
 						}
 					} catch (CertificateException e) {
 						log.error("Could not retrieve a valid user proxy");
 						log.error("Error was:", e);
-						model.addAttribute("processingError", messages.getMessage("open.id.user.proxy.error", null, RequestContextUtils.getLocale(request)));
+						model.addAttribute("processingError",
+								messages.getMessage("open.id.user.proxy.error", null,
+										RequestContextUtils.getLocale(request)));
 						canLogin = false;
 					}
 					
@@ -141,10 +163,12 @@ public class OpenIdController {
 						List<GrantedAuthority> authorities = new ArrayList<>();
 						authorities.add(new SimpleGrantedAuthority(RpcLoginService.USER_ROLE));
 						
-						Authentication authentication = new UsernamePasswordAuthenticationToken(authSuccess.getIdentity(), completeProxy, authorities);
+						Authentication authentication = new UsernamePasswordAuthenticationToken(
+								authSuccess.getIdentity(), completeProxy, authorities);
 						SecurityContextHolder.getContext().setAuthentication(authentication);
 						
-						SessionFixationProtectionStrategy fixation = new SessionFixationProtectionStrategy();
+						SessionFixationProtectionStrategy fixation =
+								new SessionFixationProtectionStrategy();
 						fixation.onAuthentication(authentication, request, response);
 						
 						return "redirect:/";
@@ -153,20 +177,25 @@ public class OpenIdController {
 	            	log.error("OpenId login procedure failed. Missing OpenID NS AX extension");
 	            }
 	        } else {
-	        	model.addAttribute("processingError", messages.getMessage("open.id.verification.failed", null, RequestContextUtils.getLocale(request)));
+	        	model.addAttribute("processingError",
+	        			messages.getMessage("open.id.verification.failed", null,
+	        					RequestContextUtils.getLocale(request)));
 	        	log.error("OpenID login procedure failed. Missing verification result");
 	        }
 		} catch (Exception e) {
 			log.error("Could not properly finish the OpenID login procedure");
 			log.error("Error was:", e);
-			model.addAttribute("processingError", messages.getMessage("open.id.sequence.error", null, RequestContextUtils.getLocale(request)));
+			model.addAttribute("processingError",
+					messages.getMessage("open.id.sequence.error", null,
+							RequestContextUtils.getLocale(request)));
 		}
 
 		return mainController.main(model, request);
 	}
 
 	private String getProxyContent(String proxy, String userCert, String proxyPrivKey) {
-		return replaceBrWithNewLines(proxy) + replaceBrWithNewLines(proxyPrivKey) + replaceBrWithNewLines(userCert);
+		return replaceBrWithNewLines(proxy) + replaceBrWithNewLines(proxyPrivKey)
+				+ replaceBrWithNewLines(userCert);
 	}
 
 	private String replaceBrWithNewLines(String contents) {

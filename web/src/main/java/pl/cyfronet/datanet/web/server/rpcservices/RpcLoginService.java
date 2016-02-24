@@ -34,7 +34,6 @@ import org.openid4java.server.RealmVerifierFactory;
 import org.openid4java.util.HttpFetcherFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.Authentication;
@@ -45,7 +44,6 @@ import org.springframework.stereotype.Service;
 import pl.cyfronet.datanet.web.client.errors.LoginException;
 import pl.cyfronet.datanet.web.client.errors.LoginException.Code;
 import pl.cyfronet.datanet.web.client.services.LoginService;
-import pl.cyfronet.datanet.web.server.db.HibernateUserDao;
 import pl.cyfronet.datanet.web.server.util.WebSessionHelper;
 
 @Service("loginService")
@@ -55,8 +53,6 @@ public class RpcLoginService implements LoginService {
 	public static final String OPEN_ID_DISCOVERIES_ATTRIBUTE_NAME = "cyfronet.datanet.openid.discoveries";
 	public static final String OPEN_ID_CONSUMER_MANAGER = "cyfronet.datanet.openid.consumer.manager";
 	public static final String USER_ROLE = "ROLE_USER";
-
-	@Autowired private HibernateUserDao userDao;
 
 	@Value("${open.id.identifier.prefix}") private String openIdIdentifierPrefix;
 	@Value("${open.id.allowed.host}") private String openIdAllowedHost;
@@ -114,7 +110,8 @@ public class RpcLoginService implements LoginService {
 		}
 	}
 
-	private ConsumerManager createConsumerManager() throws NoSuchAlgorithmException, KeyManagementException {
+	private ConsumerManager createConsumerManager() throws NoSuchAlgorithmException,
+			KeyManagementException {
 		TrustManager[] tma = new TrustManager[] { new X509TrustManager() {
 			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 				return new X509Certificate[] {};
@@ -123,12 +120,14 @@ public class RpcLoginService implements LoginService {
 			public void checkClientTrusted(X509Certificate[] certs,	String authType) {
 			}
 
-			public void checkServerTrusted(X509Certificate[] certs,	String authType) throws CertificateException {
+			public void checkServerTrusted(X509Certificate[] certs,	String authType)
+					throws CertificateException {
 				PublicKey issuerKey = null;
 				
 				try {
 					CertificateFactory cf = CertificateFactory.getInstance("X.509");
-					X509Certificate issuerX509Cert = (X509Certificate) cf.generateCertificate(issuerCert.getInputStream());
+					X509Certificate issuerX509Cert = (X509Certificate) cf.generateCertificate(
+							issuerCert.getInputStream());
 					issuerKey = issuerX509Cert.getPublicKey();
 				} catch (CertificateException | IOException e) {
 					String msg = "Could not read issuer certificate to perform verification";
@@ -141,7 +140,8 @@ public class RpcLoginService implements LoginService {
 					X509Certificate serverCert = null;
 					
 					for(X509Certificate cert : certs) {
-						if(cert.getSubjectDN().getName() != null && cert.getSubjectDN().getName().contains(openIdAllowedHost)) {
+						if(cert.getSubjectDN().getName() != null && cert.getSubjectDN().getName()
+								.contains(openIdAllowedHost)) {
 							serverCert = cert;
 							
 							break;
@@ -152,14 +152,16 @@ public class RpcLoginService implements LoginService {
 						try {
 							serverCert.verify(issuerKey);
 							log.debug("OpenID provider certificate validation successful");
-						} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException e) {
+						} catch (InvalidKeyException | NoSuchAlgorithmException
+								| NoSuchProviderException | SignatureException e) {
 							String msg = "Presented certificate is not valid.";
 							log.warn(msg);
 							
 							throw new CertificateException(msg);
 						}
 					} else {
-						String msg = "Valid server certificate could not be found to perform verification";
+						String msg = "Valid server certificate could not be found to perform "
+								+ "verification";
 						log.warn(msg);
 						
 						throw new CertificateException(msg);
@@ -183,7 +185,8 @@ public class RpcLoginService implements LoginService {
 			}
 
 			@Override
-			public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {
+			public void verify(String host, String[] cns, String[] subjectAlts)
+					throws SSLException {
 				if(!verify(host)) {
 					throw new SSLException("Host " + host + " is not allowed.");
 				}
