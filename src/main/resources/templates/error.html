@@ -3,13 +3,12 @@
 	<head>
 		<meta charset="UTF-8"/>
 		<title th:text="#{error.page.title}"></title>
-		<link href="<c:url value="/img/favicon.ico"/>" rel="icon" type="image/x-icon" />
-		<link rel="stylesheet" href="<c:url value="/css/error.css"/>" />		
+		<link th:href="@{/img/favicon.ico}" rel="icon" type="image/x-icon" />
+		<link rel="stylesheet" th:href="@{/css/error.css}" />		
 	</head>
 	<body>
     	<h1 th:text="#{error.page.message}"></h1>
     	<img th:src="@{/img/datanet-logo-143x40.png}" />
-		<h3>${exception.getLocalizedMessage()}</h3>
 		<hr/>
 		<p th:text="#{error.page.description}"></p>
 	</body>

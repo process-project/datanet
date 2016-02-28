@@ -25,8 +25,11 @@ import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.ErrorPage;
+import org.springframework.boot.context.embedded.ServletRegistrationBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -41,8 +44,10 @@ import org.springframework.web.client.RestTemplate;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
 import pl.cyfronet.datanet.model.util.ModelBuilder;
 import pl.cyfronet.datanet.web.server.util.NegativePostParamRequestMatcher;
+import pl.cyfronet.datanet.web.server.util.SpringGwtRemoteServiceServlet;
 
 @SpringBootApplication
+@PropertySource("classpath:pl/cyfronet/datanet/web/client/controller/AppProperties.properties")
 public class DataNetApplication {
 	private static final Logger log = LoggerFactory.getLogger(DataNetApplication.class);
 	
@@ -82,6 +87,12 @@ public class DataNetApplication {
 				.headers()
 					.disable();
 		}
+	}
+	
+	@Bean
+	public ServletRegistrationBean rpcServices(ApplicationContext applicationContext) {
+		return new ServletRegistrationBean(
+				new SpringGwtRemoteServiceServlet(applicationContext), "/rpcservices/*");
 	}
 	
 	@Bean

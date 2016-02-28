@@ -85,32 +85,11 @@ public class SpringConfiguration {
 	}
 	
 	@Bean
-	public ResourceBundleMessageSource messageSource() {
-		ResourceBundleMessageSource messages = new ResourceBundleMessageSource();
-		messages.setBasenames("datanet-messages");
-		
-		return messages;
-	}
-	
-	@Bean
 	public SessionLocaleResolver localeResolver() {
 	    SessionLocaleResolver localeResolver = new SessionLocaleResolver();
 	    
 	    return localeResolver;
 	}
-
-	/**
-	 * Standard view resolver used to find jsp views.
-	 */
-	@Bean
-    public ViewResolver viewResolver() {
-		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-		viewResolver.setViewClass(JstlView.class);
-        viewResolver.setPrefix("/WEB-INF/views/");
-        viewResolver.setSuffix(".jsp");
-        
-        return viewResolver;
-    }
 	
 	/**
 	 * REST client used to communicate with the portal to authenticate users.
@@ -121,50 +100,4 @@ public class SpringConfiguration {
 		
 		return restTemplate;
 	}
-	
-	/**
-	 * Database configuration
-	 * @throws Exception 
-	 */
-	@Bean
-	public FactoryBean<SessionFactory> createSessionFactory() throws Exception {
-		DataSource dataSource = null;//new ComboPooledDataSource();
-//		dataSource.setDriverClass(dbDriverClass);
-//		dataSource.setJdbcUrl(dbJdbcUrl);
-//		dataSource.setUser(dbUser);
-//		dataSource.setPassword(dbPassword);
-		
-		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-		sessionFactory.setDataSource(dataSource);
-		sessionFactory.setPackagesToScan(new String[] {"pl.cyfronet.datanet.web.server.db.beans"});
-		sessionFactory.setHibernateProperties(hibernateProperties().getObject());
-		
-		return null;//sessionFactory;
-	}
-	
-	@Bean
-	public HibernateTransactionManager transactionManager() throws Exception{
-		HibernateTransactionManager txManager = new HibernateTransactionManager();
-		txManager.setSessionFactory(createSessionFactory().getObject());
-		
-		return txManager;
-	}
-	@Bean
-	public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
-		return new PersistenceExceptionTranslationPostProcessor();
-	}
-	@Bean HibernateExceptionTranslator hibernateExceptionTranslator() {
-		return new HibernateExceptionTranslator();
-	}
-	@Bean
-	public FactoryBean<Properties> hibernateProperties() {
-		PropertiesFactoryBean pfb = new PropertiesFactoryBean();
-		pfb.setLocations(new Resource[] {new ClassPathResource("hibernate.properties"),
-				new ClassPathResource("hibernate-override.properties")});
-		pfb.setIgnoreResourceNotFound(true);
-		
-		return pfb;
-	}
-	
-	
 }
