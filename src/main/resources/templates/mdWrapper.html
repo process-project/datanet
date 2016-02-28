@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8"/>
+		<title th:text="#{${resourceKey}.page.title}"></title>
+		<link th:href="@{/img/favicon.ico}" rel="icon" type="image/x-icon" />
+		<link th:href="@{/css/bootstrap-combined.no-icons.min.css}" rel="stylesheet"/>
+		<link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+	</head>
+	<body>
+		<div class="container">
+    		${mdContents}
+    	</div>
+	</body>
+</html>

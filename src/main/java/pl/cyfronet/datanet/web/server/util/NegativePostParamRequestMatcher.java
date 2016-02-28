@@ -1,4 +1,4 @@
-package pl.cyfronet.datanet.web.server.config;
+package pl.cyfronet.datanet.web.server.util;
 
 import javax.servlet.http.HttpServletRequest;
 

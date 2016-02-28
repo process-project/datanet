@@ -9,10 +9,6 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
-@Configuration
-@EnableWebMvc
-@ComponentScan({"pl.cyfronet.datanet.web.server.controllers",
-				"pl.cyfronet.datanet.web.server.rpcservices"})
 public class WebConfiguration extends WebMvcConfigurerAdapter {
 	/**
 	 * Web resources configuration

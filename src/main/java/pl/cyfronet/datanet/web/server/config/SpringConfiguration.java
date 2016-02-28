@@ -53,11 +53,6 @@ import org.springframework.web.servlet.view.JstlView;
 import pl.cyfronet.datanet.model.util.JaxbEntityListBuilder;
 import pl.cyfronet.datanet.model.util.ModelBuilder;
 
-@Configuration
-@EnableTransactionManagement
-@EnableScheduling
-@ComponentScan({"pl.cyfronet.datanet.web.server.services",
-				"pl.cyfronet.datanet.web.server.db"})
 public class SpringConfiguration {
 	@Value("${db.driver.class}") private String dbDriverClass;
 	@Value("${db.jdbc.url}") private String dbJdbcUrl;
@@ -104,16 +99,6 @@ public class SpringConfiguration {
 	    return localeResolver;
 	}
 
-	@Bean
-	public ModelBuilder modelBuilder() {
-		return new ModelBuilder();
-	}
-
-	@Bean
-	public JaxbEntityListBuilder jaxbEntityListBuilder() {
-		return new JaxbEntityListBuilder();
-	}
-	
 	/**
 	 * Standard view resolver used to find jsp views.
 	 */
@@ -181,35 +166,5 @@ public class SpringConfiguration {
 		return pfb;
 	}
 	
-	@Bean
-	public RestTemplate restTemplate() throws NoSuchAlgorithmException, KeyManagementException {
-		ThreadSafeClientConnManager connectionManager = new ThreadSafeClientConnManager();
-		SSLContext sslContext = SSLContext.getInstance("SSL");
-		sslContext.init(null, new TrustManager[] { new X509TrustManager() {
-			public X509Certificate[] getAcceptedIssuers() {
-				return null;
-			}
-
-			public void checkClientTrusted(X509Certificate[] certs, String authType) {
-			}
-
-			public void checkServerTrusted(X509Certificate[] certs, String authType) {
-			}
-		}}, new SecureRandom());
-		DefaultHttpClient httpClient = new DefaultHttpClient(connectionManager);
-		SSLSocketFactory sslSocketFactory = new SSLSocketFactory(sslContext, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-		httpClient.getConnectionManager().getSchemeRegistry().register(new Scheme("https", 443, sslSocketFactory));
-		BasicCredentialsProvider credentialsProvider =  new BasicCredentialsProvider();
-		credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("", ""));
-		httpClient.setCredentialsProvider(credentialsProvider);
-		HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory =
-				new HttpComponentsClientHttpRequestFactory(httpClient);
-		
-		return new RestTemplate(httpComponentsClientHttpRequestFactory);
-	}
 	
-	@Bean
-	public StandardServletMultipartResolver multipartResolver() {
-		return new StandardServletMultipartResolver();
-	}
 }
