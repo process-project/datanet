@@ -1,85 +1,182 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>pl.cyfronet.datanet</groupId>
-	<artifactId>datanet</artifactId>
-	<version>1.1.3-SNAPSHOT</version>
-	<packaging>pom</packaging>
-
+	
 	<parent>
-		<groupId>pl.cyfronet.dice</groupId>
-		<artifactId>dice</artifactId>
-		<version>1</version>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.2.5.RELEASE</version>
 	</parent>
 
-	<scm>
-		<connection>scm:git:ssh://git@dev.cyfronet.pl/datanet/datanet.git</connection>
-		<developerConnection>scm:git:ssh://git@dev.cyfronet.pl/datanet/datanet.git</developerConnection>
-		<url>http://dev.cyfronet.pl/gitlab/datanet</url>
-		<tag>HEAD</tag>
-	</scm>
+	<artifactId>web</artifactId>
+	<packaging>jar</packaging>
 
+	<name>Datanet Web Frontend</name>
+	
 	<properties>
-		<cloud.foundry.version>0.7.5</cloud.foundry.version>
-		<gwt.version>2.7.0</gwt.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+		<start-class>pl.cyfronet.datanet.web.server.DatanetApplication</start-class>
+		<gwt.version>2.8.0-beta1</gwt.version>
 		<gwt.bootstrap.version>2.2.1.0</gwt.bootstrap.version>
-		<spring.version>3.2.13.RELEASE</spring.version>
-		<spring.security.version>3.2.7.RELEASE</spring.security.version>
 	</properties>
 
 	<repositories>
-		<!-- required to see the parent project -->
 		<repository>
-			<id>dice-mvnrepo</id>
-			<url>http://dev.cyfronet.pl/mvnrepo</url>
-		</repository>
-	    <!-- provides cloudfoundry artifacts -->
-	    <repository>
-			<id>Spring Framework Milestone Repository</id>
-			<url>http://maven.springframework.org/milestone</url>
+			<id>gwtrepo</id>
+			<url>http://gwtrepo.googlecode.com/svn/repo</url>
 		</repository>
 	</repositories>
 
 	<build>
 		<plugins>
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.4.1</version>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<version>${gwt.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<webappDirectory>${project.build.outputDirectory}/static</webappDirectory>
+					<hostedWebapp>${project.build.outputDirectory}/static</hostedWebapp>
+					<noServer>true</noServer>
+					<runTarget>http://localhost:8080</runTarget>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 
-	<modules>
-		<module>deployer</module>		
-		<module>web</module>
-		<module>model</module>
-	</modules>
-
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.10</version>
-			<scope>test</scope>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>1.9.5</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+
+		<!-- GWT dependencies -->
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-servlet</artifactId>
+			<version>${gwt.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+			<version>${gwt.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-dev</artifactId>
+			<version>${gwt.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.gwtbootstrap</groupId>
+			<artifactId>gwt-bootstrap</artifactId>
+			<version>${gwt.bootstrap.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt.inject</groupId>
+			<artifactId>gin</artifactId>
+			<version>2.1.2</version>
+		</dependency>
+        <dependency>
+      		<groupId>com.google.gwt.eventbinder</groupId>
+      		<artifactId>eventbinder</artifactId>
+      		<version>1.0.2</version>
+    	</dependency>
+		<dependency>
+		    <groupId>com.google.gwt.eventbinder</groupId>
+      		<artifactId>eventbinder</artifactId>
+      		<version>1.0.2</version>
+			<classifier>sources</classifier>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+		    <groupId>de.benediktmeurer.gwt-slf4j</groupId>
+		    <artifactId>gwt-slf4j</artifactId>
+		    <version>0.0.2</version>
+		</dependency>
+		
+		<!-- markdown dependencies -->
+		<dependency>
+			<groupId>com.github.rjeschke</groupId>
+			<artifactId>txtmark</artifactId>
+			<version>0.13</version>
+		</dependency>
+		
+		
+		<!-- Commons dependencies -->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3</version>
+		</dependency>
+		
+		<!-- OpenID dependencies -->
+		<dependency>
+			<groupId>org.openid4java</groupId>
+			<artifactId>openid4java</artifactId>
+			<version>0.9.8</version>
+		</dependency>
+
+		<!-- GRID proxy dependencies -->
+		<dependency>
+			<groupId>eu.eu-emi.security</groupId>
+			<artifactId>canl</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+		
+		<!-- Tests -->
+		<dependency>
+			<groupId>com.google.gwt.gwtmockito</groupId>
+			<artifactId>gwtmockito</artifactId>
+			<version>1.1.3</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

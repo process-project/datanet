@@ -8,3 +8,7 @@
 *~
 */test-output
 /target
+/datanet-db.log
+/datanet-db.properties
+/datanet-db.script
+/datanet.log
